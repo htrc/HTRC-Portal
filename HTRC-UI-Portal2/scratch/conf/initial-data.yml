@@ -1,0 +1,5 @@
+# Users
+- &mpathira !!models.User
+    email: bob@gmail.com
+    userId: mpathira
+    password: secret
