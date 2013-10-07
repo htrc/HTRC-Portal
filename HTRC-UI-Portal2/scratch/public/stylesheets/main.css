@@ -1,0 +1,187 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+}
+
+.brand {
+    line-height: 32px;
+}
+
+.navbar .nav > li {
+    line-height: 32px;
+}
+
+.navbar-inverse .nav li.dropdown>.dropdown-toggle .caret {
+    margin-top: 14px;
+}
+
+h3 {
+    font-size: 20px;
+    line-height: 1;
+}
+
+hr {
+    margin: 5px 0;
+}
+
+select{
+    font-family:  "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+}
+
+select[focus], select:focus {
+    outline: none;
+}
+
+select[active], select:active {
+    outline: none;
+}
+
+select[checked], select:checked {
+    outline: none;
+}
+
+select[disabled] {
+    background-color: white;
+}
+
+#wrap{
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto;
+}
+
+#footer{
+    margin-top: 30px;
+    height: 60px;
+}
+
+#push{
+    height: 60px;
+}
+
+.nav-footer{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-footer li {
+    display: inline;
+}
+
+.nav-footer li a {
+    width: 70px;
+    padding: 0 5px;
+}
+
+td{
+    vertical-align: top;
+}
+
+.download-csv {
+    padding-left:24px;
+    line-height:24px;
+    background-image:url(/img/download.png);
+    background-repeat:no-repeat;
+    vertical-align:middle;
+    display:block;
+}
+
+.volume-list {
+    padding-bottom: 20px;
+}
+
+.volume{
+    border-bottom: 1px #ddd dashed;
+    margin-bottom: 10px;
+}
+
+.volume h3{
+    color: #CE6A44;
+    font-weight: normal;
+}
+
+.volume-details{
+    clear: both;
+    overflow: auto;
+    padding: 0.5em 0;
+    /*font-family: Arial,Verdana,Helvetica,sans-serif;*/
+    font-size: 12px;
+}
+
+.volume-details dt{
+    clear: both;
+    color: #888;
+    float: left;
+    font-weight: bold;
+    margin: 0;
+    padding: 2px 1em 2px 0;
+    text-align: right;
+    width: 15%;
+}
+
+.volume-details dd{
+    float: left;
+    margin: 0;
+    padding: 2px 0;
+    text-align: left;
+    width: 550px;
+}
+
+.pager li>a{
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.pager {
+    border-bottom: 1px #ddd solid;
+    border-top:1px #ddd solid;
+    background-color: #eee;
+    padding: 5px;
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav>li>a .loggedin-user{
+}
+
+.login-unit{
+    margin-top: 25px;
+    padding-top: 10px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #eeeeee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.login-unit form{
+    margin-bottom: 10px;
+}
+
+.login-unit .error{
+    color: red;
+}
+
+.login-input{
+    width: 95%;
+}
+
+.markerting-unit .action-unit h3{
+    font-weight: 400;
+    color: #ff9933;
+}
+
+.action-unit{
+    background-color: #eeeeee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.action-unit > div {
+    padding: 10px;
+    min-height: 100px;
+}

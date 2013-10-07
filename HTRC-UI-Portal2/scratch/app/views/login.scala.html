@@ -1,0 +1,93 @@
+@(form: Form[HTRCPortal.Login], user: User)
+
+@main("Home", user) {
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="row">
+        <div class="span3">
+            <img src="@routes.Assets.at("images/hathi.jpg")" width="180" height="180">
+        </div>
+        <div class="span9" style="margin-left: 0;">
+            <h3 style="font-size: 60px; line-height: 1;margin-top: 35px;">
+                    Welcome to the HathiTrust Research Center!
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <p style="padding-top: 25px; font-size: 17px; line-height: 27px;"> The HathiTrust Research Center (HTRC) provides research access to the public domain text of the HathiTrust
+                Digital Library. The HTRC is a collaborative research center launched jointly by Indiana University and the
+                University of Illinois, along with the HathiTrust Digital Library, to help meet the technical challenges of
+                dealing with massive amounts of digital text that researchers face by developing cutting-edge software tools
+                and cyber infrastructure to enable advanced computational access to the growing digital record of human
+                knowledge. The HTRC provides an infrastructure to search, collect, analyze, and visualize the full text of nearly 3
+                million public domain works and is intended for nonprofit and educational
+                researchers.</p>
+        </div>
+        <div class="span4">
+            <div class="login-unit">
+                <h3 style="font-weight: 400">Get Started By Sign In</h3>
+                @helper.form(routes.HTRCPortal.authenticate()) {
+                    @if(form.hasGlobalErrors) {
+                        <p class="error">
+                            @form.globalError.message
+                        </p>
+                    }
+                    @if(flash.contains("success")) {
+                        <p class="success">
+                            @flash.get("success")
+                        </p>
+                    }
+                    <div>
+                        <div>
+                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="text" name="userId" id="userId" placeholder="User ID...">
+                        </div>
+                        <div>
+                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="password" name="password" id="password" placeholder="Password...">
+                        </div>
+                        <div>
+                            <input name="signin" id="signin" type="submit" class="btn btn-primary" value="Sign In" />
+                            <input name="signup" id="signup" type="button" class="btn btn-info" value="Sign Up" />
+                            <a href="#" class="pull-right" style="font-size: 16px; line-height: 26px;">Forgot Password?</a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="span12 pull-right" style="margin-top: 20px;">
+        <h2 style="margin-top: 0"> What You Can Do With HTRC Portal? </h2>
+    </div>
+    <div class="row pull-left markerting-unit">
+        <div class="span3 action-unit">
+            <div>
+                <h3> Create Workset </h3>
+                <p>Create workset using our workset builder.</p>
+            </div>
+
+        </div>
+        <div class="span3 action-unit">
+            <div>
+                <h3> Upload Workset </h3>
+                <p>Upload worksets with extra properties in CSV format.</p>
+            </div>
+
+        </div>
+        <div class="span3 action-unit">
+            <div>
+                <h3> Browse Workset </h3>
+                <p>Browse through already created worksets.</p>
+            </div>
+        </div>
+        <div class="span3 action-unit">
+           <div>
+               <h3> Execute Algorithms </h3>
+               <p>Execute algorithms on your worksets.</p>
+           </div>
+        </div>
+    </div>
+
+
+}

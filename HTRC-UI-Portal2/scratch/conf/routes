@@ -5,5 +5,15 @@
 # Home page
 GET     /                           controllers.HTRCPortal.index()
 
+# Login Form
+GET    /login                      controllers.HTRCPortal.login()
+
+# Logout Form
+
+GET     /logout                     controllers.HTRCPortal.logout()
+
+# Authenticate
+POST  /login                        controllers.HTRCPortal.authenticate()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
