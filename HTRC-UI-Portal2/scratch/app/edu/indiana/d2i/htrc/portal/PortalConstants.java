@@ -19,10 +19,10 @@ import play.Play;
  *
  */
 
-public class PortalConstants {
+public class  PortalConstants {
 
     // property file entry
-    public static String PROPERTY_AGENT_EPR = Play.application().configuration().getString("agent.epr");
+    public static String PROPERTY_AGENT_EPR = "agent.epr";
     public static String PROPERTY_AGENT_JOBLIST_PART = "agent.joblist";
     public static String PROPERTY_AGENT_JOB_DELETE = "agent.jobdelete";
     public static String PROPERTY_AGENT_JOB_SAVE = "agent.jobsave";
@@ -55,7 +55,7 @@ public class PortalConstants {
     //
     public static String OAUTH2_REDIRECT_URL = "oauth2.redirect";
 
-    public static String OAUTH2_CLIENT_ID = Play.application().configuration().getString("oauth2.client.id");
+    public static String OAUTH2_CLIENT_ID = "oauth2.client.id";
 
     //Solr query URL
     public static String SOLR_QUERY_URL = "solr.query.url";
