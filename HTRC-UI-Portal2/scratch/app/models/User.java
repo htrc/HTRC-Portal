@@ -64,7 +64,7 @@ public class User extends Model {
                     .tokenLocation(Play.application().configuration().getString("oauth2.token.endpoint"))
                     .setGrantType(GrantType.PASSWORD)
                     .setClientId(PlayConfWrapper.oauthClientID())
-                    .setClientSecret(Play.application().configuration().getString("oauth2.client.secrete"))
+                    .setClientSecret(PlayConfWrapper.oauthClientSecrete())
                     .setUsername(userId)
                     .setPassword(password)
                     .buildBodyMessage();
