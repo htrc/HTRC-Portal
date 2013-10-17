@@ -15,24 +15,7 @@
  *
  */
 
-package controllers;
+package models;
 
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Security;
-import views.html.about;
-
-public class Secured extends Security.Authenticator {
-    @Override
-    public String getUsername(Http.Context ctx) {
-        return ctx.session().get("userId");
-    }
-
-    @Override
-    public Result onUnauthorized(Http.Context ctx) {
-        if(ctx.request().path().equals("/about")){
-            return ok(about.render(null));
-        }
-        return redirect(routes.HTRCPortal.login());
-    }
+public class Algorithm {
 }

@@ -30,14 +30,14 @@
 
                     <div class="nav-collapse collapse">
                         <ul class="nav">
-                            <li><a href="@routes.HTRCPortal.index">Home</a></li>
-                            <li><a href="#">About</a>
+                            <li><a href="@routes.HTRCPortal.index()">Home</a></li>
+                            <li><a href="@routes.HTRCPortal.about()">About</a>
                         </li>
                         @if(user != null) {
                             <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Worksets <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#" onclick="localStorage['selectcollection'] = null; return true;">List</a></li>
+                                <li><a href="@routes.HTRCPortal.listWorkset()">List</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" role="button" data-toggle="modal">Upload Workset</a></li>
                                 <li class="divider"></li>

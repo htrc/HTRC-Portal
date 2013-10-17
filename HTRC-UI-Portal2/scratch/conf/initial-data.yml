@@ -3,3 +3,16 @@
     email: bob@gmail.com
     userId: mpathira
     password: secret
+
+# Worksets
+
+- &11123 !!models.Workset
+    id: 11123
+    name: myworkset
+    description: my first workset
+    author: liyanage
+    lastModifiedBy: liyanage
+    lastModified: 2013-06-15T17:18:23.18-06:00
+    numberOfVolumes: 12
+    shared: true
+
