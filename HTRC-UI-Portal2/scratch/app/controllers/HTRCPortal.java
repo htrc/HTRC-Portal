@@ -1,19 +1,26 @@
 package controllers;
 
+import com.avaje.ebean.PagingList;
 import models.User;
+import models.Workset;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
+import play.Logger;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import views.html.about;
 import views.html.index;
 import views.html.login;
+import views.html.worksets;
 
 import static play.data.Form.form;
 
 
 public class HTRCPortal extends Controller {
+
+    private static Logger.ALogger log = play.Logger.of("application");
 
     @Security.Authenticated(Secured.class)
     public static Result index() {
@@ -29,7 +36,6 @@ public class HTRCPortal extends Controller {
         flash("success", "You've been logged out");
         return redirect(routes.HTRCPortal.login());
     }
-
     public static Result authenticate() {
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if (loginForm.hasErrors()) {
@@ -41,6 +47,27 @@ public class HTRCPortal extends Controller {
                     routes.HTRCPortal.index()
             );
         }
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result about() {
+        return ok(about.render(User.find.byId(request().username())));
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result listWorkset(int sharedPage, int ownerPage){
+        User loggedInUser = User.find.byId(request().username());
+        PagingList<Workset> shared = Workset.shared();
+        PagingList<Workset> owned = Workset.owned(loggedInUser);
+        System.out.println("shared: " + shared.getTotalPageCount());
+        System.out.println(owned.getTotalPageCount());
+        return ok(worksets.render(loggedInUser,
+                shared.getPage(sharedPage).getList(),
+                owned.getPage(ownerPage).getList(),
+                sharedPage,
+                ownerPage,
+                shared.getTotalPageCount(),
+                owned.getTotalPageCount()));
     }
 
     public static class Login{

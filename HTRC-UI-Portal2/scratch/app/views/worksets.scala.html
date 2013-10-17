@@ -1,0 +1,102 @@
+@(user: User, shared: List[Workset], owned: List[Workset], sharedPage: Int, ownedPage: Int, sharedPages: Int, ownPages: Int)
+@import com.avaje.ebean.PagingList
+
+@main("Worksets", user) {
+    <h2> My Worksets </h2>
+    <div class="row">
+        <ul class="thumbnails">
+            @for(w <- owned) {
+                <li class="span4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>@w.name</h3>
+                            <p>@w.description</p>
+                            <table>
+                                <tr>
+                                    <td>Last Modified By:</td>
+                                    <td>@w.lastModifiedBy</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Modified Time:</td>
+                                    <td>@w.lastModified</td>
+                                </tr>
+                                <tr>
+                                    <td>Number of Volumes:</td>
+                                    <td>@w.numberOfVolumes</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+        <div class="pagination">
+            <ul>
+                <li style="padding-right: 5px;">
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">First</a>
+                </li>
+                <li>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">Prev</a>
+                </li>
+                <li style="padding-left: 5px;">
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">Last</a>
+                </li>
+                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">>Next</a>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+    <h2> Public Worksets </h2>
+    <div class="row">
+        <ul class="thumbnails">
+            @for(w <- shared) {
+                <li class="span4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>@w.name</h3>
+                            <p>@w.description</p>
+                            <table>
+                                <tr>
+                                    <td>Author:</td>
+                                    <td>@w.author</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Modified By:</td>
+                                    <td>@w.lastModifiedBy</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Modified Time:</td>
+                                    <td>@w.lastModified</td>
+                                </tr>
+                                <tr>
+                                    <td>Number of Volumes:</td>
+                                    <td>@w.numberOfVolumes</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+        <div class="pagination">
+            <ul>
+                <li style="padding-right: 5px;">
+                    <a href="@routes.HTRCPortal.listWorkset(0,ownedPage)">First</a>
+                </li>
+                <li>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage -1 ,ownedPage)">Prev</a>
+                </li>
+                <li style="padding-left: 5px;">
+                    <a href="#" onclick="@routes.HTRCPortal.listWorkset(sharedPages -1, ownedPage)">Last</a>
+                </li>
+                <li ><a href="#" onclick="@routes.HTRCPortal.listWorkset(sharedPage + 1, ownedPage)">>Next</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+}
+
+

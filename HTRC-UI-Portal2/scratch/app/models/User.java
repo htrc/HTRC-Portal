@@ -17,6 +17,7 @@
 
 package models;
 
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import htrc.security.oauth2.client.OAuth2Client;
 import htrc.security.oauth2.client.OAuthUserInfoRequest;
 import org.apache.amber.oauth2.client.URLConnectionClient;
@@ -24,6 +25,7 @@ import org.apache.amber.oauth2.client.request.OAuthClientRequest;
 import org.apache.amber.oauth2.client.response.OAuthClientResponse;
 import org.apache.amber.oauth2.common.message.types.GrantType;
 import play.Logger;
+import play.Play;
 import play.db.ebean.Model;
 
 import javax.persistence.Entity;
@@ -55,12 +57,14 @@ public class User extends Model {
     public static User authenticate(String userId, String password) {
 
 
+
+
         try {
             OAuthClientRequest accessTokenRequest = OAuthClientRequest
-                    .tokenLocation("https://htrc3.pti.indiana.edu:9443/oauth2endpoints/token")
+                    .tokenLocation(Play.application().configuration().getString("oauth2.token.endpoint"))
                     .setGrantType(GrantType.PASSWORD)
-                    .setClientId("qPgZwEPJ4UQYLJr19eX950bVql8a")
-                    .setClientSecret("SJm0K0gqnCCeQ6a5Fwvq9XhInkka")
+                    .setClientId(PlayConfWrapper.oauthClientID())
+                    .setClientSecret(Play.application().configuration().getString("oauth2.client.secrete"))
                     .setUsername(userId)
                     .setPassword(password)
                     .buildBodyMessage();
@@ -72,9 +76,9 @@ public class User extends Model {
             User u = find.where().eq("userId", userId).findUnique();
             if(u == null){
                 OAuthClientRequest userInfoRequest = OAuthUserInfoRequest
-                        .userInfoLocation("https://htrc3.pti.indiana.edu:9443/oauth2userinfo/userinfo")
-                        .setClientId("qPgZwEPJ4UQYLJr19eX950bVql8a")
-                        .setClientSecret("SJm0K0gqnCCeQ6a5Fwvq9XhInkka")
+                        .userInfoLocation(Play.application().configuration().getString("oauth2.userinfo.endpoint"))
+                        .setClientId(Play.application().configuration().getString("oauth2.client.id"))
+                        .setClientSecret(Play.application().configuration().getString("oauth2.client.secrete"))
                         .setAccessToken(accessToken)
                         .buildBodyMessage();
 

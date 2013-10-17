@@ -1,0 +1,64 @@
+{"algorithmDetail": {
+    "authors": ["Loretta Auvil"],
+    "description": "This spellcheck analysis will load data and create several reports with results of spellchecking. This version of spellcheck is set to look for and suggest replacements for OCR errors. Loads each page of each volume from HTRC. Performs lowercase transformation of text. For the html report, several spelling statistics are provided at a volume level. For the text file reports, information for each volume is displayed with blank line separating the volumes. There are options to customize the dictionary, token counts, and transformation rules. The token counts data is used to determine if a suggested dictionary word occurs in the token counts data and should be used. There are options for customizing the transformation rules which indicate the types of OCR errors that should be corrected. For instance a known problem is the transformation of an \"li\" to an \"h\" and vice a versa, so this is expressed with the transformation rule \"li=h\" which says for all misspelled words with an \"h\" check if conversion to \"li\" forms a correctly spelled word. NOTE: For development systems, the volume limit needs to be set.\n    ",
+    "name": "Meandre_Spellcheck_Report_Per_Volume",
+    "parameters": [
+        {
+            "defaultValue": null,
+            "description": "The collection containing the volume ids to be used for analysis.",
+            "label": "Please select a collection for analysis",
+            "name": "input_collection",
+            "readOnly": false,
+            "required": true,
+            "type": "collection",
+            "validation": null,
+            "validationError": null
+        },
+        {
+            "defaultValue": null,
+            "description": "The transformation rules to be applied to try to create a correctly spelled word.",
+            "label": "Please provide a text for transformation, e.g. h=li; li=h; rn=m; m=rn; s=f; (default: s=f; h={li,b}; li=h; rn=m; m=rn; o=0; i=1; l=1;)",
+            "name": "transformation_rules",
+            "readOnly": false,
+            "required": false,
+            "type": "text",
+            "validation": null,
+            "validationError": null
+        },
+        {
+            "defaultValue": null,
+            "description": "The dictionary of words.",
+            "label": "Please provide a url that contains a text file of words considered in the dictionary (default: http:\/\/repository.seasr.org\/Datasets\/Text\/dict)",
+            "name": "dictionary",
+            "readOnly": false,
+            "required": false,
+            "type": "url",
+            "validation": null,
+            "validationError": null
+        },
+        {
+            "defaultValue": null,
+            "description": "The url for a set of token counts.",
+            "label": "Please provide a url for token counts that can be used for choosing the best correctly spelled word based on popularity.",
+            "name": "token_counts",
+            "readOnly": false,
+            "required": false,
+            "type": "url",
+            "validation": null,
+            "validationError": null
+        },
+        {
+            "defaultValue": 10,
+            "description": "The volume limit to process.",
+            "label": "Please provide the limit for number of volumes to process",
+            "name": "vol_limit",
+            "readOnly": false,
+            "required": true,
+            "type": "int",
+            "validation": null,
+            "validationError": null
+        }
+    ],
+    "supportUrl": "",
+    "version": "1.0"
+}, "algorithmName": "Meandre_Spellcheck_Report_Per_Volume", "collectionNames": ["American-fiction@skowalcz", "Charles_Dickens_Novels@lauvil", "CongressUS@kirkhess", "Jane_Austen@lauvil", "Journal_Titles@skowalcz", "Journal_Titles_Holdings@skowalcz", "New_Charles_Dickens_Novels@lauvil", "Othello@lauvil", "Shakespeare_Tragedies@lauvil", "big-law@skowalcz", "cwillis-frankenstein@cwillis", "cwillis-vampires@cwillis", "public-workset1@jiaazeng", "public-workset1@testuser"]}

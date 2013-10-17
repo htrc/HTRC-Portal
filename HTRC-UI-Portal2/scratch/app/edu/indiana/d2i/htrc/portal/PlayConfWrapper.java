@@ -1,3 +1,7 @@
+package edu.indiana.d2i.htrc.portal;
+
+import play.Play;
+
 /**
  * Copyright 2013 The Trustees of Indiana University
  *
@@ -15,24 +19,11 @@
  *
  */
 
-package controllers;
-
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Security;
-import views.html.about;
-
-public class Secured extends Security.Authenticator {
-    @Override
-    public String getUsername(Http.Context ctx) {
-        return ctx.session().get("userId");
+public class PlayConfWrapper {
+    public static String oauthClientID(){
+        return Play.application().configuration().getString("oauth2.client.id");
     }
 
-    @Override
-    public Result onUnauthorized(Http.Context ctx) {
-        if(ctx.request().path().equals("/about")){
-            return ok(about.render(null));
-        }
-        return redirect(routes.HTRCPortal.login());
-    }
+
 }
+
