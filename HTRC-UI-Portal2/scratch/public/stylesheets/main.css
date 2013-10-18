@@ -185,3 +185,8 @@ td{
     padding: 10px;
     min-height: 100px;
 }
+
+.thumbnail .caption h3{
+    margin-bottom: 0px;
+    margin-top: 0px;
+}

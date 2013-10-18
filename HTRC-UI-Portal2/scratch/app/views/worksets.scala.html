@@ -3,45 +3,53 @@
 
 @main("Worksets", user) {
     <h2> My Worksets </h2>
-    <div class="row">
+    <div class="row-fluid">
         <ul class="thumbnails">
             @for(w <- owned) {
                 <li class="span4">
-                    <div class="thumbnail">
-                        <div class="caption">
-                            <h3>@w.name</h3>
-                            <p>@w.description</p>
+                    <div class="thumbnail" style="padding: 0px;">
+                        <div class="caption" style="padding: 0px;">
+                            <h3 style="padding: 5px; background-color: #eeeeee">@w.name</h3>
+                            <p style="padding: 5px;margin: 0px;">@w.description</p>
                             <table>
                                 <tr>
-                                    <td>Last Modified By:</td>
-                                    <td>@w.lastModifiedBy</td>
+                                    <td style="padding-left: 5px;">Last Modified By:</td>
+                                    <td style="padding-right: 5px;">@w.lastModifiedBy</td>
                                 </tr>
                                 <tr>
-                                    <td>Last Modified Time:</td>
-                                    <td>@w.lastModified</td>
+                                    <td style="padding-left: 5px;">Last Modified Time:</td>
+                                    <td style="padding-right: 5px;">@w.lastModified</td>
                                 </tr>
                                 <tr>
-                                    <td>Number of Volumes:</td>
-                                    <td>@w.numberOfVolumes</td>
+                                    <td style="padding-left: 5px;">Number of Volumes:</td>
+                                    <td style="padding-right: 5px;">@w.numberOfVolumes</td>
                                 </tr>
                             </table>
+                            <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                                <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                <a href="#" class="btn btn-small">Edit</a>
+                                <a href="#" class="btn btn-small btn-primary">Open</a>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </li>
             }
         </ul>
-        <div class="pagination">
+        <div class="pagination pull-right">
             <ul>
                 <li style="padding-right: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">First</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">&#8676</a>
                 </li>
                 <li>
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">Prev</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">&larr;</a>
+                </li>
+
+                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">&rarr;</a>
                 </li>
                 <li style="padding-left: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">Last</a>
-                </li>
-                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">>Next</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">&#8677</a>
                 </li>
 
             </ul>
@@ -49,49 +57,53 @@
 
     </div>
     <h2> Public Worksets </h2>
-    <div class="row">
+    <div class="row-fluid">
         <ul class="thumbnails">
             @for(w <- shared) {
                 <li class="span4">
-                    <div class="thumbnail">
-                        <div class="caption">
-                            <h3>@w.name</h3>
-                            <p>@w.description</p>
-                            <table>
-                                <tr>
-                                    <td>Author:</td>
-                                    <td>@w.author</td>
-                                </tr>
-                                <tr>
-                                    <td>Last Modified By:</td>
-                                    <td>@w.lastModifiedBy</td>
-                                </tr>
-                                <tr>
-                                    <td>Last Modified Time:</td>
-                                    <td>@w.lastModified</td>
-                                </tr>
-                                <tr>
-                                    <td>Number of Volumes:</td>
-                                    <td>@w.numberOfVolumes</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+                <div class="thumbnail" style="padding: 0px;">
+                <div class="caption" style="padding: 0px;">
+                <h3 style="padding: 5px; background-color: #eeeeee">@w.name</h3>
+                <p style="padding: 5px;margin: 0px;">@w.description</p>
+                <table>
+                <tr>
+                <td style="padding-left: 5px;">Last Modified By:</td>
+                <td style="padding-right: 5px;">@w.lastModifiedBy</td>
+                </tr>
+                <tr>
+                <td style="padding-left: 5px;">Last Modified Time:</td>
+                <td style="padding-right: 5px;">@w.lastModified</td>
+                </tr>
+                <tr>
+                <td style="padding-left: 5px;">Number of Volumes:</td>
+                <td style="padding-right: 5px;">@w.numberOfVolumes</td>
+                </tr>
+                </table>
+                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                <a href="#" class="btn btn-small">Edit</a>
+                <a href="#" class="btn btn-small btn-primary">Open</a>
+                </div>
+
+                </div>
+                </div>
+                </div>
                 </li>
             }
         </ul>
-        <div class="pagination">
+        <div class="pagination pull-right">
             <ul>
                 <li style="padding-right: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(0,ownedPage)">First</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">&#8676</a>
                 </li>
                 <li>
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage -1 ,ownedPage)">Prev</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">&larr;</a>
+                </li>
+
+                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">&rarr;</a>
                 </li>
                 <li style="padding-left: 5px;">
-                    <a href="#" onclick="@routes.HTRCPortal.listWorkset(sharedPages -1, ownedPage)">Last</a>
-                </li>
-                <li ><a href="#" onclick="@routes.HTRCPortal.listWorkset(sharedPage + 1, ownedPage)">>Next</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">&#8677</a>
                 </li>
 
             </ul>
