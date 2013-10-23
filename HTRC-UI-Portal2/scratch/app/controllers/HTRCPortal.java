@@ -1,6 +1,7 @@
 package controllers;
 
 import com.avaje.ebean.PagingList;
+import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import models.User;
 import models.Workset;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
@@ -15,12 +16,17 @@ import views.html.index;
 import views.html.login;
 import views.html.worksets;
 
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.List;
+
 import static play.data.Form.form;
 
 
 public class HTRCPortal extends Controller {
 
     private static Logger.ALogger log = play.Logger.of("application");
+
 
     @Security.Authenticated(Secured.class)
     public static Result index() {
@@ -55,8 +61,13 @@ public class HTRCPortal extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result listWorkset(int sharedPage, int ownerPage){
+    public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
         User loggedInUser = User.find.byId(request().username());
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(loggedInUser.accessToken);
+        List<Workset> publicWorksets = persistenceAPIClient.getAllWorksets();
+        for(Workset w : publicWorksets) {
+            Workset.create(w);
+        }
         PagingList<Workset> shared = Workset.shared();
         PagingList<Workset> owned = Workset.owned(loggedInUser);
         System.out.println("shared: " + shared.getTotalPageCount());
