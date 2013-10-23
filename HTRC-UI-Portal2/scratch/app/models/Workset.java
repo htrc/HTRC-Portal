@@ -18,13 +18,13 @@
 package models;
 
 import com.avaje.ebean.PagingList;
+import play.Logger;
 import play.Play;
 import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,7 +32,7 @@ public class Workset extends Model {
     public static Integer ROWS_PER_PAGE = Play.application().configuration().getInt("worksets.per.page");
 
     @Id
-    public Long id;
+    public String id;
 
     public String name;
 
@@ -42,14 +42,28 @@ public class Workset extends Model {
 
     public String lastModifiedBy;
 
-    public Date lastModified;
+    public String lastModified;
 
     public int numberOfVolumes;
 
     // Workset is public or private
     public boolean shared;
 
+    private static Logger.ALogger log = play.Logger.of("application");
+
+    public Workset(String name, String description, String author, String lastModifiedBy,
+                   String lastModified, int numberOfVolumes, boolean shared){
+        this.name = name;
+        this.description = description;
+        this.author = author;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModified = lastModified;
+        this.numberOfVolumes = numberOfVolumes;
+        this.shared = shared;
+    }
     public static Finder<Long, Workset> finder = new Finder<Long, Workset>(Long.class, Workset.class);
+
+
 
     public static List<Workset> all(){
         return finder.all();
