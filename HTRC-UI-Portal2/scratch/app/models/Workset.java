@@ -52,14 +52,13 @@ public class Workset extends Model {
     private static Logger.ALogger log = play.Logger.of("application");
 
     public Workset(String name, String description, String author, String lastModifiedBy,
-                   String lastModified, int numberOfVolumes, boolean shared){
+                   String lastModified, int numberOfVolumes){
         this.name = name;
         this.description = description;
         this.author = author;
         this.lastModifiedBy = lastModifiedBy;
         this.lastModified = lastModified;
         this.numberOfVolumes = numberOfVolumes;
-        this.shared = shared;
     }
     public static Finder<Long, Workset> finder = new Finder<Long, Workset>(Long.class, Workset.class);
 

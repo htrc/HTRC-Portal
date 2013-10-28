@@ -2,6 +2,8 @@ package controllers;
 
 import com.avaje.ebean.PagingList;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.PortalConstants;
 import models.User;
 import models.Workset;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
@@ -64,8 +66,18 @@ public class HTRCPortal extends Controller {
     public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
         User loggedInUser = User.find.byId(request().username());
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(loggedInUser.accessToken);
-        List<Workset> publicWorksets = persistenceAPIClient.getAllWorksets();
+        String publicWorksetUrl = PlayConfWrapper.registryEPR() + PortalConstants.WORKSETS_URL + PortalConstants.PUBLIC_WORKSET;
+        String userWorksetUrl = PlayConfWrapper.registryEPR() + PortalConstants.WORKSETS_URL;
+        List<Workset> publicWorksets = persistenceAPIClient.getAllWorksets(publicWorksetUrl,null);
+        List<Workset> userPublicWorksets = persistenceAPIClient.getAllWorksets(publicWorksetUrl,loggedInUser.userId);
+        List<Workset> userPrivateWorksets = persistenceAPIClient.getAllWorksets(userWorksetUrl,null);
+        userPrivateWorksets.removeAll(userPublicWorksets);
         for(Workset w : publicWorksets) {
+            w.shared = true;
+            Workset.create(w);
+        }
+        for(Workset w : userPrivateWorksets){
+            w.shared = false;
             Workset.create(w);
         }
         PagingList<Workset> shared = Workset.shared();
@@ -78,7 +90,9 @@ public class HTRCPortal extends Controller {
                 sharedPage,
                 ownerPage,
                 shared.getTotalPageCount(),
-                owned.getTotalPageCount()));
+                owned.getTotalPageCount(),
+                publicWorksets.size(),
+                userPrivateWorksets.size() + userPublicWorksets.size()));
     }
 
     public static class Login{
