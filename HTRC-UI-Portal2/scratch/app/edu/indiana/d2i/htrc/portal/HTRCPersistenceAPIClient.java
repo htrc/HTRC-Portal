@@ -17,6 +17,9 @@
 
 package edu.indiana.d2i.htrc.portal;
 
+import edu.illinois.i3.htrc.registry.entities.workset.WorksetContent;
+import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
+import edu.illinois.i3.htrc.registry.entities.workset.Worksets;
 import models.Workset;
 import org.apache.amber.oauth2.client.OAuthClient;
 import org.apache.amber.oauth2.client.URLConnectionClient;
@@ -26,9 +29,6 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import play.Logger;
-import registry.workset.WorksetContent;
-import registry.workset.WorksetMeta;
-import registry.workset.Worksets;
 
 import javax.xml.bind.*;
 import java.io.ByteArrayInputStream;
@@ -73,7 +73,7 @@ public class HTRCPersistenceAPIClient {
 
     private Object parseXML(String xmlStr) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext
-                .newInstance("registry.workset");
+                .newInstance("edu.illinois.i3.htrc.registry.entities.workset");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setEventHandler(new RSLValidationEventHandler());
         JAXBElement<Object> worksets = (JAXBElement<Object>) unmarshaller
@@ -116,11 +116,9 @@ public class HTRCPersistenceAPIClient {
 
 
 
-    public List<Workset> getAllWorksets() throws IOException,
+    public List<Workset> getAllWorksets(String url, String userName) throws IOException,
             JAXBException {
-        String url = PlayConfWrapper.registryEPR() + WORKSETS_URL +
-                PUBLIC_WORKSET;
-        log.debug("getAllWorksets url: " + url);
+        log.debug("getAllWorksets Url: " + url);
 
         GetMethod get = new GetMethod(url);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);
@@ -133,9 +131,13 @@ public class HTRCPersistenceAPIClient {
             System.out.println(xmlStr);
             Worksets worksets = (Worksets) parseXML(xmlStr);
 
-            Map<String, Workset> userWorksets = new TreeMap<String, Workset>();
-            List<Workset> publicWorksets = new ArrayList<Workset>();
-            for (registry.workset.Workset workset : worksets.getWorkset()) {
+
+            List<Workset> worksetList = new ArrayList<Workset>();
+            List<Workset> userPublicWorksets = new ArrayList<Workset>();
+
+
+
+            for (edu.illinois.i3.htrc.registry.entities.workset.Workset workset : worksets.getWorkset()) {
 
                 WorksetMeta metadata = workset.getMetadata();
                 WorksetContent worksetContent = workset.getContent();
@@ -144,45 +146,32 @@ public class HTRCPersistenceAPIClient {
                 SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
                 formatter.setTimeZone(calendar.getTimeZone());
                 String dateString = formatter.format(calendar.getTime());
-                // mandatory options
+
+                System.out.println("Count: "+ metadata.getVolumeCount());
+
                 Workset ws = new Workset(
                         metadata.getName(),
                         metadata.getDescription(),
                         metadata.getAuthor(),
                         metadata.getLastModifiedBy(),
                         dateString,
-                        metadata.getVolumeCount(),
-                        true
+                        5
                 );
 
+                if(metadata.getAuthor().equals(userName)){
+                    userPublicWorksets.add(ws);
+                    return  userPublicWorksets;
 
-
-
-                publicWorksets.add(ws);
-
-
-
-//                //WorksetMeta metadata = workset.getMetadata();
-//                Workset ws = createWorksetBean(workset, 0);
-//                if (ws.getAuthor().equalsIgnoreCase(userName)) {
-//                    userWorksets.put(ws.getUniqueIdentity(), ws);
-//                } else {
-//                    otherWorksets.put(ws.getUniqueIdentity(), ws);
-//                }
+                } else{
+                    worksetList.add(ws);
+                }
             }
-
-//            Map<String, Workset> res = new LinkedHashMap<String, Workset>();
-//            for (Map.Entry<String, Workset> entry : userWorksets.entrySet()) {
-//                res.put(entry.getKey(), entry.getValue());
-//            }
-//            for (Map.Entry<String, Workset> entry : publicWorksets.entrySet()) {
-//                res.put(entry.getKey(), entry.getValue());
-//            }
-//            renew = 0;
-            return publicWorksets;
+            return worksetList;
         } else {
             return null;
+        }
     }
-    }
+
+
 
 }

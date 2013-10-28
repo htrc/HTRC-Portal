@@ -1,7 +1,5 @@
 package edu.indiana.d2i.htrc.portal;
 
-import play.Play;
-
 /**
  * Copyright 2013 The Trustees of Indiana University
  *
@@ -63,6 +61,10 @@ public class  PortalConstants {
     // registry entries
     public static String REGISTRY_ENDPOINT = "reg.epr";
     public static String REGISTRY_ALGO_FOLDER = "reg.alg.folder";
+    public static String WORKSETS_URL = "/worksets";
+    public static String FILES_URL = "/files";
+    public static String PUBLIC_WORKSET = "?public=true";
+    public static String VOLUME_DETAILS_QUERY_SOLR_URL = "?q=id:";
 
     // user register
     public static String USER_REG_URL = "user.reg.url";

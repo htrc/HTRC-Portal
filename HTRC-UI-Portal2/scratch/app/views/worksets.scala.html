@@ -1,8 +1,9 @@
-@(user: User, shared: List[Workset], owned: List[Workset], sharedPage: Int, ownedPage: Int, sharedPages: Int, ownPages: Int)
+@(user: User, shared: List[Workset], owned: List[Workset], sharedPage: Int, ownedPage: Int, sharedPages: Int,
+ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
 @import com.avaje.ebean.PagingList
 
 @main("Worksets", user) {
-    <h2> My Worksets </h2>
+    <h2> My Worksets (@ownedWorksets) </h2>
     <div class="row-fluid">
         <ul class="thumbnails">
             @for(w <- owned) {
@@ -27,6 +28,13 @@
                             </table>
                             <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
                                 <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                    @if(w.shared.==(true)){
+                                    <i class="icon-globe"></i>
+                                    }
+                                    @if(w.shared.==(false)){
+                                        <i class="icon-lock"></i>
+                                    }
+
                                 <a href="#" class="btn btn-small">Edit</a>
                                 <a href="#" class="btn btn-small btn-primary">Open</a>
                                 </div>
@@ -37,7 +45,7 @@
                 </li>
             }
         </ul>
-        <div class="pagination pull-right">
+        <div id="owner-pagination" class="pagination pull-right">
             <ul>
                 <li style="padding-right: 5px;">
                     <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">&#8676</a>
@@ -56,7 +64,7 @@
         </div>
 
     </div>
-    <h2> Public Worksets </h2>
+    <h2> Public Worksets (@sharedWorksets) </h2>
     <div class="row-fluid">
         <ul class="thumbnails">
             @for(w <- shared) {
@@ -91,19 +99,19 @@
                 </li>
             }
         </ul>
-        <div class="pagination pull-right">
+        <div id="public-pagination" class="pagination pull-right">
             <ul>
                 <li style="padding-right: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">&#8676</a>
+                    <a href="@routes.HTRCPortal.listWorkset(0, ownedPage)">&#8676</a>
                 </li>
                 <li>
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">&larr;</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPage-1, ownedPage)">&larr;</a>
                 </li>
 
-                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">&rarr;</a>
+                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage+1, ownedPage)">&rarr;</a>
                 </li>
                 <li style="padding-left: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">&#8677</a>
+                    <a href="@routes.HTRCPortal.listWorkset(sharedPages-1, ownedPage)">&#8677</a>
                 </li>
 
             </ul>
