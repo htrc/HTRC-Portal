@@ -1,0 +1,58 @@
+@(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails,
+parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails.Parameter], worksetlist: List[Workset])
+@import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails
+
+
+@main("Worksets", user) {
+    <table>
+        <tr>
+            <td><b>Name: </b></td>
+            <td>@algorithmdetails.getName</td>
+        </tr>
+        <tr>
+            <td><b>Description:</b></td>
+            <td>@algorithmdetails.getDescription</td>
+        </tr>
+        <tr>
+            <td><b>Version:</b></td>
+            <td>@algorithmdetails.getVersion</td>
+        </tr>
+        <tr>
+            <td><b>Author:</b></td>
+            <td>@algorithmdetails.getAuthors</td>
+        </tr>
+    </table>
+    <div id="param">
+        <label>Please Input Job Name: </label> (required)<br>
+        <input type="text" name="jobName" required="required" id="jobName">
+    </div>
+    @for(pm <- parameters){
+        <div>
+            <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramName" value="@pm.getName"/>
+            <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramType" value="@pm.getType"/>
+            <label>@pm.getLabel</label>
+            @if(pm.getType == "collection"){
+                <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
+                    @for(ws <- worksetlist){
+                        <option>@ws.name</option>
+                    }
+                </select>
+            }else{
+                @if(pm.getType == "boolean"){
+                    <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
+                        <option>True</option><option>False</option>
+                    </select>
+                }else{
+                    @if(pm.isRequired){
+                        <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue" required="required" value="@pm.getDefaultValue">
+                            (required)
+                    }else{
+                        <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue"  value="@pm.getDefaultValue">
+                            (optional)
+                    }
+                }
+            }
+        </div>
+    }
+
+}

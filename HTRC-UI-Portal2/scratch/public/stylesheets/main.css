@@ -1,7 +1,10 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700);
+
 body {
     padding-top: 60px;
     padding-bottom: 40px;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    /*font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;*/
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
 }
 
 .brand {
@@ -94,7 +97,7 @@ td{
 }
 
 .volume{
-    border-bottom: 1px #ddd dashed;
+    border-bottom: 1px #ccc dashed;
     margin-bottom: 10px;
 }
 
@@ -189,4 +192,22 @@ td{
 .thumbnail .caption h3{
     margin-bottom: 0px;
     margin-top: 0px;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.thumbnail{
+    border: 1px solid #ccc;
+}
+
+.thumbnail .caption table tr {
+    font-size: 12px;
+}
+
+.bold-label{
+    font-weight: 600;
+}
+
+.equal-width-cell{
+    width: 290px;
 }

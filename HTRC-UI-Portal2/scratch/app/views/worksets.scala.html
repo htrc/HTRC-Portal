@@ -1,42 +1,93 @@
 @(user: User, shared: List[Workset], owned: List[Workset], sharedPage: Int, ownedPage: Int, sharedPages: Int,
 ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
 @import com.avaje.ebean.PagingList
+@import edu.indiana.d2i.htrc.portal.Utils
 
 @main("Worksets", user) {
-    <h2> My Worksets (@ownedWorksets) </h2>
+    <h2 style="border-bottom: 1px solid #ccc; margin: 25px 0;"> My Worksets (@ownedWorksets) </h2>
     <div class="row-fluid">
         <ul class="thumbnails">
-            @for(w <- owned) {
+            @for((w, idx) <- owned.zipWithIndex) {
+                @if(idx == 0 || idx == 1 || idx == 2){
+                    <li class="span4">
+                        <div class="thumbnail" style="padding: 0px;">
+                            <div class="caption" style="padding: 0px;">
+                                <h3 style="padding: 5px; background-color: #ccc">@Utils.shortenWorksetName(w.name)
+                                    <span class="pull-right">
+                                        @if(w.shared.==(true)) {
+                                            <i class="icon-globe"></i>
+                                        }
+                                        @if(w.shared.==(false)) {
+                                            <i class="icon-lock"></i>
+                                        }
+                                    </span>
+                                </h3>
+                                <p style="padding: 5px;margin: 0px;">@w.description</p>
+                                <table>
+                                    <tr>
+                                        <td style="padding-left: 5px; font-weight: 600;">Last Modified By:</td>
+                                        <td style="padding-right: 5px;">@w.lastModifiedBy</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px; font-weight: 600;">Last Modified Time:</td>
+                                        <td style="padding-right: 5px;">@w.lastModified</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px; font-weight: 600;">Number of Volumes:</td>
+                                        <td style="padding-right: 5px;">@w.numberOfVolumes</td>
+                                    </tr>
+                                </table>
+                                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                                    <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                    <a href="#" class="btn btn-small disabled">Edit</a>
+                                    <a href="@routes.HTRCPortal.viewWorkset(w.name,w.author)" class="btn btn-small btn-primary">Open</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="row-fluid">
+        @for((w, idx) <- owned.zipWithIndex) {
+            @if(idx == 3 || idx == 4 || idx == 5) {
                 <li class="span4">
                     <div class="thumbnail" style="padding: 0px;">
                         <div class="caption" style="padding: 0px;">
-                            <h3 style="padding: 5px; background-color: #eeeeee">@w.name</h3>
-                            <p style="padding: 5px;margin: 0px;">@w.description</p>
+                            <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                                <span class="pull-right">
+                                @if(w.shared.==(true)) {
+                                    <i class="icon-globe"></i>
+                                }
+                                @if(w.shared.==(false)) {
+                                    <i class="icon-lock"></i>
+                                }
+                                </span>
+                            </h3>
+                            <p style="padding: 5px;margin: 0px;"> @w.description </p>
                             <table>
                                 <tr>
-                                    <td style="padding-left: 5px;">Last Modified By:</td>
-                                    <td style="padding-right: 5px;">@w.lastModifiedBy</td>
+                                    <td style="padding-left: 5px; font-weight: 600;"> Last Modified By: </td>
+                                    <td style="padding-right: 5px;"> @w.lastModifiedBy </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-left: 5px;">Last Modified Time:</td>
-                                    <td style="padding-right: 5px;">@w.lastModified</td>
+                                    <td style="padding-left: 5px; font-weight: 600;"> Last Modified Time: </td>
+                                    <td style="padding-right: 5px;"> @w.lastModified </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-left: 5px;">Number of Volumes:</td>
-                                    <td style="padding-right: 5px;">@w.numberOfVolumes</td>
+                                    <td style="padding-left: 5px; font-weight: 600;"> Number of Volumes: </td>
+                                    <td style="padding-right: 5px;"> @w.numberOfVolumes </td>
                                 </tr>
                             </table>
                             <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
                                 <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
-                                    @if(w.shared.==(true)){
-                                    <i class="icon-globe"></i>
-                                    }
-                                    @if(w.shared.==(false)){
-                                        <i class="icon-lock"></i>
-                                    }
 
-                                <a href="#" class="btn btn-small">Edit</a>
-                                <a href="#" class="btn btn-small btn-primary">Open</a>
+
+                                    <a href="#" class="btn btn-small disabled"> Edit </a>
+                                    <a href="@routes.HTRCPortal.viewWorkset(w.name, w.author)" class="btn btn-small btn-primary"> Open </a>
                                 </div>
 
                             </div>
@@ -44,78 +95,115 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
                     </div>
                 </li>
             }
-        </ul>
-        <div id="owner-pagination" class="pagination pull-right">
-            <ul>
-                <li style="padding-right: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, 0)">&#8676</a>
-                </li>
-                <li>
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage -1)">&larr;</a>
-                </li>
-
-                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage+1)">&rarr;</a>
-                </li>
-                <li style="padding-left: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage, ownPages - 1)">&#8677</a>
-                </li>
-
-            </ul>
-        </div>
-
+        }
     </div>
-    <h2> Public Worksets (@sharedWorksets) </h2>
+    <div class="row-fluid">
+        @paginatedowned(ownedPage, ownPages, sharedPage)
+    </div>
+    <h2 style="border-bottom: 1px solid #ccc; margin: 25px 0;"> Public Worksets (@sharedWorksets)</h2>
     <div class="row-fluid">
         <ul class="thumbnails">
-            @for(w <- shared) {
-                <li class="span4">
-                <div class="thumbnail" style="padding: 0px;">
-                <div class="caption" style="padding: 0px;">
-                <h3 style="padding: 5px; background-color: #eeeeee">@w.name</h3>
-                <p style="padding: 5px;margin: 0px;">@w.description</p>
-                <table>
-                <tr>
-                <td style="padding-left: 5px;">Last Modified By:</td>
-                <td style="padding-right: 5px;">@w.lastModifiedBy</td>
-                </tr>
-                <tr>
-                <td style="padding-left: 5px;">Last Modified Time:</td>
-                <td style="padding-right: 5px;">@w.lastModified</td>
-                </tr>
-                <tr>
-                <td style="padding-left: 5px;">Number of Volumes:</td>
-                <td style="padding-right: 5px;">@w.numberOfVolumes</td>
-                </tr>
-                </table>
-                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
-                <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
-                <a href="#" class="btn btn-small">Edit</a>
-                <a href="#" class="btn btn-small btn-primary">Open</a>
-                </div>
-
-                </div>
-                </div>
-                </div>
-                </li>
+            @for((w, idx) <- shared.zipWithIndex) {
+                @if(idx == 0 || idx == 1 || idx == 2){
+                    <li class="span4">
+                        <div class="thumbnail" style="padding: 0px;">
+                            <div class="caption" style="padding: 0px;">
+                                <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                                <span class="pull-right">
+                                    @if(w.shared.==(true)) {
+                                        <i class="icon-globe"></i>
+                                    }
+                                    @if(w.shared.==(false)) {
+                                        <i class="icon-lock"></i>
+                                    }
+                                </span>
+                                </h3>
+                                <p style="padding: 5px;margin: 0px;"> @w.description </p>
+                                <table>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Author: </td>
+                                        <td style="padding-right: 5px;"> @w.author </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Last Modified By: </td>
+                                        <td style="padding-right: 5px;"> @w.lastModifiedBy </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Last Modified Time: </td>
+                                        <td style="padding-right: 5px;"> @w.lastModified </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Number of Volumes: </td>
+                                        <td style="padding-right: 5px;"> @w.numberOfVolumes </td>
+                                    </tr>
+                                </table>
+                                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                                    <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                        <a href="#" class="btn btn-small disabled"> Edit </a>
+                                        <a href="@routes.HTRCPortal.viewWorkset(w.name,w.author)" class="btn btn-small btn-primary"> Open </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
             }
         </ul>
-        <div id="public-pagination" class="pagination pull-right">
-            <ul>
-                <li style="padding-right: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(0, ownedPage)">&#8676</a>
-                </li>
-                <li>
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPage-1, ownedPage)">&larr;</a>
-                </li>
 
-                <li ><a href="@routes.HTRCPortal.listWorkset(sharedPage+1, ownedPage)">&rarr;</a>
-                </li>
-                <li style="padding-left: 5px;">
-                    <a href="@routes.HTRCPortal.listWorkset(sharedPages-1, ownedPage)">&#8677</a>
-                </li>
+    </div>
+    <div class="row-fluid">
+        <ul class="thumbnails">
+            @for((w, idx) <- shared.zipWithIndex) {
+                @if(idx == 3 || idx == 4 || idx == 5){
+                    <li class="span4">
+                        <div class="thumbnail" style="padding: 0px;">
+                            <div class="caption" style="padding: 0px;">
+                                <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                                    <span class="pull-right">
+                                        @if(w.shared.==(true)) {
+                                            <i class="icon-globe"></i>
+                                        }
+                                        @if(w.shared.==(false)) {
+                                            <i class="icon-lock"></i>
+                                        }
+                                    </span>
+                                </h3>
+                                <p style="padding: 5px;margin: 0px;"> @w.description </p>
+                                <table>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Author: </td>
+                                        <td style="padding-right: 5px;"> @w.author </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Last Modified By: </td>
+                                        <td style="padding-right: 5px;"> @w.lastModifiedBy </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Last Modified Time: </td>
+                                        <td style="padding-right: 5px;"> @w.lastModified </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 5px;"> Number of Volumes: </td>
+                                        <td style="padding-right: 5px;"> @w.numberOfVolumes </td>
+                                    </tr>
+                                </table>
+                                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                                    <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                        <a href="#" class="btn btn-small disabled"> Edit </a>
+                                        <a href="@routes.HTRCPortal.viewWorkset(w.name,w.author)" class="btn btn-small btn-primary"> Open </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
 
-            </ul>
-        </div>
+    </div>
+
+    <div class="row-fluid">
+        @paginateshared(sharedPage, sharedPages, ownedPage)
     </div>
 }
 

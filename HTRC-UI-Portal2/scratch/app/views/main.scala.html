@@ -45,9 +45,17 @@
                                 </li>
                             </ul>
                             </li>
-                            <li><a href="ListAlgorithmAction">Algorithms</a>
+                            <li><a href="@routes.HTRCPortal.listAlgorithms()">Algorithms</a>
                             </li>
                             <li><a href="ListJobsAction">Results</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">SLOAN VMs <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@routes.HTRCPortal.listVMs()">List VMs</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="@routes.HTRCPortal.createVMs()" role="button" data-toggle="modal">Create VM</a></li>
+                                </ul>
                             </li>
                             <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>
                         }
