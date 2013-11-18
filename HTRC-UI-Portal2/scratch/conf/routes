@@ -17,7 +17,22 @@ GET     /logout                                            controllers.HTRCPorta
 GET    /about                                               controllers.HTRCPortal.about()
 
 # Workset List Form
-GET   /listworksets                                         controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 0, ownerPage:Int ?= 0)
+GET   /listworksets                                         controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
+
+# View Workset
+GET   /viewworkset                                          controllers.HTRCPortal.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
+
+# Algorithm List Form
+GET   /listalgorithms                                       controllers.HTRCPortal.listAlgorithms(page:Int ?= 1)
+
+# View Algorithm
+GET   /viewalgorithm                                        controllers.HTRCPortal.viewAlgorithm(algorithmName:String ?="")
+
+# SLOAN VM List Form
+GET   /listvms                                               controllers.HTRCPortal.listVMs()
+
+# SLOAN VM Create Form
+GET   /createvms                                             controllers.HTRCPortal.createVMs()
 
 # Authenticate
 POST  /login                                                controllers.HTRCPortal.authenticate()

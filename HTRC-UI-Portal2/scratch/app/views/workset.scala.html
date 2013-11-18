@@ -1,0 +1,62 @@
+@(user: User, workset: Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetails])
+@import edu.indiana.d2i.htrc.portal.bean.VolumeDetails
+
+@main("Worksets", user) {
+    <h2 style="border-bottom: 1px solid #ccc; margin: 5px 0;">@workset.name
+        <span style="color: #777777;">
+            @if(workset.shared.==(true)) {
+                (shared)
+            }
+            @if(workset.shared.==(false)) {
+                (private)
+            }
+        </span>
+    </h2>
+    <p style="padding-top: 10px;">@workset.description</p>
+    <table style="table-layout: fixed">
+        <tr>
+            <td class="equal-width-cell"><span class="bold-label">Author : </span>@workset.author</td>
+            <td class="equal-width-cell"><span class="bold-label">Last Modified By : </span>@workset.lastModifiedBy</td>
+            <td class="equal-width-cell"><span class="bold-label">Last Modified Time : </span>@workset.lastModified</td>
+            <td class="equal-width-cell"><span class="bold-label">Number of Volumes : </span>@workset.numberOfVolumes</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <div class="volume-list">
+                    @for(v <- volumeList){
+                        <div class="volume">
+                            <h3><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
+                            <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h3>
+                            <dl class="volume-details">
+                                <dt class="volume-id">Volume Id:</dt>
+                                <dd class="volume-id">@v.getVolumeId</dd>
+                                <dt class="volume-author">Author:</dt>
+                                @if(v.getFemaleAuthor != null){
+                                    <dd class="volume-author">@v.getFemaleAuthor
+                                    <span class="badge">F</span>
+                                    </dd>
+                                }
+                                @if(v.getMaleAuthor != null){
+                                    <dd class="volume-author">@v.getMaleAuthor
+                                    <span class="badge">M</span>
+                                    </dd>
+                                }
+                                @if(v.getFemaleAuthor != null){
+                                    <dd class="volume-author">@v.getFemaleAuthor
+                                    <span class="badge">F</span>
+                                    </dd>
+                                }
+                                <dt class="volume-pageCount">Page Count[HTRC]:</dt>
+                                <dd class="volume-pageCount">@v.getPageCount</dd>
+                                <dt class="volume-wordCount">Word Count[HTRC]:</dt>
+                                <dd class="volume-wordCount">v.getWordCount</dd>
+                            </dl>
+                        </div>
+                }
+            </td>
+        </tr>
+    </table>
+
+}

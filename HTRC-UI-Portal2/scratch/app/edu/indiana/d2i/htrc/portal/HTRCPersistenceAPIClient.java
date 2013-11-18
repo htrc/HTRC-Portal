@@ -17,29 +17,39 @@
 
 package edu.indiana.d2i.htrc.portal;
 
+import edu.illinois.i3.htrc.registry.entities.workset.Volume;
+import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetContent;
-import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
 import edu.illinois.i3.htrc.registry.entities.workset.Worksets;
-import models.Workset;
+import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails;
 import org.apache.amber.oauth2.client.OAuthClient;
 import org.apache.amber.oauth2.client.URLConnectionClient;
 import org.apache.amber.oauth2.client.request.OAuthClientRequest;
 import org.apache.amber.oauth2.client.response.OAuthClientResponse;
 import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import play.Logger;
 
 import javax.xml.bind.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class HTRCPersistenceAPIClient {
     private static Logger.ALogger log = play.Logger.of("application");
 
     private String accessToken;
+    private String registryEPR;
     private String refreshToken;
     private Map<String, Object> session;
     private HttpClient client = new HttpClient();
@@ -47,18 +57,22 @@ public class HTRCPersistenceAPIClient {
     public int responseCode;
 
     /**
-     * different service urls
+     * xml parsing for algorithm info
      */
-    private final String WORKSETS_URL = "/worksets";
-    private final String FILES_URL = "/files";
-    private final String PUBLIC_WORKSET = "?public=true";
-    private final String VOLUME_DETAILS_QUERY_SOLR_URL = "?q=id:";
+    private XMLInputFactory factory = XMLInputFactory.newInstance();
+
 
     /**
      * access token renew time
      */
     private int renew = 0;
     private final int MAX_RENEW = 1;
+
+    public HTRCPersistenceAPIClient(String accessToken, String registryEPR) {
+        this.accessToken = accessToken;
+        this.registryEPR = registryEPR;
+
+    }
 
 
     private static class RSLValidationEventHandler implements
@@ -96,7 +110,8 @@ public class HTRCPersistenceAPIClient {
             throws Exception {
         OAuthClientRequest refreshTokenRequest = OAuthClientRequest
                 .tokenLocation(PlayConfWrapper.tokenEndpoint())
-                .setGrantType(GrantType.REFRESH_TOKEN).setRefreshToken(refreshToken)
+                .setGrantType(GrantType.REFRESH_TOKEN)
+                .setRefreshToken(refreshToken)
                 .setClientId(PlayConfWrapper.oauthClientID())
                 .setClientSecret(PlayConfWrapper.oauthClientSecrete())
                 .buildBodyMessage();
@@ -109,18 +124,17 @@ public class HTRCPersistenceAPIClient {
         return refreshAccessToken;
     }
 
-    public HTRCPersistenceAPIClient(String accessToken) {
-        this.accessToken = accessToken;
-
-    }
 
 
 
-    public List<Workset> getAllWorksets(String url, String userName) throws IOException,
+
+    public List<Workset> getWorksets(Boolean isPublicWorkset) throws IOException,
             JAXBException {
-        log.debug("getAllWorksets Url: " + url);
 
-        GetMethod get = new GetMethod(url);
+        String worksetUrl = registryEPR + "/worksets" + "?public=" + isPublicWorkset;
+        log.debug("getWorksets Url: " + worksetUrl);
+
+        GetMethod get = new GetMethod(worksetUrl);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);
         get.addRequestHeader("Accept", "application/vnd.htrc-workset+xml");
 
@@ -128,49 +142,173 @@ public class HTRCPersistenceAPIClient {
         this.responseCode = response;
         if (response == 200) {
             String xmlStr = get.getResponseBodyAsString();
-            System.out.println(xmlStr);
+//            System.out.println(xmlStr);
             Worksets worksets = (Worksets) parseXML(xmlStr);
-
-
-            List<Workset> worksetList = new ArrayList<Workset>();
-            List<Workset> userPublicWorksets = new ArrayList<Workset>();
-
-
-
-            for (edu.illinois.i3.htrc.registry.entities.workset.Workset workset : worksets.getWorkset()) {
-
-                WorksetMeta metadata = workset.getMetadata();
-                WorksetContent worksetContent = workset.getContent();
-
-                Calendar calendar = metadata.getLastModified().toGregorianCalendar();
-                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
-                formatter.setTimeZone(calendar.getTimeZone());
-                String dateString = formatter.format(calendar.getTime());
-
-                System.out.println("Count: "+ metadata.getVolumeCount());
-
-                Workset ws = new Workset(
-                        metadata.getName(),
-                        metadata.getDescription(),
-                        metadata.getAuthor(),
-                        metadata.getLastModifiedBy(),
-                        dateString,
-                        5
-                );
-
-                if(metadata.getAuthor().equals(userName)){
-                    userPublicWorksets.add(ws);
-                    return  userPublicWorksets;
-
-                } else{
-                    worksetList.add(ws);
-                }
-            }
-            return worksetList;
+            return worksets.getWorkset();
         } else {
             return null;
         }
     }
+
+
+    public List<Volume> getWorksetVolumes(String worksetName, String worksetAuthor) throws IOException, JAXBException {
+        String worksetUrl = registryEPR + "/worksets/" + worksetName + "?author=" + worksetAuthor;
+        log.debug("getWorkset Url: " + worksetUrl);
+
+        GetMethod get = new GetMethod(worksetUrl);
+        get.addRequestHeader("Authorization", "Bearer " + accessToken);
+        get.addRequestHeader("Accept", "application/vnd.htrc-workset+xml");
+
+        int response = client.executeMethod(get);
+        this.responseCode = response;
+        if (response == 200) {
+            String xmlStr = get.getResponseBodyAsString();
+            Workset workset = (Workset) parseXML(xmlStr);
+            WorksetContent worksetContent = workset.getContent();
+            if (worksetContent != null) {
+                return worksetContent.getVolumes().getVolume();
+            }
+            else {
+                log.info("Workset content null.");
+                return null;
+
+            }
+        }else{
+            log.debug("Response Code: " + response);
+            return null;
+        }
+    }
+
+    /**
+     * Return all algorithm details.
+     *
+     * @return a hash map with algorithm id as key and algorithm detail as value
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JAXBException
+     * @throws javax.xml.stream.XMLStreamException
+     */
+    public Map<String, AlgorithmDetails> getAllAlgorithmDetails()
+            throws IOException, IllegalStateException,
+            JAXBException, XMLStreamException {
+        Map<String, AlgorithmDetails> res = new TreeMap<String, AlgorithmDetails>();
+
+        String algoFolder = PlayConfWrapper.registryAlgFolder();
+        String str = getFilesAsString(algoFolder, ".*.xml", null, true);
+
+        while (true) {
+            int start = str.indexOf("<algorithm>");
+            int end = str.indexOf("</algorithm>");
+            if (start == -1 || end == -1)
+                break;
+            String sub = str.substring(start, end + "</algorithm>".length());
+            AlgorithmDetails algoDetail = parseAlgorithmDetailBean(
+                    new ByteArrayInputStream(sub.getBytes("UTF-8")));
+            res.put(algoDetail.getName(), algoDetail);
+            str = str.substring(end + "</algorithm>".length());
+        }
+        return res;
+    }
+
+    public String getFilesAsString(String repoPath, String nameReg,
+                                   String typeReg, boolean shared)
+            throws HttpException, IOException {
+        String url = PlayConfWrapper.registryEPR() + "/files" + repoPath;
+        if (nameReg != null)
+            url += "?name=" + nameReg + "&";
+        if (typeReg != null)
+            url += "?type=" + typeReg + "&";
+        if (url.lastIndexOf("&") == url.length() - 1)
+            url += "public=" + String.valueOf(shared);
+        else
+            url += "?public=" + String.valueOf(shared);
+        log.debug("getFilesAsString url: " + url);
+
+        GetMethod get = new GetMethod(url);
+        get.addRequestHeader("Authorization", "Bearer " + accessToken);
+        int response = client.executeMethod(get);
+        this.responseCode = response;
+        if (response == 200) {
+            renew = 0;
+            return get.getResponseBodyAsString();
+        } else if (response == 404) {
+            return ""; // empty string
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+                session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                renew++;
+                return getFilesAsString(repoPath, nameReg, typeReg, shared);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else {
+            this.responseCode = response;
+            throw new IOException("Response code " + response + " for " + url);
+        }
+    }
+
+    private AlgorithmDetails parseAlgorithmDetailBean(InputStream stream) throws XMLStreamException {
+        AlgorithmDetails res = new AlgorithmDetails();
+        XMLStreamReader parser = factory.createXMLStreamReader(stream);
+
+        List<AlgorithmDetails.Parameter> parameters =
+                new ArrayList<AlgorithmDetails.Parameter>();
+        List<String> authors = new ArrayList<String>();
+        while (parser.hasNext()) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                if (parser.hasName()) {
+                    // only parse the info tag!
+                    if (parser.getLocalName().equals(AlgorithmDetails.NAME)) {
+                        res.setName(parser.getElementText());
+                    } else if (parser.getLocalName().equals(AlgorithmDetails.VERSION)) {
+                        res.setVersion(parser.getElementText());
+                    } else if (parser.getLocalName().equals(AlgorithmDetails.DESCRIPTION)) {
+                        res.setDescription(parser.getElementText());
+                    } else if (parser.getLocalName().equals(AlgorithmDetails.SUPPORTURL)) {
+                        res.setSupportUrl(parser.getElementText());
+                    } else if (parser.getLocalName().equals(AlgorithmDetails.PARAMETER)) {
+                        AlgorithmDetails.Parameter parameter = new AlgorithmDetails.Parameter();
+                        int count = parser.getAttributeCount();
+                        for (int i = 0; i < count; i++) {
+                            if (parser.getAttributeLocalName(i).equals("required"))
+                                parameter.setRequired(Boolean.valueOf(parser.getAttributeValue(i)));
+                            if (parser.getAttributeLocalName(i).equals("type"))
+                                parameter.setType(parser.getAttributeValue(i));
+                            if (parser.getAttributeLocalName(i).equals("name"))
+                                parameter.setName(parser.getAttributeValue(i));
+                            if (parser.getAttributeLocalName(i).equals("defaultValue"))
+                                parameter.setDefaultValue(parser.getAttributeValue(i));
+                            if (parser.getAttributeLocalName(i).equals("validation"))
+                                parameter.setValidation(parser.getAttributeValue(i));
+                            if (parser.getAttributeLocalName(i).equals("validationError"))
+                                parameter.setValidationError(parser.getAttributeValue(i));
+                            if (parser.getAttributeLocalName(i).equals("readOnly"))
+                                parameter.setReadOnly(Boolean.parseBoolean(parser.getAttributeValue(i)));
+                        }
+                        parser.nextTag();
+                        if (parser.getLocalName().equals("label"))
+                            parameter.setLabel(parser.getElementText());
+                        parser.nextTag();
+                        if (parser.getLocalName().equals("description"))
+                            parameter.setDescription(parser.getElementText());
+                        parameters.add(parameter);
+                    } else if (parser.getLocalName().equals(AlgorithmDetails.AUTHOR)) {
+                        int count = parser.getAttributeCount();
+                        for (int i = 0; i < count; i++) {
+                            if (parser.getAttributeLocalName(i).equals("name"))
+                                authors.add(parser.getAttributeValue(i));
+                        }
+                    }
+                }
+            }
+        }
+        res.setParameters(parameters);
+        res.setAuthors(authors);
+        return res;
+    }
+
 
 
 

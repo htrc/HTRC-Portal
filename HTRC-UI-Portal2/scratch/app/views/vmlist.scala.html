@@ -1,0 +1,47 @@
+@(user: User)
+
+
+@main("Worksets", user) {
+    <legend>List of VMs</legend>
+     <table class="table table-hover">
+         <thead>
+             <tr>
+                 <th><b>VM Name</b></th>
+                 <th><b>Status</b></th>
+                 <th><b>Actions</b></th>
+             </tr>
+         </thead>
+         <tbody>
+             <tr>
+                 <td>vm-1</td>
+                 <td>running</td>
+                 <td>
+                     <a href="#" class="btn btn-info btn-small" id="switchmode" onclick="return linkOnclick('switch');">
+                             Switch VM Mode
+                     </a>
+                     <a href="#" class="btn btn-warning btn-small" id="stopvm" onclick="return linkOnclick('stop');">
+                             STOP
+                     </a>
+                     <a href="#" class="btn btn-danger btn-small" id="deletevms" onclick="return linkOnclick('delete');">
+                         <i class="icon-trash icon-white"></i> Delete
+                     </a>
+                 </td>
+             </tr>
+             <tr>
+                 <td>vm-2</td>
+                 <td>stop</td>
+                 <td>
+                     <a href="#" class="btn btn-info btn-small" id="switchmode1" onclick="return linkOnclick('switch');">
+                             Switch VM Mode
+                     </a>
+                     <a href="#" class="btn btn-warning btn-small" id="stopvm1" onclick="return linkOnclick('stop');">
+                             STOP
+                     </a>
+                     <a href="#" class="btn btn-danger btn-small" id="deletevms1" onclick="return linkOnclick('delete');">
+                         <i class="icon-trash icon-white"></i> Delete
+                     </a>
+                 </td>
+             </tr>
+         </tbody>
+     </table>
+}

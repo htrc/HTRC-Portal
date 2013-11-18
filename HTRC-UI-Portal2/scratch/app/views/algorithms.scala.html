@@ -1,0 +1,36 @@
+@(user: User, algorithms: List[Algorithm] , totalalgorithms: Int)
+
+
+@main("Worksets", user) {
+    <h2 style="border-bottom: 1px solid #ccc; margin: 25px 0;"> Available Algorithms (@totalalgorithms) </h2>
+    <div class="row-fluid">
+        <ul class="thumbnails">
+            @for(al <- algorithms){
+                <li class="span4">
+                    <div class="thumbnail" style="padding: 0px;">
+                        <div class="caption" style="padding: 0px;">
+                            <h3 style="padding: 5px; background-color: #ccc">@al.name</h3>
+                            <p style="padding: 5px;margin: 0px;">@al.description</p>
+                            <table>
+                                <tr>
+                                    <td style="padding-left: 5px; font-weight: 600;">Author:</td>
+                                    <td style="padding-right: 5px;">@al.authors</td>
+                                 </tr>
+                                <tr>
+                                    <td style="padding-left: 5px; font-weight: 600;">Version:</td>
+                                    <td style="padding-right: 5px;">@al.version</td>
+                                </tr>
+                            </table>
+                            <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
+                                <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                                      <a href="#" class="btn btn-small disabled">Edit</a>
+                                      <a href="@routes.HTRCPortal.viewAlgorithm(al.name)" class="btn btn-small btn-primary">Open</a>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}

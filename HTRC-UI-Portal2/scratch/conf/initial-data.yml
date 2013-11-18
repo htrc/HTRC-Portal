@@ -33,5 +33,13 @@
     numberOfVolumes: 2315
     shared: false
 
+## Algorithm
+#
+#- !!models.Algorithm
+#    name: sample_algo
+#    description: my first algo
+#    authors: liyanage
+#    version: 1.1
+
 
 

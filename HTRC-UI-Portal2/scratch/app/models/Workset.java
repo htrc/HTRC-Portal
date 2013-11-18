@@ -18,6 +18,7 @@
 package models;
 
 import com.avaje.ebean.PagingList;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import play.Logger;
 import play.Play;
 import play.db.ebean.Model;
@@ -29,7 +30,7 @@ import java.util.List;
 
 @Entity
 public class Workset extends Model {
-    public static Integer ROWS_PER_PAGE = Play.application().configuration().getInt("worksets.per.page");
+    public static Integer ROWS_PER_PAGE = PlayConfWrapper.worksetsPerPage();
 
     @Id
     public String id;
@@ -52,13 +53,14 @@ public class Workset extends Model {
     private static Logger.ALogger log = play.Logger.of("application");
 
     public Workset(String name, String description, String author, String lastModifiedBy,
-                   String lastModified, int numberOfVolumes){
+                   String lastModified, int numberOfVolumes, boolean shared){
         this.name = name;
         this.description = description;
         this.author = author;
         this.lastModifiedBy = lastModifiedBy;
         this.lastModified = lastModified;
         this.numberOfVolumes = numberOfVolumes;
+        this.shared = shared;
     }
     public static Finder<Long, Workset> finder = new Finder<Long, Workset>(Long.class, Workset.class);
 
@@ -72,8 +74,25 @@ public class Workset extends Model {
         workset.save();
     }
 
+    public static void delete(Workset workset){
+        workset.delete();
+    }
+
+    public static Workset findWorkset(String worksetName){
+        return finder.where().eq("name", worksetName).findUnique();
+    }
+
+
+    public static List<Workset> listAllShared(){
+        return finder.where().eq("shared", true).findList();
+    }
+
+    public static List<Workset> listAllOwned(String user){
+        return finder.where().eq("author", user).findList();
+    }
+
     public static List<Workset> listShared(int page){
-        List<Workset> allSharedWorksets = finder.where().eq("shared", true).findList();
+        List<Workset> allSharedWorksets = listAllShared();
         List<Workset> sharedWorkset = new ArrayList<Workset>();
         int volumesPerPage = Play.application().configuration().getInt("worksets.paer.page");
         int startVol = volumesPerPage * page;
@@ -96,7 +115,7 @@ public class Workset extends Model {
     }
 
     public static List<Workset> listOwned(int page, User user){
-        List<Workset> allOwnedWorksets = finder.where().eq("author", user).findList();
+        List<Workset> allOwnedWorksets = listAllOwned(user.userId);
         List<Workset> ownedWorkset = new ArrayList<Workset>();
         int volumesPerPage = Play.application().configuration().getInt("worksets.paer.page");
         int startVol = volumesPerPage * page;

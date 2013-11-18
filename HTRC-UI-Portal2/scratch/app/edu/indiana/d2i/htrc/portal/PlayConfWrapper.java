@@ -56,6 +56,12 @@ public class PlayConfWrapper {
     private static String registryEPR = null;
     private static String registryAlgFolder = null;
 
+    // workset properties
+    private static  int worksetsPerPage = 0;
+
+    // algorithm properties
+    private static  int algorithmsPerPage = 0;
+
     // user register
     private static String userRegUrl = null;
     private static String userRegUser = null;
@@ -267,6 +273,20 @@ public class PlayConfWrapper {
             jobDetailsTimeOut = Play.application().configuration().getString(PortalConstants.PORTAL_JOB_DETAILS_TIMEOUT);
         }
         return jobDetailsTimeOut;
+    }
+
+    public static int worksetsPerPage(){
+        if(worksetsPerPage == 0){
+            worksetsPerPage = Play.application().configuration().getInt(PortalConstants.WORKSETS_PER_PAGE);
+        }
+        return worksetsPerPage;
+    }
+
+    public static int algorithmsPerPage(){
+        if(algorithmsPerPage == 0){
+            algorithmsPerPage = Play.application().configuration().getInt(PortalConstants.ALGORITHMS_PER_PAGE);
+        }
+        return algorithmsPerPage;
     }
 }
 

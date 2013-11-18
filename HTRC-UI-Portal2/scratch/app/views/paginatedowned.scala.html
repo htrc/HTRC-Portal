@@ -1,0 +1,56 @@
+@(ownedPage:Int, totalOwnedPages:Int, sharedPage:Int, bound:Int = 3)
+
+@lowbound() = @{
+    if (ownedPage == 1){
+        1
+    } else {
+        ownedPage - 1
+    }
+}
+
+@highbound() = @{
+    if (ownedPage == totalOwnedPages){
+        totalOwnedPages
+    } else {
+        ownedPage + 1
+    }
+}
+
+
+<div class="pagination pull-right">
+    <ul>
+        @if(ownedPage == 1){
+            <li class="disabled"><a href="#">&laquo; Previous</a></li>
+        } else {
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage - 1)">&laquo; Previous</a></li>
+
+        }
+
+       @if(ownedPage >= bound) {
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, 1)">1</a></li>
+            <li class="disabled"><a href="#">..</a></li>
+        }
+
+        @for(i <- lowbound().max(1) until ownedPage) {
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, i)">@i</a></li>
+        }
+
+        <li class="active"><a href="#">@ownedPage</a></li>
+
+        @for(i <- ownedPage + 1 to highbound()) {
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, i)">@i</a></li>
+        }
+
+        @if(highbound() < totalOwnedPages) {
+            <li class="disabled"><a href="#">..</a></li>
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, totalOwnedPages)">@totalOwnedPages</a></li>
+        }
+
+        @if(ownedPage < highbound()) {
+            <li><a href="@routes.HTRCPortal.listWorkset(sharedPage, ownedPage + 1)">Next &raquo;</a></li>
+        } else {
+            <li class="disabled"><a href="#">Next &raquo;</a></li>
+
+        }
+    </ul>
+</div>

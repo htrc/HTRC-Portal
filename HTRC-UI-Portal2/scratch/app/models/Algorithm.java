@@ -17,5 +17,63 @@
 
 package models;
 
-public class Algorithm {
+import com.avaje.ebean.PagingList;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import play.Logger;
+import play.db.ebean.Model;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.List;
+
+@Entity
+public class Algorithm extends Model {
+    public static Integer ROWS_PER_PAGE = PlayConfWrapper.algorithmsPerPage();
+
+    @Id
+    public String id;
+
+    public String name;
+
+    public String description;
+
+    public String authors;
+
+    public String version;
+
+    private static Logger.ALogger log = play.Logger.of("application");
+
+    public Algorithm(String name, String description, String authors, String version){
+        this.name = name;
+        this.description = description;
+        this.authors = authors;
+        this.version = version;
+    }
+
+    public static Finder<Long, Algorithm> finder = new Finder<Long, Algorithm>(Long.class, Algorithm.class);
+
+    public static List<Algorithm> all(){
+        return finder.all();
+    }
+
+    public static PagingList<Algorithm> algorithmPagingList(){
+        return finder.where().findPagingList(ROWS_PER_PAGE);
+    }
+
+    public static void create(Algorithm algorithm){
+        algorithm.save();
+    }
+
+    public static void delete(Algorithm algorithm){
+        algorithm.delete();
+    }
+
+    public static Algorithm findAlgoritm(String algorithmName){
+        return finder.where().eq("name", algorithmName).findUnique();
+    }
+
+
+
+
+
 }

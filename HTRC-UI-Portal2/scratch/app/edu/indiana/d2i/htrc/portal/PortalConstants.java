@@ -66,6 +66,12 @@ public class  PortalConstants {
     public static String PUBLIC_WORKSET = "?public=true";
     public static String VOLUME_DETAILS_QUERY_SOLR_URL = "?q=id:";
 
+    // workset entries
+    public static String WORKSETS_PER_PAGE = "worksets.per.page";
+
+    // algorithm entries
+    public static String ALGORITHMS_PER_PAGE = "algorithms.per.page";
+
     // user register
     public static String USER_REG_URL = "user.reg.url";
     public static String USER_REG_USER = "user.reg.user";
@@ -83,4 +89,13 @@ public class  PortalConstants {
     public static final String PORTAL_CACHED_JOB_DETAILS = "portal.job.details";
     public static final String PORTAL_JOB_DETAILS_CACHED_TIME = "portal.job.details.cached.time";
     public static final String PORTAL_JOB_DETAILS_TIMEOUT = "portal.job.details.timeout";
+
+    // session entry
+    public static String SESSION_USERNAME = "session.username";
+    public static String SESSION_TOKEN = "session.token";
+    public static String SESSION_TOKEN_EXPIRE_SEC = "session.token.expire";
+    public static String SESSION_REFRESH_TOKEN = "session.refresh.token";
+    public static String SESSION_AGENT_INSTANCE = "session.agent.instance";
+    public static String SESSION_LAST_ACTION = "session.lastaction";
+    public static String SESSION_EXIST_BEFORE = "session.timeout";
 }
