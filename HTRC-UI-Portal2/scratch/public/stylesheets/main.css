@@ -211,3 +211,7 @@ td{
 .equal-width-cell{
     width: 290px;
 }
+
+.error{
+    color: red;
+}

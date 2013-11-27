@@ -1,47 +1,80 @@
-@(user: User)
+@(user: User, vmDetailsList: List[VirtualMachine])
+
 
 
 @main("Worksets", user) {
-    <legend>List of VMs</legend>
+    <legend>Virtual Machines
+        <a href="@routes.HTRCExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top: 5px">
+            <i class="icon-plus"></i>
+        </a>
+    </legend>
+    @if(vmDetailsList.length > 0){
      <table class="table table-hover">
          <thead>
              <tr>
+                 <th><b>Vm Id</b></th>
                  <th><b>VM Name</b></th>
-                 <th><b>Status</b></th>
                  <th><b>Actions</b></th>
              </tr>
          </thead>
          <tbody>
-             <tr>
-                 <td>vm-1</td>
-                 <td>running</td>
-                 <td>
-                     <a href="#" class="btn btn-info btn-small" id="switchmode" onclick="return linkOnclick('switch');">
-                             Switch VM Mode
+             @for(vm <- vmDetailsList){
+                 <tr>
+                     <td>
+                         <a href="@routes.HTRCExperimentalAnalysis.showVMStatus(vm.vmId)">
+                             @vm.vmName
+                         </a>
+                     </td>
+                     <td>
+                         @vm.vmId
+                     </td>
+                     <td>
+                     @if(vm.vmStatus == "SHUTDOWN"){
+                     <a href="@routes.HTRCExperimentalAnalysis.startVM(vm.vmId)" class="btn btn-info btn-small" id="startvm">
+                         Start VM
                      </a>
-                     <a href="#" class="btn btn-warning btn-small" id="stopvm" onclick="return linkOnclick('stop');">
-                             STOP
+                     }
+                     @if(vm.vmStatus != "SHUTDOWN"){
+                         @if(vm.mode == "MAINTENANCE"){
+                     <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.vmId, "security")" class="btn btn-info btn-small" id="switchmode-maintainance">
+                         Switch To Security
                      </a>
-                     <a href="#" class="btn btn-danger btn-small" id="deletevms" onclick="return linkOnclick('delete');">
-                         <i class="icon-trash icon-white"></i> Delete
+                         } else{
+
+                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.vmId, "maintenance")" class="btn btn-info btn-small" id="switchmode-security">
+                                 Switch To Maintenance
+                         </a>
+                         }
+                     }
+                     @if(vm.vmStatus != "SHUTDOWN"){
+                     <a href="@routes.HTRCExperimentalAnalysis.stopVM(vm.vmId)" class="btn btn-warning btn-small" id="stopvm">
+                         Stop VM
                      </a>
-                 </td>
-             </tr>
-             <tr>
-                 <td>vm-2</td>
-                 <td>stop</td>
-                 <td>
-                     <a href="#" class="btn btn-info btn-small" id="switchmode1" onclick="return linkOnclick('switch');">
-                             Switch VM Mode
+                     }
+                     <a href="@routes.HTRCExperimentalAnalysis.deleteVM(vm.vmId)" class="btn btn-danger btn-small" id="deletevms" onclick="">
+                        <i class="icon-trash icon-white"></i> Delete VM
                      </a>
-                     <a href="#" class="btn btn-warning btn-small" id="stopvm1" onclick="return linkOnclick('stop');">
-                             STOP
-                     </a>
-                     <a href="#" class="btn btn-danger btn-small" id="deletevms1" onclick="return linkOnclick('delete');">
-                         <i class="icon-trash icon-white"></i> Delete
-                     </a>
-                 </td>
-             </tr>
+                     </td>
+                 </tr>
+             }
          </tbody>
      </table>
+     } else {
+        <p>There are no virtual machines.</p>
+     }
+
+     <div class="modal hide fade" id="dlete-vm-modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Delete VM</h3>
+        </div>
+        <div class="modal-body">
+            <p>Do you want to delete VM Id: </p>
+        </div>
+        <div class="modal-footer">
+            <span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin: -3px 0 0;"> Don't Show This Again.</span>
+            <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+            <a href="<%=PortalConfiguration.getBlacklightURL()%>" class="btn btn-primary" onclick="goToCreateCollection()">Go</a>
+        </div>
+    </div>
 }

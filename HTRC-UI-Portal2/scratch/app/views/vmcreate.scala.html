@@ -1,37 +1,57 @@
-@(user: User)
+@(user: User, form: Form[HTRCExperimentalAnalysis.CreateVM] , vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
 
 
 @main("Worksets", user) {
     <legend>VM Creation (All fields are required) </legend>
-    <form class="form-horizontal">
+    @helper.form(routes.HTRCExperimentalAnalysis.createVM(), 'class -> "form-horizontal") {
+        @if(form.hasGlobalErrors) {
+            <p class="error">
+                @form.globalError.message
+            </p>
+        }
+        @if(flash.contains("success")) {
+            <p class="success">
+                @flash.get("success")
+            </p>
+        }
         <div class="control-group">
             <label for="vmName" class="control-label">VM Name</label>
             <div class="controls">
-                <input type="text" id="vmName" placeholder="VM Name">
+                <input type="text" id="vmName" name="vmName" placeholder="VM Name">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="vmImageName" class="control-label">VM Image</label>
+            <div class="controls">
+                <select id="vmImageName" name="vmImageName">
+                    @for(vm <- vmDetailsList){
+                        <option>@vm.getVmImageName</option>
+                    }
+                </select>
             </div>
         </div>
         <div class="control-group">
             <label for="userName" class="control-label">User Name</label>
             <div class="controls">
-                <input type="text" id="userName" placeholder="User Name">
+                <input type="text" id="userName" name="userName" placeholder="User Name">
             </div>
         </div>
         <div class="control-group">
             <label for="password" class="control-label">Password</label>
             <div class="controls">
-                <input type="password" id="password" placeholder="Password">
+                <input type="password" id="password" name="password" placeholder="Password">
             </div>
         </div>
         <div class="control-group">
-            <label for="confirmpassword" class="control-label">Confirm Password</label>
+            <label for="confirmPassword" class="control-label">Confirm Password</label>
             <div class="controls">
-                <input type="password" id="confirmpassword" placeholder="Password">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password">
             </div>
         </div>
         <div class="control-group">
-            <label for="vcpu" class="control-label">VCPUs</label>
+            <label for="numberOfVCPUs" class="control-label">VCPUs</label>
             <div class="controls">
-                <select id="vcpu">
+                <select id="numberOfVCPUs" name="numberOfVCPUs">
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
@@ -46,7 +66,7 @@
         <div class="control-group">
             <label for="memory" class="control-label">Memory (GB)</label>
             <div class="controls">
-                <select id="memory">
+                <select id="memory" name="memory">
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
@@ -65,6 +85,5 @@
                 <button type="submit" class="btn btn-default">Create VM</button>
             </div>
         </div>
-
-    </form>
+    }
 }
