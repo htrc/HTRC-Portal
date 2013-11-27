@@ -1,0 +1,52 @@
+@(user: User, vmStatus: edu.indiana.d2i.htrc.sloan.bean.VMStatus)
+@import edu.indiana.d2i.htrc.sloan.bean.VMStatus
+
+
+@main("Worksets", user) {
+    <legend>Virtual Machine Status</legend>
+    <table border="0">
+
+        <tbody>
+        <tr>
+            <td style="width: 200px;"><b>VM Id:</b></td>
+            <td>@vmStatus.getVmId</td>
+        </tr>
+        <tr>
+            <td><b>Image Name:</b></td>
+            <td>@vmStatus.getImageName</td>
+        </tr>
+        <tr>
+            <td><b>State:</b></td>
+            <td>@vmStatus.getState</td>
+        </tr>
+        <tr>
+            <td><b>VM Mode:</b></td>
+            <td>@vmStatus.getMode</td>
+        </tr>
+        <tr>
+            <td><b>VNC Port:</b></td>
+            <td>@vmStatus.getVncPort</td>
+        </tr>
+        <tr>
+            <td><b>SSH Port:</b></td>
+            <td>@vmStatus.getSshPort</td>
+        </tr>
+        <tr>
+            <td><b>Public IP:</b></td>
+            <td>@vmStatus.getPublicIp</td>
+        </tr>
+        <tr>
+            <td><b>Memory:</b></td>
+            <td>@vmStatus.getMemory</td>
+        </tr>
+        <tr>
+            <td><b>VCPU:</b></td>
+            <td>@vmStatus.getVcpu</td>
+        </tr>
+        <tr>
+            <td><b>Volume Size:</b></td>
+            <td>@vmStatus.getVolumeSize</td>
+        </tr>
+        </tbody>
+    </table>
+}

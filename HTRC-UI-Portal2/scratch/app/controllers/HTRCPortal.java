@@ -143,19 +143,6 @@ public class HTRCPortal extends Controller {
         return ok();
     }
 
-    @Security.Authenticated(Secured.class)
-    public static Result listVMs(){
-        User loggedInUser = User.find.byId(request().username());
-        return ok(vmlist.render(loggedInUser));
-    }
-
-    @Security.Authenticated(Secured.class)
-    public static Result createVMs(){
-        User loggedInUser = User.find.byId(request().username());
-        return ok(vmcreate.render(loggedInUser));
-    }
-
-
     public static void updateWorksets(String accessToken, String userName, String registryUrl, Boolean isPublicWorkset) throws IOException, JAXBException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, registryUrl);
 
@@ -345,13 +332,20 @@ public class HTRCPortal extends Controller {
         public String password;
 
         public String validate() throws OAuthProblemException, OAuthSystemException {
-            System.out.println(userId);
-            System.out.println(password);
             if (User.authenticate(userId, password) == null) {
                 return "Invalid user or password";
             }
             return null;
         }
+    }
+
+    public static class CreateVM{
+        public String vmName;
+        public String userName;
+        public String userPassword;
+        public int numberOfVCPUs;
+        public int memory;
+
     }
 
 }

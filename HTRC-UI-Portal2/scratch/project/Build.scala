@@ -13,6 +13,8 @@ object ApplicationBuild extends Build {
     "org.apache.amber" % "oauth2-common" % "0.22.1358727-wso2v2",
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
     "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v2",
+  "com.googlecode.json-simple" % "json-simple" % "1.1",
+//    "edu.indiana.d2i.sloan" % ""
 //    "edu.indiana.d2i.htrc.portal" % "HTRC-UI-Portal2" % "1.0-SNAPSHOT",
     "edu.illinois.i3.htrc" % "UserManager" % "0.3.1"
       exclude("org.apache.tomcat.ha.wso2","tomcat-ha")
@@ -31,6 +33,7 @@ object ApplicationBuild extends Build {
       exclude("org.wso2.carbon","org.wso2.carbon.caching.core")
       exclude("org.wso2.carbon","org.wso2.carbon.ntask.core")
       exclude("org.slf4j","jcl-over-slf4j"),
+
     javaCore,
     javaJdbc,
     javaEbean

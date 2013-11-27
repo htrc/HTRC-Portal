@@ -29,10 +29,24 @@ GET   /listalgorithms                                       controllers.HTRCPort
 GET   /viewalgorithm                                        controllers.HTRCPortal.viewAlgorithm(algorithmName:String ?="")
 
 # SLOAN VM List Form
-GET   /listvms                                               controllers.HTRCPortal.listVMs()
+GET   /listvms                                              controllers.HTRCExperimentalAnalysis.listVMs()
 
 # SLOAN VM Create Form
-GET   /createvms                                             controllers.HTRCPortal.createVMs()
+GET   /createvms                                            controllers.HTRCExperimentalAnalysis.createVMForm()
+
+POST  /createvm                                             controllers.HTRCExperimentalAnalysis.createVM()
+
+#SLOAN VM Show VM Status
+GET /showvm                                                 controllers.HTRCExperimentalAnalysis.showVMStatus(vmId:String ?="")
+
+#SLOAN VM Delete
+GET /deletevm                                               controllers.HTRCExperimentalAnalysis.deleteVM(vmId:String ?="")
+
+GET /launchvm                                               controllers.HTRCExperimentalAnalysis.startVM(vmId:String ?="")
+
+GET /stopvm                                               controllers.HTRCExperimentalAnalysis.stopVM(vmId:String ?="")
+
+GET /switchvm                                               controllers.HTRCExperimentalAnalysis.switchVMMode(vmId:String ?="", mode:String ?="")
 
 # Authenticate
 POST  /login                                                controllers.HTRCPortal.authenticate()

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://registry.htrc.i3.illinois.edu/model/security"
+    xmlns:tns="http://registry.htrc.i3.illinois.edu/model/security"
+    elementFormDefault="qualified">
+
+    <simpleType name="PermissionTypeEnumeration">
+       <restriction base="string">
+           <enumeration value="GET"/>
+           <enumeration value="PUT"/>
+           <enumeration value="DELETE"/>
+           <enumeration value="AUTHORIZE"/>
+       </restriction>
+    </simpleType>
+
+    <!--
+    <complexType name="PermissionType">
+        <sequence>
+            <element
+        </sequence>
+    </complexType>
+    -->
+</schema>
