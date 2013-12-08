@@ -86,7 +86,7 @@ public class HTRCAgentClient {
             this.responseCode = respondecode;
             if (respondecode == 200) {
                 jobSubmitResponse = parseJobSubmit(putMethod.getResponseBodyAsStream());
-                System.out.println(jobSubmitResponse.getJobStatus());
+                System.out.println(putMethod.getResponseBodyAsString());
             }else{
                 this.responseCode = respondecode;
                 throw new IOException("Response code " + respondecode + " for " + submitJobUrl + " message: \n " + putMethod.getResponseBodyAsString());
