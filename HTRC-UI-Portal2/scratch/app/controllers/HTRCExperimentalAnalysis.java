@@ -40,13 +40,8 @@ public class HTRCExperimentalAnalysis extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result listVMs() throws IOException {
         User loggedInUser = User.find.byId(request().username());
+        updateVMList(loggedInUser);
         List<VirtualMachine> vmList = VirtualMachine.all();
-        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        for(VirtualMachine vm : vmList){
-            VMStatus vmStatus = serviceClient.showVM(vm.vmId,loggedInUser);
-            vm.vmStatus = vmStatus.getState();
-            vm.mode = vmStatus.getMode();
-        }
         return ok(vmlist.render(loggedInUser, vmList));
     }
 
@@ -97,7 +92,7 @@ public class HTRCExperimentalAnalysis extends Controller {
     public static Result startVM(String vmId) throws IOException {
         User loggedInUser = User.find.byId(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.startVM(vmId,loggedInUser);
+        serviceClient.startVM(vmId, loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 
@@ -117,8 +112,29 @@ public class HTRCExperimentalAnalysis extends Controller {
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 
+    public static void updateVMList(User loggedInUser){
+        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+        try {
+            List<VMStatus> vmList = serviceClient.listVMs(loggedInUser);
+            for(VMStatus v:vmList){
+                VirtualMachine alreadyExist = VirtualMachine.findVM(v.getVmId());
+                if(alreadyExist != null){
+                    VirtualMachine.deleteVM(alreadyExist);
+                }
+                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(),v.getState(),v.getMode());
+                VirtualMachine.createVM(virtualMachine);
+            }
+
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+    }
+
     public static class CreateVM{
-        public String vmName;
         public String vmImageName;
         public String userName;
         public String password;
@@ -134,8 +150,6 @@ public class HTRCExperimentalAnalysis extends Controller {
                 HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
                 try {
                     String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), loggedInUser);
-                    VirtualMachine vm = new VirtualMachine(vmName,vmId);
-                    VirtualMachine.createVM(vm);
                 } catch (IOException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     return null;

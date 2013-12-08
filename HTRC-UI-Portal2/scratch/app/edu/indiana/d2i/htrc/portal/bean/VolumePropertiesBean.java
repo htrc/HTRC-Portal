@@ -17,7 +17,7 @@
 
 package edu.indiana.d2i.htrc.portal.bean;
 
-public class VolumeProperties {
+public class VolumePropertiesBean {
     public String name;
     public String value;
 }

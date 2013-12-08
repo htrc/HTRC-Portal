@@ -20,7 +20,7 @@ package edu.indiana.d2i.htrc.portal.bean;
 
 import java.util.List;
 
-public class VolumeDetails{
+public class VolumeDetailsBean {
 
 
     private String volumeId;
@@ -33,11 +33,11 @@ public class VolumeDetails{
 
     public static int VOLUMES_PER_PAGE = 10;
 
-    public List<VolumeProperties> getProperties() {
+    public List<VolumePropertiesBean> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<VolumeProperties> properties) {
+    public void setProperties(List<VolumePropertiesBean> properties) {
         this.properties = properties;
     }
 
@@ -89,7 +89,7 @@ public class VolumeDetails{
         this.wordCount = wordCount;
     }
 
-    private List<VolumeProperties> properties;
+    private List<VolumePropertiesBean> properties;
 
     public String getVolumeId() {
         return volumeId;

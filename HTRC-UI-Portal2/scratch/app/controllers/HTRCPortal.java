@@ -3,11 +3,14 @@ package controllers;
 import com.avaje.ebean.PagingList;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
+import edu.indiana.d2i.htrc.portal.HTRCAgentClient;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
-import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails;
-import edu.indiana.d2i.htrc.portal.bean.VolumeDetails;
+import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
+import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
+import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
+import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import models.Algorithm;
 import models.User;
 import models.Workset;
@@ -21,6 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -33,10 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static play.data.Form.form;
 
@@ -112,7 +113,7 @@ public class HTRCPortal extends Controller {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
             System.out.println(worksetName + " : " + volumeList.size());
         }
-        List<VolumeDetails> volumeDetailsList = new ArrayList<VolumeDetails>();
+        List<VolumeDetailsBean> volumeDetailsList = new ArrayList<VolumeDetailsBean>();
         System.out.println(volumeList.size());
         for (int i = 0; i <= volumeList.size() - 1; i++) {
             volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
@@ -132,15 +133,65 @@ public class HTRCPortal extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result viewAlgorithm(String algorithmName) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.find.byId(request().username());
-        AlgorithmDetails algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, algorithmName);
-        List<AlgorithmDetails.Parameter> parameters = algorithmDetails.getParameters();
+        AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, algorithmName);
+        List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         List<Workset> worksetList = Workset.all();
-        return ok(algorithm.render(loggedInUser,algorithmDetails,parameters,worksetList));
+        return ok(algorithm.render(loggedInUser,algorithmDetails,parameters,worksetList,Form.form(SubmitJob.class)));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result submitAlgorithm(){
-        return ok();
+        User loggedInUser = User.find.byId(request().username());
+        JobSubmitBean jobSubmitBean = new JobSubmitBean();
+        DynamicForm requestData = form().bindFromRequest();
+        jobSubmitBean.setJobName(requestData.get("jobName"));
+        jobSubmitBean.setUserName(loggedInUser.userId);
+        jobSubmitBean.setAlgorithmName(requestData.get("algorithmName"));
+        AlgorithmDetailsBean algorithmDetails = null;
+        try {
+            algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, requestData.get("algorithmName"));
+        } catch (JAXBException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (XMLStreamException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        List<AlgorithmDetailsBean.Parameter> parameters = null;
+        if (algorithmDetails != null) {
+            parameters = algorithmDetails.getParameters();
+        }
+        if (parameters != null) {
+            List<JobSubmitBean.Parameter> parameterList = new ArrayList<JobSubmitBean.Parameter>();
+            for(AlgorithmDetailsBean.Parameter pm: parameters){
+                int index = parameters.indexOf(pm) + 1;
+                JobSubmitBean.Parameter parameter = new JobSubmitBean.Parameter();
+                parameter.setParamName(requestData.field("parameters[" + index + "].paramName").value());
+                parameter.setParamType(requestData.field("parameters[" + index + "].paramType").value());
+                parameter.setParamValue(requestData.field("parameters[" + index + "].paramValue").value());
+                parameterList.add(parameter);
+            }
+            jobSubmitBean.setParameters(parameterList);
+        }
+
+        HTRCAgentClient agentClient = new HTRCAgentClient();
+        JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean,loggedInUser);
+        if(jobDetailsBean == null){
+            System.out.println(jobSubmitBean.getJobName() + jobSubmitBean.getUserName());
+            log.error(String.format("Unable to submit job %s for user %s to agent",
+                    jobSubmitBean.getJobName(), jobSubmitBean.getUserName()));
+        }else{
+            log.info(String.format("Job (id: %s) is submitted, status is %s",
+                    jobDetailsBean.getJobId(), jobDetailsBean.getJobStatus()));
+        }
+
+
+        Form<SubmitJob> submitJobForm = form(SubmitJob.class).bindFromRequest();
+        if (submitJobForm.hasErrors()) {
+            return badRequest();
+        } else {
+            return redirect(routes.HTRCPortal.index());
+        }
     }
 
     public static void updateWorksets(String accessToken, String userName, String registryUrl, Boolean isPublicWorkset) throws IOException, JAXBException {
@@ -178,10 +229,10 @@ public class HTRCPortal extends Controller {
 
     }
 
-    public static VolumeDetails getVolumeDetails(String volid) throws IOException {
+    public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
         String volumeDetailsQueryUrl = PlayConfWrapper.solrQueryUrl() + "?q=id:" + volid.replace(":", "%20") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
 
-        VolumeDetails volDetails = new VolumeDetails();
+        VolumeDetailsBean volDetails = new VolumeDetailsBean();
 
         HttpClient httpClient = new HttpClient();
         HttpMethod method = new GetMethod(volumeDetailsQueryUrl);
@@ -294,15 +345,15 @@ public class HTRCPortal extends Controller {
 
     public static void updateAlgorithms(String accessToken, String registryUrl) throws JAXBException, IOException, XMLStreamException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, PlayConfWrapper.registryEPR());
-        Map<String, AlgorithmDetails> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
+        Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY + " for user "
                     + session.get(PortalConstants.SESSION_USERNAME));
         }else{
             List<String> algorithms = new ArrayList<String>(allAlgorithms.keySet());
-            List<AlgorithmDetails> algorithmDetailsList = new ArrayList<AlgorithmDetails>(allAlgorithms.values());
+            List<AlgorithmDetailsBean> algorithmDetailsList = new ArrayList<AlgorithmDetailsBean>(allAlgorithms.values());
 
-            for(AlgorithmDetails al:algorithmDetailsList ){
+            for(AlgorithmDetailsBean al:algorithmDetailsList ){
                 if(Algorithm.findAlgoritm(al.getName()) != null){
                     Algorithm.delete(Algorithm.findAlgoritm(al.getName()));
                 }
@@ -314,10 +365,10 @@ public class HTRCPortal extends Controller {
 
     }
 
-    public static AlgorithmDetails getAlgorithmDetails(String accessToken, String algorithmName) throws JAXBException, IOException, XMLStreamException {
+    public static AlgorithmDetailsBean getAlgorithmDetails(String accessToken, String algorithmName) throws JAXBException, IOException, XMLStreamException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, PlayConfWrapper.registryEPR());
-        AlgorithmDetails algorithmDetails = new AlgorithmDetails();
-        Map<String, AlgorithmDetails> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
+        AlgorithmDetailsBean algorithmDetails = new AlgorithmDetailsBean();
+        Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY + " for user "
                     + session.get(PortalConstants.SESSION_USERNAME));
@@ -337,6 +388,24 @@ public class HTRCPortal extends Controller {
             }
             return null;
         }
+    }
+
+    public static class SubmitJob {
+        public String jobName;
+        public String userName;
+        public String algorithmName;
+        public List<JobParameters> parameters;
+
+
+
+
+
+    }
+
+    public static class JobParameters{
+        public String paramName;
+        public String paramType;
+        public String paramValue;
     }
 
     public static class CreateVM{

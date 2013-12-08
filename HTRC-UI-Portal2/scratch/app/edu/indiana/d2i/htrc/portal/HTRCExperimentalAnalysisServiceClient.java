@@ -119,11 +119,11 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     }
 
-    public void listVMs(User loggedIn) throws GeneralSecurityException, IOException {
-        String listVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/listvm";
-        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
-        Protocol.registerProtocol("https", easyhttps);
-
+    public List<VMStatus> listVMs(User loggedIn) throws GeneralSecurityException, IOException {
+        String listVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/show";
+//        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
+//        Protocol.registerProtocol("https", easyhttps);
+        List<VMStatus> vmList = new ArrayList<VMStatus>();
         PostMethod post = new PostMethod(listVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -132,11 +132,37 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            System.out.println("LIST VM ACTION");
+            String jsonStr = post.getResponseBodyAsString();
+            JSONParser parser = new JSONParser();
+            try {
+                Object obj = parser.parse(jsonStr);
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray jsonArray = (JSONArray) jsonObject.get("status");
+
+                for (Object aJsonArray : jsonArray) {
+                    VMStatus vmStatus = new VMStatus();
+                    JSONObject infoObject = (JSONObject) aJsonArray;
+                    vmStatus.setVmId((String) infoObject.get("vmid"));
+                    vmStatus.setMode((String) infoObject.get("mode"));
+                    vmStatus.setState((String) infoObject.get("state"));
+                    vmStatus.setVncPort((Long) infoObject.get("vncport"));
+                    vmStatus.setSshPort((Long) infoObject.get("sshport"));
+                    vmStatus.setPublicIp((String) infoObject.get("publicip"));
+                    vmStatus.setVcpu((Long) infoObject.get("vcpus"));
+                    vmStatus.setMemory((Long) infoObject.get("memSize"));
+                    vmStatus.setVolumeSize((Long) infoObject.get("volumeSize"));
+                    vmStatus.setImageName((String) infoObject.get("imageName"));
+                    vmList.add(vmStatus);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
         } else {
             this.responseCode = response;
             throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
+        return vmList;
 
     }
 

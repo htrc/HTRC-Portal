@@ -21,7 +21,7 @@ import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetContent;
 import edu.illinois.i3.htrc.registry.entities.workset.Worksets;
-import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails;
+import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import org.apache.amber.oauth2.client.OAuthClient;
 import org.apache.amber.oauth2.client.URLConnectionClient;
 import org.apache.amber.oauth2.client.request.OAuthClientRequest;
@@ -188,10 +188,10 @@ public class HTRCPersistenceAPIClient {
      * @throws JAXBException
      * @throws javax.xml.stream.XMLStreamException
      */
-    public Map<String, AlgorithmDetails> getAllAlgorithmDetails()
+    public Map<String, AlgorithmDetailsBean> getAllAlgorithmDetails()
             throws IOException, IllegalStateException,
             JAXBException, XMLStreamException {
-        Map<String, AlgorithmDetails> res = new TreeMap<String, AlgorithmDetails>();
+        Map<String, AlgorithmDetailsBean> res = new TreeMap<String, AlgorithmDetailsBean>();
 
         String algoFolder = PlayConfWrapper.registryAlgFolder();
         String str = getFilesAsString(algoFolder, ".*.xml", null, true);
@@ -202,7 +202,7 @@ public class HTRCPersistenceAPIClient {
             if (start == -1 || end == -1)
                 break;
             String sub = str.substring(start, end + "</algorithm>".length());
-            AlgorithmDetails algoDetail = parseAlgorithmDetailBean(
+            AlgorithmDetailsBean algoDetail = parseAlgorithmDetailBean(
                     new ByteArrayInputStream(sub.getBytes("UTF-8")));
             res.put(algoDetail.getName(), algoDetail);
             str = str.substring(end + "</algorithm>".length());
@@ -248,28 +248,28 @@ public class HTRCPersistenceAPIClient {
         }
     }
 
-    private AlgorithmDetails parseAlgorithmDetailBean(InputStream stream) throws XMLStreamException {
-        AlgorithmDetails res = new AlgorithmDetails();
+    private AlgorithmDetailsBean parseAlgorithmDetailBean(InputStream stream) throws XMLStreamException {
+        AlgorithmDetailsBean res = new AlgorithmDetailsBean();
         XMLStreamReader parser = factory.createXMLStreamReader(stream);
 
-        List<AlgorithmDetails.Parameter> parameters =
-                new ArrayList<AlgorithmDetails.Parameter>();
+        List<AlgorithmDetailsBean.Parameter> parameters =
+                new ArrayList<AlgorithmDetailsBean.Parameter>();
         List<String> authors = new ArrayList<String>();
         while (parser.hasNext()) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (parser.hasName()) {
                     // only parse the info tag!
-                    if (parser.getLocalName().equals(AlgorithmDetails.NAME)) {
+                    if (parser.getLocalName().equals(AlgorithmDetailsBean.NAME)) {
                         res.setName(parser.getElementText());
-                    } else if (parser.getLocalName().equals(AlgorithmDetails.VERSION)) {
+                    } else if (parser.getLocalName().equals(AlgorithmDetailsBean.VERSION)) {
                         res.setVersion(parser.getElementText());
-                    } else if (parser.getLocalName().equals(AlgorithmDetails.DESCRIPTION)) {
+                    } else if (parser.getLocalName().equals(AlgorithmDetailsBean.DESCRIPTION)) {
                         res.setDescription(parser.getElementText());
-                    } else if (parser.getLocalName().equals(AlgorithmDetails.SUPPORTURL)) {
+                    } else if (parser.getLocalName().equals(AlgorithmDetailsBean.SUPPORTURL)) {
                         res.setSupportUrl(parser.getElementText());
-                    } else if (parser.getLocalName().equals(AlgorithmDetails.PARAMETER)) {
-                        AlgorithmDetails.Parameter parameter = new AlgorithmDetails.Parameter();
+                    } else if (parser.getLocalName().equals(AlgorithmDetailsBean.PARAMETER)) {
+                        AlgorithmDetailsBean.Parameter parameter = new AlgorithmDetailsBean.Parameter();
                         int count = parser.getAttributeCount();
                         for (int i = 0; i < count; i++) {
                             if (parser.getAttributeLocalName(i).equals("required"))
@@ -294,7 +294,7 @@ public class HTRCPersistenceAPIClient {
                         if (parser.getLocalName().equals("description"))
                             parameter.setDescription(parser.getElementText());
                         parameters.add(parameter);
-                    } else if (parser.getLocalName().equals(AlgorithmDetails.AUTHOR)) {
+                    } else if (parser.getLocalName().equals(AlgorithmDetailsBean.AUTHOR)) {
                         int count = parser.getAttributeCount();
                         for (int i = 0; i < count; i++) {
                             if (parser.getAttributeLocalName(i).equals("name"))
