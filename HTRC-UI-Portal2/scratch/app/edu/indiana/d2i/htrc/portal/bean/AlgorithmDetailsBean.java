@@ -19,7 +19,7 @@ package edu.indiana.d2i.htrc.portal.bean;
 
 import java.util.List;
 
-public class AlgorithmDetails {
+public class AlgorithmDetailsBean {
     public static final String INFO = "info";
     public static final String NAME = "name";
     public static final String VERSION = "version";

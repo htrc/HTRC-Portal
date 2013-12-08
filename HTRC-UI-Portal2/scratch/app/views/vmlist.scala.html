@@ -13,7 +13,6 @@
          <thead>
              <tr>
                  <th><b>Vm Id</b></th>
-                 <th><b>VM Name</b></th>
                  <th><b>Actions</b></th>
              </tr>
          </thead>
@@ -22,11 +21,8 @@
                  <tr>
                      <td>
                          <a href="@routes.HTRCExperimentalAnalysis.showVMStatus(vm.vmId)">
-                             @vm.vmName
+                             @vm.vmId
                          </a>
-                     </td>
-                     <td>
-                         @vm.vmId
                      </td>
                      <td>
                      @if(vm.vmStatus == "SHUTDOWN"){

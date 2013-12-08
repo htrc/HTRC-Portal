@@ -26,18 +26,14 @@ import java.util.List;
 @Entity
 public class VirtualMachine extends Model {
     @Id
-    public String vmName;
     public String vmId;
     public String vmStatus;
     public String mode;
 
-    public VirtualMachine(String vmName, String vmId){
-        this.vmName = vmName;
+    public VirtualMachine(String vmId, String vmStatus, String mode){
         this.vmId = vmId;
-    }
-
-    public VirtualMachine(){
-
+        this.vmStatus = vmStatus;
+        this.mode = mode;
     }
 
     public static Finder<String, VirtualMachine> finder = new Finder<String, VirtualMachine>(
@@ -46,10 +42,6 @@ public class VirtualMachine extends Model {
 
     public static List<VirtualMachine> all(){
         return finder.all();
-    }
-
-    public static String vmId(String vmName){
-        return String.valueOf(finder.where().eq("vmName", vmName).findUnique());
     }
 
     public static VirtualMachine findVM(String vmId){

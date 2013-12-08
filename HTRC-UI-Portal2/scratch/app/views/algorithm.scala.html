@@ -1,57 +1,75 @@
-@(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails,
-parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails.Parameter], worksetlist: List[Workset])
-@import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetails
+@(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean,
+parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], worksetlist: List[Workset], form: Form[HTRCPortal.SubmitJob])
+@import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
 
 
 @main("Worksets", user) {
-    <table>
-        <tr>
-            <td><b>Name: </b></td>
-            <td>@algorithmdetails.getName</td>
-        </tr>
-        <tr>
-            <td><b>Description:</b></td>
-            <td>@algorithmdetails.getDescription</td>
-        </tr>
-        <tr>
-            <td><b>Version:</b></td>
-            <td>@algorithmdetails.getVersion</td>
-        </tr>
-        <tr>
-            <td><b>Author:</b></td>
-            <td>@algorithmdetails.getAuthors</td>
-        </tr>
-    </table>
-    <div id="param">
-        <label>Please Input Job Name: </label> (required)<br>
-        <input type="text" name="jobName" required="required" id="jobName">
-    </div>
-    @for(pm <- parameters){
-        <div>
-            <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramName" value="@pm.getName"/>
-            <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramType" value="@pm.getType"/>
-            <label>@pm.getLabel</label>
-            @if(pm.getType == "collection"){
-                <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
-                    @for(ws <- worksetlist){
-                        <option>@ws.name</option>
-                    }
-                </select>
-            }else{
-                @if(pm.getType == "boolean"){
+    @helper.form(routes.HTRCPortal.submitAlgorithm(), 'class -> "form-horizontal") {
+        @if(form.hasGlobalErrors) {
+            <p class="error">
+                @form.globalError.message
+            </p>
+        }
+        @if(flash.contains("success")) {
+            <p class="success">
+                @flash.get("success")
+            </p>
+        }
+        <table>
+            <tr>
+                <input type="hidden" name="algorithmName" value="@algorithmdetails.getName"/>
+                <td><b>Name: </b></td>
+                <td>@algorithmdetails.getName</td>
+            </tr>
+            <tr>
+                <td><b>Description:</b></td>
+                <td>@algorithmdetails.getDescription</td>
+            </tr>
+            <tr>
+                <td><b>Version:</b></td>
+                <td>@algorithmdetails.getVersion</td>
+            </tr>
+            <tr>
+                <td><b>Author:</b></td>
+                <td>@algorithmdetails.getAuthors</td>
+            </tr>
+        </table>
+        <div id="param">
+            <label>Please Input Job Name: </label> (required)<br>
+            <input type="text" name="jobName" required="required" id="jobName">
+        </div>
+        @for(pm <- parameters){
+            <div>
+                <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramName" value="@pm.getName"/>
+                <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramType" value="@pm.getType"/>
+                <label>@pm.getLabel</label>
+                @if(pm.getType == "collection"){
                     <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
-                        <option>True</option><option>False</option>
+                        @for(ws <- worksetlist){
+                            <option>@ws.name</option>
+                        }
                     </select>
                 }else{
-                    @if(pm.isRequired){
-                        <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue" required="required" value="@pm.getDefaultValue">
-                            (required)
+                    @if(pm.getType == "boolean"){
+                        <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
+                            <option>True</option><option>False</option>
+                        </select>
                     }else{
-                        <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue"  value="@pm.getDefaultValue">
-                            (optional)
+                        @if(pm.isRequired){
+                            <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue" required="required" value="@pm.getDefaultValue">
+                                (required)
+                        }else{
+                            <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue"  value="@pm.getDefaultValue">
+                                (optional)
+                        }
                     }
                 }
-            }
+            </div>
+        }
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
         </div>
     }
 
