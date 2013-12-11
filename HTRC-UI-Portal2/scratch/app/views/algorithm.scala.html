@@ -3,7 +3,7 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
 
 
-@main("Worksets", user) {
+@main("Algorithm", user) {
     @helper.form(routes.HTRCPortal.submitAlgorithm(), 'class -> "form-horizontal") {
         @if(form.hasGlobalErrors) {
             <p class="error">

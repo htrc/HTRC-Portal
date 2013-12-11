@@ -1,7 +1,7 @@
 @(user: User, form: Form[HTRCExperimentalAnalysis.CreateVM] , vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
 
 
-@main("Worksets", user) {
+@main("VMCreate", user) {
     <legend>VM Creation (All fields are required) </legend>
     @helper.form(routes.HTRCExperimentalAnalysis.createVM(), 'class -> "form-horizontal") {
         @if(form.hasGlobalErrors) {
