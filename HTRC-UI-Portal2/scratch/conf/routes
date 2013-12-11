@@ -31,6 +31,9 @@ GET   /viewalgorithm                                        controllers.HTRCPort
 # Submit Job
 POST  /submitjob                                            controllers.HTRCPortal.submitAlgorithm()
 
+# View Job List
+GET /listjobs                                               controllers.HTRCPortal.listJobs()
+
 # SLOAN VM List Form
 GET   /listvms                                              controllers.HTRCExperimentalAnalysis.listVMs()
 

@@ -174,8 +174,8 @@ public class HTRCPortal extends Controller {
             jobSubmitBean.setParameters(parameterList);
         }
 
-        HTRCAgentClient agentClient = new HTRCAgentClient();
-        JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean,loggedInUser);
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean);
         if(jobDetailsBean == null){
             System.out.println(jobSubmitBean.getJobName() + jobSubmitBean.getUserName());
             log.error(String.format("Unable to submit job %s for user %s to agent",
@@ -190,9 +190,29 @@ public class HTRCPortal extends Controller {
         if (submitJobForm.hasErrors()) {
             return badRequest();
         } else {
-            return redirect(routes.HTRCPortal.index());
+            return redirect(routes.HTRCPortal.listJobs());
         }
     }
+
+    @Security.Authenticated(Secured.class)
+    public static Result listJobs(){
+        User loggedInUser = User.find.byId(request().username());
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        Map<String,JobDetailsBean> jobDetailBeans = agentClient.getAllJobsDetails();
+        List<JobDetailsBean> jobDetailsBeanList = null;
+        if (jobDetailBeans == null) {
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+                    + session.get(PortalConstants.SESSION_USERNAME));
+        }else{
+            List<String> jobIds = new ArrayList<String>(jobDetailBeans.keySet());
+            jobDetailsBeanList = new ArrayList<JobDetailsBean>(jobDetailBeans.values());
+        }
+
+        return ok(joblist.render(loggedInUser,jobDetailsBeanList));
+
+    }
+
+
 
     public static void updateWorksets(String accessToken, String userName, String registryUrl, Boolean isPublicWorkset) throws IOException, JAXBException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, registryUrl);

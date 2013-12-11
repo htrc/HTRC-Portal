@@ -1,7 +1,7 @@
 @(user: User, workset: Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean])
 @import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean
 
-@main("Worksets", user) {
+@main("Workset", user) {
     <h2 style="border-bottom: 1px solid #ccc; margin: 5px 0;">@workset.name
         <span style="color: #777777;">
             @if(workset.shared.==(true)) {
