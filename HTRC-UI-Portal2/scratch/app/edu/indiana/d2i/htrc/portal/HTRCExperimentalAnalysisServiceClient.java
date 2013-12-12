@@ -121,8 +121,8 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     public List<VMStatus> listVMs(User loggedIn) throws GeneralSecurityException, IOException {
         String listVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/show";
-//        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
-//        Protocol.registerProtocol("https", easyhttps);
+        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
+        Protocol.registerProtocol("https", easyhttps);
         List<VMStatus> vmList = new ArrayList<VMStatus>();
         PostMethod post = new PostMethod(listVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
@@ -162,6 +162,7 @@ public class HTRCExperimentalAnalysisServiceClient {
             this.responseCode = response;
             throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
+        System.out.println(vmList.size());
         return vmList;
 
     }

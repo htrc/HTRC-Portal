@@ -84,7 +84,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.find.byId(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.deleteVM(vmId,loggedInUser);
-        VirtualMachine.deleteVM(VirtualMachine.findVM(vmId));
+        updateVMList(loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 

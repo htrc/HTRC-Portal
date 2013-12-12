@@ -1,4 +1,4 @@
-@(user: User, jobList: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
+@(user: User, activeJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean] , completedJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
 @import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean
 
 
@@ -23,7 +23,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for(job <- jobList){
+                            @for(job <- activeJobs){
                                 <tr>
                                     <td>@job.getJobTitle</td>
                                 </tr>
@@ -35,7 +35,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                    <input type="checkbox"> Check me out
+                                    <input type="checkbox">
                                     </td>
                                 </tr>
                             }
@@ -48,75 +48,53 @@
             </fieldset>
         </div>
     </div>
-    @*<div class="row">*@
-        @*<div class="span12">*@
-                @*<fieldset>*@
-                    @*<legend><b>Completed Jobs</b>*@
-                        @*<s:if test="jobsCompletedDetails.size() > 0">*@
-                            @*<div class="pull-right">*@
-                                @*<a href="#" class="btn btn-danger btn-small" id="deletejobs"*@
-                                @*onclick="return linkOnclick('delete');">*@
-                                    @*<i class="icon-trash icon-white"></i> Delete Selected*@
-                                @*</a>*@
-                                @*<a href="#" class="btn btn-info btn-small" id="savejobs" onclick="return linkOnclick('save');">*@
-                                    @*<i class="icon-file icon-white"></i> Save Selected*@
-                                @*</a>*@
-                            @*</div>*@
-                        @*</s:if>*@
-                    @*</legend>*@
-                    @*<s:if test="jobsCompletedDetails.size() > 0">*@
-                        @*<div id="completedjobsheader">*@
-                            @*<table class="table table-striped">*@
-                                @*<thead>*@
-                                    @*<tr>*@
-                                        @*<th width="30%">Job Title</th>*@
-                                        @*<th width="20%">Last Updated</th>*@
-                                        @*<th width="20%">Status</th>*@
-                                        @*<th width="20%">Delete/Save?</th>*@
-                                        @*<th width="10%">Saved?</th>*@
-                                    @*</tr>*@
-                                @*</thead>*@
-                                @*<tbody>*@
-                                    @*<s:iterator value="jobsCompletedDetails">*@
-                                        @*<tr>*@
-                                            @*<td width="30%">*@
-                                                @*<div>*@
-                                                    @*<s:url action="ViewJobsDetailsAction.action" var="joburl">*@
-                                                        @*<s:param name="jobId"><s:property value="jobId"/></s:param>*@
-                                                    @*</s:url>*@
-                                                    @*<s:a href="%{joburl}"><s:property value="jobTitle"/></s:a>*@
-                                                @*</div>*@
-                                            @*</td>*@
-                                            @*<td width="20%"><s:property value="lastUpdatedDate"/></td>*@
-                                            @*<td width="20%">*@
-                                                @*<s:set name="status" value="jobStatus"/>*@
-                                                @*<s:if test="%{#status == 'Crashed'}">*@
-                                                    @*<div style="color:#FF4500"><s:property value="jobStatus"/></div>*@
-                                                @*</s:if>*@
-                                                @*<s:else>*@
-                                                    @*<s:property value="jobStatus"/>*@
-                                                @*</s:else>*@
-                                            @*</td>*@
-                                            @*<td width="20%"><s:checkbox name="opJobIds" fieldValue="%{jobId}"/></td>*@
-                                            @*<td width="10%"><s:property value="jobSavedStr"/></td>*@
-                                        @*</tr>*@
-                                    @*</s:iterator>*@
-                                @*</tbody>*@
-                            @*</table>*@
-                        @*</div>*@
-
-                    @*</s:if>*@
-                    @*<s:else>*@
-                        @*<div class="alert alert-info">*@
-                            @*<p style="margin-bottom: 0;">There are no completed jobs..</p>*@
-                        @*</div>*@
-                    @*</s:else>*@
-                @*</fieldset>*@
-            @*</s:form>*@
-        @*</div>*@
-    @*</div>*@
-
-
+    <div class="row">
+        <div class="span12">
+            <fieldset>
+                <legend><b>Completed Jobs</b>
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-danger btn-small" id="deletejobs">
+                            <i class="icon-remove icon-white"></i>Delete</a>
+                        <a href="#" class="btn btn-info btn-small" id="savejobs">
+                            <i class="icon-remove icon-white"></i>Save</a>
+                    </div>
+                </legend>
+                <div id="completedjobsheader">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Last Updated</th>
+                                <th>Status</th>
+                                <th>Cancel?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(job <- completedJobs){
+                                <tr>
+                                    <td>@job.getJobTitle</td>
+                                </tr>
+                                <tr>
+                                    <td>@job.getLastUpdatedDate</td>
+                                </tr>
+                                <tr>
+                                    <td>@job.getJobStatus</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox">
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info">
+                    <p style="margin-bottom: 0;">There are no completed jobs..</p>
+                </div>
+            </fieldset>
+        </div>
+    </div>
 
 
 }

@@ -32,10 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class HTRCAgentClient {
     private String accessToken = null;
@@ -325,18 +322,58 @@ public class HTRCAgentClient {
         return jobdetailBeans;
     }
 
-    public Map<String, JobDetailsBean> getJobsDetails(List<String> jobIds) {
-        Map<String, JobDetailsBean> res = new HashMap<String, JobDetailsBean>();
-        Map<String, JobDetailsBean> jobsDetails = getAllJobsDetails();
-        if (jobsDetails == null) return res; // ugly!
+    public Map<String, JobDetailsBean> getActiveJobsDetails() {
+        GetMethod getJobDetailsList = null;
+        Map<String, JobDetailsBean> jobdetailBeans = new TreeMap<String, JobDetailsBean>();
+        try {
+            String jobDetailsURL = PlayConfWrapper.agentEndpoint() + "/job/active/status";
+            getJobDetailsList = new GetMethod(jobDetailsURL);
+            getJobDetailsList.setRequestHeader("Authorization", "Bearer "
+                    + accessToken);
 
-        for (String id : jobIds) {
-            if (jobsDetails.containsKey(id)) {
-                res.put(id, jobsDetails.get(id));
+            client.getHttpConnectionManager().getParams().setConnectionTimeout(
+                    PlayConfWrapper.agentConnectTimeout());
+            client.getHttpConnectionManager().getParams().setSoTimeout(
+                    PlayConfWrapper.agentWaitTimeout());
+
+            int response = client.executeMethod(getJobDetailsList);
+            this.responseCode = response;
+            if (response == 200) {
+                jobdetailBeans = parseJobDetailBeans(getJobDetailsList
+                        .getResponseBodyAsStream());
             } else {
-                log.error(String.format("Cannot find job Id %s from agent", id));
+                log.error("Unable to get job list from agent. url " + jobDetailsURL +
+                        "Response code " + response);
+                jobdetailBeans = null;
+            }
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+            jobdetailBeans = null;
+        } finally {
+            if (getJobDetailsList != null) {
+                getJobDetailsList.releaseConnection();
+                getJobDetailsList = null;
             }
         }
-        return res;
+
+        return jobdetailBeans;
+    }
+
+    public Map<String, JobDetailsBean> getCompletedJobsDetails() {
+        Map<String, JobDetailsBean> allJobsDetails = getAllJobsDetails();
+        if (allJobsDetails== null) {
+            log.error("Unable to get data from agent");
+        }else{
+            Map<String, JobDetailsBean> activeJobsDetails = getActiveJobsDetails();
+            if(activeJobsDetails == null){
+                log.info("There is no active jobs");
+            } else{
+                List<String> activeJobIds = new ArrayList<String>(activeJobsDetails.keySet());
+                for(String id: activeJobIds){
+                   allJobsDetails.remove(id);
+                }
+            }
+        }
+        return allJobsDetails;
     }
 }
