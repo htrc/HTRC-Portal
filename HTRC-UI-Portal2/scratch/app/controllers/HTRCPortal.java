@@ -198,17 +198,25 @@ public class HTRCPortal extends Controller {
     public static Result listJobs(){
         User loggedInUser = User.find.byId(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
-        Map<String,JobDetailsBean> jobDetailBeans = agentClient.getAllJobsDetails();
-        List<JobDetailsBean> jobDetailsBeanList = null;
-        if (jobDetailBeans == null) {
+        Map<String,JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+        Map<String,JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+        List<JobDetailsBean> activeJobsList = null;
+        List<JobDetailsBean> completedJobsList = null;
+        if (activeJobs == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
                     + session.get(PortalConstants.SESSION_USERNAME));
         }else{
-            List<String> jobIds = new ArrayList<String>(jobDetailBeans.keySet());
-            jobDetailsBeanList = new ArrayList<JobDetailsBean>(jobDetailBeans.values());
+            activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
         }
 
-        return ok(joblist.render(loggedInUser,jobDetailsBeanList));
+        if(completedJobs == null){
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+                    + session.get(PortalConstants.SESSION_USERNAME));
+        }else{
+            completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
+        }
+
+        return ok(joblist.render(loggedInUser,activeJobsList,completedJobsList));
 
     }
 
