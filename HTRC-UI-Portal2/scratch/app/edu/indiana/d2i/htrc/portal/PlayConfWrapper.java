@@ -72,6 +72,20 @@ public class PlayConfWrapper {
 
     private static String jobDetailsTimeOut = null;
 
+    // Sloan Web Service
+    private static String sloanWsEndpoint = null;
+    private static String createVMUrl = null;
+    private static String showVMUrl = null;
+    private static String listVMImagesUrl = null;
+    private static String deleteVMUrl = null;
+    private static String startVMUrl = null;
+    private static String stopVMUrl = null;
+    private static String switchVMUrl = null;
+
+
+
+
+
     public static String agentEndpoint() {
         if(agentEndpoint == null){
             agentEndpoint = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_EPR);
@@ -287,6 +301,62 @@ public class PlayConfWrapper {
             algorithmsPerPage = Play.application().configuration().getInt(PortalConstants.ALGORITHMS_PER_PAGE);
         }
         return algorithmsPerPage;
+    }
+
+    public static String sloanWsEndpoint() {
+        if(sloanWsEndpoint == null){
+            sloanWsEndpoint = Play.application().configuration().getString(PortalConstants.SLOAN_WS_EPR);
+        }
+        return sloanWsEndpoint;
+    }
+
+    public static String createVMUrl() {
+        if(createVMUrl == null){
+            createVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_CREATEVM);
+        }
+        return createVMUrl;
+    }
+
+    public static String showVMUrl() {
+        if(showVMUrl == null){
+            showVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_SHOWVM);
+        }
+        return showVMUrl;
+    }
+
+    public static String listVMImagesUrl() {
+        if(listVMImagesUrl == null){
+            listVMImagesUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_LISTVMIMAGES);
+        }
+        return listVMImagesUrl;
+    }
+
+    public static String deleteVMUrl() {
+        if(deleteVMUrl == null){
+            deleteVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_DELETEVM);
+        }
+        return deleteVMUrl;
+    }
+
+    public static String startVMUrl() {
+        if(startVMUrl == null){
+            startVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_STARTVM);
+        }
+        return startVMUrl;
+    }
+
+    public static String stopVMUrl() {
+        if(stopVMUrl == null){
+            stopVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_STOPVM);
+        }
+        return stopVMUrl;
+    }
+
+    public static String switchVMUrl() {
+        if(switchVMUrl == null){
+            switchVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_SWITCHVM);
+        }
+        return switchVMUrl;
     }
 }
 

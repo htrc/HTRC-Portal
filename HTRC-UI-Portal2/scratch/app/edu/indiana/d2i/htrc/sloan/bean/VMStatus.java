@@ -28,6 +28,8 @@ public class VMStatus {
     private long memory;
     private long volumeSize;
     private String imageName;
+    private String vmIntialLogingId;
+    private String vmInitialLogingPassword;
 
     public String getVmId() {
         return vmId;
@@ -107,5 +109,21 @@ public class VMStatus {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getVmIntialLogingId() {
+        return vmIntialLogingId;
+    }
+
+    public void setVmIntialLogingId(String vmIntialLogingId) {
+        this.vmIntialLogingId = vmIntialLogingId;
+    }
+
+    public String getVmInitialLogingPassword() {
+        return vmInitialLogingPassword;
+    }
+
+    public void setVmInitialLogingPassword(String vmInitialLogingPassword) {
+        this.vmInitialLogingPassword = vmInitialLogingPassword;
     }
 }
