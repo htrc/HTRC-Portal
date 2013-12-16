@@ -38,10 +38,10 @@ import java.util.List;
 public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
-    public static Result listVMs() throws IOException {
+    public static Result listVMs() throws IOException, GeneralSecurityException {
         User loggedInUser = User.findByUserID(request().username());
-        updateVMList(loggedInUser);
-        List<VirtualMachine> vmList = VirtualMachine.all();
+        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+        List<VMStatus> vmList = serviceClient.listVMs(loggedInUser);
         return ok(vmlist.render(loggedInUser, vmList));
     }
 
@@ -84,7 +84,6 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.deleteVM(vmId,loggedInUser);
-        updateVMList(loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 
