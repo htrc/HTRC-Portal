@@ -31,7 +31,7 @@ public class Algorithm extends Model {
     public static Integer ROWS_PER_PAGE = PlayConfWrapper.algorithmsPerPage();
 
     @Id
-    public String id;
+    public Long id;
 
     public String name;
 
