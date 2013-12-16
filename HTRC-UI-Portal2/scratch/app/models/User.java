@@ -54,6 +54,9 @@ public class User extends Model {
             Long.class, User.class
     );
 
+    public static User findByUserID(String userId){
+        return find.where().eq("userId", userId).findUnique();
+    }
 
     public static User authenticate(String userId, String password) {
 

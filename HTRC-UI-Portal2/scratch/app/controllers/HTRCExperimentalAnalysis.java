@@ -39,7 +39,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result listVMs() throws IOException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         updateVMList(loggedInUser);
         List<VirtualMachine> vmList = VirtualMachine.all();
         return ok(vmlist.render(loggedInUser, vmList));
@@ -47,7 +47,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result createVMForm(){
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmDetailsList = new ArrayList<VMImageDetails>();
         try {
@@ -73,7 +73,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result showVMStatus(String vmId) throws IOException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         VMStatus vmStatus = serviceClient.showVM(vmId,loggedInUser);
         return ok(vmstatus.render(loggedInUser,vmStatus));
@@ -81,7 +81,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result deleteVM(String vmId) throws IOException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.deleteVM(vmId,loggedInUser);
         updateVMList(loggedInUser);
@@ -90,7 +90,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result startVM(String vmId) throws IOException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.startVM(vmId, loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
@@ -98,7 +98,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result stopVM(String vmId) throws IOException{
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.stopVM(vmId, loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
@@ -106,7 +106,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result switchVMMode(String vmId, String mode) throws IOException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.switchVMMode(vmId, mode, loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
@@ -146,7 +146,7 @@ public class HTRCExperimentalAnalysis extends Controller {
             if(!password.equals(confirmPassword)) {
                 return "Passwords doesn't match.";
             } else{
-                User loggedInUser = User.find.byId(request().username());
+                User loggedInUser = User.findByUserID(request().username());
                 HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
                 try {
                     String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), loggedInUser);

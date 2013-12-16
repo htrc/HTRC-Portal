@@ -52,7 +52,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result index() {
-        return ok(index.render(User.find.byId(request().username())));
+        return ok(index.render(User.findByUserID(request().username())));
     }
 
     public static Result login() {
@@ -80,12 +80,12 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result about() {
-        return ok(about.render(User.find.byId(request().username())));
+        return ok(about.render(User.findByUserID(request().username())));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         updateWorksets(loggedInUser.accessToken, loggedInUser.userId, PlayConfWrapper.registryEPR(), true);
         PagingList<Workset> shared = Workset.shared();
         PagingList<Workset> owned = Workset.owned(loggedInUser);
@@ -105,7 +105,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
         Workset ws = Workset.findWorkset(worksetName);
         List<Volume> volumeList = new ArrayList<Volume>();
@@ -123,7 +123,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         updateAlgorithms(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
         List<Algorithm> algorithms = Algorithm.algorithmPagingList().getPage(page -1).getList();
 
@@ -132,7 +132,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result viewAlgorithm(String algorithmName) throws JAXBException, IOException, XMLStreamException {
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         List<Workset> worksetList = Workset.all();
@@ -141,7 +141,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result submitAlgorithm(){
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
         jobSubmitBean.setJobName(requestData.get("jobName"));
@@ -196,7 +196,7 @@ public class HTRCPortal extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result listJobs(){
-        User loggedInUser = User.find.byId(request().username());
+        User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
         Map<String,JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
         Map<String,JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
