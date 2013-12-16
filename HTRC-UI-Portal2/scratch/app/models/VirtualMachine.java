@@ -37,8 +37,8 @@ public class VirtualMachine extends Model {
         this.mode = mode;
     }
 
-    public static Finder<String, VirtualMachine> finder = new Finder<String, VirtualMachine>(
-            String.class, VirtualMachine.class
+    public static Finder<Long, VirtualMachine> finder = new Finder<Long, VirtualMachine>(
+            Long.class, VirtualMachine.class
     );
 
     public static List<VirtualMachine> all(){
