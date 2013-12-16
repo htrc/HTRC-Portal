@@ -43,7 +43,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     public int responseCode;
 
     public String createVM(String imageName, String loginuUerName, String loginPassword, String memory, String vcpu, User loggedIn) throws IOException {
-        String createVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/createvm";
+        String createVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.createVMUrl();
 
         PostMethod post = new PostMethod(createVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
@@ -78,7 +78,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public List<VMImageDetails> listVMImages(User loggedIn) throws IOException, GeneralSecurityException {
-        String listVMImageUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/listimage";
+        String listVMImageUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.listVMImagesUrl();
         List<VMImageDetails> vmDetailsList = new ArrayList<VMImageDetails>();
         Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
@@ -120,7 +120,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public List<VMStatus> listVMs(User loggedIn) throws GeneralSecurityException, IOException {
-        String listVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/show";
+        String listVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.showVMUrl();
         Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
         List<VMStatus> vmList = new ArrayList<VMStatus>();
@@ -152,6 +152,8 @@ public class HTRCExperimentalAnalysisServiceClient {
                     vmStatus.setMemory((Long) infoObject.get("memSize"));
                     vmStatus.setVolumeSize((Long) infoObject.get("volumeSize"));
                     vmStatus.setImageName((String) infoObject.get("imageName"));
+                    vmStatus.setVmIntialLogingId("vmInitialLoginId");
+                    vmStatus.setVmInitialLogingPassword("vmInitialLoginPassword");
                     vmList.add(vmStatus);
                 }
             } catch (ParseException e) {
@@ -168,7 +170,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public VMStatus showVM(String vmId, User loggedIn) throws IOException {
-        String showVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/show";
+        String showVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.showVMUrl();
         VMStatus vmStatus = new VMStatus();
         PostMethod post = new PostMethod(showVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
@@ -200,6 +202,8 @@ public class HTRCExperimentalAnalysisServiceClient {
                     vmStatus.setMemory((Long) infoObject.get("memSize"));
                     vmStatus.setVolumeSize((Long) infoObject.get("volumeSize"));
                     vmStatus.setImageName((String) infoObject.get("imageName"));
+                    vmStatus.setVmIntialLogingId("vmInitialLoginId");
+                    vmStatus.setVmInitialLogingPassword("vmInitialLoginPassword");
                     }
 
             } catch (ParseException e) {
@@ -216,7 +220,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public void switchVMMode(String vmId, String mode, User loggedIn) throws IOException {
-        String switchVMModeUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/switchvm";
+        String switchVMModeUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.switchVMUrl();
         PostMethod post = new PostMethod(switchVMModeUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -232,7 +236,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public void startVM(String vmId, User loggedIn) throws IOException {
-        String launchVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/launchvm";
+        String launchVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.startVMUrl();
         PostMethod post = new PostMethod(launchVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -247,7 +251,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public void stopVM(String vmId, User loggedIn) throws IOException {
-        String stopVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/stopvm";
+        String stopVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.stopVMUrl();
         PostMethod post = new PostMethod(stopVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -262,7 +266,7 @@ public class HTRCExperimentalAnalysisServiceClient {
     }
 
     public void deleteVM(String vmId, User loggedIn) throws IOException {
-        String deleteVMUrl = "https://thatchpalm.pti.indiana.edu:8080/sloan-ws-1.0-SNAPSHOT/deletevm";
+        String deleteVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.deleteVMUrl();
         PostMethod post = new PostMethod(deleteVMUrl);
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");

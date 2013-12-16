@@ -98,4 +98,16 @@ public class  PortalConstants {
     public static String SESSION_AGENT_INSTANCE = "session.agent.instance";
     public static String SESSION_LAST_ACTION = "session.lastaction";
     public static String SESSION_EXIST_BEFORE = "session.timeout";
+
+    // Sloan Web Service entries
+    public static String SLOAN_WS_EPR = "sloanws.epr";
+    public static String SLOAN_WS_CREATEVM = "sloanws.createvm";
+    public static String SLOAN_WS_LISTVMIMAGES = "sloanws.listimages";
+    public static String SLOAN_WS_SHOWVM = "sloanws.showvm";
+    public static String SLOAN_WS_DELETEVM = "sloanws.deletevm";
+    public static String SLOAN_WS_STARTVM = "sloanws.startvm";
+    public static String SLOAN_WS_STOPVM = "sloanws.stopvm";
+    public static String SLOAN_WS_SWITCHVM = "sloanws.switchvm";
+
+
 }
