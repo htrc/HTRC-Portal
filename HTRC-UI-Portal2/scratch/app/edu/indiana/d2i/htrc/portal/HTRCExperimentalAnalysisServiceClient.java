@@ -152,8 +152,8 @@ public class HTRCExperimentalAnalysisServiceClient {
                     vmStatus.setMemory((Long) infoObject.get("memSize"));
                     vmStatus.setVolumeSize((Long) infoObject.get("volumeSize"));
                     vmStatus.setImageName((String) infoObject.get("imageName"));
-                    vmStatus.setVmIntialLogingId("vmInitialLoginId");
-                    vmStatus.setVmInitialLogingPassword("vmInitialLoginPassword");
+                    vmStatus.setVmIntialLogingId((String) infoObject.get("vmInitialLoginId"));
+                    vmStatus.setVmInitialLogingPassword((String) infoObject.get("vmInitialLoginPassword"));
                     vmList.add(vmStatus);
                 }
             } catch (ParseException e) {
@@ -202,8 +202,8 @@ public class HTRCExperimentalAnalysisServiceClient {
                     vmStatus.setMemory((Long) infoObject.get("memSize"));
                     vmStatus.setVolumeSize((Long) infoObject.get("volumeSize"));
                     vmStatus.setImageName((String) infoObject.get("imageName"));
-                    vmStatus.setVmIntialLogingId("vmInitialLoginId");
-                    vmStatus.setVmInitialLogingPassword("vmInitialLoginPassword");
+                    vmStatus.setVmIntialLogingId((String) infoObject.get("vmInitialLoginId"));
+                    vmStatus.setVmInitialLogingPassword((String) infoObject.get("vmInitialLoginPassword"));
                     }
 
             } catch (ParseException e) {
