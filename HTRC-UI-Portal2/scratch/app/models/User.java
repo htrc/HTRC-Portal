@@ -35,6 +35,7 @@ import javax.persistence.Id;
 public class User extends Model {
 
     @Id
+    public Long id;
     public String userId;
     public String email;
     public String password;

@@ -33,7 +33,7 @@ public class Workset extends Model {
     public static Integer ROWS_PER_PAGE = PlayConfWrapper.worksetsPerPage();
 
     @Id
-    public String id;
+    public Long id;
 
     public String name;
 

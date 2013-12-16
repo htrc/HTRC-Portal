@@ -26,6 +26,7 @@ import java.util.List;
 @Entity
 public class VirtualMachine extends Model {
     @Id
+    public Long id;
     public String vmId;
     public String vmStatus;
     public String mode;
