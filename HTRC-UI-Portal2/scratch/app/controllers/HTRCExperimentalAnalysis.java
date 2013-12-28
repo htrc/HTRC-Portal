@@ -49,15 +49,15 @@ public class HTRCExperimentalAnalysis extends Controller {
     public static Result createVMForm(){
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        List<VMImageDetails> vmDetailsList = new ArrayList<VMImageDetails>();
+        List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
         try {
-            vmDetailsList = serviceClient.listVMImages(loggedInUser);
+            vmImageDetailsList = serviceClient.listVMImages(loggedInUser);
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return ok(vmcreate.render(loggedInUser, Form.form(CreateVM.class),vmDetailsList));
+        return ok(vmcreate.render(loggedInUser, Form.form(CreateVM.class),vmImageDetailsList));
     }
 
     @Security.Authenticated(Secured.class)
