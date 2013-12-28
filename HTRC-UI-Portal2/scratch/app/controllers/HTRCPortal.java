@@ -3,14 +3,12 @@ package controllers;
 import com.avaje.ebean.PagingList;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
-import edu.indiana.d2i.htrc.portal.HTRCAgentClient;
-import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
-import edu.indiana.d2i.htrc.portal.PortalConstants;
+import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
+import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Algorithm;
 import models.User;
 import models.Workset;
@@ -220,6 +218,21 @@ public class HTRCPortal extends Controller {
 
     }
 
+    @Security.Authenticated(Secured.class)
+    public static Result createSignUpForm(){
+        User loggedInUser = User.findByUserID(request().username());
+        return ok(signup.render(loggedInUser, Form.form(SignUp.class)));
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result signUp(){
+        Form<SignUp> signUpForm = Form.form(SignUp.class).bindFromRequest();
+        if(signUpForm.hasErrors()){
+            return badRequest();
+        }
+        return redirect(routes.HTRCPortal.login());
+    }
+
 
 
     public static void updateWorksets(String accessToken, String userName, String registryUrl, Boolean isPublicWorkset) throws IOException, JAXBException {
@@ -417,6 +430,52 @@ public class HTRCPortal extends Controller {
             return null;
         }
     }
+    
+    public static class SignUp {
+        public String userId;
+        public String password;
+        public String confirmPassword;
+        public String firstName;
+        public String lastName;
+        public String email;
+        private final String[] permissions = {"/permission/admin/login"};
+        private String status = null;
+
+        public String validate(){
+            if(!password.equals(confirmPassword)) {
+                return "Passwords doesn't match.";
+            } else{
+                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/givenname", firstName));
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/lastname", lastName));
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/emailaddress", email));
+                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+                try {
+                    userManager.createUser(userId,password,claims,permissions);
+                    setStatus("Successed");
+
+                } catch (UserAlreadyExistsException e) {
+                    log.warn(e.getMessage());
+                    setStatus("Failed");
+                }catch (Exception e) {
+                    log.error("Unable to sign up user.", e);
+                }
+
+            }
+            return null;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+    }
 
     public static class SubmitJob {
         public String jobName;
@@ -436,13 +495,6 @@ public class HTRCPortal extends Controller {
         public String paramValue;
     }
 
-    public static class CreateVM{
-        public String vmName;
-        public String userName;
-        public String userPassword;
-        public int numberOfVCPUs;
-        public int memory;
-
-    }
+    
 
 }

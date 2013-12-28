@@ -1,0 +1,59 @@
+@(user: User, form: Form[HTRCPortal.SignUp])
+
+
+@main("SignUp", user) {
+    <legend>User Registration (ALL fields are required)</legend>
+    @helper.form(routes.HTRCPortal.createSignUpForm(), 'class -> "form-horizontal") {
+        @if(form.hasGlobalErrors) {
+            <p class="error">
+                @form.globalError.message
+            </p>
+        }
+        @if(flash.contains("success")) {
+            <p class="success">
+                @flash.get("success")
+            </p>
+        }
+        <div class="control-group">
+            <label for="userId" class="control-label">User ID:</label>
+            <div class="controls">
+                <input type="text" id="userId" name="userId" placeholder="User ID">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="password" class="control-label">Password :</label>
+            <div class="controls">
+                <input type="password" id="password" name="password" placeholder="Password"> Password should be at least 6 characters
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="confirmPassword" class="control-label">Confirm Password :</label>
+            <div class="controls">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="firstName" class="control-label">First Name :</label>
+            <div class="controls">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="lastName" class="control-label">Last Name :</label>
+            <div class="controls">
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="email" class="control-label">Last Name :</label>
+            <div class="controls">
+                <input type="email" id="email" name="email">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-default">Register</button>
+            </div>
+        </div>
+    }
+}

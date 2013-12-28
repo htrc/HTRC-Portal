@@ -12,6 +12,9 @@ GET    /login                                              controllers.HTRCPorta
 
 GET     /logout                                            controllers.HTRCPortal.logout()
 
+# Signup Form
+GET    /signup                                              controllers.HTRCPortal.createSignUpForm()
+
 # About Form
 
 GET    /about                                               controllers.HTRCPortal.about()

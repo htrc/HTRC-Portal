@@ -110,4 +110,14 @@ public class  PortalConstants {
     public static String SLOAN_WS_SWITCHVM = "sloanws.switchvm";
 
 
+    // User Manager Constants
+    public static final String UR_CONFIG_HTRC_USER_HOME = "user.home";
+    public static final String UR_CONFIG_HTRC_USER_FILES = "user.files";
+    public static final String UR_CONFIG_HTRC_USER_WORKSETS = "user.worksets";
+    public static final String UR_CONFIG_HTRC_USER_JOBS = "user.jobs";
+
+    public static final String UR_CONFIG_WSO2IS_URL = "ur.config.wso2is.url";
+    public static final String UR_CONFIG_WSO2GREG_URL = "ur.config.wso2greg.url";
+
+
 }
