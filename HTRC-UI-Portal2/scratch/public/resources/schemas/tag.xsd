@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://registry.htrc.i3.illinois.edu/entities/workset"
+    xmlns:tns="http://registry.htrc.i3.illinois.edu/entities/workset"
+    elementFormDefault="qualified">
+
+    <complexType name="Tags">
+        <sequence>
+            <element name="tag" type="string" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <element name="tags" type="tns:Tags" />
+
+</schema>

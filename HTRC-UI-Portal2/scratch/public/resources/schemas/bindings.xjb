@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb" version="2.1"
+    xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	extensionBindingPrefixes="xjc"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+
+	<bindings>
+		<globalBindings fixedAttributeAsConstantProperty="true" >
+			<xjc:simple />
+			<javaType name="java.util.Calendar" xmlType="xs:dateTime"
+				parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime"
+				printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
+			<javaType name="java.util.Calendar" xmlType="xs:date"
+				parseMethod="javax.xml.bind.DatatypeConverter.parseDate"
+				printMethod="javax.xml.bind.DatatypeConverter.printDate" />
+		</globalBindings>
+	</bindings>
+
+</bindings>
