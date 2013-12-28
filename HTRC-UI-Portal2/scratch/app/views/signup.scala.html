@@ -1,9 +1,9 @@
-@(user: User, form: Form[HTRCPortal.SignUp])
+@(form: Form[HTRCPortal.SignUp], user: User)
 
 
 @main("SignUp", user) {
     <legend>User Registration (ALL fields are required)</legend>
-    @helper.form(routes.HTRCPortal.createSignUpForm(), 'class -> "form-horizontal") {
+    @helper.form(routes.HTRCPortal.signUp(), 'class -> "form-horizontal") {
         @if(form.hasGlobalErrors) {
             <p class="error">
                 @form.globalError.message

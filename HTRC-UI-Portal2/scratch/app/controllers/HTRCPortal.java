@@ -3,12 +3,14 @@ package controllers;
 import com.avaje.ebean.PagingList;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
-import edu.indiana.d2i.htrc.portal.*;
+import edu.indiana.d2i.htrc.portal.HTRCAgentClient;
+import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
-import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Algorithm;
 import models.User;
 import models.Workset;
@@ -35,7 +37,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import static play.data.Form.form;
 
@@ -109,10 +114,8 @@ public class HTRCPortal extends Controller {
         List<Volume> volumeList = new ArrayList<Volume>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
-            System.out.println(worksetName + " : " + volumeList.size());
         }
         List<VolumeDetailsBean> volumeDetailsList = new ArrayList<VolumeDetailsBean>();
-        System.out.println(volumeList.size());
         for (int i = 0; i <= volumeList.size() - 1; i++) {
             volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
         }
@@ -123,9 +126,10 @@ public class HTRCPortal extends Controller {
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(request().username());
         updateAlgorithms(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
-        List<Algorithm> algorithms = Algorithm.algorithmPagingList().getPage(page -1).getList();
+        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
+        List<Algorithm> algorithms = algorithmsPL.getPage(page -1).getList();
 
-        return ok(views.html.algorithms.render(loggedInUser, algorithms, Algorithm.all().size()));
+        return ok(views.html.algorithms.render(loggedInUser, algorithms, Algorithm.all().size(), page, algorithmsPL.getTotalPageCount()));
     }
 
     @Security.Authenticated(Secured.class)
@@ -138,7 +142,7 @@ public class HTRCPortal extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result submitAlgorithm(){
+    public static Result submitAlgorithm() throws Exception {
         User loggedInUser = User.findByUserID(request().username());
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
@@ -148,13 +152,11 @@ public class HTRCPortal extends Controller {
         AlgorithmDetailsBean algorithmDetails = null;
         try {
             algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, requestData.get("algorithmName"));
-        } catch (JAXBException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            Logger.error("Error occurred during algorithm details request.", e);
+            throw e;
         }
+
         List<AlgorithmDetailsBean.Parameter> parameters = null;
         if (algorithmDetails != null) {
             parameters = algorithmDetails.getParameters();
@@ -175,7 +177,6 @@ public class HTRCPortal extends Controller {
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
         JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean);
         if(jobDetailsBean == null){
-            System.out.println(jobSubmitBean.getJobName() + jobSubmitBean.getUserName());
             log.error(String.format("Unable to submit job %s for user %s to agent",
                     jobSubmitBean.getJobName(), jobSubmitBean.getUserName()));
         }else{
@@ -218,18 +219,16 @@ public class HTRCPortal extends Controller {
 
     }
 
-    @Security.Authenticated(Secured.class)
     public static Result createSignUpForm(){
-        User loggedInUser = User.findByUserID(request().username());
-        return ok(signup.render(loggedInUser, Form.form(SignUp.class)));
+        return ok(signup.render(Form.form(SignUp.class), null));
     }
 
-    @Security.Authenticated(Secured.class)
     public static Result signUp(){
         Form<SignUp> signUpForm = Form.form(SignUp.class).bindFromRequest();
         if(signUpForm.hasErrors()){
             return badRequest();
         }
+        log.info(signUpForm.toString());
         return redirect(routes.HTRCPortal.login());
     }
 
@@ -248,7 +247,6 @@ public class HTRCPortal extends Controller {
             List<Volume> volumeList = new ArrayList<Volume>();
             if (!metadata.getName().contains(" ")) {
                 volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
-//                System.out.println(metadata.getName() + " : " + volumeList.size());
             }
 
             Calendar calendar = metadata.getLastModified().toGregorianCalendar();
@@ -444,27 +442,28 @@ public class HTRCPortal extends Controller {
         public String validate(){
             if(!password.equals(confirmPassword)) {
                 return "Passwords doesn't match.";
-            } else{
-                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
-                        "http://wso2.org/claims/givenname", firstName));
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
-                        "http://wso2.org/claims/lastname", lastName));
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
-                        "http://wso2.org/claims/emailaddress", email));
-                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-                try {
-                    userManager.createUser(userId,password,claims,permissions);
-                    setStatus("Successed");
-
-                } catch (UserAlreadyExistsException e) {
-                    log.warn(e.getMessage());
-                    setStatus("Failed");
-                }catch (Exception e) {
-                    log.error("Unable to sign up user.", e);
-                }
-
             }
+//            } else{
+//                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
+//                claims.add(new AbstractMap.SimpleEntry<String, String>(
+//                        "http://wso2.org/claims/givenname", firstName));
+//                claims.add(new AbstractMap.SimpleEntry<String, String>(
+//                        "http://wso2.org/claims/lastname", lastName));
+//                claims.add(new AbstractMap.SimpleEntry<String, String>(
+//                        "http://wso2.org/claims/emailaddress", email));
+//                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+//                try {
+//                    userManager.createUser(userId,password,claims,permissions);
+//                    setStatus("Successed");
+//
+//                } catch (UserAlreadyExistsException e) {
+//                    log.warn(e.getMessage());
+//                    setStatus("Failed");
+//                }catch (Exception e) {
+//                    log.error("Unable to sign up user.", e);
+//                }
+//
+//            }
             return null;
         }
 

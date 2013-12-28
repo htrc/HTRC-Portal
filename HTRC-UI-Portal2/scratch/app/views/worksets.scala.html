@@ -5,6 +5,12 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
 
 @main("Worksets", user) {
     <h2 style="border-bottom: 1px solid #ccc; margin: 25px 0;"> My Worksets (@ownedWorksets) </h2>
+    <style>
+            .tooltip-inner {background-color: #D18913; color: #fff; max-width: 350px;}
+
+            .tooltip.top .tooltip-arrow {border-top-color: #D18913;}
+
+    </style>
     <div class="row-fluid">
         <ul class="thumbnails">
             @for((w, idx) <- owned.zipWithIndex) {
@@ -12,7 +18,7 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
                     <li class="span4">
                         <div class="thumbnail" style="padding: 0px;">
                             <div class="caption" style="padding: 0px;">
-                                <h3 style="padding: 5px; background-color: #ccc">@Utils.shortenWorksetName(w.name)
+                                <h3 class="tooltiped" data-toggle="tooltip" data-placement="top" title="" data-original-title="@w.name" style="padding: 5px; background-color: #ccc">@Utils.shortenTitle(w.name)
                                     <span class="pull-right">
                                         @if(w.shared.==(true)) {
                                             <i class="icon-globe"></i>
@@ -57,7 +63,7 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
                 <li class="span4">
                     <div class="thumbnail" style="padding: 0px;">
                         <div class="caption" style="padding: 0px;">
-                            <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                            <h3 class="tooltiped" data-toggle="tooltip" data-placement="top" title="" data-original-title="@w.name" style="padding: 5px; background-color: #ccc"> @Utils.shortenTitle(w.name)
                                 <span class="pull-right">
                                 @if(w.shared.==(true)) {
                                     <i class="icon-globe"></i>
@@ -108,7 +114,7 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
                     <li class="span4">
                         <div class="thumbnail" style="padding: 0px;">
                             <div class="caption" style="padding: 0px;">
-                                <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                                <h3 class="tooltiped" data-toggle="tooltip" data-placement="top" title="" data-original-title="@w.name" style="padding: 5px; background-color: #ccc"> @Utils.shortenTitle(w.name)
                                 <span class="pull-right">
                                     @if(w.shared.==(true)) {
                                         <i class="icon-globe"></i>
@@ -158,7 +164,7 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
                     <li class="span4">
                         <div class="thumbnail" style="padding: 0px;">
                             <div class="caption" style="padding: 0px;">
-                                <h3 style="padding: 5px; background-color: #ccc"> @Utils.shortenWorksetName(w.name)
+                                <h3 class="tooltiped" data-toggle="tooltip" data-placement="top" title="" data-original-title="@w.name" style="padding: 5px; background-color: #ccc"> @Utils.shortenTitle(w.name)
                                     <span class="pull-right">
                                         @if(w.shared.==(true)) {
                                             <i class="icon-globe"></i>
@@ -205,6 +211,10 @@ ownPages: Int, sharedWorksets: Int, ownedWorksets: Int)
     <div class="row-fluid">
         @paginateshared(sharedPage, sharedPages, ownedPage)
     </div>
+
+    <script type="text/javascript">
+            $(".tooltiped").tooltip();
+    </script>
 }
 
 
