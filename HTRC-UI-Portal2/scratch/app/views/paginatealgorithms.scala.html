@@ -1,0 +1,56 @@
+@(algorithmPage:Int, totalAlgorithmPages:Int, bound:Int = 3)
+
+@lowbound() = @{
+    if (algorithmPage == 1){
+        1
+    } else {
+        algorithmPage - 1
+    }
+}
+
+@highbound() = @{
+    if (algorithmPage == totalAlgorithmPages){
+        totalAlgorithmPages
+    } else {
+        algorithmPage + 1
+    }
+}
+
+
+<div class="pagination pull-right">
+    <ul>
+        @if(algorithmPage == 1){
+            <li class="disabled"><a href="#">&laquo; Previous</a></li>
+        } else {
+            <li><a href="@routes.HTRCPortal.listAlgorithms(algorithmPage - 1)">&laquo; Previous</a></li>
+
+        }
+
+        @if(algorithmPage >= bound) {
+            <li><a href="@routes.HTRCPortal.listAlgorithms(1)">1</a></li>
+            <li class="disabled"><a href="#">..</a></li>
+        }
+
+        @for(i <- lowbound().max(1) until algorithmPage) {
+            <li><a href="@routes.HTRCPortal.listAlgorithms(i)">@i</a></li>
+        }
+
+        <li class="active"><a href="#">@algorithmPage</a></li>
+
+        @for(i <- algorithmPage + 1 to highbound()) {
+            <li><a href="@routes.HTRCPortal.listAlgorithms(i)">@i</a></li>
+        }
+
+        @if(highbound() < totalAlgorithmPages) {
+            <li class="disabled"><a href="#">..</a></li>
+            <li><a href="@routes.HTRCPortal.listAlgorithms(totalAlgorithmPages)">@totalAlgorithmPages</a></li>
+        }
+
+        @if(algorithmPage < highbound()) {
+            <li><a href="@routes.HTRCPortal.listAlgorithms(algorithmPage + 1)">Next &raquo;</a></li>
+        } else {
+            <li class="disabled"><a href="#">Next &raquo;</a></li>
+
+        }
+    </ul>
+</div>

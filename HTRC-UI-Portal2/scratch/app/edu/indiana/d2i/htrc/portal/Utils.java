@@ -18,7 +18,7 @@
 package edu.indiana.d2i.htrc.portal;
 
 public class Utils {
-    public static String shortenWorksetName(String worksetName){
+    public static String shortenTitle(String worksetName){
         if (worksetName.length() > 25){
             return worksetName.substring(0, 25) + "...";
         }

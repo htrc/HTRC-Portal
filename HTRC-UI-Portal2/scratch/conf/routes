@@ -13,17 +13,19 @@ GET    /login                                              controllers.HTRCPorta
 GET     /logout                                            controllers.HTRCPortal.logout()
 
 # Signup Form
-GET    /signup                                              controllers.HTRCPortal.createSignUpForm()
+GET    /signup                                             controllers.HTRCPortal.createSignUpForm()
+
+POST   /signupUser                                         controllers.HTRCPortal.signUp()
 
 # About Form
 
-GET    /about                                               controllers.HTRCPortal.about()
+GET    /about                                              controllers.HTRCPortal.about()
 
 # Workset List Form
-GET   /listworksets                                         controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
+GET   /listworksets                                        controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
 
 # View Workset
-GET   /viewworkset                                          controllers.HTRCPortal.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
+GET   /viewworkset                                         controllers.HTRCPortal.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
 
 # Algorithm List Form
 GET   /listalgorithms                                       controllers.HTRCPortal.listAlgorithms(page:Int ?= 1)
