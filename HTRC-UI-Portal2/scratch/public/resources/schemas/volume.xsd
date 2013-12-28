@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://registry.htrc.i3.illinois.edu/entities/workset"
+    xmlns:tns="http://registry.htrc.i3.illinois.edu/entities/workset"
+    elementFormDefault="qualified">
+
+    <complexType name="Property">
+		<attribute name="name" type="string" />
+		<attribute name="value" type="string" />
+    </complexType>
+
+    <complexType name="Properties">
+        <sequence>
+            <element name="property" type="tns:Property" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Volume">
+        <sequence>
+            <element name="id" type="string" />
+            <element name="properties" type="tns:Properties" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Volumes">
+        <sequence>
+            <element name="volume" type="tns:Volume" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <element name="volumes" type="tns:Volumes" />
+
+</schema>

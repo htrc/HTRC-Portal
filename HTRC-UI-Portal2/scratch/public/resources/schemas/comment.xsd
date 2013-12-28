@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://registry.htrc.i3.illinois.edu/entities/workset"
+    xmlns:tns="http://registry.htrc.i3.illinois.edu/entities/workset"
+    elementFormDefault="qualified">
+
+    <complexType name="Comment">
+        <sequence>
+            <element name="author" type="string" />
+            <element name="text" type="string" />
+            <element name="created" type="dateTime" minOccurs="0" />
+            <element name="lastModified" type="dateTime" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Comments">
+        <sequence>
+            <element name="comment" type="tns:Comment" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <element name="comments" type="tns:Comments" />
+
+</schema>

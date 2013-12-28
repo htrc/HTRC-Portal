@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://registry.htrc.i3.illinois.edu/entities/file"
+    xmlns:tns="http://registry.htrc.i3.illinois.edu/entities/file"
+    elementFormDefault="qualified">
+
+    <complexType name="Entry">
+        <sequence>
+            <element name="url" type="string" />
+            <element name="name" type="string" />
+            <element name="parentPath" type="string" minOccurs="0" />
+            <element name="contentType" type="string" />
+            <element name="author" type="string" />
+            <element name="description" type="string" minOccurs="0" />
+            <element name="createdTime" type="dateTime" />
+            <element name="lastModified" type="dateTime" />
+            <element name="entries" type="tns:Entries" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Entries">
+        <sequence>
+            <element ref="tns:entry" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <element name="entry" type="tns:Entry" />
+
+</schema>
