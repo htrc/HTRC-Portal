@@ -246,13 +246,13 @@ public class HTRCPortal extends Controller {
         return redirect(routes.HTRCPortal.login());
     }
 
-//    public static Result createPasswordResetForm(){
-//        return ok(passwordreset.render(passwordreset.render(Form.form(PasswordReset.class),null)))
-//    }
+    public static Result createPasswordResetForm(){
+        return TODO;
+    }
 
-//    public static Result passwordReset(){
-//
-//    }
+    public static Result passwordReset(){
+        return TODO;
+    }
 
 
 
@@ -463,7 +463,7 @@ public class HTRCPortal extends Controller {
 
         public String validate(){
             if(!password.equals(confirmPassword)) {
-                return "Passwords doesn't match.";
+                return "Passwords do not match.";
 
             } else{
                 List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
@@ -570,7 +570,7 @@ public class HTRCPortal extends Controller {
 
         public String validate(){
             if(!newPassword.equals(confirmPassword)) {
-                return "Passwords doesn't match.";
+                return "Passwords do not match.";
 
             } else{
                 HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
