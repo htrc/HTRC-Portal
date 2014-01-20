@@ -77,10 +77,6 @@ public class User extends Model {
     }
 
     public static User authenticate(String userId, String password) {
-
-
-
-
         try {
             OAuthClientRequest accessTokenRequest = OAuthClientRequest
                     .tokenLocation(Play.application().configuration().getString("oauth2.token.endpoint"))

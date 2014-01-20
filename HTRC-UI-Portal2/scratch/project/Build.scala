@@ -16,6 +16,7 @@ object ApplicationBuild extends Build {
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
     "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v2",
     "com.googlecode.json-simple" % "json-simple" % "1.1",
+      "mysql" % "mysql-connector-java" % "5.1.27",
     "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.0.3",
     "edu.illinois.i3.htrc" % "UserManager" % "0.3.1"
       exclude("org.apache.tomcat.ha.wso2","tomcat-ha")
