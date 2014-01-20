@@ -11,11 +11,20 @@ body {
     line-height: 32px;
 }
 
+.navbar .brand {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .navbar .nav > li {
-    line-height: 32px;
+    line-height: 25px;
 }
 
 .navbar-inverse .nav li.dropdown>.dropdown-toggle .caret {
+    margin-top: 14px;
+}
+
+.nav li.dropdown>.dropdown-toggle .caret {
     margin-top: 14px;
 }
 

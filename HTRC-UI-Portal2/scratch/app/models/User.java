@@ -30,6 +30,8 @@ import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User extends Model {
@@ -38,15 +40,13 @@ public class User extends Model {
     public Long id;
     public String userId;
     public String email;
-    public String password;
     public String accessToken;
 
     private static Logger.ALogger log = play.Logger.of("application");
 
-    public User(String userId, String email, String password, String accessToken) {
+    public User(String userId, String email, String accessToken) {
         this.userId = userId;
         this.email = email;
-        this.password = password;
         this.accessToken = accessToken;
     }
 
@@ -56,6 +56,21 @@ public class User extends Model {
 
     public static User findByUserID(String userId){
         return find.where().eq("userId", userId).findUnique();
+    }
+
+    /**
+     * find users from user's email.
+     * @param email
+     * @return list of user Ids with the given email
+     */
+    public static List<String> findByEmail(String email){
+        List<String> userIdList = new ArrayList<String>();
+        for(User user: find.all()){
+            if(user.email.equals(email)){
+                userIdList.add(user.userId);
+            }
+        }
+        return userIdList;
     }
 
     public static User authenticate(String userId, String password) {
@@ -89,7 +104,7 @@ public class User extends Model {
                 OAuth2Client userInfoClient = new OAuth2Client(new URLConnectionClient());
                 OAuthClientResponse userInfoResponse = userInfoClient.userInfo(userInfoRequest);
                 String email = userInfoResponse.getParam("user_email");
-                User nu = new User(userId,email,password,accessToken);
+                User nu = new User(userId,email,accessToken);
                 nu.save();
                 return nu;
 

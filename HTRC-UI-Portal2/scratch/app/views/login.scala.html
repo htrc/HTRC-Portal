@@ -39,15 +39,17 @@
                     }
                     <div>
                         <div>
-                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="text" name="userId" id="userId" placeholder="User ID...">
+                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="text" name="userId" id="userId" autofocus="true" placeholder="User ID...">
                         </div>
                         <div>
                             <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="password" name="password" id="password" placeholder="Password...">
                         </div>
                         <div>
                             <input name="signin" id="signin" type="submit" class="btn btn-primary" value="Sign In" />
-                            <input name="signup" id="signup" type="button" class="btn btn-info" value="Sign Up" />
-                            <a href="#" class="pull-right" style="font-size: 16px; line-height: 26px;">Forgot Password?</a>
+                            <div class="pull-right" style="margin-top: 2px;">
+                                <a href="@routes.HTRCPortal.createPasswordResetForm()" style="font-size: 14px; line-height: 26px;">Forgot Password?</a> &nbsp;
+                                <a href="@routes.HTRCPortal.createSignUpForm()"  style="font-size: 14px; line-height: 26px;">Sign Up</a>
+                            </div>
                         </div>
                     </div>
                 }

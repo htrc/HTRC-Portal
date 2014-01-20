@@ -3,15 +3,14 @@ package controllers;
 import com.avaje.ebean.PagingList;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
-import edu.indiana.d2i.htrc.portal.HTRCAgentClient;
-import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
-import edu.indiana.d2i.htrc.portal.PortalConstants;
+import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
+import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Algorithm;
+import models.Token;
 import models.User;
 import models.Workset;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
@@ -23,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceUserStoreException;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -31,16 +31,17 @@ import play.mvc.Result;
 import play.mvc.Security;
 import views.html.*;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static play.data.Form.form;
 
@@ -231,6 +232,27 @@ public class HTRCPortal extends Controller {
         log.info(signUpForm.toString());
         return redirect(routes.HTRCPortal.login());
     }
+
+    public static Result createPasswordResetMailForm(){
+        return ok(passwordresetmail.render(Form.form(PasswordResetMail.class),null));
+    }
+
+    public static Result passwordResetMail(){
+        Form<PasswordResetMail> passwordResetForm= Form.form(PasswordResetMail.class).bindFromRequest();
+        if(passwordResetForm.hasErrors()){
+            return badRequest();
+        }
+        log.info(passwordResetForm.toString());
+        return redirect(routes.HTRCPortal.login());
+    }
+
+//    public static Result createPasswordResetForm(){
+//        return ok(passwordreset.render(passwordreset.render(Form.form(PasswordReset.class),null)))
+//    }
+
+//    public static Result passwordReset(){
+//
+//    }
 
 
 
@@ -442,28 +464,28 @@ public class HTRCPortal extends Controller {
         public String validate(){
             if(!password.equals(confirmPassword)) {
                 return "Passwords doesn't match.";
+
+            } else{
+                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/givenname", firstName));
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/lastname", lastName));
+                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                        "http://wso2.org/claims/emailaddress", email));
+                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+                try {
+                    userManager.createUser(userId,password,claims,permissions);
+                    setStatus("Successed");
+
+                } catch (UserAlreadyExistsException e) {
+                    log.warn(e.getMessage());
+                    setStatus("Failed");
+                }catch (Exception e) {
+                    log.error("Unable to sign up user.", e);
+                }
+
             }
-//            } else{
-//                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
-//                claims.add(new AbstractMap.SimpleEntry<String, String>(
-//                        "http://wso2.org/claims/givenname", firstName));
-//                claims.add(new AbstractMap.SimpleEntry<String, String>(
-//                        "http://wso2.org/claims/lastname", lastName));
-//                claims.add(new AbstractMap.SimpleEntry<String, String>(
-//                        "http://wso2.org/claims/emailaddress", email));
-//                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-//                try {
-//                    userManager.createUser(userId,password,claims,permissions);
-//                    setStatus("Successed");
-//
-//                } catch (UserAlreadyExistsException e) {
-//                    log.warn(e.getMessage());
-//                    setStatus("Failed");
-//                }catch (Exception e) {
-//                    log.error("Unable to sign up user.", e);
-//                }
-//
-//            }
             return null;
         }
 
@@ -475,6 +497,93 @@ public class HTRCPortal extends Controller {
             this.status = status;
         }
     }
+
+    public static class PasswordResetMail {
+        public String userId;
+        public String userEmail;
+
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+
+        public String validate(){
+            if(!userManager.isUserExists(userId)){
+                return "User Name Does Not Exist";
+            }
+            try {
+                userEmail = userManager.getEmail(userId);
+                Properties props = new Properties();
+
+                props.put("mail.smtp.host", "smtp.gmail.com");
+                props.put("mail.smtp.socketFactory.port", "465");
+                props.put("mail.smtp.socketFactory.class",
+                        "javax.net.ssl.SSLSocketFactory");
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.port", "465");
+
+                Session session = Session.getDefaultInstance(props,
+                        new javax.mail.Authenticator() {
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication("htrc.portal","anep0rtal");
+                            }
+                        });
+
+                try {
+
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress("htrc.portal@gmail.com"));
+                    message.setRecipients(Message.RecipientType.TO,
+                            InternetAddress.parse(userEmail));
+                    message.setSubject("Password Reset for HTRC Portal");
+                    String passwordResetToken = TokenManager.generateToken(userId, userEmail) ;
+                    Token token = new Token(User.findByUserID(userId),passwordResetToken,new Date().getTime());
+                    token.save();
+                    String url = PlayConfWrapper.passwordResetLinkUrl()+"?"+"token="+token;
+
+                    // Now set the actual message
+                    message.setText("Please click on following url to reset your password. \n" +
+                            url);
+
+                    Transport.send(message);
+
+                    log.info("Sent message successfully....");
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            } catch (OAuthAdminServiceUserStoreException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+
+            return null;
+        }
+
+
+    }
+
+    public static class PasswordReset{
+        public String userId;
+        public String newPassword;
+        public String confirmPassword;
+
+        public String validate(){
+            if(!newPassword.equals(confirmPassword)) {
+                return "Passwords doesn't match.";
+
+            } else{
+                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+//                userId =
+//                userManager.changePassword();
+
+            }
+
+           return null;
+        }
+    }
+
+
 
     public static class SubmitJob {
         public String jobName;
@@ -494,6 +603,6 @@ public class HTRCPortal extends Controller {
         public String paramValue;
     }
 
-    
+
 
 }

@@ -26,22 +26,28 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
+import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceStub;
+import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceUserStoreException;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.extensions.stub.ResourceAdminServiceStub;
 import org.wso2.carbon.registry.ws.client.registry.WSRegistryServiceClient;
+import org.wso2.carbon.user.mgt.stub.ChangePasswordUserAdminExceptionException;
 import org.wso2.carbon.user.mgt.stub.UserAdminStub;
 import org.wso2.carbon.user.mgt.stub.types.carbon.ClaimValue;
 import org.wso2.carbon.user.mgt.stub.types.carbon.UserStoreInfo;
 import org.wso2.carbon.utils.NetworkUtils;
 import play.Logger;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.regex.Pattern;
+
 
 public class HTRCUserManagerUtility {
     private static Logger.ALogger log = play.Logger.of("application");
     private Properties configProperties;
     private UserAdminStub userAdmin;
+    private OAuthAdminServiceStub oAuthAdminServiceStub;
     private UserStoreInfo userStoreInfo;
     private WSRegistryServiceClient registry;
     private ResourceAdminServiceStub resourceAdmin;
@@ -92,6 +98,7 @@ public class HTRCUserManagerUtility {
         if (!gregURL.endsWith("/")) gregURL += "/";
 
         String userAdminEPR = isURL + "UserAdmin";
+        String oauthAdminEPR = isURL + "OAuthAdminService";
         String resourceAdminEPR = gregURL + "ResourceAdminService";
 
         try {
@@ -117,6 +124,13 @@ public class HTRCUserManagerUtility {
 
             userNameRegExp = Pattern.compile(userStoreInfo.getUserNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
             roleNameRegExp = Pattern.compile(userStoreInfo.getRoleNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
+
+            oAuthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext,oauthAdminEPR);
+            Options option_1 = oAuthAdminServiceStub._getServiceClient().getOptions();
+            option_1.setManageSession(true);
+            option_1.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
+                    userName, password));
+
 
         } catch (Exception e) {
             String errMessage = "Error occurred during user registration utility intialization " +
@@ -195,7 +209,7 @@ public class HTRCUserManagerUtility {
                 throw new RuntimeException("Invalid username; Must conform to both of the following regexps: "
                         + userNameRegExp.pattern() + " and " + roleNameRegExp.pattern());
 
-            // javadoc: addUser(String userName, String password, String[] roles, ClaimValue[] claims, String profileName)
+            // javadoc: addUser(String userId, String password, String[] roles, ClaimValue[] claims, String profileName)
             userAdmin.addUser(userName, password, null, claimValues, "default");
             if (log.isDebugEnabled()) {
                 log.debug("Created user: " + userName);
@@ -257,7 +271,7 @@ public class HTRCUserManagerUtility {
     }
 
     /* Check whether the user is already exists
-    * @param userName*/
+    * @param userId*/
     public boolean isUserExists(String userName){
         try{
             String[] users = userAdmin.listUsers("*");
@@ -292,6 +306,41 @@ public class HTRCUserManagerUtility {
         return null;
 
     }
+
+    /**
+     * Change User password
+     *
+     * @param userName The User's username
+     * @param newPassword The User's new password
+     * @throws RemoteException,ChangePasswordUserAdminExceptionException
+     */
+    public void changePassword(String userName, String newPassword) throws RemoteException, ChangePasswordUserAdminExceptionException {
+        userAdmin.changePassword(userName,newPassword);
+        throw new ChangePasswordUserAdminExceptionException("Cannot change password for user: " + userName);
+    }
+
+    /**
+     * Get User's email address
+     * @param userId = User name
+     * @retun user Email
+     * @throws RemoteException,OAuthAdminServiceUserStoreException
+     */
+    public String getEmail(String userId) throws OAuthAdminServiceUserStoreException {
+        if(isUserExists(userId)){
+            try {
+                return oAuthAdminServiceStub.getUserEmail(userId);
+            } catch (RemoteException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (OAuthAdminServiceUserStoreException e) {
+                String errMessage = "Error with user store";
+                log.error(errMessage, e);
+                throw new OAuthAdminServiceUserStoreException(errMessage,e);
+            }
+        }
+        return "User doesn't exist";
+    }
+
+
 
 
 }

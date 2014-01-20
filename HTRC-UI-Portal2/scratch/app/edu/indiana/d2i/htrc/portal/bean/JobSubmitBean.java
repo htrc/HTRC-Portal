@@ -113,7 +113,7 @@ public class JobSubmitBean {
 
     @Override
     public String toString() {
-        return "JobSubmitBean [jobName=" + jobName + ", userName=" + userName
+        return "JobSubmitBean [jobName=" + jobName + ", userId=" + userName
                 + ", algorithmName=" + algorithmName + ", parameters="
                 + parameters + "]";
     }

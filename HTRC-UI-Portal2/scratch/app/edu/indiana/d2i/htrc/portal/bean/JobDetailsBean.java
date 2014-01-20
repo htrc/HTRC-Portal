@@ -190,7 +190,7 @@ public class JobDetailsBean implements Comparable<JobDetailsBean> {
         return "JobDetailBean [jobId=" + jobId + ", lastUpdatedDate="
                 + lastUpdatedDate + ", jobTitle=" + jobTitle + ", jobStatus="
                 + jobStatus + ", algorithmName=" + algorithmName
-                + ", userName=" + userName + ", message=" + message
+                + ", userId=" + userName + ", message=" + message
                 + ", jobParams=" + jobParams + ", results=" + results + "]";
     }
 

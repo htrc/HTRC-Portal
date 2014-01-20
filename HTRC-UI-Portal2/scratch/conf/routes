@@ -17,6 +17,12 @@ GET    /signup                                             controllers.HTRCPorta
 
 POST   /signupUser                                         controllers.HTRCPortal.signUp()
 
+# Password Reset Form
+GET    /passwordresetmail                                  controllers.HTRCPortal.createPasswordResetMailForm()
+
+# Send Password reset link
+POST   /passwordresetmail                                  controllers.HTRCPortal.passwordResetMail()
+
 # About Form
 
 GET    /about                                              controllers.HTRCPortal.about()
