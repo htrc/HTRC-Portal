@@ -16,6 +16,7 @@ object ApplicationBuild extends Build {
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
     "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v2",
     "com.googlecode.json-simple" % "json-simple" % "1.1",
+    "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.0.3",
     "edu.illinois.i3.htrc" % "UserManager" % "0.3.1"
       exclude("org.apache.tomcat.ha.wso2","tomcat-ha")
       exclude("org.wso2.securevault","org.wso2.securevault")
@@ -43,7 +44,8 @@ object ApplicationBuild extends Build {
 * "repository_name" at "repository path"*/
 
    val main = play.Project(appName, appVersion, appDependencies).settings(
-    resolvers += "WSO2 internal Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/",
+//    resolvers += "WSO2 internal Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/",
+     resolvers += ("Local Maven Repository" at "file://"+ Path.userHome.absolutePath + "/.m2/repository"),
     resolvers += "Internal Release Repository" at "http://htrc.illinois.edu:8080/archiva/repository/internal/",
     resolvers += "Internal Snapshot Repository" at "http://htrc.illinois.edu:8080/archiva/repository/snapshots/"
   )
