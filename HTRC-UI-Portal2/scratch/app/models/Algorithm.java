@@ -23,6 +23,8 @@ import play.Logger;
 import play.db.ebean.Model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class Algorithm extends Model {
     public static Integer ROWS_PER_PAGE = PlayConfWrapper.algorithmsPerPage();
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     public String name;
