@@ -142,7 +142,6 @@ public class HTRCPersistenceAPIClient {
         this.responseCode = response;
         if (response == 200) {
             String xmlStr = get.getResponseBodyAsString();
-//            System.out.println(xmlStr);
             Worksets worksets = (Worksets) parseXML(xmlStr);
             return worksets.getWorkset();
         } else {

@@ -194,15 +194,14 @@ public class HTRCAgentClient {
             putMethod.setRequestHeader("Content-type", "text/xml; charset=ISO-8859-1");
 
 
-            int respondecode = client.executeMethod(putMethod);
-            System.out.println(respondecode);
-            this.responseCode = respondecode;
-            if (respondecode == 200) {
+            int responsecode = client.executeMethod(putMethod);
+            this.responseCode = responsecode;
+            if (responsecode == 200) {
                 jobSubmitResponse = parseJobSubmit(putMethod.getResponseBodyAsStream());
-                System.out.println(putMethod.getResponseBodyAsString());
+                log.debug(putMethod.getResponseBodyAsString());
             }else{
-                this.responseCode = respondecode;
-                throw new IOException("Response code " + respondecode + " for " + submitJobUrl + " message: \n " + putMethod.getResponseBodyAsString());
+                this.responseCode = responsecode;
+                throw new IOException("Response code " + responsecode + " for " + submitJobUrl + " message: \n " + putMethod.getResponseBodyAsString());
             }
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -266,8 +265,7 @@ public class HTRCAgentClient {
                 int response = client.executeMethod(saveJobId);
                 this.responseCode = response;
                 if (response == 200) {
-                    System.out.println("Saved Job ID :  " + id);
-
+                    log.info("Saved Job ID :  " + id);
                 }else {
                     log.error(String.format("Unable to save job %s from agent. Response code %d",
                             response));
