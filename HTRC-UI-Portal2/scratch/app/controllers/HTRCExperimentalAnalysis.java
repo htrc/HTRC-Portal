@@ -22,6 +22,7 @@ import edu.indiana.d2i.htrc.sloan.bean.VMImageDetails;
 import edu.indiana.d2i.htrc.sloan.bean.VMStatus;
 import models.User;
 import models.VirtualMachine;
+import play.Logger;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HTRCExperimentalAnalysis extends Controller {
+    private static Logger.ALogger log = play.Logger.of("application");
+
 
     @Security.Authenticated(Secured.class)
     public static Result listVMs() throws IOException, GeneralSecurityException {
@@ -62,11 +65,24 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result createVM() throws IOException {
-//        User loggedInUser = User.find.byId(request().username());
-//        List<VirtualMachine> virtualMachinesList = VirtualMachine.all();
+        User loggedInUser = User.findByUserID(request().username());
+        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+        List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
+        try {
+            vmImageDetailsList = serviceClient.listVMImages(loggedInUser);
+        } catch (GeneralSecurityException e) {
+            log.error("Security exception while getting vm image details.", e);
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            log.error("IO exception during vm image details retrieval.", e);
+            throw new RuntimeException(e);
+        }
+
+        log.debug("Inside create vm action.");
         Form<CreateVM> createVMForm = Form.form(CreateVM.class).bindFromRequest();
         if(createVMForm.hasErrors()){
-            return badRequest();
+            log.debug("Create VM form has errors." + createVMForm.errorsAsJson());
+            return ok(vmcreate.render(loggedInUser, createVMForm, vmImageDetailsList));
         }
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
@@ -139,24 +155,36 @@ public class HTRCExperimentalAnalysis extends Controller {
         public String password;
         public String confirmPassword;
         public int numberOfVCPUs;
-        public int memory;
+        public String memory;
 
-        public String validate(){
-            if(!password.equals(confirmPassword)) {
-                return "Passwords doesn't match.";
-            } else{
+        public String validate() {
+            int mem = 0;
+            if (userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || memory.isEmpty()) {
+                return "Please fill in all fields.";
+            }
+            if (!password.equals(confirmPassword)) {
+                return "The Passwords do not match.";
+            }
+
+            try {
+                mem = Integer.parseInt(memory);
+            } catch (Exception e){
+                log.error("Error parsing memory value.", e);
+                return "Memory should be an integer between 1024 and 10240.";
+            }
+
+            if ( mem < 1024 || mem > 10240) {
+                return "Memory should be between 1024MB - 10240MB";
+            } else {
                 User loggedInUser = User.findByUserID(request().username());
                 HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
                 try {
                     String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), loggedInUser);
-                } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    return null;
+                } catch (Exception e) {
+                    log.error("Error calling createVM in data capsule API.", e);
+                    return "VM Creation failed. Internal Error occurred!!";
                 }
             }
-
-
-            // TODO: Validate for other errors like empty name, wrong vm sizes, etc.
 
             return null;
         }

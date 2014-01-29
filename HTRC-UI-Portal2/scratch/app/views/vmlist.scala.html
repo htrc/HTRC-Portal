@@ -3,6 +3,7 @@
 
 
 @main("VMList", user) {
+    <meta http-equiv="refresh" content="30">
     <legend>Virtual Machines
         <a href="@routes.HTRCExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top: 5px">
             <i class="icon-plus"></i>
@@ -29,27 +30,30 @@
                              @vm.getState
                              <img src="@routes.Assets.at("images/7.gif")">
                          } else{
-                             @if(vm.getState == "SHUTDOWN"){
-                                 <a href="@routes.HTRCExperimentalAnalysis.startVM(vm.getVmId)" class="btn btn-info btn-small" id="startvm">
-                                         Start VM
-                                 </a>
-                             }
-                             @if(vm.getState != "SHUTDOWN"){
-                                 @if(vm.getMode == "MAINTENANCE"){
-                                     <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "security")" class="btn btn-info btn-small" id="switchmode-maintainance">
-                                             Switch To Security
+                             @if(vm.getState == "ERROR"){
+                                 <span class="label label-important">@vm.getState</span>
+                             } else{
+                                 @if(vm.getState == "SHUTDOWN"){
+                                     <a href="@routes.HTRCExperimentalAnalysis.startVM(vm.getVmId)" class="btn btn-info btn-small" id="startvm">
+                                             Start VM
                                      </a>
                                  } else{
-
-                                     <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "maintenance")" class="btn btn-info btn-small" id="switchmode-security">
-                                             Switch To Maintenance
+                                     <a href="@routes.HTRCExperimentalAnalysis.stopVM(vm.getVmId)" class="btn btn-warning btn-small" id="stopvm">
+                                             Stop VM
                                      </a>
+                                     @if(vm.getMode == "MAINTENANCE"){
+                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "security")" class="btn btn-info btn-small" id="switchmode-maintainance">
+                                                 Switch To Security
+                                         </a>
+                                     } else{
+
+                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "maintenance")" class="btn btn-info btn-small" id="switchmode-security">
+                                                 Switch To Maintenance
+                                         </a>
+                                     }
+
                                  }
-                             }
-                             @if(vm.getState != "SHUTDOWN"){
-                                 <a href="@routes.HTRCExperimentalAnalysis.stopVM(vm.getVmId)" class="btn btn-warning btn-small" id="stopvm">
-                                         Stop VM
-                                 </a>
+
                              }
                              <a href="@routes.HTRCExperimentalAnalysis.deleteVM(vm.getVmId)" class="btn btn-danger btn-small" id="deletevms" onclick="">
                                  <i class="icon-trash icon-white"></i> Delete VM

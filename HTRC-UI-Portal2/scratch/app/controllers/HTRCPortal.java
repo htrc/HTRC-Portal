@@ -444,6 +444,9 @@ public class HTRCPortal extends Controller {
         public String password;
 
         public String validate() throws OAuthProblemException, OAuthSystemException {
+            if(userId.isEmpty()||password.isEmpty()){
+                return "Please fill username and password.";
+            }
             if (User.authenticate(userId, password) == null) {
                 return "Invalid user or password";
             }
@@ -570,7 +573,7 @@ public class HTRCPortal extends Controller {
 
         public String validate(){
             if(!newPassword.equals(confirmPassword)) {
-                return "Passwords do not match.";
+                return "The Passwords do not match.";
 
             } else{
                 HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();

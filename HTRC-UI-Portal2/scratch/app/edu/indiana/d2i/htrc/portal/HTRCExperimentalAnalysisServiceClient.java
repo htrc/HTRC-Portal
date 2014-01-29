@@ -30,6 +30,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import play.Logger;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -37,12 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HTRCExperimentalAnalysisServiceClient {
+    private static Logger.ALogger log = play.Logger.of("application");
 
     private HttpClient client = new HttpClient();
 
     public int responseCode;
 
-    public String createVM(String imageName, String loginuUerName, String loginPassword, String memory, String vcpu, User loggedIn) throws IOException {
+    public String createVM(String imageName, String loginUerName, String loginPassword, String memory, String vcpu, User loggedIn) throws IOException {
         String createVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.createVMUrl();
 
         PostMethod post = new PostMethod(createVMUrl);
@@ -50,7 +52,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.setParameter("imagename", imageName);
-        post.setParameter("loginusername", loginuUerName);
+        post.setParameter("loginusername", loginUerName);
         post.setParameter("loginpassword", loginPassword);
         post.setParameter("memory", memory);
         post.setParameter("vcpu", vcpu);
@@ -111,7 +113,6 @@ public class HTRCExperimentalAnalysisServiceClient {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             return vmDetailsList;
-//            System.out.println(jsonStr);
         } else {
             this.responseCode = response;
             throw new IOException("Response code " + response + " for " + listVMImageUrl + " message: \n " + getMethod.getResponseBodyAsString());
@@ -164,7 +165,6 @@ public class HTRCExperimentalAnalysisServiceClient {
             this.responseCode = response;
             throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
-        System.out.println(vmList.size());
         return vmList;
 
     }
@@ -187,7 +187,7 @@ public class HTRCExperimentalAnalysisServiceClient {
                 Object obj = parser.parse(jsonStr);
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONArray jsonArray = (JSONArray) jsonObject.get("status");
-                System.out.println(jsonArray);
+                log.info(String.valueOf(jsonArray));
 
                 for (Object aJsonArray : jsonArray) {
                     JSONObject infoObject = (JSONObject) aJsonArray;
@@ -210,7 +210,6 @@ public class HTRCExperimentalAnalysisServiceClient {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             return vmStatus;
-//            System.out.println(jsonStr);
 
         }else{
             this.responseCode = response;
@@ -231,7 +230,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            System.out.println("Deleted VM Id: ");
+            log.info("Switch to "+mode+ " mode.");
         }
     }
 
@@ -246,7 +245,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            System.out.println("Deleted VM Id: ");
+            log.info("Started VM Id: "+vmId);
         }
     }
 
@@ -261,7 +260,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            System.out.println("Deleted VM Id: ");
+            log.info("Started VM Id: "+vmId);
         }
     }
 
@@ -276,7 +275,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            System.out.println("Deleted VM Id: ");
+            log.info("Deleted VM Id: "+vmId);
         }
 
     }
