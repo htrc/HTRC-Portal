@@ -34,6 +34,9 @@ GET    /about                                              controllers.HTRCPorta
 # Workset List Form
 GET   /listworksets                                        controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
 
+# Create Workset from HTRC Workset builder
+GET  /createworkset                                        controllers.HTRCWorksetBuilder.createWorkset()
+
 # View Workset
 GET   /viewworkset                                         controllers.HTRCPortal.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
 
@@ -71,6 +74,9 @@ GET /switchvm                                               controllers.HTRCExpe
 
 # Authenticate
 POST  /login                                                controllers.HTRCPortal.authenticate()
+
+# Search
+POST  /search                                                controllers.HTRCWorksetBuilder.searchCorpus()
 
 # Map Bootstrap images
 GET    /assets/img/glyphicons-halflings.png                 controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")

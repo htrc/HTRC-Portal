@@ -71,18 +71,19 @@ public class HTRCExperimentalAnalysisServiceClient {
             } catch (ParseException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-        }else{
+        } else {
             this.responseCode = response;
+            log.error(post.getResponseBodyAsString());
             throw new IOException("Response code " + response + " for " + createVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
-         return null;
+        return null;
 
     }
 
     public List<VMImageDetails> listVMImages(User loggedIn) throws IOException, GeneralSecurityException {
         String listVMImageUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.listVMImagesUrl();
         List<VMImageDetails> vmDetailsList = new ArrayList<VMImageDetails>();
-        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
+        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
 
         GetMethod getMethod = new GetMethod(listVMImageUrl);
@@ -105,7 +106,7 @@ public class HTRCExperimentalAnalysisServiceClient {
                     String name = (String) infoObject.get("imageName");
                     String description = (String) infoObject.get("imageDescription");
                     VMImageDetails vmDetails = new VMImageDetails(name, description);
-                    if(!vmDetailsList.contains(vmDetails)){
+                    if (!vmDetailsList.contains(vmDetails)) {
                         vmDetailsList.add(vmDetails);
                     }
                 }
@@ -122,7 +123,7 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     public List<VMStatus> listVMs(User loggedIn) throws GeneralSecurityException, IOException {
         String listVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.showVMUrl();
-        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
+        Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
         List<VMStatus> vmList = new ArrayList<VMStatus>();
         PostMethod post = new PostMethod(listVMUrl);
@@ -163,6 +164,7 @@ public class HTRCExperimentalAnalysisServiceClient {
 
         } else {
             this.responseCode = response;
+            log.error(post.getResponseBodyAsString());
             throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
         return vmList;
@@ -204,15 +206,17 @@ public class HTRCExperimentalAnalysisServiceClient {
                     vmStatus.setImageName((String) infoObject.get("imageName"));
                     vmStatus.setVmIntialLogingId((String) infoObject.get("vmInitialLoginId"));
                     vmStatus.setVmInitialLogingPassword((String) infoObject.get("vmInitialLoginPassword"));
-                    }
+                }
 
             } catch (ParseException e) {
+
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             return vmStatus;
 
-        }else{
+        } else {
             this.responseCode = response;
+            log.error(post.getResponseBodyAsString());
             throw new IOException("Response code " + response + " for " + showVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
 
@@ -230,7 +234,9 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            log.info("Switch to "+mode+ " mode.");
+            log.info("Switch to " + mode + " mode.");
+        } else {
+            log.error(post.getResponseBodyAsString());
         }
     }
 
@@ -245,7 +251,9 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            log.info("Started VM Id: "+vmId);
+            log.info("Started VM Id: " + vmId);
+        } else {
+            log.error(post.getResponseBodyAsString());
         }
     }
 
@@ -260,7 +268,9 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            log.info("Started VM Id: "+vmId);
+            log.info("Stoped VM Id: " + vmId);
+        } else {
+            log.error(post.getResponseBodyAsString());
         }
     }
 
@@ -275,7 +285,9 @@ public class HTRCExperimentalAnalysisServiceClient {
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
-            log.info("Deleted VM Id: "+vmId);
+            log.info("Deleted VM Id: " + vmId);
+        } else {
+            log.error(post.getResponseBodyAsString());
         }
 
     }
