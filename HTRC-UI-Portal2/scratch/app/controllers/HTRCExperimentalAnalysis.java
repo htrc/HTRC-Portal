@@ -173,8 +173,8 @@ public class HTRCExperimentalAnalysis extends Controller {
                 return "Memory should be an integer between 1024 and 10240.";
             }
 
-            if ( mem < 1024 || mem > 10240) {
-                return "Memory should be between 1024MB - 10240MB";
+            if ( mem < 1024 || mem > 4096) {
+                return "Memory should be between 1024MB - 4096MB";
             } else {
                 User loggedInUser = User.findByUserID(request().username());
                 HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();

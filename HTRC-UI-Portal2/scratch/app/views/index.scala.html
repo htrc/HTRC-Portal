@@ -11,6 +11,7 @@
                     Welcome to the HathiTrust Research Center!
             </h3>
 
+
             @*@if(user == null){*@
                 @*<div class="row">*@
                     @*<div class="span3">*@
@@ -38,7 +39,35 @@
                 researchers. </p>
         </div>
     </div>
+    <div class="row" style="padding-top: 25px; font-size: 17px; line-height: 27px;">
+        <div class="span12">
+            <h3>Search HathiTrust Research Center Corpus</h3>
+        </div>
+    </div>
 
+    @helper.form(routes.HTRCWorksetBuilder.searchCorpus()){
+        <div class="row" style="padding-top: 25px; font-size: 17px; line-height: 27px;">
+            <div class="input-group">
+                <div class="span7">
+                    <input type="text" class="form-control" id="search-text" name="searchString" style="width: 100%">
+                </div>
+                <div class="span3">
+                    in
+                    <select id="search-context" name="context">
+                        <option value="fulltext">Full Text</option>
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                        <option value="subject">Subject</option>
+                    </select>
+                </div>
+                <div class="span2">
+                    <div class="input-group-btn">
+                        <button id="search-button"  type="submit" class="btn btn-default" style="width: 100%">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
     <div class="span12 pull-right" style="margin-top: 20px;">
         <h2 style="margin-top: 0"> What You Can Do With HTRC Portal? </h2>
@@ -46,7 +75,7 @@
     <div class="row pull-left markerting-unit">
         <div class="span3 action-unit">
             <div>
-                <h3><a href="#" style="color:#FF9933;">Create Workset </a></h3>
+                <h3><a href="#" onclick="blacklightLoggingWarning()" style="color:#FF9933;">Create Workset </a></h3>
                 <p>Create workset using our workset builder.</p>
             </div>
 
@@ -60,13 +89,13 @@
         </div>
         <div class="span3 action-unit">
             <div>
-                <h3><a href="#" style="color:#FF9933;"> Browse Workset</a> </h3>
+                <h3><a href="@routes.HTRCPortal.listWorkset()" style="color:#FF9933;"> Browse Workset</a> </h3>
                 <p>Browse through already created worksets.</p>
             </div>
         </div>
         <div class="span3 action-unit">
             <div>
-                <h3><a href="#" style="color:#FF9933;"> Execute Algorithms</a> </h3>
+                <h3><a href="@routes.HTRCPortal.listAlgorithms()" style="color:#FF9933;"> Execute Algorithms</a> </h3>
                 <p>Execute algorithms on your worksets.</p>
             </div>
         </div>

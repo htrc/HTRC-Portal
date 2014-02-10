@@ -1,4 +1,5 @@
 @(title: String, user: User)(content: Html)
+@import play.api.Play
 
 
 <!DOCTYPE html>
@@ -24,7 +25,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="brand" href="#"><img src="@routes.Assets.at("images/hathi.jpg")"
+                    <a class="brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
                     width="32" height="32" style="padding-right: 5px;">HTRC Portal</a>
 
                     <div class="nav-collapse collapse">
@@ -34,15 +35,20 @@
                         </li>
                         @if(user != null) {
                             <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Worksets <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@routes.HTRCPortal.listWorkset()">List</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#" role="button" data-toggle="modal">Upload Workset</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#" onclick="blacklightLoggingWarning()">Create Worksets</a>
-                                </li>
-                            </ul>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Worksets <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@routes.HTRCPortal.listWorkset()">List</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#" role="button" data-toggle="modal">Upload Workset</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-submenu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create Workset <b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" onclick="blacklightLoggingWarning()">From Workset Builder</a></li>
+                                            <li><a href="@routes.HTRCWorksetBuilder.createWorkset()" >From Portal</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             </li>
                             <li><a href="@routes.HTRCPortal.listAlgorithms()">Algorithms</a>
                             </li>
@@ -93,5 +99,42 @@
                 </ul>
             </div>
         </div>
+        <div class="modal hide fade" id="create-collection-modal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Create Workset</h3>
+            </div>
+            <div class="modal-body">
+                <p>Although you've already logged in to HTRC Portal, you need to log in
+                    to HTRC Workset Builder in order to create or modify a workset.</p>
+            </div>
+            <div class="modal-footer">
+                <span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin: -3px 0 0;"> Don't Show This Again.</span>
+                <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+                <a href="@play.Play.application().configuration().getString("blacklight.url")" class="btn btn-primary" onclick="goToCreateCollection()">Go</a>
+            </div>
+        </div>
+
     </body>
+    <script type="text/javascript">
+            function blacklightLoggingWarning(){
+            if(localStorage['dont-show-create-warning']){
+            location.href = "@play.Play.application().configuration().getString("blacklight.url")";
+            return true;
+            }
+
+            $('#create-collection-modal').modal('show');
+
+            return false;
+            }
+
+            function goToCreateCollection(){
+            if($("#dont-show").is(':checked')){
+            alert("checked");
+            localStorage['dont-show-create-warning'] = true;
+            }
+
+            return true;
+            }
+    </script>
 </html>

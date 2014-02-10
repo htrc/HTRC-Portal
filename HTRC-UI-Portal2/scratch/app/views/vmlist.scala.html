@@ -42,12 +42,12 @@
                                              Stop VM
                                      </a>
                                      @if(vm.getMode == "MAINTENANCE"){
-                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "security")" class="btn btn-info btn-small" id="switchmode-maintainance">
+                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "SECURE")" class="btn btn-info btn-small" id="switchmode-maintainance">
                                                  Switch To Security
                                          </a>
                                      } else{
 
-                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "maintenance")" class="btn btn-info btn-small" id="switchmode-security">
+                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "MAINTENANCE")" class="btn btn-info btn-small" id="switchmode-security">
                                                  Switch To Maintenance
                                          </a>
                                      }
