@@ -3,17 +3,22 @@
 
 
 @main("VMList", user) {
-    <meta http-equiv="refresh" content="30">
+    <meta http-equiv="refresh" content="40">
     <legend>Virtual Machines
         <a href="@routes.HTRCExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top: 5px">
             <i class="icon-plus"></i>
         </a>
     </legend>
+    To log in to a virtual machine, you should use a VNC client. You can
+    input the host name and VNC port information shown by clicking the
+    vmid link.
+    <br><br>
     @if(vmDetailsList.length > 0){
      <table class="table table-hover">
          <thead>
              <tr>
                  <th><b>Vm Id</b></th>
+                 <th><b>Status</b></th>
                  <th><b>Actions</b></th>
              </tr>
          </thead>
@@ -24,6 +29,10 @@
                          <a href="@routes.HTRCExperimentalAnalysis.showVMStatus(vm.getVmId)">
                              @vm.getVmId
                          </a>
+                     </td>
+                     <td>
+                         <span class="label label-info"><b>Status: </b>@vm.getState</span>
+                         <Span class="label label-info"><b>Mode: </b>@vm.getMode</Span>
                      </td>
                      <td>
                          @if(vm.getState.contains("PENDING")){
@@ -42,22 +51,29 @@
                                              Stop VM
                                      </a>
                                      @if(vm.getMode == "MAINTENANCE"){
-                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "SECURE")" class="btn btn-info btn-small" id="switchmode-maintainance">
-                                                 Switch To Security
+                                         <a href="#" class="btn btn-info btn-small" id="switchmode-maintainance" onclick="modalMessage('Switch to Secure Mode',
+                                         'Network in secure mode is highly constrained. You can only access HTRC Data service. You should only write your data to secure volume. ' +
+                                          'Data written to other places will not be persistent.','@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId,"SECURE")')">
+                                                 Switch To Secure Mode
                                          </a>
-                                     } else{
+                                     } else {
 
-                                         <a href="@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId, "MAINTENANCE")" class="btn btn-info btn-small" id="switchmode-security">
-                                                 Switch To Maintenance
+                                         <a href="#" class="btn btn-info btn-small" id="switchmode-security"
+                                         onclick="modalMessage('Switch to Maintenance Mode',
+                                         'Only data written in secure volume is preserved! Please make sure you save your data to secure volume! Please dismount secure volume in virtual machine before to maintenance mode! ' +
+                                          'Click OK to continue switching, click Cancel to discard switching operation.','@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId,"MAINTENANCE")')">
+                                                 Switch To Maintenance Mode
                                          </a>
                                      }
 
                                  }
 
                              }
-                             <a href="@routes.HTRCExperimentalAnalysis.deleteVM(vm.getVmId)" class="btn btn-danger btn-small" id="deletevms" onclick="">
+                             <a href="#" class="btn btn-danger btn-small" id="deletevms" onclick="modalMessage('Delete VM','Do you want to delete VM ID: @vm.getVmId?','@routes.HTRCExperimentalAnalysis.deleteVM(vm.getVmId)')">
                                  <i class="icon-trash icon-white"></i> Delete VM
                              </a>
+
+
                          }
 
                      </td>
@@ -68,19 +84,32 @@
      } else {
         <p>There are no virtual machines.</p>
      }
-
-     <div class="modal hide fade" id="dlete-vm-modal">
+    @*Popup Modal for Delete VM......................................................................*@
+    <div class="modal hide fade" id="popup-modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Delete VM</h3>
+            <h3 id="modal-header"></h3>
         </div>
         <div class="modal-body">
-            <p>Do you want to delete VM Id: </p>
+            <p id="modal-body" ></p>
         </div>
         <div class="modal-footer">
-            <span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin: -3px 0 0;"> Don't Show This Again.</span>
+            @*<span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show-secureModePopup" style="margin: -3px 0 0;"> Don't Show This Again.</span>*@
             <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
-            <a href="<%=PortalConfiguration.getBlacklightURL()%>" class="btn btn-primary" onclick="goToCreateCollection()">Go</a>
+            <a href="" class="btn btn-primary" id="modal-href">Go</a>
         </div>
+        <script type="text/javascript">
+                function modalMessage(modalHeader,modalBody,locationHref){
+                $('#modal-header').text(modalHeader);
+                $('#modal-body').text(modalBody);
+                $('#modal-href').attr("href", locationHref);
+                $('#popup-modal').modal('show');
+                return true;
+                }
+        </script>
     </div>
+
+
+
+
 }

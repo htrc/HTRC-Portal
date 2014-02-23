@@ -17,37 +17,47 @@
         <div class="control-group">
             <label for="userId" class="control-label">User ID:</label>
             <div class="controls">
-                <input type="text" id="userId" name="userId" placeholder="User ID">
+                <input type="text" id="userId" name="userId" placeholder="User ID" required="true">
             </div>
         </div>
         <div class="control-group">
             <label for="password" class="control-label">Password :</label>
             <div class="controls">
-                <input type="password" id="password" name="password" placeholder="Password"> Password should be at least 6 characters
+                <input type="password" id="password" name="password" placeholder="Password" required="true"> Password should be at least 6 characters
             </div>
         </div>
         <div class="control-group">
             <label for="confirmPassword" class="control-label">Confirm Password :</label>
             <div class="controls">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)">
+                <script language='javascript' type='text/javascript'>
+                        function check(input) {
+                        if (input.value != document.getElementById('password').value) {
+                        input.setCustomValidity('Password Must be Matching.');
+                        } else {
+                        // input is valid -- reset the error message
+                        input.setCustomValidity('');
+                        }
+                        }
+                </script>
             </div>
         </div>
         <div class="control-group">
             <label for="firstName" class="control-label">First Name :</label>
             <div class="controls">
-                <input type="text" id="firstName" name="firstName" placeholder="First Name">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name" required="true">
             </div>
         </div>
         <div class="control-group">
             <label for="lastName" class="control-label">Last Name :</label>
             <div class="controls">
-                <input type="text" id="lastName" name="lastName" placeholder="Last Name">
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required="true">
             </div>
         </div>
         <div class="control-group">
             <label for="email" class="control-label">Email :</label>
             <div class="controls">
-                <input type="email" id="email" name="email">
+                <input type="email" id="email" name="email" required="true">
             </div>
         </div>
         <div class="control-group">

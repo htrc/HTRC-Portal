@@ -225,34 +225,37 @@ public class HTRCPortal extends Controller {
     }
 
     public static Result signUp(){
-        Form<SignUp> signUpForm = Form.form(SignUp.class).bindFromRequest();
+        Form<SignUp> signUpForm = form(SignUp.class).bindFromRequest();
         if(signUpForm.hasErrors()){
-            return badRequest();
+            return badRequest(signup.render(signUpForm,null));
         }
         log.info(signUpForm.toString());
         return redirect(routes.HTRCPortal.login());
     }
+
 
     public static Result createPasswordResetMailForm(){
         return ok(passwordresetmail.render(Form.form(PasswordResetMail.class),null));
     }
 
     public static Result passwordResetMail(){
-        Form<PasswordResetMail> passwordResetForm= Form.form(PasswordResetMail.class).bindFromRequest();
+        Form<PasswordResetMail> passwordResetForm= form(PasswordResetMail.class).bindFromRequest();
         if(passwordResetForm.hasErrors()){
-            return badRequest();
+            return badRequest(passwordresetmail.render(passwordResetForm,null));
         }
         log.info(passwordResetForm.toString());
-        return redirect(routes.HTRCPortal.login());
+        return ok("Password reset link sent to " + passwordResetForm.get().userEmail.substring(0,4)+"...."+passwordResetForm.get().userEmail.substring(12));
     }
 
-    public static Result createPasswordResetForm(){
-        return TODO;
+    public static Result createPasswordResetForm(String token){
+        return ok(passwordreset.render(Form.form(PasswordReset.class),null,token));
     }
 
     public static Result passwordReset(){
+
         return TODO;
     }
+
 
 
 
@@ -291,7 +294,7 @@ public class HTRCPortal extends Controller {
     }
 
     public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
-        String volumeDetailsQueryUrl = PlayConfWrapper.solrQueryUrl() + "?q=id:" + volid.replace(":", "%20") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
+        String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + volid.replace(":", "%20") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
 
         VolumeDetailsBean volDetails = new VolumeDetailsBean();
 
@@ -464,11 +467,21 @@ public class HTRCPortal extends Controller {
         private final String[] permissions = {"/permission/admin/login"};
         private String status = null;
 
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+
         public String validate(){
-            if(!password.equals(confirmPassword)) {
+            if(userId.isEmpty() || password.isEmpty()
+                    || confirmPassword.isEmpty() || firstName.isEmpty()
+                    || lastName.isEmpty() || email.isEmpty()){
+
+                return "Please fill all the fields.";
+            }if(!password.equals(confirmPassword)) {
                 return "Passwords do not match.";
 
-            } else{
+            } if(userManager.isUserExists(userId)){
+                return "Username already exists.";
+            }
+            else{
                 List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
                 claims.add(new AbstractMap.SimpleEntry<String, String>(
                         "http://wso2.org/claims/givenname", firstName));
@@ -476,7 +489,6 @@ public class HTRCPortal extends Controller {
                         "http://wso2.org/claims/lastname", lastName));
                 claims.add(new AbstractMap.SimpleEntry<String, String>(
                         "http://wso2.org/claims/emailaddress", email));
-                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
                 try {
                     userManager.createUser(userId,password,claims,permissions);
                     setStatus("Successed");
@@ -508,66 +520,70 @@ public class HTRCPortal extends Controller {
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
 
         public String validate(){
-            if(!userManager.isUserExists(userId)){
+            if(userId.isEmpty()){
+                return "User name is empty, Please enter username";
+            }if(!userManager.isUserExists(userId)){
                 return "User Name Does Not Exist";
-            }
-            try {
-                userEmail = userManager.getEmail(userId);
-                Properties props = new Properties();
-
-                props.put("mail.smtp.host", "smtp.gmail.com");
-                props.put("mail.smtp.socketFactory.port", "465");
-                props.put("mail.smtp.socketFactory.class",
-                        "javax.net.ssl.SSLSocketFactory");
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.port", "465");
-
-                Session session = Session.getDefaultInstance(props,
-                        new javax.mail.Authenticator() {
-                            protected PasswordAuthentication getPasswordAuthentication() {
-                                return new PasswordAuthentication("htrc.portal","anep0rtal");
-                            }
-                        });
-
+            }else{
                 try {
+                    userEmail = userManager.getEmail(userId);
+                    Properties props = new Properties();
 
-                    Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress("htrc.portal@gmail.com"));
-                    message.setRecipients(Message.RecipientType.TO,
-                            InternetAddress.parse(userEmail));
-                    message.setSubject("Password Reset for HTRC Portal");
-                    String passwordResetToken = TokenManager.generateToken(userId, userEmail) ;
-                    Token token = new Token(User.findByUserID(userId),passwordResetToken,new Date().getTime());
-                    token.save();
-                    String url = PlayConfWrapper.passwordResetLinkUrl()+"?"+"token="+token;
+                    props.put("mail.smtp.host", "smtp.gmail.com");
+                    props.put("mail.smtp.socketFactory.port", "465");
+                    props.put("mail.smtp.socketFactory.class",
+                            "javax.net.ssl.SSLSocketFactory");
+                    props.put("mail.smtp.auth", "true");
+                    props.put("mail.smtp.port", "465");
 
-                    // Now set the actual message
-                    message.setText("Please click on following url to reset your password. \n" +
-                            url);
+                    Session session = Session.getInstance(props,
+                            new javax.mail.Authenticator() {
+                                protected PasswordAuthentication getPasswordAuthentication() {
+                                    return new PasswordAuthentication("htrc.portal","anep0rtal");
+                                }
+                            });
 
-                    Transport.send(message);
+                    try {
 
-                    log.info("Sent message successfully....");
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchAlgorithmException e) {
+                        Message message = new MimeMessage(session);
+                        message.setFrom(new InternetAddress("htrc.portal@gmail.com"));
+                        message.setRecipients(Message.RecipientType.TO,
+                                InternetAddress.parse(userEmail));
+                        message.setSubject("Password Reset for HTRC Portal");
+                        String passwordResetToken = TokenManager.generateToken(userId, userEmail) ;
+                        Token token = new Token(User.findByUserID(userId),passwordResetToken,new Date().getTime());
+                        token.save();
+                        String url = PlayConfWrapper.passwordResetLinkUrl()+"?"+"token=" + token.token;
+
+                        // Now set the actual message
+                        message.setText("Please click on following url to reset your password. \n" +
+                                url);
+
+                        Transport.send(message);
+
+                        log.info("Sent message successfully....");
+                    } catch (MessagingException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                } catch (OAuthAdminServiceUserStoreException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
-            } catch (OAuthAdminServiceUserStoreException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
+
+                return null;
             }
 
-
-            return null;
         }
 
 
     }
 
     public static class PasswordReset{
-        public String userId;
+        public String token;
         public String newPassword;
         public String confirmPassword;
 

@@ -17,6 +17,7 @@
 
 package controllers;
 
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import models.Doc;
 import models.SearchOption;
 import models.User;
@@ -41,8 +42,8 @@ import java.util.Map;
 public class HTRCWorksetBuilder extends Controller {
     private static Logger.ALogger log = play.Logger.of("application");
 
-    private static final String solrMeta = "http://chinkapin.pti.indiana.edu:9994/solr/meta/select?q=";
-    private static final String solrOcr = "http://chinkapin.pti.indiana.edu:9994/solr/ocr/select?q=";
+    private static final String solrMeta = PlayConfWrapper.solrMetaQueryUrl();
+    private static final String solrOcr = PlayConfWrapper.solrOcrQueryUrl();
 
     private static final Map<String, String> searchOptions;
     static {

@@ -24,6 +24,7 @@ import models.User;
 import models.VirtualMachine;
 import play.Logger;
 import play.data.Form;
+import play.data.validation.Constraints;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -49,7 +50,7 @@ public class HTRCExperimentalAnalysis extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result createVMForm(){
+    public static Result createVMForm() {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
@@ -60,7 +61,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return ok(vmcreate.render(loggedInUser, Form.form(CreateVM.class),vmImageDetailsList));
+        return ok(vmcreate.render(loggedInUser, Form.form(CreateVM.class), vmImageDetailsList));
     }
 
     @Security.Authenticated(Secured.class)
@@ -80,7 +81,7 @@ public class HTRCExperimentalAnalysis extends Controller {
 
         log.debug("Inside create vm action.");
         Form<CreateVM> createVMForm = Form.form(CreateVM.class).bindFromRequest();
-        if(createVMForm.hasErrors()){
+        if (createVMForm.hasErrors()) {
             log.debug("Create VM form has errors." + createVMForm.errorsAsJson());
             return ok(vmcreate.render(loggedInUser, createVMForm, vmImageDetailsList));
         }
@@ -91,15 +92,15 @@ public class HTRCExperimentalAnalysis extends Controller {
     public static Result showVMStatus(String vmId) throws IOException {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        VMStatus vmStatus = serviceClient.showVM(vmId,loggedInUser);
-        return ok(vmstatus.render(loggedInUser,vmStatus));
+        VMStatus vmStatus = serviceClient.showVM(vmId, loggedInUser);
+        return ok(vmstatus.render(loggedInUser, vmStatus));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result deleteVM(String vmId) throws IOException {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.deleteVM(vmId,loggedInUser);
+        serviceClient.deleteVM(vmId, loggedInUser);
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 
@@ -112,7 +113,7 @@ public class HTRCExperimentalAnalysis extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result stopVM(String vmId) throws IOException{
+    public static Result stopVM(String vmId) throws IOException {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.stopVM(vmId, loggedInUser);
@@ -127,16 +128,16 @@ public class HTRCExperimentalAnalysis extends Controller {
         return redirect(routes.HTRCExperimentalAnalysis.listVMs());
     }
 
-    public static void updateVMList(User loggedInUser){
+    public static void updateVMList(User loggedInUser) {
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         try {
             List<VMStatus> vmList = serviceClient.listVMs(loggedInUser);
-            for(VMStatus v:vmList){
+            for (VMStatus v : vmList) {
                 VirtualMachine alreadyExist = VirtualMachine.findVM(v.getVmId());
-                if(alreadyExist != null){
+                if (alreadyExist != null) {
                     VirtualMachine.deleteVM(alreadyExist);
                 }
-                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(),v.getState(),v.getMode());
+                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(), v.getState(), v.getMode());
                 VirtualMachine.createVM(virtualMachine);
             }
 
@@ -149,31 +150,41 @@ public class HTRCExperimentalAnalysis extends Controller {
 
     }
 
-    public static class CreateVM{
+    public static class CreateVM {
+        @Constraints.Required
         public String vmImageName;
+
+        @Constraints.Required
         public String userName;
+
+        @Constraints.Required
+        @Constraints.MaxLength(8)
         public String password;
+
+        @Constraints.Required
         public String confirmPassword;
+
+        @Constraints.Required
         public int numberOfVCPUs;
+
+        @Constraints.Required
         public String memory;
 
         public String validate() {
             int mem = 0;
-            if (userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || memory.isEmpty()) {
-                return "Please fill in all fields.";
-            }
+
             if (!password.equals(confirmPassword)) {
                 return "The Passwords do not match.";
             }
 
             try {
                 mem = Integer.parseInt(memory);
-            } catch (Exception e){
+            } catch (Exception e) {
                 log.error("Error parsing memory value.", e);
                 return "Memory should be an integer between 1024 and 10240.";
             }
 
-            if ( mem < 1024 || mem > 4096) {
+            if (mem < 1024 || mem > 4096) {
                 return "Memory should be between 1024MB - 4096MB";
             } else {
                 User loggedInUser = User.findByUserID(request().username());
