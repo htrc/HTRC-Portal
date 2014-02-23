@@ -45,6 +45,10 @@ public class Token extends Model {
 
     public static Finder<Long, Token> find = new Finder<Long, Token>(Long.class, Token.class);
 
+    public static Token findByToken(String token){
+        return find.where().eq("token", token).findUnique();
+    }
+
 
 
 }

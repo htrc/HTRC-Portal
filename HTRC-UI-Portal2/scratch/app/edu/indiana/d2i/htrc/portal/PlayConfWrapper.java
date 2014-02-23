@@ -43,7 +43,8 @@ public class PlayConfWrapper {
     private static String oauthBackendUrl = null;
 
     //Solr query URL
-    private static String solrQueryUrl = null;
+    private static String solrMetaQueryUrl = null;
+    private static String solrOcrQueryUrl = null;
 
 
     // blacklight url
@@ -205,11 +206,18 @@ public class PlayConfWrapper {
         return oauthBackendUrl;
     }
 
-    public static String solrQueryUrl() {
-        if(solrQueryUrl == null){
-            solrQueryUrl = Play.application().configuration().getString(PortalConstants.SOLR_QUERY_URL);
+    public static String solrMetaQueryUrl() {
+        if(solrMetaQueryUrl == null){
+            solrMetaQueryUrl = Play.application().configuration().getString(PortalConstants.SOLR_META_QUERY_URL);
         }
-        return solrQueryUrl;
+        return solrMetaQueryUrl;
+    }
+
+    public static String solrOcrQueryUrl() {
+        if(solrOcrQueryUrl == null){
+            solrOcrQueryUrl = Play.application().configuration().getString(PortalConstants.SOLR_OCR_QUERY_URL);
+        }
+        return solrOcrQueryUrl;
     }
 
     public static String blacklightUrl() {

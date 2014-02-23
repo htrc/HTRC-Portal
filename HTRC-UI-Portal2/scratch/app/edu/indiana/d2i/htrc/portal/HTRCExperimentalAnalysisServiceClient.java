@@ -35,6 +35,7 @@ import play.Logger;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HTRCExperimentalAnalysisServiceClient {
@@ -51,6 +52,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("imagename", imageName);
         post.setParameter("loginusername", loginUerName);
         post.setParameter("loginpassword", loginPassword);
@@ -62,6 +64,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         this.responseCode = response;
         if (response == 200) {
             String jsonStr = post.getResponseBodyAsString();
+            log.info(Arrays.toString(post.getRequestHeaders()));
             JSONParser parser = new JSONParser();
             try {
                 Object obj = parser.parse(jsonStr);
@@ -90,11 +93,13 @@ public class HTRCExperimentalAnalysisServiceClient {
         getMethod.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         getMethod.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         getMethod.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        getMethod.addRequestHeader("htrc-remote-user-email", loggedIn.email);
 
         int response = client.executeMethod(getMethod);
         this.responseCode = response;
         if (response == 200) {
             String jsonStr = getMethod.getResponseBodyAsString();
+            log.info(Arrays.toString(getMethod.getRequestHeaders()));
             JSONParser parser = new JSONParser();
             try {
                 Object obj = parser.parse(jsonStr);
@@ -130,12 +135,14 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
 
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
             String jsonStr = post.getResponseBodyAsString();
             JSONParser parser = new JSONParser();
+            log.info(Arrays.toString(post.getRequestHeaders()));
             try {
                 Object obj = parser.parse(jsonStr);
                 JSONObject jsonObject = (JSONObject) obj;
@@ -178,12 +185,14 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("vmid", vmId);
 
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
             String jsonStr = post.getResponseBodyAsString();
+            log.info(Arrays.toString(post.getRequestHeaders()));
             JSONParser parser = new JSONParser();
             try {
                 Object obj = parser.parse(jsonStr);
@@ -228,6 +237,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("vmid", vmId);
         post.setParameter("mode", mode);
 
@@ -235,6 +245,7 @@ public class HTRCExperimentalAnalysisServiceClient {
         this.responseCode = response;
         if (response == 200) {
             log.info("Switch to " + mode + " mode.");
+            log.info(Arrays.toString(post.getRequestHeaders()));
         } else {
             log.error(post.getResponseBodyAsString());
         }
@@ -246,12 +257,14 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("vmid", vmId);
 
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
             log.info("Started VM Id: " + vmId);
+            log.info(Arrays.toString(post.getRequestHeaders()));
         } else {
             log.error(post.getResponseBodyAsString());
         }
@@ -263,12 +276,14 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("vmid", vmId);
 
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
             log.info("Stoped VM Id: " + vmId);
+            log.info(Arrays.toString(post.getRequestHeaders()));
         } else {
             log.error(post.getResponseBodyAsString());
         }
@@ -280,12 +295,14 @@ public class HTRCExperimentalAnalysisServiceClient {
         post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
+        post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
         post.setParameter("vmid", vmId);
 
         int response = client.executeMethod(post);
         this.responseCode = response;
         if (response == 200) {
             log.info("Deleted VM Id: " + vmId);
+            log.info(Arrays.toString(post.getRequestHeaders()));
         } else {
             log.error(post.getResponseBodyAsString());
         }

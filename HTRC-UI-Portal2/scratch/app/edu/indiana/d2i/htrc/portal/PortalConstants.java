@@ -56,7 +56,8 @@ public class  PortalConstants {
     public static String OAUTH2_CLIENT_ID = "oauth2.client.id";
 
     //Solr query URL
-    public static String SOLR_QUERY_URL = "solr.query.url";
+    public static String SOLR_META_QUERY_URL = "solr.meta.query.url";
+    public static String SOLR_OCR_QUERY_URL = "solr.ocr.query.url";
 
     // registry entries
     public static String REGISTRY_ENDPOINT = "reg.epr";

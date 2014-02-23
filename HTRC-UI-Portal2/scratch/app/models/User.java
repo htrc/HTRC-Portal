@@ -119,4 +119,6 @@ public class User extends Model {
 //        return find.where().eq("userId",userId).eq("password",password).findUnique();
         //To change body of created methods use File | Settings | File Templates.
     }
+
+
 }
