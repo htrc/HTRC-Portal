@@ -128,11 +128,11 @@ public class HTRCPersistenceAPIClient {
 
 
 
-    public List<Workset> getWorksets(Boolean isPublicWorkset) throws IOException,
+    public List<Workset> getPublicWorksets() throws IOException,
             JAXBException {
 
-        String worksetUrl = registryEPR + "/worksets" + "?public=" + isPublicWorkset;
-        log.debug("getWorksets Url: " + worksetUrl);
+        String worksetUrl = registryEPR + "/worksets" + "?public=" + true;
+        log.debug("getPublicWorksets Url: " + worksetUrl);
 
         GetMethod get = new GetMethod(worksetUrl);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);

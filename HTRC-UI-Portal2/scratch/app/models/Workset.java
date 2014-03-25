@@ -94,6 +94,17 @@ public class Workset extends Model {
         return finder.where().eq("author", user).findList();
     }
 
+    public static List<Workset> listOwnedPublic(String user){
+        List<Workset> ownedWorkset = listAllOwned(user);
+        List<Workset> ownedPublicWorkset = new ArrayList<Workset>();
+        for(Workset ws: ownedWorkset){
+            if(ws.shared){
+                ownedPublicWorkset.add(ws);
+            }
+        }
+        return ownedPublicWorkset;
+    }
+
     public static List<Workset> listShared(int page){
         List<Workset> allSharedWorksets = listAllShared();
         List<Workset> sharedWorkset = new ArrayList<Workset>();

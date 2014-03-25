@@ -62,7 +62,7 @@
                                     <li><a href="@routes.HTRCExperimentalAnalysis.createVMForm()" role="button" data-toggle="modal">Create Virtual Machine</a></li>
                                 </ul>
                             </li>
-                            <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>
+                            <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Getting+Started+FAQ">Help</a></li>
                         }
                         </ul>
                         @if(user == null) {
@@ -118,6 +118,7 @@
     </body>
     <script type="text/javascript">
             function blacklightLoggingWarning(){
+
             if(localStorage['dont-show-create-warning']){
             location.href = "@play.Play.application().configuration().getString("blacklight.url")";
             return true;
@@ -130,7 +131,6 @@
 
             function goToCreateCollection(){
             if($("#dont-show").is(':checked')){
-            alert("checked");
             localStorage['dont-show-create-warning'] = true;
             }
 

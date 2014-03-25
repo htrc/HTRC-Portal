@@ -158,7 +158,6 @@ public class HTRCExperimentalAnalysis extends Controller {
         public String userName;
 
         @Constraints.Required
-        @Constraints.MaxLength(8)
         public String password;
 
         @Constraints.Required
@@ -175,6 +174,8 @@ public class HTRCExperimentalAnalysis extends Controller {
 
             if (!password.equals(confirmPassword)) {
                 return "The Passwords do not match.";
+            } if(password.length()>= 8){
+                return "Password should be less than 8 characters.";
             }
 
             try {

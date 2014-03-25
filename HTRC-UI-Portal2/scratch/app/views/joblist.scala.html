@@ -1,5 +1,5 @@
-@(user: User, activeJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean] , completedJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
-@import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean
+@(user: User, activeJobs: List[ActiveJob] , completedJobs: List[CompletedJob])
+
 
 
 @main("JobList", user) {
@@ -13,10 +13,11 @@
                     </div>
                 </legend>
                 <div id="activejobsheader">
+                    @helper.form(routes.HTRCPortal.cancelJobs() , 'id -> "active_jobs"){
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Job Title</th>
+                                <th>ActiveJob Title</th>
                                 <th>Last Updated</th>
                                 <th>Status</th>
                                 <th>Cancel?</th>
@@ -25,26 +26,21 @@
                         <tbody>
                             @for(job <- activeJobs){
                                 <tr>
-                                    <td>@job.getJobTitle</td>
-                                </tr>
-                                <tr>
-                                    <td>@job.getLastUpdatedDate</td>
-                                </tr>
-                                <tr>
-                                    <td>@job.getJobStatus</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                    <input type="checkbox">
-                                    </td>
+                                    <td>@job.jobName</td>
+                                    <td>@job.lastModified</td>
+                                    <td>@job.status</td>
+                                    <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                    }
                 </div>
-                <div class="alert alert-info">
+                @if(activeJobs.isEmpty){
+                    <div class="alert alert-info">
                     <p style="margin-bottom: 0;">There are no active jobs..</p>
-                </div>
+                    </div>
+                }
             </fieldset>
         </div>
     </div>
@@ -60,41 +56,64 @@
                     </div>
                 </legend>
                 <div id="completedjobsheader">
+                    @helper.form(routes.HTRCPortal.updateJobs(), 'id -> "completed_jobs"){
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Job Title</th>
+                                <th>ActiveJob Title</th>
                                 <th>Last Updated</th>
                                 <th>Status</th>
-                                <th>Cancel?</th>
+                                <th>Save/Delete?</th>
+                                <th>Saved?</th>
                             </tr>
                         </thead>
                         <tbody>
                             @for(job <- completedJobs){
                                 <tr>
-                                    <td>@job.getJobTitle</td>
-                                </tr>
-                                <tr>
-                                    <td>@job.getLastUpdatedDate</td>
-                                </tr>
-                                <tr>
-                                    <td>@job.getJobStatus</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox">
-                                    </td>
+                                    <td><a href="@routes.HTRCPortal.viewJobDetails(job.jobId)">@job.jobName</a></td>
+                                    <td>@job.lastModified</td>
+                                    <td>@job.status</td>
+                                    <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
+                                    <td>@job.jobSavedStr</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                    }
                 </div>
-                <div class="alert alert-info">
-                    <p style="margin-bottom: 0;">There are no completed jobs..</p>
-                </div>
+                @if(completedJobs.isEmpty){
+                    <div class="alert alert-info">
+                        <p style="margin-bottom: 0;">There are no completed jobs..</p>
+                    </div>
+                }
             </fieldset>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function(){
+            $( "#canceljobs" ).click(function() {
+                $( "#active_jobs" ).submit();
+                return false;
+            });
+
+            $( "#deletejobs" ).click(function() {
+                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'delete'});
+                $hiddenInput.appendTo('#completed_jobs');
+                $( "#completed_jobs" ).submit();
+                return false;
+            });
+
+            $( "#savejobs" ).click(function() {
+                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'save'});
+                $hiddenInput.appendTo('#completed_jobs');
+                $( "#completed_jobs" ).submit();
+                return false;
+            });
+        });
+
+
+    </script>
 
 
 }

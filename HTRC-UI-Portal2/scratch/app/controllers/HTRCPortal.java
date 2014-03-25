@@ -9,10 +9,7 @@ import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
-import models.Algorithm;
-import models.Token;
-import models.User;
-import models.Workset;
+import models.*;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.commons.httpclient.HttpClient;
@@ -23,6 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceUserStoreException;
+import org.wso2.carbon.user.mgt.stub.ChangePasswordUserAdminExceptionException;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -51,7 +49,6 @@ import static play.data.Form.form;
 public class HTRCPortal extends Controller {
 
     private static Logger.ALogger log = play.Logger.of("application");
-    private static Map<String, Object> session;
 
 
     @Security.Authenticated(Secured.class)
@@ -90,7 +87,7 @@ public class HTRCPortal extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(request().username());
-        updateWorksets(loggedInUser.accessToken, loggedInUser.userId, PlayConfWrapper.registryEPR(), true);
+        updateWorksets(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
         PagingList<Workset> shared = Workset.shared();
         PagingList<Workset> owned = Workset.owned(loggedInUser);
         List<Workset> allShared = Workset.listAllShared();
@@ -126,6 +123,7 @@ public class HTRCPortal extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(request().username());
+        updateWorksets(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
         updateAlgorithms(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
         PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
         List<Algorithm> algorithms = algorithmsPL.getPage(page -1).getList();
@@ -181,43 +179,96 @@ public class HTRCPortal extends Controller {
             log.error(String.format("Unable to submit job %s for user %s to agent",
                     jobSubmitBean.getJobName(), jobSubmitBean.getUserName()));
         }else{
-            log.info(String.format("Job (id: %s) is submitted, status is %s",
+            log.info(String.format("ActiveJob (id: %s) is submitted, status is %s",
                     jobDetailsBean.getJobId(), jobDetailsBean.getJobStatus()));
+            ActiveJob job = new ActiveJob(jobDetailsBean.getJobId(),jobDetailsBean.getJobTitle(),
+                    jobDetailsBean.getLastUpdatedDate(),jobDetailsBean.getJobStatus());
+            job.save();
         }
 
 
-        Form<SubmitJob> submitJobForm = form(SubmitJob.class).bindFromRequest();
-        if (submitJobForm.hasErrors()) {
-            return badRequest();
-        } else {
-            return redirect(routes.HTRCPortal.listJobs());
-        }
+        return redirect(routes.HTRCPortal.listJobs());
     }
 
     @Security.Authenticated(Secured.class)
     public static Result listJobs(){
         User loggedInUser = User.findByUserID(request().username());
+        updateJobList(loggedInUser);
+        return ok(joblist.render(loggedInUser,ActiveJob.all(),CompletedJob.all()));
+
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result cancelJobs(){
+        List<String> activeJobIds = new ArrayList<String>();
+        Map<String, String[]> form = request().body().asFormUrlEncoded();
+        Set<String> keys = form.keySet();
+
+        for(String key : keys){
+            if (form.get(key).length > 0){
+                activeJobIds.add(form.get(key)[0]);
+            }
+        }
+        User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
-        Map<String,JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
-        Map<String,JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
-        List<JobDetailsBean> activeJobsList = null;
-        List<JobDetailsBean> completedJobsList = null;
-        if (activeJobs == null) {
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-                    + session.get(PortalConstants.SESSION_USERNAME));
+        boolean response = agentClient.cancelJobs(activeJobIds);
+        if(response){
+            for(String jonId: activeJobIds){
+                ActiveJob.delete(ActiveJob.findByJobID(jonId));
+            }
+            log.info("Following ActiveJob Ids are canceled successfully :" + activeJobIds);
         }else{
-            activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
+            log.error("Error occured during ActiveJob cancellation process");
+        }
+        return redirect(routes.HTRCPortal.listJobs());
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result updateJobs(){
+        List<String> completedJobIds = new ArrayList<String>();
+        Map<String, String[]> form = request().body().asFormUrlEncoded();
+        Set<String> keys = form.keySet();
+        String actionType = form.get("update-type")[0].trim();
+        for(String key : keys){
+            if(form.get(key).length > 0 && !key.equals("update-type")){
+                completedJobIds.add(form.get(key)[0]);
+            }
+        }
+        User loggedInUser = User.findByUserID(request().username());
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        boolean response = false;
+        if(actionType.equals("delete")){
+            log.info("Deleting jobs: " + completedJobIds);
+             response = agentClient.deleteJobs(completedJobIds);
+             if(response){
+                 for(String jobId: completedJobIds){
+                     CompletedJob.delete(CompletedJob.findByJobID(jobId));
+                 }
+                log.info("Following Completed Job Ids are deleted successfully :" + completedJobIds);
+             }else{
+                log.error("Error occured during Completed Job deletion process");
+             }
+        }if(actionType.equals("save")){
+            log.info("Saving jobs: " + completedJobIds);
+             response = agentClient.saveJobs(completedJobIds);
+             if(response){
+                 log.info("Following Completed Job Ids are saved successfully :" + completedJobIds);
+             }else{
+                 log.error("Error occured during Completed Job saving process");
+             }
         }
 
-        if(completedJobs == null){
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-                    + session.get(PortalConstants.SESSION_USERNAME));
-        }else{
-            completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
-        }
+        return redirect(routes.HTRCPortal.listJobs());
+    }
 
-        return ok(joblist.render(loggedInUser,activeJobsList,completedJobsList));
-
+    @Security.Authenticated(Secured.class)
+    public static Result viewJobDetails(String jobId){
+        User loggedInUser = User.findByUserID(request().username());
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        List<String> jobIds = new ArrayList<String>();
+        jobIds.add(jobId);
+        Map<String, JobDetailsBean> jobsDetails = agentClient.getJobsDetails(jobIds);
+        return ok(jobdetails.render(loggedInUser, jobsDetails.values()));
     }
 
     public static Result createSignUpForm(){
@@ -239,12 +290,12 @@ public class HTRCPortal extends Controller {
     }
 
     public static Result passwordResetMail(){
-        Form<PasswordResetMail> passwordResetForm= form(PasswordResetMail.class).bindFromRequest();
-        if(passwordResetForm.hasErrors()){
-            return badRequest(passwordresetmail.render(passwordResetForm,null));
+        Form<PasswordResetMail> passwordResetMailForm= form(PasswordResetMail.class).bindFromRequest();
+        if(passwordResetMailForm.hasErrors()){
+            return badRequest(passwordresetmail.render(passwordResetMailForm,null));
         }
-        log.info(passwordResetForm.toString());
-        return ok("Password reset link sent to " + passwordResetForm.get().userEmail.substring(0,4)+"...."+passwordResetForm.get().userEmail.substring(12));
+        log.info(passwordResetMailForm.toString());
+        return ok("Password reset link sent to " + passwordResetMailForm.get().userEmail.substring(0,4)+"...."+passwordResetMailForm.get().userEmail.substring(15));
     }
 
     public static Result createPasswordResetForm(String token){
@@ -252,17 +303,21 @@ public class HTRCPortal extends Controller {
     }
 
     public static Result passwordReset(){
-
-        return TODO;
+        Form<PasswordReset> passwordResetForm= form(PasswordReset.class).bindFromRequest();
+        if(passwordResetForm.hasErrors()){
+            return badRequest(passwordreset.render(passwordResetForm,null,passwordResetForm.get().token));
+        }
+        log.info(passwordResetForm.toString());
+        return ok("Password changed successfully. Click on the login link to begin: "+ redirect(routes.HTRCPortal.login()));
     }
 
 
 
 
-    public static void updateWorksets(String accessToken, String userName, String registryUrl, Boolean isPublicWorkset) throws IOException, JAXBException {
+    public static void updateWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, registryUrl);
 
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getWorksets(isPublicWorkset);
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
         for (edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList) {
             WorksetMeta metadata = w.getMetadata();
             Workset alreadyExistWorkset = Workset.findWorkset(metadata.getName());
@@ -411,8 +466,7 @@ public class HTRCPortal extends Controller {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, PlayConfWrapper.registryEPR());
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY + " for user "
-                    + session.get(PortalConstants.SESSION_USERNAME));
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY);
         }else{
             List<String> algorithms = new ArrayList<String>(allAlgorithms.keySet());
             List<AlgorithmDetailsBean> algorithmDetailsList = new ArrayList<AlgorithmDetailsBean>(allAlgorithms.values());
@@ -434,12 +488,45 @@ public class HTRCPortal extends Controller {
         AlgorithmDetailsBean algorithmDetails = new AlgorithmDetailsBean();
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY + " for user "
-                    + session.get(PortalConstants.SESSION_USERNAME));
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY);
         }else{
             algorithmDetails = allAlgorithms.get(algorithmName);
         }
         return algorithmDetails;
+    }
+
+    public static void updateJobList(User loggedInUser){
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        Map<String,JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+        Map<String,JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+        if (completedJobs == null) {
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+                    + loggedInUser.userId);
+        }else{
+            List<JobDetailsBean> completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
+            for(JobDetailsBean job : completedJobsList ){
+                if(ActiveJob.findByJobID(job.getJobId()) != null){
+                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
+                } else if(CompletedJob.findByJobID(job.getJobId()) == null){
+                    CompletedJob completedJob = new CompletedJob(job.getJobId(),job.getJobTitle(),job.getLastUpdatedDate(),job.getJobStatus(),job.getJobSavedStr());
+                    completedJob.save();
+                }
+            }
+        }
+        if (activeJobs == null) {
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+                    + loggedInUser.userId);
+        }else{
+            List<JobDetailsBean> activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
+            for(JobDetailsBean job : activeJobsList ){
+                if(ActiveJob.findByJobID(job.getJobId()) != null){
+                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
+                }
+                ActiveJob activeJob = new ActiveJob(job.getJobId(),job.getJobTitle(),job.getLastUpdatedDate(),job.getJobStatus());
+                activeJob.save();
+            }
+        }
+
     }
 
     public static class Login {
@@ -550,18 +637,19 @@ public class HTRCPortal extends Controller {
                         message.setRecipients(Message.RecipientType.TO,
                                 InternetAddress.parse(userEmail));
                         message.setSubject("Password Reset for HTRC Portal");
-                        String passwordResetToken = TokenManager.generateToken(userId, userEmail) ;
-                        Token token = new Token(User.findByUserID(userId),passwordResetToken,new Date().getTime());
-                        token.save();
-                        String url = PlayConfWrapper.passwordResetLinkUrl()+"?"+"token=" + token.token;
+//                        User user = User.findByUserID(userId);
+//                        Token.deleteAllTokens();
+                        String passwordResetToken = Token.generateToken(userId, userEmail) ;
+                        String url = PlayConfWrapper.portalUrl()+"/passwordreset"+"?"+"token=" + passwordResetToken;
 
                         // Now set the actual message
-                        message.setText("Please click on following url to reset your password. \n" +
-                                url);
+                        message.setText("Please click on following url to reset your password. \n" + url);
 
                         Transport.send(message);
 
                         log.info("Sent message successfully....");
+
+
                     } catch (MessagingException e) {
                         throw new RuntimeException(e);
                     } catch (IOException e) {
@@ -585,17 +673,23 @@ public class HTRCPortal extends Controller {
     public static class PasswordReset{
         public String token;
         public String newPassword;
-        public String confirmPassword;
+        public String retypePassword;
 
         public String validate(){
-            if(!newPassword.equals(confirmPassword)) {
+            if(!newPassword.equals(retypePassword)) {
                 return "The Passwords do not match.";
 
             } else{
+                Token token1 = Token.findByToken(token);
+                String userId = token1.userId;
                 HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-//                userId =
-//                userManager.changePassword();
-
+                try {
+                    userManager.changePassword(userId,newPassword);
+                    token1.isTokenUsed = true;
+                    token1.update();
+                } catch (ChangePasswordUserAdminExceptionException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
 
            return null;

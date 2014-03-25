@@ -16,6 +16,7 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
             </p>
         }
         <table>
+            <input type="hidden" name="userName" value="@user.id">
             <tr>
                 <input type="hidden" name="algorithmName" value="@algorithmdetails.getName"/>
                 <td><b>Name: </b></td>
@@ -31,12 +32,12 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
             </tr>
             <tr>
                 <td><b>Author:</b></td>
-                <td>@algorithmdetails.getAuthors</td>
+                <td>@algorithmdetails.getAuthors.remove(0)</td>
             </tr>
         </table>
         <div id="param">
-            <label>Please Input Job Name: </label> (required)<br>
-            <input type="text" name="jobName" required="required" id="jobName">
+            <label for="jobName">Please Input Job Name: (required) </label>
+            <input type="text" name="jobName" required="true" id="jobName">
         </div>
         @for(pm <- parameters){
             <div>
@@ -44,22 +45,38 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
                 <input type="hidden" name="parameters[@{parameters.indexOf(pm) + 1}].paramType" value="@pm.getType"/>
                 <label>@pm.getLabel</label>
                 @if(pm.getType == "collection"){
-                    <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
-                        @for(ws <- worksetlist){
-                            <option>@ws.name</option>
-                        }
-                    </select>
+                    <label>
+                        <select name="parameters[@{
+                            parameters.indexOf(pm) + 1
+                        }].paramValue">
+                            @for(ws <- worksetlist) {
+                                <option> @ws.name </option>
+                            }
+                        </select>
+                    </label>
                 }else{
                     @if(pm.getType == "boolean"){
-                        <select name="parameters[@{parameters.indexOf(pm) + 1}].paramValue">
-                            <option>True</option><option>False</option>
-                        </select>
+                        <label>
+                            <select name="parameters[@{
+                                parameters.indexOf(pm) + 1
+                            }].paramValue">
+                                <option> True </option> <option> False </option>
+                            </select>
+                        </label>
                     }else{
                         @if(pm.isRequired){
-                            <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue" required="required" value="@pm.getDefaultValue">
+                            <label>
+                                <input type="text" class = "span4" name="parameters[@{
+                                    parameters.indexOf(pm) + 1
+                                }].paramValue" required="true" value="@pm.getDefaultValue">
+                            </label>
                                 (required)
                         }else{
-                            <input type="text" class = "span4" name="parameters[@{parameters.indexOf(pm) + 1}].paramValue"  value="@pm.getDefaultValue">
+                            <label>
+                                <input type="text" class = "span4" name="parameters[@{
+                                    parameters.indexOf(pm) + 1
+                                }].paramValue" value="@pm.getDefaultValue">
+                            </label>
                                 (optional)
                         }
                     }

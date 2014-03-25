@@ -50,9 +50,6 @@ public class PlayConfWrapper {
     // blacklight url
     private static String blacklighturl = null;
 
-    // password reset
-    private static String passwordResetLinkUrl = null;
-
     // registry properties
     private static String registryEPR = null;
     private static String registryAlgFolder = null;
@@ -83,6 +80,8 @@ public class PlayConfWrapper {
     private static String stopVMUrl = null;
     private static String switchVMUrl = null;
 
+    //Portal URL
+    private static String portalUrl = null;
 
 
 
@@ -227,13 +226,6 @@ public class PlayConfWrapper {
         return blacklighturl;
     }
 
-    public static String passwordResetLinkUrl() {
-        if(passwordResetLinkUrl == null){
-            passwordResetLinkUrl = Play.application().configuration().getString(PortalConstants.PASSWORD_RESET_LINK_URL);
-        }
-        return passwordResetLinkUrl;
-    }
-
     public static String registryEPR() {
         if(registryEPR == null){
             registryEPR = Play.application().configuration().getString(PortalConstants.REGISTRY_ENDPOINT);
@@ -365,6 +357,13 @@ public class PlayConfWrapper {
             switchVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_SWITCHVM);
         }
         return switchVMUrl;
+    }
+
+    public static String portalUrl(){
+        if(portalUrl == null){
+            portalUrl = Play.application().configuration().getString(PortalConstants.PORTAL_URL);
+        }
+        return portalUrl;
     }
 }
 
