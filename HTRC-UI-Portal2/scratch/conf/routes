@@ -52,6 +52,14 @@ POST  /submitjob                                            controllers.HTRCPort
 # View Job List
 GET /listjobs                                               controllers.HTRCPortal.listJobs()
 
+# Cancel Jobs
+POST  /canceljobs                                            controllers.HTRCPortal.cancelJobs()
+
+# Cancel Jobs
+POST  /updatejobs                                            controllers.HTRCPortal.updateJobs()
+
+# View Job Details
+GET  /viewjobdetails                                        controllers.HTRCPortal.viewJobDetails(jobId:String ?="")
 # SLOAN VM List Form
 GET   /listvms                                              controllers.HTRCExperimentalAnalysis.listVMs()
 
@@ -78,12 +86,10 @@ POST  /login                                                controllers.HTRCPort
 # Search
 POST  /search                                                controllers.HTRCWorksetBuilder.searchCorpus()
 
-# Map Bootstrap images
-GET    /assets/img/glyphicons-halflings.png                 controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
-GET    /assets/img/glyphicons-halflings-white.png           controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
-
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)
 
+# Map Bootstrap images
+GET    /assets/img/glyphicons-halflings.png                 controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
+GET    /assets/img/glyphicons-halflings-white.png           controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
 

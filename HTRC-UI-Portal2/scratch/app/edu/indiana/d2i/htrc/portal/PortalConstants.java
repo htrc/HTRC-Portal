@@ -81,7 +81,7 @@ public class  PortalConstants {
     public static String USER_REG_TRUSTSTORE_PWD = "user.reg.truststore.pwd";
     public static String USER_REG_TRUSTSTORE_TYPE = "user.reg.truststore.type";
 
-    public static String PASSWORD_RESET_LINK_URL = "password.reset.link.url";
+
 
     // error message
     public static String CANNOT_GETDATA_FROM_AGENT = "Unable to get data from agent.";
@@ -109,6 +109,9 @@ public class  PortalConstants {
     public static String SLOAN_WS_STARTVM = "sloanws.startvm";
     public static String SLOAN_WS_STOPVM = "sloanws.stopvm";
     public static String SLOAN_WS_SWITCHVM = "sloanws.switchvm";
+
+    //Portal URL
+    public static  String PORTAL_URL = "portal.url";
 
 
     // User Manager Constants

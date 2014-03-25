@@ -212,6 +212,10 @@ public class HTRCAgentClient {
 
     }
 
+    public boolean cancelJobs(List<String> jobIds){
+        return deleteJobs(jobIds);
+    }
+
     public boolean deleteJobs(List<String> jobIds) {
         boolean res = true;
         for (String id : jobIds) {
@@ -221,8 +225,8 @@ public class HTRCAgentClient {
                 deleteJobId = new DeleteMethod(jobdeleteURL);
                 deleteJobId.setRequestHeader("Authorization", "Bearer " + accessToken);
 
-                client.getHttpConnectionManager().getParams().setConnectionTimeout(PlayConfWrapper.agentConnectTimeout());
-                client.getHttpConnectionManager().getParams().setSoTimeout(PlayConfWrapper.agentWaitTimeout());
+//                client.getHttpConnectionManager().getParams().setConnectionTimeout(PlayConfWrapper.agentConnectTimeout());
+//                client.getHttpConnectionManager().getParams().setSoTimeout(PlayConfWrapper.agentWaitTimeout());
 
                 int response = client.executeMethod(deleteJobId);
                 this.responseCode = response;
@@ -259,13 +263,13 @@ public class HTRCAgentClient {
                 saveJobId.setRequestHeader("Authorization", "Bearer "+ accessToken);
                 log.info("Save job url: " + jobsaveURL);
 
-                client.getHttpConnectionManager().getParams().setConnectionTimeout(PlayConfWrapper.agentConnectTimeout());
-                client.getHttpConnectionManager().getParams().setSoTimeout(PlayConfWrapper.agentWaitTimeout());
+//                client.getHttpConnectionManager().getParams().setConnectionTimeout(PlayConfWrapper.agentConnectTimeout());
+//                client.getHttpConnectionManager().getParams().setSoTimeout(PlayConfWrapper.agentWaitTimeout());
 
                 int response = client.executeMethod(saveJobId);
                 this.responseCode = response;
                 if (response == 200) {
-                    log.info("Saved Job ID :  " + id);
+                    log.info("Saved ActiveJob ID :  " + id);
                 }else {
                     log.error(String.format("Unable to save job %s from agent. Response code %d",
                             response));
@@ -292,10 +296,10 @@ public class HTRCAgentClient {
             getJobDetailsList.setRequestHeader("Authorization", "Bearer "
                     + accessToken);
 
-            client.getHttpConnectionManager().getParams().setConnectionTimeout(
-                    PlayConfWrapper.agentConnectTimeout());
-            client.getHttpConnectionManager().getParams().setSoTimeout(
-                    PlayConfWrapper.agentWaitTimeout());
+//            client.getHttpConnectionManager().getParams().setConnectionTimeout(
+//                    PlayConfWrapper.agentConnectTimeout());
+//            client.getHttpConnectionManager().getParams().setSoTimeout(
+//                    PlayConfWrapper.agentWaitTimeout());
 
             int response = client.executeMethod(getJobDetailsList);
             this.responseCode = response;
@@ -308,7 +312,7 @@ public class HTRCAgentClient {
                 jobdetailBeans = null;
             }
         } catch (Exception e) {
-            log.error(String.valueOf(e));
+            log.error("Error while getting job details from agent.", e);
             jobdetailBeans = null;
         } finally {
             if (getJobDetailsList != null) {
@@ -329,10 +333,10 @@ public class HTRCAgentClient {
             getJobDetailsList.setRequestHeader("Authorization", "Bearer "
                     + accessToken);
 
-            client.getHttpConnectionManager().getParams().setConnectionTimeout(
-                    PlayConfWrapper.agentConnectTimeout());
-            client.getHttpConnectionManager().getParams().setSoTimeout(
-                    PlayConfWrapper.agentWaitTimeout());
+//            client.getHttpConnectionManager().getParams().setConnectionTimeout(
+//                    PlayConfWrapper.agentConnectTimeout());
+//            client.getHttpConnectionManager().getParams().setSoTimeout(
+//                    PlayConfWrapper.agentWaitTimeout());
 
             int response = client.executeMethod(getJobDetailsList);
             this.responseCode = response;
@@ -345,7 +349,7 @@ public class HTRCAgentClient {
                 jobdetailBeans = null;
             }
         } catch (Exception e) {
-            log.error(String.valueOf(e));
+            log.error("Error occurred while getting active jobs.", e);
             jobdetailBeans = null;
         } finally {
             if (getJobDetailsList != null) {
@@ -364,7 +368,7 @@ public class HTRCAgentClient {
         }else{
             Map<String, JobDetailsBean> activeJobsDetails = getActiveJobsDetails();
             if(activeJobsDetails == null){
-                log.info("There is no active jobs");
+                log.warn("There is no active jobs");
             } else{
                 List<String> activeJobIds = new ArrayList<String>(activeJobsDetails.keySet());
                 for(String id: activeJobIds){
@@ -373,5 +377,24 @@ public class HTRCAgentClient {
             }
         }
         return allJobsDetails;
+    }
+
+    public Map<String, JobDetailsBean> getJobsDetails(List<String> jobIds) {
+        Map<String, JobDetailsBean> res = new HashMap<String, JobDetailsBean>();
+        Map<String, JobDetailsBean> jobsDetails = getAllJobsDetails();
+        if (jobsDetails == null){
+            log.error("Unable to get data from agent.");
+        }else{
+            for (String id : jobIds) {
+                if (jobsDetails.containsKey(id)) {
+                    res.put(id, jobsDetails.get(id));
+                } else {
+                    log.error("Cannot find job Id " + id + " in agent");
+                }
+            }
+        }
+
+
+        return res;
     }
 }

@@ -24,21 +24,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Token extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public User user;
+    public String userId;
     public String token;
     public Long createdTime;
-    public Boolean isTokenUsed = false;
+    public Boolean isTokenUsed;
 
     private static Logger.ALogger log = play.Logger.of("application");
 
-    public Token(User user, String token, Long createdTime) {
-        this.user = user;
+    public Token(String userId, String token, Long createdTime) {
+        this.userId = userId;
         this.token = token;
         this.createdTime = createdTime;
     }
@@ -47,6 +52,52 @@ public class Token extends Model {
 
     public static Token findByToken(String token){
         return find.where().eq("token", token).findUnique();
+    }
+
+    public static String generateToken(String userId, String userEmail) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
+
+        MessageDigest messageDigestInstance = MessageDigest.getInstance("SHA-256");
+
+        byte[] hash = messageDigestInstance.digest((new Date().toString() + userId + userEmail).getBytes("UTF-8"));
+        StringBuilder sb = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            sb.append(HEX_CHARS[(b & 0xF0) >> 4]);
+            sb.append(HEX_CHARS[b & 0x0F]);
+        }
+
+        String passwordResetToken = sb.toString();
+        if(Token.findByToken(passwordResetToken) != null){
+            Token alreadyExistToken = Token.findByToken(passwordResetToken);
+            if(alreadyExistToken.userId.equals(userId)){
+                alreadyExistToken.createdTime = new Date().getTime();
+                alreadyExistToken.update();
+            }else{
+                log.error("Error in saving tokens.");
+            }
+
+        }else {
+            Token token = new Token(userId,passwordResetToken,new Date().getTime());
+            token.save();
+        }
+        return passwordResetToken;
+    }
+
+    public static void deleteToken(String token){
+       Token token1 = Token.findByToken(token);
+        token1.delete();
+    }
+
+    public static void replaceToken(Token token1){
+        token1.update();
+    }
+
+    public static void deleteAllTokens(){
+        List<Token> tokenList = find.all();
+        for(Token token1 : tokenList){
+             token1.delete();
+        }
+
     }
 
 

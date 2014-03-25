@@ -314,9 +314,12 @@ public class HTRCUserManagerUtility {
      * @param newPassword The User's new password
      * @throws RemoteException,ChangePasswordUserAdminExceptionException
      */
-    public void changePassword(String userName, String newPassword) throws RemoteException, ChangePasswordUserAdminExceptionException {
-        userAdmin.changePassword(userName,newPassword);
-        throw new ChangePasswordUserAdminExceptionException("Cannot change password for user: " + userName);
+    public void changePassword(String userName, String newPassword) throws ChangePasswordUserAdminExceptionException {
+        try {
+            userAdmin.changePassword(userName,newPassword);
+        } catch (RemoteException e) {
+            throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
+        }
     }
 
     /**
