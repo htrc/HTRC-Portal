@@ -19,7 +19,6 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceUserStoreException;
 import org.wso2.carbon.user.mgt.stub.ChangePasswordUserAdminExceptionException;
 import play.Logger;
 import play.data.DynamicForm;
@@ -40,6 +39,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static play.data.Form.form;
 
@@ -109,11 +109,11 @@ public class HTRCPortal extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
         Workset ws = Workset.findWorkset(worksetName);
-        List<Volume> volumeList = new ArrayList<Volume>();
+        List<Volume> volumeList = new ArrayList<>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
         }
-        List<VolumeDetailsBean> volumeDetailsList = new ArrayList<VolumeDetailsBean>();
+        List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
         for (int i = 0; i <= volumeList.size() - 1; i++) {
             volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
         }
@@ -123,10 +123,10 @@ public class HTRCPortal extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(request().username());
-        updateWorksets(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
-        updateAlgorithms(loggedInUser.accessToken,PlayConfWrapper.registryEPR());
+        updateWorksets(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
+        updateAlgorithms(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
         PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
-        List<Algorithm> algorithms = algorithmsPL.getPage(page -1).getList();
+        List<Algorithm> algorithms = algorithmsPL.getPage(page - 1).getList();
 
         return ok(views.html.algorithms.render(loggedInUser, algorithms, Algorithm.all().size(), page, algorithmsPL.getTotalPageCount()));
     }
@@ -137,20 +137,20 @@ public class HTRCPortal extends Controller {
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         List<Workset> worksetList = Workset.all();
-        return ok(algorithm.render(loggedInUser,algorithmDetails,parameters,worksetList,Form.form(SubmitJob.class)));
+        return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result submitAlgorithm() throws Exception {
-        User loggedInUser = User.findByUserID(request().username());
+        AtomicReference<User> loggedInUser = new AtomicReference<>(User.findByUserID(request().username()));
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
         jobSubmitBean.setJobName(requestData.get("jobName"));
-        jobSubmitBean.setUserName(loggedInUser.userId);
+        jobSubmitBean.setUserName(loggedInUser.get().userId);
         jobSubmitBean.setAlgorithmName(requestData.get("algorithmName"));
-        AlgorithmDetailsBean algorithmDetails = null;
+        AlgorithmDetailsBean algorithmDetails;
         try {
-            algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, requestData.get("algorithmName"));
+            algorithmDetails = getAlgorithmDetails(loggedInUser.get().accessToken, requestData.get("algorithmName"));
         } catch (Exception e) {
             Logger.error("Error occurred during algorithm details request.", e);
             throw e;
@@ -161,8 +161,8 @@ public class HTRCPortal extends Controller {
             parameters = algorithmDetails.getParameters();
         }
         if (parameters != null) {
-            List<JobSubmitBean.Parameter> parameterList = new ArrayList<JobSubmitBean.Parameter>();
-            for(AlgorithmDetailsBean.Parameter pm: parameters){
+            List<JobSubmitBean.Parameter> parameterList = new ArrayList<>();
+            for (AlgorithmDetailsBean.Parameter pm : parameters) {
                 int index = parameters.indexOf(pm) + 1;
                 JobSubmitBean.Parameter parameter = new JobSubmitBean.Parameter();
                 parameter.setParamName(requestData.field("parameters[" + index + "].paramName").value());
@@ -173,16 +173,16 @@ public class HTRCPortal extends Controller {
             jobSubmitBean.setParameters(parameterList);
         }
 
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.get().accessToken);
         JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean);
-        if(jobDetailsBean == null){
+        if (jobDetailsBean == null) {
             log.error(String.format("Unable to submit job %s for user %s to agent",
                     jobSubmitBean.getJobName(), jobSubmitBean.getUserName()));
-        }else{
+        } else {
             log.info(String.format("ActiveJob (id: %s) is submitted, status is %s",
                     jobDetailsBean.getJobId(), jobDetailsBean.getJobStatus()));
-            ActiveJob job = new ActiveJob(jobDetailsBean.getJobId(),jobDetailsBean.getJobTitle(),
-                    jobDetailsBean.getLastUpdatedDate(),jobDetailsBean.getJobStatus());
+            ActiveJob job = new ActiveJob(jobDetailsBean.getJobId(), jobDetailsBean.getJobTitle(),
+                    jobDetailsBean.getLastUpdatedDate(), jobDetailsBean.getJobStatus());
             job.save();
         }
 
@@ -191,127 +191,126 @@ public class HTRCPortal extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result listJobs(){
+    public static Result listJobs() {
         User loggedInUser = User.findByUserID(request().username());
         updateJobList(loggedInUser);
-        return ok(joblist.render(loggedInUser,ActiveJob.all(),CompletedJob.all()));
+        return ok(joblist.render(loggedInUser, ActiveJob.all(), CompletedJob.all()));
 
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result cancelJobs(){
-        List<String> activeJobIds = new ArrayList<String>();
+    public static Result cancelJobs() {
+        List<String> activeJobIds = new ArrayList<>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
 
-        for(String key : keys){
-            if (form.get(key).length > 0){
+        for (String key : keys) {
+            if (form.get(key).length > 0) {
                 activeJobIds.add(form.get(key)[0]);
             }
         }
         User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
         boolean response = agentClient.cancelJobs(activeJobIds);
-        if(response){
-            for(String jonId: activeJobIds){
+        if (response) {
+            for (String jonId : activeJobIds) {
                 ActiveJob.delete(ActiveJob.findByJobID(jonId));
             }
             log.info("Following ActiveJob Ids are canceled successfully :" + activeJobIds);
-        }else{
+        } else {
             log.error("Error occured during ActiveJob cancellation process");
         }
         return redirect(routes.HTRCPortal.listJobs());
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result updateJobs(){
-        List<String> completedJobIds = new ArrayList<String>();
+    public static Result updateJobs() {
+        List<String> completedJobIds = new ArrayList<>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
         String actionType = form.get("update-type")[0].trim();
-        for(String key : keys){
-            if(form.get(key).length > 0 && !key.equals("update-type")){
+        for (String key : keys) {
+            if (form.get(key).length > 0 && !key.equals("update-type")) {
                 completedJobIds.add(form.get(key)[0]);
             }
         }
         User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
-        boolean response = false;
-        if(actionType.equals("delete")){
+        boolean response;
+        if (actionType.equals("delete")) {
             log.info("Deleting jobs: " + completedJobIds);
-             response = agentClient.deleteJobs(completedJobIds);
-             if(response){
-                 for(String jobId: completedJobIds){
-                     CompletedJob.delete(CompletedJob.findByJobID(jobId));
-                 }
+            response = agentClient.deleteJobs(completedJobIds);
+            if (response) {
+                for (String jobId : completedJobIds) {
+                    CompletedJob.delete(CompletedJob.findByJobID(jobId));
+                }
                 log.info("Following Completed Job Ids are deleted successfully :" + completedJobIds);
-             }else{
+            } else {
                 log.error("Error occured during Completed Job deletion process");
-             }
-        }if(actionType.equals("save")){
+            }
+        }
+        if (actionType.equals("save")) {
             log.info("Saving jobs: " + completedJobIds);
-             response = agentClient.saveJobs(completedJobIds);
-             if(response){
-                 log.info("Following Completed Job Ids are saved successfully :" + completedJobIds);
-             }else{
-                 log.error("Error occured during Completed Job saving process");
-             }
+            response = agentClient.saveJobs(completedJobIds);
+            if (response) {
+                log.info("Following Completed Job Ids are saved successfully :" + completedJobIds);
+            } else {
+                log.error("Error occured during Completed Job saving process");
+            }
         }
 
         return redirect(routes.HTRCPortal.listJobs());
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result viewJobDetails(String jobId){
+    public static Result viewJobDetails(String jobId) {
         User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
-        List<String> jobIds = new ArrayList<String>();
+        List<String> jobIds = new ArrayList<>();
         jobIds.add(jobId);
         Map<String, JobDetailsBean> jobsDetails = agentClient.getJobsDetails(jobIds);
         return ok(jobdetails.render(loggedInUser, jobsDetails.values()));
     }
 
-    public static Result createSignUpForm(){
+    public static Result createSignUpForm() {
         return ok(signup.render(Form.form(SignUp.class), null));
     }
 
-    public static Result signUp(){
+    public static Result signUp() {
         Form<SignUp> signUpForm = form(SignUp.class).bindFromRequest();
-        if(signUpForm.hasErrors()){
-            return badRequest(signup.render(signUpForm,null));
+        if (signUpForm.hasErrors()) {
+            return badRequest(signup.render(signUpForm, null));
         }
         log.info(signUpForm.toString());
         return redirect(routes.HTRCPortal.login());
     }
 
 
-    public static Result createPasswordResetMailForm(){
-        return ok(passwordresetmail.render(Form.form(PasswordResetMail.class),null));
+    public static Result createPasswordResetMailForm() {
+        return ok(passwordresetmail.render(Form.form(PasswordResetMail.class), null));
     }
 
-    public static Result passwordResetMail(){
-        Form<PasswordResetMail> passwordResetMailForm= form(PasswordResetMail.class).bindFromRequest();
-        if(passwordResetMailForm.hasErrors()){
-            return badRequest(passwordresetmail.render(passwordResetMailForm,null));
+    public static Result passwordResetMail() {
+        Form<PasswordResetMail> passwordResetMailForm = form(PasswordResetMail.class).bindFromRequest();
+        if (passwordResetMailForm.hasErrors()) {
+            return badRequest(passwordresetmail.render(passwordResetMailForm, null));
         }
         log.info(passwordResetMailForm.toString());
-        return ok("Password reset link sent to " + passwordResetMailForm.get().userEmail.substring(0,4)+"...."+passwordResetMailForm.get().userEmail.substring(15));
+        return ok("Password reset link sent to " + passwordResetMailForm.get().userEmail.substring(0, 4) + "...." + passwordResetMailForm.get().userEmail.substring(15));
     }
 
-    public static Result createPasswordResetForm(String token){
-        return ok(passwordreset.render(Form.form(PasswordReset.class),null,token));
+    public static Result createPasswordResetForm(String token) {
+        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token));
     }
 
-    public static Result passwordReset(){
-        Form<PasswordReset> passwordResetForm= form(PasswordReset.class).bindFromRequest();
-        if(passwordResetForm.hasErrors()){
-            return badRequest(passwordreset.render(passwordResetForm,null,passwordResetForm.get().token));
+    public static Result passwordReset() {
+        Form<PasswordReset> passwordResetForm = form(PasswordReset.class).bindFromRequest();
+        if (passwordResetForm.hasErrors()) {
+            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.get().token));
         }
         log.info(passwordResetForm.toString());
-        return ok("Password changed successfully. Click on the login link to begin: "+ redirect(routes.HTRCPortal.login()));
+        return ok("Password changed successfully. Click on the login link to begin: " + redirect(routes.HTRCPortal.login()));
     }
-
-
 
 
     public static void updateWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
@@ -324,7 +323,7 @@ public class HTRCPortal extends Controller {
             if (alreadyExistWorkset != null) {
                 Workset.delete(Workset.findWorkset(metadata.getName()));
             }
-            List<Volume> volumeList = new ArrayList<Volume>();
+            List<Volume> volumeList = new ArrayList<>();
             if (!metadata.getName().contains(" ")) {
                 volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
             }
@@ -379,7 +378,7 @@ public class HTRCPortal extends Controller {
 
                     if (arr.hasAttribute("name") && arr.getAttribute("name").equals("title")) {
                         NodeList strElements = arr.getElementsByTagName("str");
-                        volDetails.setTitle(((Element) strElements.item(0)).getTextContent());
+                        volDetails.setTitle((strElements.item(0)).getTextContent());
                     } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderMale")) {
                         NodeList strElements = arr.getElementsByTagName("str");
                         String maleAuthor = "";
@@ -467,16 +466,15 @@ public class HTRCPortal extends Controller {
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY);
-        }else{
-            List<String> algorithms = new ArrayList<String>(allAlgorithms.keySet());
-            List<AlgorithmDetailsBean> algorithmDetailsList = new ArrayList<AlgorithmDetailsBean>(allAlgorithms.values());
+        } else {
+            List<AlgorithmDetailsBean> algorithmDetailsList = new ArrayList<>(allAlgorithms.values());
 
-            for(AlgorithmDetailsBean al:algorithmDetailsList ){
-                if(Algorithm.findAlgoritm(al.getName()) != null){
+            for (AlgorithmDetailsBean al : algorithmDetailsList) {
+                if (Algorithm.findAlgoritm(al.getName()) != null) {
                     Algorithm.delete(Algorithm.findAlgoritm(al.getName()));
                 }
                 String authors = StringUtils.collectionToCommaDelimitedString(al.getAuthors());
-                Algorithm algorithm = new Algorithm(al.getName(),al.getDescription().substring(0,50),authors,al.getVersion());
+                Algorithm algorithm = new Algorithm(al.getName(), al.getDescription().substring(0, 50), authors, al.getVersion());
                 Algorithm.create(algorithm);
             }
         }
@@ -489,26 +487,26 @@ public class HTRCPortal extends Controller {
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY);
-        }else{
+        } else {
             algorithmDetails = allAlgorithms.get(algorithmName);
         }
         return algorithmDetails;
     }
 
-    public static void updateJobList(User loggedInUser){
+    public static void updateJobList(User loggedInUser) {
         HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
-        Map<String,JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
-        Map<String,JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+        Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+        Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
         if (completedJobs == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
                     + loggedInUser.userId);
-        }else{
-            List<JobDetailsBean> completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
-            for(JobDetailsBean job : completedJobsList ){
-                if(ActiveJob.findByJobID(job.getJobId()) != null){
+        } else {
+            List<JobDetailsBean> completedJobsList = new ArrayList<>(completedJobs.values());
+            for (JobDetailsBean job : completedJobsList) {
+                if (ActiveJob.findByJobID(job.getJobId()) != null) {
                     ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
-                } else if(CompletedJob.findByJobID(job.getJobId()) == null){
-                    CompletedJob completedJob = new CompletedJob(job.getJobId(),job.getJobTitle(),job.getLastUpdatedDate(),job.getJobStatus(),job.getJobSavedStr());
+                } else if (CompletedJob.findByJobID(job.getJobId()) == null) {
+                    CompletedJob completedJob = new CompletedJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus(), job.getJobSavedStr());
                     completedJob.save();
                 }
             }
@@ -516,13 +514,13 @@ public class HTRCPortal extends Controller {
         if (activeJobs == null) {
             log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
                     + loggedInUser.userId);
-        }else{
-            List<JobDetailsBean> activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
-            for(JobDetailsBean job : activeJobsList ){
-                if(ActiveJob.findByJobID(job.getJobId()) != null){
+        } else {
+            List<JobDetailsBean> activeJobsList = new ArrayList<>(activeJobs.values());
+            for (JobDetailsBean job : activeJobsList) {
+                if (ActiveJob.findByJobID(job.getJobId()) != null) {
                     ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
                 }
-                ActiveJob activeJob = new ActiveJob(job.getJobId(),job.getJobTitle(),job.getLastUpdatedDate(),job.getJobStatus());
+                ActiveJob activeJob = new ActiveJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus());
                 activeJob.save();
             }
         }
@@ -534,7 +532,7 @@ public class HTRCPortal extends Controller {
         public String password;
 
         public String validate() throws OAuthProblemException, OAuthSystemException {
-            if(userId.isEmpty()||password.isEmpty()){
+            if (userId.isEmpty() || password.isEmpty()) {
                 return "Please fill username and password.";
             }
             if (User.authenticate(userId, password) == null) {
@@ -543,7 +541,7 @@ public class HTRCPortal extends Controller {
             return null;
         }
     }
-    
+
     public static class SignUp {
         public String userId;
         public String password;
@@ -556,34 +554,35 @@ public class HTRCPortal extends Controller {
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
 
-        public String validate(){
-            if(userId.isEmpty() || password.isEmpty()
+        public String validate() {
+            if (userId.isEmpty() || password.isEmpty()
                     || confirmPassword.isEmpty() || firstName.isEmpty()
-                    || lastName.isEmpty() || email.isEmpty()){
+                    || lastName.isEmpty() || email.isEmpty()) {
 
                 return "Please fill all the fields.";
-            }if(!password.equals(confirmPassword)) {
+            }
+            if (!password.equals(confirmPassword)) {
                 return "Passwords do not match.";
 
-            } if(userManager.isUserExists(userId)){
-                return "Username already exists.";
             }
-            else{
-                List<Map.Entry<String, String>> claims = new ArrayList<Map.Entry<String, String>>();
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
+            if (userManager.isUserExists(userId)) {
+                return "Username already exists.";
+            } else {
+                List<Map.Entry<String, String>> claims = new ArrayList<>();
+                claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/givenname", firstName));
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/lastname", lastName));
-                claims.add(new AbstractMap.SimpleEntry<String, String>(
+                claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/emailaddress", email));
                 try {
-                    userManager.createUser(userId,password,claims,permissions);
-                    setStatus("Successed");
+                    userManager.createUser(userId, password, claims, permissions);
+                    setStatus("Success");
 
                 } catch (UserAlreadyExistsException e) {
                     log.warn(e.getMessage());
                     setStatus("Failed");
-                }catch (Exception e) {
+                } catch (Exception e) {
                     log.error("Unable to sign up user.", e);
                 }
 
@@ -606,12 +605,13 @@ public class HTRCPortal extends Controller {
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
 
-        public String validate(){
-            if(userId.isEmpty()){
+        public String validate() {
+            if (userId.isEmpty()) {
                 return "User name is empty, Please enter username";
-            }if(!userManager.isUserExists(userId)){
+            }
+            if (!userManager.isUserExists(userId)) {
                 return "User Name Does Not Exist";
-            }else{
+            } else {
                 try {
                     userEmail = userManager.getEmail(userId);
                     Properties props = new Properties();
@@ -626,9 +626,10 @@ public class HTRCPortal extends Controller {
                     Session session = Session.getInstance(props,
                             new javax.mail.Authenticator() {
                                 protected PasswordAuthentication getPasswordAuthentication() {
-                                    return new PasswordAuthentication("htrc.portal","anep0rtal");
+                                    return new PasswordAuthentication("htrc.portal", "anep0rtal");
                                 }
-                            });
+                            }
+                    );
 
                     try {
 
@@ -639,8 +640,8 @@ public class HTRCPortal extends Controller {
                         message.setSubject("Password Reset for HTRC Portal");
 //                        User user = User.findByUserID(userId);
 //                        Token.deleteAllTokens();
-                        String passwordResetToken = Token.generateToken(userId, userEmail) ;
-                        String url = PlayConfWrapper.portalUrl()+"/passwordreset"+"?"+"token=" + passwordResetToken;
+                        String passwordResetToken = Token.generateToken(userId, userEmail);
+                        String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
 
                         // Now set the actual message
                         message.setText("Please click on following url to reset your password. \n" + url);
@@ -650,72 +651,54 @@ public class HTRCPortal extends Controller {
                         log.info("Sent message successfully....");
 
 
-                    } catch (MessagingException e) {
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (MessagingException | NoSuchAlgorithmException | IOException e) {
+                        throw new RuntimeException(e);  // TODO: Review exception handling logic.
                     }
-                } catch (OAuthAdminServiceUserStoreException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
 
                 return null;
             }
-
         }
-
-
     }
 
-    public static class PasswordReset{
+    public static class PasswordReset {
         public String token;
         public String newPassword;
         public String retypePassword;
 
-        public String validate(){
-            if(!newPassword.equals(retypePassword)) {
+        public String validate() {
+            if (!newPassword.equals(retypePassword)) {
                 return "The Passwords do not match.";
 
-            } else{
+            } else {
                 Token token1 = Token.findByToken(token);
                 String userId = token1.userId;
                 HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
                 try {
-                    userManager.changePassword(userId,newPassword);
+                    userManager.changePassword(userId, newPassword);
                     token1.isTokenUsed = true;
                     token1.update();
                 } catch (ChangePasswordUserAdminExceptionException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e); // TODO: Review this.
                 }
             }
 
-           return null;
+            return null;
         }
     }
-
-
 
     public static class SubmitJob {
         public String jobName;
         public String userName;
         public String algorithmName;
         public List<JobParameters> parameters;
-
-
-
-
-
     }
 
-    public static class JobParameters{
+    public static class JobParameters {
         public String paramName;
         public String paramType;
         public String paramValue;
     }
-
-
-
 }

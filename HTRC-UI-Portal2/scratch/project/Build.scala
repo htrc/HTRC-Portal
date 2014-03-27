@@ -2,22 +2,21 @@ import sbt._
 import Keys._
 import play.Project._
 
-object ApplicationBuild extends Build {
+object ApplicationBuild extends Build { 
 
-  val appName = "htrc-portal"
+  val appName = "htrc-portal"   
   val appVersion = "3.0.0-SNAPSHOT"
 
-/* Add Dependencies in following format
-*  "group_id" % "artifact_id" % "version"*/
+  /* Add Dependencies in following format
+   *  "group_id" % "artifact_id" % "version"*/
 
     val appDependencies = Seq(
-    "org.apache.amber" % "oauth2-client" % "0.22.1358727-wso2v2",
-    "org.apache.amber" % "oauth2-common" % "0.22.1358727-wso2v2",
+    "org.apache.amber.wso2" % "amber" % "0.22.1358727.wso2v3",
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
-    "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v2",
+    "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v3",
     "com.googlecode.json-simple" % "json-simple" % "1.1",
-      "mysql" % "mysql-connector-java" % "5.1.27",
-    "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.0.3",
+     "mysql" % "mysql-connector-java" % "5.1.27",
+    "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.2.2",
     "edu.illinois.i3.htrc" % "UserManager" % "0.3.1"
       exclude("org.apache.tomcat.ha.wso2","tomcat-ha")
       exclude("org.wso2.securevault","org.wso2.securevault")
@@ -45,7 +44,7 @@ object ApplicationBuild extends Build {
 * "repository_name" at "repository path"*/
 
    val main = play.Project(appName, appVersion, appDependencies).settings(
-//    resolvers += "WSO2 internal Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/",
+     resolvers += ("WSO2 Maven Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public"),
      resolvers += ("Local Maven Repository" at "file://"+ Path.userHome.absolutePath + "/.m2/repository"),
     resolvers += "Internal Release Repository" at "http://htrc.illinois.edu:8080/archiva/repository/internal/",
     resolvers += "Internal Snapshot Repository" at "http://htrc.illinois.edu:8080/archiva/repository/snapshots/"
