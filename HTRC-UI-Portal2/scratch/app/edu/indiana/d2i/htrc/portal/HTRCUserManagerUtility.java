@@ -27,7 +27,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
 import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceStub;
-import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceUserStoreException;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.extensions.stub.ResourceAdminServiceStub;
 import org.wso2.carbon.registry.ws.client.registry.WSRegistryServiceClient;
@@ -60,7 +59,7 @@ public class HTRCUserManagerUtility {
     };
 
 
-    public static HTRCUserManagerUtility getInstanceWithDefaultProperties(){
+    public static HTRCUserManagerUtility getInstanceWithDefaultProperties() {
         try {
             Properties userMgtUtilityProps = new Properties();
             userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
@@ -68,14 +67,12 @@ public class HTRCUserManagerUtility {
             userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
             userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
 
-            HTRCUserManagerUtility userManager = new HTRCUserManagerUtility(
+            return new HTRCUserManagerUtility(
                     PlayConfWrapper.oauthBackendUrl() + "/services/",
                     PlayConfWrapper.userRegUrl(),
                     PlayConfWrapper.userRegUser(),
                     PlayConfWrapper.userRegPwd(),
                     userMgtUtilityProps);
-
-            return  userManager;
         } catch (Exception e) {
             String errMessage = "Failed to create User Manager Utility instance.";
             log.error(errMessage, e);
@@ -84,7 +81,7 @@ public class HTRCUserManagerUtility {
     }
 
     public HTRCUserManagerUtility(String isURL, String gregURL, String userName, String password,
-                                 Properties configProperties) {
+                                  Properties configProperties) {
         if (!(configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_HOME)
                 && configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_FILES)
                 && configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_WORKSETS)
@@ -125,7 +122,7 @@ public class HTRCUserManagerUtility {
             userNameRegExp = Pattern.compile(userStoreInfo.getUserNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
             roleNameRegExp = Pattern.compile(userStoreInfo.getRoleNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
 
-            oAuthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext,oauthAdminEPR);
+            oAuthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext, oauthAdminEPR);
             Options option_1 = oAuthAdminServiceStub._getServiceClient().getOptions();
             option_1.setManageSession(true);
             option_1.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
@@ -171,17 +168,17 @@ public class HTRCUserManagerUtility {
     /**
      * Create a new user for the HTRC platform
      *
-     * @param userName The user name
-     * @param password The user's password
-     * @param claims The <code>ClaimValue[]</code> array of profile claims
-     *                  (see <a href="https://htrc3.pti.indiana.edu:9443/carbon/claim-mgt/claim-view.jsp?store=Internal&dialect=http://wso2.org/claims">available claims</a>)
+     * @param userName    The user name
+     * @param password    The user's password
+     * @param claims      The <code>ClaimValue[]</code> array of profile claims
+     *                    (see <a href="https://htrc3.pti.indiana.edu:9443/carbon/claim-mgt/claim-view.jsp?store=Internal&dialect=http://wso2.org/claims">available claims</a>)
      * @param permissions The array of permission keys to assign to the user, for example: "/permission/admin/login" (can be <code>null</code>)
+     * @throws UserAlreadyExistsException Thrown if an error occurred
      * @see #getRequiredUserClaims()
      * @see #getAvailablePermissions()
-     * @throws UserManagerException Thrown if an error occurred
      */
     public void createUser(String userName, String password, List<Map.Entry<String, String>> claims,
-                           String[] permissions) throws UserAlreadyExistsException {
+                           String[] permissions) throws UserAlreadyExistsException { // TODO: Review this
         if (userName == null) {
             throw new NullPointerException("User name null.");
         }
@@ -190,7 +187,7 @@ public class HTRCUserManagerUtility {
             throw new NullPointerException("Password null.");
         }
 
-        if(isUserExists(userName)){
+        if (isUserExists(userName)) {
             String message = "User with name " + userName + " already exists.";
             log.warn(message);
             throw new UserAlreadyExistsException(message);
@@ -272,8 +269,8 @@ public class HTRCUserManagerUtility {
 
     /* Check whether the user is already exists
     * @param userId*/
-    public boolean isUserExists(String userName){
-        try{
+    public boolean isUserExists(String userName) {
+        try {
             String[] users = userAdmin.listUsers("*");
             return new HashSet<String>(Arrays.asList(users)).contains(userName);
         } catch (Exception e) {
@@ -298,11 +295,11 @@ public class HTRCUserManagerUtility {
      * Get the list of available role permissions
      *
      * @return A Map<String,String> of available role permissions,
-     *         where the key represents the permission key, and the value provides a
-     *         human readable name for the permission
+     * where the key represents the permission key, and the value provides a
+     * human readable name for the permission
      * @throws UserManagerException Thrown if an error occurred
      */
-    public Map<String, String> getAvailablePermissions() throws UserManagerException{
+    public Map<String, String> getAvailablePermissions() throws UserManagerException {
         return null;
 
     }
@@ -310,13 +307,13 @@ public class HTRCUserManagerUtility {
     /**
      * Change User password
      *
-     * @param userName The User's username
+     * @param userName    The User's username
      * @param newPassword The User's new password
-     * @throws RemoteException,ChangePasswordUserAdminExceptionException
+     * @throws ChangePasswordUserAdminExceptionException
      */
     public void changePassword(String userName, String newPassword) throws ChangePasswordUserAdminExceptionException {
         try {
-            userAdmin.changePassword(userName,newPassword);
+            userAdmin.changePassword(userName, newPassword);
         } catch (RemoteException e) {
             throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
         }
@@ -324,26 +321,23 @@ public class HTRCUserManagerUtility {
 
     /**
      * Get User's email address
+     *
      * @param userId = User name
+     * @throws RemoteException
      * @retun user Email
-     * @throws RemoteException,OAuthAdminServiceUserStoreException
      */
-    public String getEmail(String userId) throws OAuthAdminServiceUserStoreException {
-        if(isUserExists(userId)){
+    public String getEmail(String userId) {
+        if (isUserExists(userId)) {
             try {
-                return oAuthAdminServiceStub.getUserEmail(userId);
-            } catch (RemoteException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (OAuthAdminServiceUserStoreException e) {
+                return oAuthAdminServiceStub.getUserEmail(userId); // TODO: Fix this
+            } catch (Exception e) {
                 String errMessage = "Error with user store";
                 log.error(errMessage, e);
-                throw new OAuthAdminServiceUserStoreException(errMessage,e);
+                throw new RuntimeException(e);
             }
         }
         return "User doesn't exist";
     }
-
-
 
 
 }
