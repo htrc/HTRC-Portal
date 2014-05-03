@@ -23,6 +23,7 @@ import org.wso2.carbon.user.mgt.stub.ChangePasswordUserAdminExceptionException;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.Constraints;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -31,6 +32,7 @@ import views.html.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.validation.Constraint;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -528,7 +530,10 @@ public class HTRCPortal extends Controller {
     }
 
     public static class Login {
+        @Constraints.Required
         public String userId;
+
+        @Constraints.Required
         public String password;
 
         public String validate() throws OAuthProblemException, OAuthSystemException {

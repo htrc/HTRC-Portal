@@ -23,7 +23,14 @@ import htrc.security.oauth2.client.OAuthUserInfoRequest;
 import org.apache.amber.oauth2.client.URLConnectionClient;
 import org.apache.amber.oauth2.client.request.OAuthClientRequest;
 import org.apache.amber.oauth2.client.response.OAuthClientResponse;
+import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.message.types.GrantType;
+import org.apache.amber.oauth2.common.utils.JSONUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import play.Logger;
 import play.Play;
 import play.db.ebean.Model;
@@ -34,6 +41,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class User extends Model {
@@ -57,19 +65,20 @@ public class User extends Model {
             Long.class, User.class
     );
 
-    public static User findByUserID(String userId){
+    public static User findByUserID(String userId) {
         return find.where().eq("userId", userId).findUnique();
     }
 
     /**
      * find users from user's email.
+     *
      * @param email
      * @return list of user Ids with the given email
      */
-    public static List<String> findByEmail(String email){
+    public static List<String> findByEmail(String email) {
         List<String> userIdList = new ArrayList<String>();
-        for(User user: find.all()){
-            if(user.email.equals(email)){
+        for (User user : find.all()) {
+            if (user.email.equals(email)) {
                 userIdList.add(user.userId);
             }
         }
@@ -85,6 +94,7 @@ public class User extends Model {
                     .setClientSecret(PlayConfWrapper.oauthClientSecrete())
                     .setUsername(userId)
                     .setPassword(password)
+                    .setScope("openid")
                     .buildBodyMessage();
 
             OAuth2Client accessTokenClient = new OAuth2Client(new URLConnectionClient());
@@ -92,22 +102,34 @@ public class User extends Model {
 
             String accessToken = accessTokenResponse.getParam("access_token");
             User u = find.where().eq("userId", userId).findUnique();
-            if(u == null){
-                OAuthClientRequest userInfoRequest = OAuthUserInfoRequest
-                        .userInfoLocation(Play.application().configuration().getString("oauth2.userinfo.endpoint"))
-                        .setClientId(Play.application().configuration().getString("oauth2.client.id"))
-                        .setClientSecret(Play.application().configuration().getString("oauth2.client.secrete"))
-                        .setAccessToken(accessToken)
-                        .buildBodyMessage();
+            if (u == null) {
+                String userInfoEndpoint = Play.application().configuration().getString("oauth2.userinfo.endpoint");
+                String clientId = Play.application().configuration().getString("oauth2.client.id");
+                String clientSecret = Play.application().configuration().getString("oauth2.client.secrete");
 
-                OAuth2Client userInfoClient = new OAuth2Client(new URLConnectionClient());
-                OAuthClientResponse userInfoResponse = userInfoClient.userInfo(userInfoRequest);
-                String email = userInfoResponse.getParam("user_email");
-                User nu = new User(userId,email,accessToken);
+                HttpClient userInfoClient = new HttpClient();
+                HttpMethod getUserInfo = new GetMethod(userInfoEndpoint);
+
+                getUserInfo.setQueryString(new NameValuePair[]{
+                        new NameValuePair("schema", "openid"),
+                        new NameValuePair(OAuth.OAUTH_CLIENT_ID, clientId),
+                        new NameValuePair(OAuth.OAUTH_CLIENT_SECRET, clientSecret)
+                });
+
+                getUserInfo.addRequestHeader(OAuth.HeaderType.CONTENT_TYPE, OAuth.ContentType.JSON);
+                getUserInfo.addRequestHeader(OAuth.HeaderType.AUTHORIZATION, OAuth.OAUTH_HEADER_NAME + " " + accessToken);
+
+                userInfoClient.executeMethod(getUserInfo);
+
+                String userInfoResponse = getUserInfo.getResponseBodyAsString();
+                Logger.info(userInfoResponse);
+                Map<String, Object> userInfo = JSONUtils.parseJSON(userInfoResponse);
+
+                User nu = new User(userId, (String)userInfo.get("http://wso2.org/claims/emailaddress"), accessToken);
                 nu.save();
                 return nu;
 
-            } else{
+            } else {
                 u.accessToken = accessToken;
                 u.save();
                 return u;
@@ -116,8 +138,6 @@ public class User extends Model {
             log.error("Invalid user ID or Password", e);
             return null;
         }
-//        return find.where().eq("userId",userId).eq("password",password).findUnique();
-        //To change body of created methods use File | Settings | File Templates.
     }
 
 

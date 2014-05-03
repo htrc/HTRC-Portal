@@ -15,8 +15,10 @@
  *
  */
 
+import edu.indiana.d2i.htrc.portal.PortalConstants;
 import play.Application;
 import play.GlobalSettings;
+import play.Play;
 
 public class Global extends GlobalSettings {
     @Override
@@ -25,5 +27,8 @@ public class Global extends GlobalSettings {
         System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
+        System.setProperty("javax.net.ssl.trustStore", Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE));
+        System.setProperty("javax.net.ssl.trustStorePassword", Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE_PWD));
+        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
     }
 }

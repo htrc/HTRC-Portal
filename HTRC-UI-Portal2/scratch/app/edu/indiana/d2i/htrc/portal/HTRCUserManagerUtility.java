@@ -17,9 +17,8 @@
 
 package edu.indiana.d2i.htrc.portal;
 
-import edu.illinois.i3.htrc.usermanager.exceptions.UserManagerException;
-import edu.illinois.i3.htrc.usermanager.utils.PermissionType;
-import edu.illinois.i3.htrc.usermanager.utils.ResourceActionPermission;
+
+import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -30,10 +29,12 @@ import org.wso2.carbon.identity.oauth.stub.OAuthAdminServiceStub;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.extensions.stub.ResourceAdminServiceStub;
 import org.wso2.carbon.registry.ws.client.registry.WSRegistryServiceClient;
-import org.wso2.carbon.user.mgt.stub.ChangePasswordUserAdminExceptionException;
+import org.wso2.carbon.user.mgt.common.UserAdminException;
 import org.wso2.carbon.user.mgt.stub.UserAdminStub;
+import edu.indiana.d2i.htrc.wso2is.extensions.stub.ExtendedUserAdminStub;
+import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import org.wso2.carbon.user.mgt.stub.types.carbon.ClaimValue;
-import org.wso2.carbon.user.mgt.stub.types.carbon.UserStoreInfo;
+import org.wso2.carbon.user.mgt.stub.types.carbon.UserRealmInfo;
 import org.wso2.carbon.utils.NetworkUtils;
 import play.Logger;
 
@@ -44,10 +45,18 @@ import java.util.regex.Pattern;
 
 public class HTRCUserManagerUtility {
     private static Logger.ALogger log = play.Logger.of("application");
+
+    private static final String CONFIG_HTRC_USER_HOME = "user.home";
+    private static final String CONFIG_HTRC_USER_FILES = "user.files";
+    private static final String CONFIG_HTRC_USER_WORKSETS = "user.worksets";
+    private static final String CONFIG_HTRC_USER_JOBS = "user.jobs";
+
     private Properties configProperties;
     private UserAdminStub userAdmin;
     private OAuthAdminServiceStub oAuthAdminServiceStub;
-    private UserStoreInfo userStoreInfo;
+    private ExtendedUserAdminStub extendedUserAdminStub;
+    private UserRealmInfo userRealmInfo;
+
     private WSRegistryServiceClient registry;
     private ResourceAdminServiceStub resourceAdmin;
     private Pattern userNameRegExp;
@@ -62,10 +71,10 @@ public class HTRCUserManagerUtility {
     public static HTRCUserManagerUtility getInstanceWithDefaultProperties() {
         try {
             Properties userMgtUtilityProps = new Properties();
-            userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
-            userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
-            userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
-            userMgtUtilityProps.put(edu.illinois.i3.htrc.usermanager.Constants.CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
+            userMgtUtilityProps.put(CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
+            userMgtUtilityProps.put(CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
+            userMgtUtilityProps.put(CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
+            userMgtUtilityProps.put(CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
 
             return new HTRCUserManagerUtility(
                     PlayConfWrapper.oauthBackendUrl() + "/services/",
@@ -96,6 +105,7 @@ public class HTRCUserManagerUtility {
 
         String userAdminEPR = isURL + "UserAdmin";
         String oauthAdminEPR = isURL + "OAuthAdminService";
+        String extendedUserAdminEPR = isURL + "ExtendedUserAdmin";
         String resourceAdminEPR = gregURL + "ResourceAdminService";
 
         try {
@@ -109,7 +119,7 @@ public class HTRCUserManagerUtility {
             option.setManageSession(true);
             option.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
                     userName, password));
-            userStoreInfo = userAdmin.getUserStoreInfo();
+            userRealmInfo = userAdmin.getUserRealmInfo();
 
             String gregAuthCookie = authenticateWithWSO2Server(gregURL, userName, password);
             registry = new WSRegistryServiceClient(gregURL, gregAuthCookie);
@@ -119,13 +129,19 @@ public class HTRCUserManagerUtility {
             option.setManageSession(true);
             option.setProperty(HTTPConstants.COOKIE_STRING, gregAuthCookie);
 
-            userNameRegExp = Pattern.compile(userStoreInfo.getUserNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
-            roleNameRegExp = Pattern.compile(userStoreInfo.getRoleNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
+            userNameRegExp = Pattern.compile(userRealmInfo.getPrimaryUserStoreInfo().getUserNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
+            roleNameRegExp = Pattern.compile(userRealmInfo.getPrimaryUserStoreInfo().getRoleNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
 
             oAuthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext, oauthAdminEPR);
             Options option_1 = oAuthAdminServiceStub._getServiceClient().getOptions();
             option_1.setManageSession(true);
             option_1.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
+                    userName, password));
+
+            extendedUserAdminStub = new ExtendedUserAdminStub(isConfigContext, extendedUserAdminEPR);
+            Options option_2 = extendedUserAdminStub._getServiceClient().getOptions();
+            option_2.setManageSession(true);
+            option_2.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
                     userName, password));
 
 
@@ -213,7 +229,7 @@ public class HTRCUserManagerUtility {
             }
 
             // javadoc: addRole(String roleName, String[] userList, String[] permissions)
-            userAdmin.addRole(userName, new String[]{userName}, permissions);
+            userAdmin.addRole(userName, new String[]{userName}, permissions, false);
 
             if (log.isDebugEnabled()) {
                 log.debug(String.format("Created role: %s with permissions: %s", userName,
@@ -251,7 +267,7 @@ public class HTRCUserManagerUtility {
                 log.debug(String.format("Created user jobs collection: %s", regUserJobs));
             }
 
-            String everyone = userStoreInfo.getEveryOneRole();
+            String everyone = userRealmInfo.getEveryOneRole();
             for (ResourceActionPermission permission : ALL_PERMISSIONS) {
                 resourceAdmin.addRolePermission(regUserHome, userName, permission.toString(), PermissionType.ALLOW.toString());
                 resourceAdmin.addRolePermission(regUserHome, everyone, permission.toString(), PermissionType.DENY.toString());
@@ -269,9 +285,10 @@ public class HTRCUserManagerUtility {
 
     /* Check whether the user is already exists
     * @param userId*/
-    public boolean isUserExists(String userName) {
+     // TODO: Fix this
+     public boolean isUserExists(String userName) {
         try {
-            String[] users = userAdmin.listUsers("*");
+            String[] users = userAdmin.listUsers("*", Integer.MAX_VALUE);
             return new HashSet<String>(Arrays.asList(users)).contains(userName);
         } catch (Exception e) {
             String errMessage = "Error checking whether given user exists.";
@@ -284,9 +301,9 @@ public class HTRCUserManagerUtility {
      * Get the list of required user claims (expected to be supplied as part of the createUser request)
      *
      * @return The array of required user claims
-     * @throws UserManagerException Thrown if an error occurred
+     * @throws org.wso2.carbon.user.mgt.common.UserAdminException Thrown if an error occurred
      */
-    public String[] getRequiredUserClaims() throws UserManagerException {
+    public String[] getRequiredUserClaims() throws UserAdminException {
         return null;
 
     }
@@ -297,9 +314,9 @@ public class HTRCUserManagerUtility {
      * @return A Map<String,String> of available role permissions,
      * where the key represents the permission key, and the value provides a
      * human readable name for the permission
-     * @throws UserManagerException Thrown if an error occurred
+     * @throws org.wso2.carbon.user.mgt.common.UserAdminException Thrown if an error occurred
      */
-    public Map<String, String> getAvailablePermissions() throws UserManagerException {
+    public Map<String, String> getAvailablePermissions() throws UserAdminException {
         return null;
 
     }
@@ -316,6 +333,8 @@ public class HTRCUserManagerUtility {
             userAdmin.changePassword(userName, newPassword);
         } catch (RemoteException e) {
             throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
+        } catch (UserAdminUserAdminException e) {
+            throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
         }
     }
 
@@ -329,7 +348,7 @@ public class HTRCUserManagerUtility {
     public String getEmail(String userId) {
         if (isUserExists(userId)) {
             try {
-                return oAuthAdminServiceStub.getUserEmail(userId); // TODO: Fix this
+                return extendedUserAdminStub.getUserEmailFromUserId(userId); // TODO: Fix this
             } catch (Exception e) {
                 String errMessage = "Error with user store";
                 log.error(errMessage, e);
@@ -338,6 +357,14 @@ public class HTRCUserManagerUtility {
         }
         return "User doesn't exist";
     }
+
+    /**
+     * Retrieve User's Id from the email address
+     *
+     * @param userEmail = User Email
+     * @throws RemoteException
+     * @retun user Id
+     */
 
 
 }
