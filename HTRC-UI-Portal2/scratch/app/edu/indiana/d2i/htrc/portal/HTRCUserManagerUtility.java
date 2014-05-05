@@ -53,7 +53,7 @@ public class HTRCUserManagerUtility {
 
     private Properties configProperties;
     private UserAdminStub userAdmin;
-    private OAuthAdminServiceStub oAuthAdminServiceStub;
+    private OAuthAdminServiceStub oauthAdminServiceStub;
     private ExtendedUserAdminStub extendedUserAdminStub;
     private UserRealmInfo userRealmInfo;
 
@@ -132,8 +132,8 @@ public class HTRCUserManagerUtility {
             userNameRegExp = Pattern.compile(userRealmInfo.getPrimaryUserStoreInfo().getUserNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
             roleNameRegExp = Pattern.compile(userRealmInfo.getPrimaryUserStoreInfo().getRoleNameRegEx().replaceAll("\\\\\\\\", "\\\\"));
 
-            oAuthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext, oauthAdminEPR);
-            Options option_1 = oAuthAdminServiceStub._getServiceClient().getOptions();
+            oauthAdminServiceStub = new OAuthAdminServiceStub(isConfigContext, oauthAdminEPR);
+            Options option_1 = oauthAdminServiceStub._getServiceClient().getOptions();
             option_1.setManageSession(true);
             option_1.setProperty(HTTPConstants.COOKIE_STRING, authenticateWithWSO2Server(isURL,
                     userName, password));
