@@ -7,11 +7,8 @@ object ApplicationBuild extends Build {
   val appName = "htrc-portal"
   val appVersion = "3.0.0-SNAPSHOT"
 
-  /* Add Dependencies in following format
-   *  "group_id" % "artifact_id" % "version"*/
-
   val appDependencies = Seq(
-    "edu.indiana.d2i.htrc.wso2is.extensions" % "edu.indiana.d2i.htrc.wso2is.extensions.stub" % "1.0.0",
+    "edu.indiana.d2i.htrc.security" % "useradmin-ext-stub" % "1.0.0-SNAPSHOT",
     "org.apache.amber.wso2" % "amber" % "0.22.1358727.wso2v3",
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
     "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v3",
