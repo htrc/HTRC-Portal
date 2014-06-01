@@ -27,6 +27,7 @@ import play.data.Form;
 import play.data.validation.Constraints;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Results;
 import play.mvc.Security;
 import views.html.vmcreate;
 import views.html.vmlist;
@@ -37,7 +38,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HTRCExperimentalAnalysis extends Controller {
+public class ExperimentalAnalysis extends Controller {
     private static Logger.ALogger log = play.Logger.of("application");
 
 
@@ -85,7 +86,7 @@ public class HTRCExperimentalAnalysis extends Controller {
             log.debug("Create VM form has errors." + createVMForm.errorsAsJson());
             return ok(vmcreate.render(loggedInUser, createVMForm, vmImageDetailsList));
         }
-        return redirect(routes.HTRCExperimentalAnalysis.listVMs());
+        return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @Security.Authenticated(Secured.class)
@@ -101,7 +102,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.deleteVM(vmId, loggedInUser);
-        return redirect(routes.HTRCExperimentalAnalysis.listVMs());
+        return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @Security.Authenticated(Secured.class)
@@ -109,7 +110,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.startVM(vmId, loggedInUser);
-        return redirect(routes.HTRCExperimentalAnalysis.listVMs());
+        return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @Security.Authenticated(Secured.class)
@@ -117,7 +118,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.stopVM(vmId, loggedInUser);
-        return redirect(routes.HTRCExperimentalAnalysis.listVMs());
+        return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @Security.Authenticated(Secured.class)
@@ -125,7 +126,7 @@ public class HTRCExperimentalAnalysis extends Controller {
         User loggedInUser = User.findByUserID(request().username());
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.switchVMMode(vmId, mode, loggedInUser);
-        return redirect(routes.HTRCExperimentalAnalysis.listVMs());
+        return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     public static void updateVMList(User loggedInUser) {
@@ -141,13 +142,9 @@ public class HTRCExperimentalAnalysis extends Controller {
                 VirtualMachine.createVM(virtualMachine);
             }
 
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            log.error("Update VM List Failed.", e);
         }
-
-
     }
 
     public static class CreateVM {

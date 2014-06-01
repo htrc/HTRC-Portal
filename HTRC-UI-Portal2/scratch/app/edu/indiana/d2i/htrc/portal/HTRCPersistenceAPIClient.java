@@ -1,19 +1,19 @@
 /**
-* Copyright 2013 The Trustees of Indiana University
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express  or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*/
+ * Copyright 2013 The Trustees of Indiana University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express  or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
 package edu.indiana.d2i.htrc.portal;
 
@@ -31,6 +31,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import play.Logger;
+import play.Play;
+import sun.rmi.runtime.Log;
 
 import javax.xml.bind.*;
 import javax.xml.stream.XMLInputFactory;
@@ -40,10 +42,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class HTRCPersistenceAPIClient {
     private static Logger.ALogger log = play.Logger.of("application");
@@ -86,6 +85,11 @@ public class HTRCPersistenceAPIClient {
     }
 
     private Object parseXML(String xmlStr) throws JAXBException {
+        System.out.println("Worset Response: \n" + xmlStr);
+        if (log.isDebugEnabled()) {
+            Logger.debug("Workset Response: \n" + xmlStr);
+        }
+
         JAXBContext jaxbContext = JAXBContext
                 .newInstance("edu.illinois.i3.htrc.registry.entities.workset");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -125,9 +129,6 @@ public class HTRCPersistenceAPIClient {
     }
 
 
-
-
-
     public List<Workset> getPublicWorksets() throws IOException,
             JAXBException {
 
@@ -145,7 +146,7 @@ public class HTRCPersistenceAPIClient {
             Worksets worksets = (Worksets) parseXML(xmlStr);
             return worksets.getWorkset();
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -166,13 +167,12 @@ public class HTRCPersistenceAPIClient {
             WorksetContent worksetContent = workset.getContent();
             if (worksetContent != null) {
                 return worksetContent.getVolumes().getVolume();
-            }
-            else {
+            } else {
                 log.info("Workset content null.");
                 return null;
 
             }
-        }else{
+        } else {
             log.debug("Response Code: " + response);
             return null;
         }
@@ -193,6 +193,7 @@ public class HTRCPersistenceAPIClient {
         Map<String, AlgorithmDetailsBean> res = new TreeMap<String, AlgorithmDetailsBean>();
 
         String algoFolder = PlayConfWrapper.registryAlgFolder();
+        log.debug("setting repo path to algofolder");
         String str = getFilesAsString(algoFolder, ".*.xml", null, true);
 
         while (true) {
@@ -213,15 +214,22 @@ public class HTRCPersistenceAPIClient {
                                    String typeReg, boolean shared)
             throws HttpException, IOException {
         String url = PlayConfWrapper.registryEPR() + "/files" + repoPath;
-        if (nameReg != null)
+
+        if (nameReg != null) {
             url += "?name=" + nameReg + "&";
-        if (typeReg != null)
+        }
+
+        if (typeReg != null) {
             url += "?type=" + typeReg + "&";
-        if (url.lastIndexOf("&") == url.length() - 1)
+        }
+
+        if (url.lastIndexOf("&") == url.length() - 1) {
             url += "public=" + String.valueOf(shared);
-        else
+        } else {
             url += "?public=" + String.valueOf(shared);
-        log.debug("getFilesAsString url: " + url);
+        }
+
+        Logger.info("getFilesAsString url: " + url);
 
         GetMethod get = new GetMethod(url);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);
@@ -231,8 +239,10 @@ public class HTRCPersistenceAPIClient {
             renew = 0;
             return get.getResponseBodyAsString();
         } else if (response == 404) {
+            play.Logger.error("getFilesAsString failed: \n" + get.getResponseBodyAsString());
             return ""; // empty string
         } else if (response == 401 && (renew < MAX_RENEW)) {
+            play.Logger.info("getFilesAsString got access token expired error.");
             try {
                 accessToken = renewToken(refreshToken);
                 session.put(PortalConstants.SESSION_TOKEN, accessToken);
@@ -307,8 +317,6 @@ public class HTRCPersistenceAPIClient {
         res.setAuthors(authors);
         return res;
     }
-
-
 
 
 }

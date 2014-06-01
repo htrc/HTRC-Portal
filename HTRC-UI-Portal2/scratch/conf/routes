@@ -3,93 +3,93 @@
 # ~~~~
 
 # Home page
-GET     /                                                  controllers.HTRCPortal.index()
+GET         /                                                 controllers.HTRCPortal.index()
 
 # Login Form
-GET    /login                                              controllers.HTRCPortal.login()
+GET         /login                                            controllers.HTRCPortal.login()
 
 # Logout Form
 
-GET     /logout                                            controllers.HTRCPortal.logout()
+GET         /logout                                           controllers.HTRCPortal.logout()
 
 # Signup Form
-GET    /signup                                             controllers.HTRCPortal.createSignUpForm()
+GET         /signup                                           controllers.UserManagement.createSignUpForm()
 
-POST   /signupUser                                         controllers.HTRCPortal.signUp()
+POST        /signupUser                                       controllers.UserManagement.signUp()
 
-GET   /passwordreset                                       controllers.HTRCPortal.createPasswordResetForm(token:String ?="")
+GET         /passwordreset                                    controllers.UserManagement.createPasswordResetForm(token:String ?="")
 
-POST  /passwordreset                                       controllers.HTRCPortal.passwordReset()
+POST        /passwordreset                                    controllers.UserManagement.passwordReset()
 
 # Password Reset Form
-GET    /passwordresetmail                                  controllers.HTRCPortal.createPasswordResetMailForm()
+GET         /passwordresetmail                                controllers.UserManagement.createPasswordResetMailForm()
 
 # Send Password reset link
-POST   /passwordresetmail                                  controllers.HTRCPortal.passwordResetMail()
+POST        /passwordresetmail                                controllers.UserManagement.passwordResetMail()
 
 # About Form
 
-GET    /about                                              controllers.HTRCPortal.about()
+GET         /about                                            controllers.HTRCPortal.about()
 
 # Workset List Form
-GET   /listworksets                                        controllers.HTRCPortal.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
+GET         /listworksets                                     controllers.WorksetManagement.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
 
 # Create Workset from HTRC Workset builder
-GET  /createworkset                                        controllers.HTRCWorksetBuilder.createWorkset()
+GET         /createworkset                                    controllers.HTRCWorksetBuilder.createWorkset()
 
 # View Workset
-GET   /viewworkset                                         controllers.HTRCPortal.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
+GET         /viewworkset                                      controllers.WorksetManagement.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
 
 # Algorithm List Form
-GET   /listalgorithms                                       controllers.HTRCPortal.listAlgorithms(page:Int ?= 1)
+GET         /listalgorithms                                   controllers.AlgorithmManagement.listAlgorithms(page:Int ?= 1)
 
 # View Algorithm
-GET   /viewalgorithm                                        controllers.HTRCPortal.viewAlgorithm(algorithmName:String ?="")
+GET         /viewalgorithm                                    controllers.AlgorithmManagement.viewAlgorithm(algorithmName:String ?="")
 
 # Submit Job
-POST  /submitjob                                            controllers.HTRCPortal.submitAlgorithm()
+POST        /submitjob                                        controllers.AlgorithmManagement.submitAlgorithm()
 
 # View Job List
-GET /listjobs                                               controllers.HTRCPortal.listJobs()
+GET         /listjobs                                         controllers.JobManagement.listJobs()
 
 # Cancel Jobs
-POST  /canceljobs                                            controllers.HTRCPortal.cancelJobs()
+POST        /canceljobs                                       controllers.JobManagement.cancelJobs()
 
 # Cancel Jobs
-POST  /updatejobs                                            controllers.HTRCPortal.updateJobs()
+POST        /updatejobs                                       controllers.JobManagement.updateJobs()
 
 # View Job Details
-GET  /viewjobdetails                                        controllers.HTRCPortal.viewJobDetails(jobId:String ?="")
+GET         /viewjobdetails                                   controllers.JobManagement.viewJobDetails(jobId:String ?="")
 # SLOAN VM List Form
-GET   /listvms                                              controllers.HTRCExperimentalAnalysis.listVMs()
+GET         /listvms                                          controllers.ExperimentalAnalysis.listVMs()
 
 # SLOAN VM Create Form
-GET   /createvms                                            controllers.HTRCExperimentalAnalysis.createVMForm()
+GET         /createvms                                        controllers.ExperimentalAnalysis.createVMForm()
 
-POST  /createvm                                             controllers.HTRCExperimentalAnalysis.createVM()
+POST        /createvm                                         controllers.ExperimentalAnalysis.createVM()
 
 #SLOAN VM Show VM Status
-GET /showvm                                                 controllers.HTRCExperimentalAnalysis.showVMStatus(vmId:String ?="")
+GET         /showvm                                           controllers.ExperimentalAnalysis.showVMStatus(vmId:String ?="")
 
 #SLOAN VM Delete
-GET /deletevm                                               controllers.HTRCExperimentalAnalysis.deleteVM(vmId:String ?="")
+GET         /deletevm                                         controllers.ExperimentalAnalysis.deleteVM(vmId:String ?="")
 
-GET /launchvm                                               controllers.HTRCExperimentalAnalysis.startVM(vmId:String ?="")
+GET         /launchvm                                         controllers.ExperimentalAnalysis.startVM(vmId:String ?="")
 
-GET /stopvm                                               controllers.HTRCExperimentalAnalysis.stopVM(vmId:String ?="")
+GET         /stopvm                                           controllers.ExperimentalAnalysis.stopVM(vmId:String ?="")
 
-GET /switchvm                                               controllers.HTRCExperimentalAnalysis.switchVMMode(vmId:String ?="", mode:String ?="")
+GET         /switchvm                                         controllers.ExperimentalAnalysis.switchVMMode(vmId:String ?="", mode:String ?="")
 
 # Authenticate
-POST  /login                                                controllers.HTRCPortal.authenticate()
+POST        /login                                            controllers.HTRCPortal.authenticate()
 
 # Search
-POST  /search                                                controllers.HTRCWorksetBuilder.searchCorpus()
+POST        /search                                           controllers.HTRCWorksetBuilder.searchCorpus()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                       controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                     controllers.Assets.at(path="/public", file)
 
 # Map Bootstrap images
-GET    /assets/img/glyphicons-halflings.png                 controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
-GET    /assets/img/glyphicons-halflings-white.png           controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
+GET         /assets/img/glyphicons-halflings.png              controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
+GET         /assets/img/glyphicons-halflings-white.png        controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
 
