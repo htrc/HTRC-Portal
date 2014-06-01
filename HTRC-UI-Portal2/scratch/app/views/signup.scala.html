@@ -1,4 +1,4 @@
-@(form: Form[HTRCPortal.SignUp], user: User)
+@(form: Form[UserManagement.SignUp], user: User)
 
 
 @main("SignUp", user) {
@@ -23,7 +23,8 @@
         <div class="control-group">
             <label for="password" class="control-label">Password :</label>
             <div class="controls">
-                <input type="password" id="password" name="password" placeholder="Password" required="true"> Password should be at least 6 characters
+                <input type="password" id="password" name="password" placeholder="Password" required="true">
+                <p style="width: 240px; font-size: 11px; color: red; margin-bottom: 0px;">Password must be between 8 and 16 characters long.</p>
             </div>
         </div>
         <div class="control-group">
@@ -31,14 +32,14 @@
             <div class="controls">
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)">
                 <script language='javascript' type='text/javascript'>
-                        function check(input) {
+                    function check(input) {
                         if (input.value != document.getElementById('password').value) {
-                        input.setCustomValidity('Password Must be Matching.');
+                            input.setCustomValidity('Password Must be Matching.');
                         } else {
-                        // input is valid -- reset the error message
-                        input.setCustomValidity('');
+                            // input is valid -- reset the error message
+                            input.setCustomValidity('');
                         }
-                        }
+                    }
                 </script>
             </div>
         </div>
@@ -57,12 +58,16 @@
         <div class="control-group">
             <label for="email" class="control-label">Email :</label>
             <div class="controls">
-                <input type="email" id="email" name="email" required="true">
+                <input type="email" id="email" name="email" placeholder="Email" required="true">
+                <p style="width: 240px; font-size: 11px; color: red;">Please enter your institutional email.
+                If you don't have an institutional email or if your email is not recognized by our system,
+                please press 'Send Request' with your current email address.</p>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
                 <button type="submit" class="btn btn-default">Register</button>
+                <a href="#" class="btn btn-default">Send Request</a>
             </div>
         </div>
     }

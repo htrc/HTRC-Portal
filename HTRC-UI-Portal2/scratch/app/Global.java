@@ -30,5 +30,6 @@ public class Global extends GlobalSettings {
         System.setProperty("javax.net.ssl.trustStore", Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE));
         System.setProperty("javax.net.ssl.trustStorePassword", Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE_PWD));
         System.setProperty("javax.net.ssl.trustStoreType", "JKS");
+        play.Logger.info("Java Trust Store", System.getProperty("javax.net.ssl.trustStore"));
     }
 }

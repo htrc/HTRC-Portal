@@ -5,7 +5,7 @@
 @main("VMList", user) {
     <meta http-equiv="refresh" content="40">
     <legend>Virtual Machines
-        <a href="@routes.HTRCExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top: 5px">
+        <a href="@routes.ExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top: 5px">
             <i class="icon-plus"></i>
         </a>
     </legend>
@@ -26,7 +26,7 @@
              @for(vm <- vmDetailsList){
                  <tr>
                      <td>
-                         <a href="@routes.HTRCExperimentalAnalysis.showVMStatus(vm.getVmId)">
+                         <a href="@routes.ExperimentalAnalysis.showVMStatus(vm.getVmId)">
                              @vm.getVmId
                          </a>
                      </td>
@@ -43,17 +43,17 @@
                                  <span class="label label-important">@vm.getState</span>
                              } else{
                                  @if(vm.getState == "SHUTDOWN"){
-                                     <a href="@routes.HTRCExperimentalAnalysis.startVM(vm.getVmId)" class="btn btn-info btn-small" id="startvm">
+                                     <a href="@routes.ExperimentalAnalysis.startVM(vm.getVmId)" class="btn btn-info btn-small" id="startvm">
                                              Start VM
                                      </a>
                                  } else{
-                                     <a href="@routes.HTRCExperimentalAnalysis.stopVM(vm.getVmId)" class="btn btn-warning btn-small" id="stopvm">
+                                     <a href="@routes.ExperimentalAnalysis.stopVM(vm.getVmId)" class="btn btn-warning btn-small" id="stopvm">
                                              Stop VM
                                      </a>
                                      @if(vm.getMode == "MAINTENANCE"){
                                          <a href="#" class="btn btn-info btn-small" id="switchmode-maintainance" onclick="modalMessage('Switch to Secure Mode',
                                          'Network in secure mode is highly constrained. You can only access HTRC Data service. You should only write your data to secure volume. ' +
-                                          'Data written to other places will not be persistent.','@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId,"SECURE")')">
+                                          'Data written to other places will not be persistent.','@routes.ExperimentalAnalysis.switchVMMode(vm.getVmId,"SECURE")')">
                                                  Switch To Secure Mode
                                          </a>
                                      } else {
@@ -61,7 +61,7 @@
                                          <a href="#" class="btn btn-info btn-small" id="switchmode-security"
                                          onclick="modalMessage('Switch to Maintenance Mode',
                                          'Only data written in secure volume is preserved! Please make sure you save your data to secure volume! Please dismount secure volume in virtual machine before to maintenance mode! ' +
-                                          'Click OK to continue switching, click Cancel to discard switching operation.','@routes.HTRCExperimentalAnalysis.switchVMMode(vm.getVmId,"MAINTENANCE")')">
+                                          'Click OK to continue switching, click Cancel to discard switching operation.','@routes.ExperimentalAnalysis.switchVMMode(vm.getVmId,"MAINTENANCE")')">
                                                  Switch To Maintenance Mode
                                          </a>
                                      }
@@ -69,7 +69,7 @@
                                  }
 
                              }
-                             <a href="#" class="btn btn-danger btn-small" id="deletevms" onclick="modalMessage('Delete VM','Do you want to delete VM ID: @vm.getVmId?','@routes.HTRCExperimentalAnalysis.deleteVM(vm.getVmId)')">
+                             <a href="#" class="btn btn-danger btn-small" id="deletevms" onclick="modalMessage('Delete VM','Do you want to delete VM ID: @vm.getVmId?','@routes.ExperimentalAnalysis.deleteVM(vm.getVmId)')">
                                  <i class="icon-trash icon-white"></i> Delete VM
                              </a>
 

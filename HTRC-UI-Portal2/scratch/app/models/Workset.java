@@ -81,8 +81,8 @@ public class Workset extends Model {
         workset.delete();
     }
 
-    public static Workset findWorkset(String worksetName){
-        return finder.where().eq("name", worksetName).findUnique();
+    public static Workset findWorkset(String worksetName, String authorName){
+        return finder.where().eq("name", worksetName).eq("author", authorName ).findUnique();
     }
 
 
