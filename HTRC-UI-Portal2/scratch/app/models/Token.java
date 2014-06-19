@@ -51,6 +51,7 @@ public class Token extends Model {
     public static Finder<Long, Token> find = new Finder<Long, Token>(Long.class, Token.class);
 
     public static Token findByToken(String token){
+        log.info("Looking for token: "+ token);
         return find.where().eq("token", token).findUnique();
     }
 
@@ -66,9 +67,10 @@ public class Token extends Model {
             sb.append(HEX_CHARS[b & 0x0F]);
         }
 
-        String passwordResetToken = sb.toString();
-        if(Token.findByToken(passwordResetToken) != null){
-            Token alreadyExistToken = Token.findByToken(passwordResetToken);
+        String newToken = sb.toString();
+        if(Token.findByToken(newToken) != null){
+            Token alreadyExistToken = Token.findByToken(newToken);
+            log.info("Token: "+newToken+" is already exist.");
             if(alreadyExistToken.userId.equals(userId)){
                 alreadyExistToken.createdTime = new Date().getTime();
                 alreadyExistToken.update();
@@ -77,10 +79,11 @@ public class Token extends Model {
             }
 
         }else {
-            Token token = new Token(userId,passwordResetToken,new Date().getTime());
+            Token token = new Token(userId,newToken,new Date().getTime());
             token.save();
+            log.info("Token :"+ Token.findByToken(newToken).token + " is saved successfully.");
         }
-        return passwordResetToken;
+        return newToken;
     }
 
     public static void deleteToken(String token){

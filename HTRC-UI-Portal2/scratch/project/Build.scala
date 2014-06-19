@@ -17,6 +17,7 @@ object ApplicationBuild extends Build {
     "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.2.2",
     "org.wso2.carbon" % "org.wso2.carbon.user.mgt.stub" % "4.2.0",
     "edu.vt.middleware" % "vt-password" % "3.1.2",
+    "net.sourceforge.javacsv" % "javacsv" % "2.0",
     "org.wso2.carbon" % "org.wso2.carbon.registry.ws.client" % "4.2.0"
 	exclude("org.eclipse.core","org.eclipse.core.runtime")
 	exclude("uddi","uddi4j")

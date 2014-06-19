@@ -37,7 +37,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Worksets <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="@routes.HTRCPortal.listWorkset()">List</a></li>
+                                    <li><a href="@routes.WorksetManagement.listWorkset()">List</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#" role="button" data-toggle="modal">Upload Workset</a></li>
                                     <li class="divider"></li>
@@ -50,9 +50,9 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li><a href="@routes.HTRCPortal.listAlgorithms()">Algorithms</a>
+                            <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a>
                             </li>
-                            <li><a href="@routes.HTRCPortal.listJobs()">Results</a>
+                            <li><a href="@routes.JobManagement.listJobs()">Results</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Experimental Analysis<b class="caret"></b></a>
@@ -62,13 +62,13 @@
                                     <li><a href="@routes.ExperimentalAnalysis.createVMForm()" role="button" data-toggle="modal">Create Virtual Machine</a></li>
                                 </ul>
                             </li>
-                            <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Getting+Started+FAQ">Help</a></li>
                         }
+                            <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Getting+Started+FAQ">Help</a></li>
                         </ul>
                         @if(user == null) {
                             <ul class="nav pull-right">
                                 <li><a href="@routes.HTRCPortal.login()">Sign In</a></li>
-                                <li><a href="@routes.HTRCPortal.createSignUpForm()"><span>Sign Up</span></a></li>
+                                <li><a href="@routes.UserManagement.createSignUpForm()"><span>Sign Up</span></a></li>
                             </ul>
                         } else {
                             <ul class="nav pull-right">

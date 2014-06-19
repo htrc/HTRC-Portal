@@ -1,74 +1,95 @@
 @(form: Form[UserManagement.SignUp], user: User)
 
 
-@main("SignUp", user) {
-    <legend>User Registration (ALL fields are required)</legend>
-    @helper.form(routes.HTRCPortal.signUp(), 'class -> "form-horizontal") {
-        @if(form.hasGlobalErrors) {
-            <p class="error">
+    @main("SignUp", user) {
+        <legend>User Registration (ALL fields are required)</legend>
+        @helper.form(routes.UserManagement.signUp(), 'class -> "form-horizontal") {
+            @if(form.hasGlobalErrors) {
+                <p class="error">
                 @form.globalError.message
-            </p>
-        }
-        @if(flash.contains("success")) {
-            <p class="success">
+                </p>
+            }
+            @if(flash.contains("success")) {
+                <p class="success">
                 @flash.get("success")
-            </p>
-        }
-        <div class="control-group">
-            <label for="userId" class="control-label">User ID:</label>
-            <div class="controls">
-                <input type="text" id="userId" name="userId" placeholder="User ID" required="true">
+                </p>
+            }
+            <div class="control-group">
+                <label for="userId" class="control-label">User ID:</label>
+                <div class="controls">
+                    <input type="text" id="username" name="userId" placeholder="User ID" required="true" class="span3">
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label for="password" class="control-label">Password :</label>
-            <div class="controls">
-                <input type="password" id="password" name="password" placeholder="Password" required="true">
-                <p style="width: 240px; font-size: 11px; color: red; margin-bottom: 0px;">Password must be between 8 and 16 characters long.</p>
+            <div class="control-group">
+                <label for="password" class="control-label">Password :</label>
+                <div class="controls">
+                    <input type="password" id="password" name="password" placeholder="Password" required="true" class="span3">
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        Password must be more than 8 characters long.
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        Password must contain characters from three of the following five categories:
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        * Uppercase characters of European languages (A through Z, with diacritic marks, Greek and Cyrillic characters)
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        * Lowercase characters of European languages (a through z, sharp-s, with diacritic marks, Greek and Cyrillic characters)
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        * Base 10 digits (0 through 9)
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span8">
+                        * Nonalphanumeric characters
+                    </p>
+                    <p style="font-size : 11px; color : red ; margin-bottom : 0px; float:none; margin-left:0;" class="span12">
+                        * Any Unicode character that is categorized as an alphabetic character but is not uppercase or lowercase. This includes Unicode characters from Asian languages.
+                    </p>
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label for="confirmPassword" class="control-label">Confirm Password :</label>
-            <div class="controls">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)">
-                <script language='javascript' type='text/javascript'>
-                    function check(input) {
-                        if (input.value != document.getElementById('password').value) {
-                            input.setCustomValidity('Password Must be Matching.');
+            <div class="control-group">
+                <label for="confirmPassword" class="control-label">Confirm Password :</label>
+                <div class="controls">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)" class="span3">
+                    <script language='javascript' type='text/javascript'>
+                    function check ( input ) {
+                        if ( input.value != document.getElementById ( 'password' ).value ) {
+                            input.setCustomValidity ( 'Password Must be Matching.' ) ;
                         } else {
                             // input is valid -- reset the error message
-                            input.setCustomValidity('');
+                            input.setCustomValidity ( '' ) ;
                         }
                     }
-                </script>
+                    </script>
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label for="firstName" class="control-label">First Name :</label>
-            <div class="controls">
-                <input type="text" id="firstName" name="firstName" placeholder="First Name" required="true">
+            <div class="control-group">
+                <label for="firstName" class="control-label">First Name :</label>
+                <div class="controls">
+                    <input type="text" id="firstName" name="firstName" placeholder="First Name" required="true" class="span3">
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label for="lastName" class="control-label">Last Name :</label>
-            <div class="controls">
-                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required="true">
+            <div class="control-group">
+                <label for="lastName" class="control-label">Last Name :</label>
+                <div class="controls">
+                    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required="true" class="span3">
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label for="email" class="control-label">Email :</label>
-            <div class="controls">
-                <input type="email" id="email" name="email" placeholder="Email" required="true">
-                <p style="width: 240px; font-size: 11px; color: red;">Please enter your institutional email.
-                If you don't have an institutional email or if your email is not recognized by our system,
-                please press 'Send Request' with your current email address.</p>
+            <div class="control-group">
+                <label for="email" class="control-label">Email :</label>
+                <div class="controls">
+                    <input type="email" id="email" name="email" placeholder="Email" required="true" class="span3">
+                    <p style="font-size : 11px; color : red;float: none;margin-left: 0;" class="span3">Please enter your institutional email.
+                        If you don't have an institutional email or if your email is not recognized by our system,
+                        please press 'Send Request' with your current email address.</p>
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <button type="submit" class="btn btn-default">Register</button>
-                <a href="#" class="btn btn-default">Send Request</a>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <a href="@routes.UserManagement.createAccountRequestForm()" class="btn btn-default">Request Account</a>
+                </div>
             </div>
-        </div>
+            <script src="@routes.Assets.at("javascripts/passwordstrengthchecker.js")"></script>
+        }
     }
-}

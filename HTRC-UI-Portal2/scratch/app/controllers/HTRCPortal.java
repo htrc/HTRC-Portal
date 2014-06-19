@@ -1,5 +1,6 @@
 package controllers;
 
+import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import models.User;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
@@ -15,7 +16,7 @@ import views.html.login;
 
 import static play.data.Form.form;
 
-public class HTRCPortal extends Controller {
+public class HTRCPortal extends  Controller {
 
     private static Logger.ALogger log = play.Logger.of("application");
 
@@ -42,9 +43,7 @@ public class HTRCPortal extends Controller {
         } else {
             session().clear();
             session("userId", loginForm.get().userId);
-            return redirect(
-                    routes.HTRCPortal.index()
-            );
+            return redirect(routes.HTRCPortal.index());
         }
     }
 
@@ -60,12 +59,17 @@ public class HTRCPortal extends Controller {
         @Constraints.Required
         public String password;
 
-        public String validate() throws OAuthProblemException, OAuthSystemException {
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+
+        public String validate() throws Exception {
             if (userId.isEmpty() || password.isEmpty()) {
                 return "Please fill username and password.";
             }
             if (User.authenticate(userId, password) == null) {
                 return "Invalid user or password";
+            }
+            if(!userManager.roleNameExists(userId)){
+                return String.format("Please activate your account. Activation link has been sent to %s",userManager.getEmail(userId));
             }
             return null;
         }
