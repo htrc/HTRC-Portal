@@ -224,3 +224,16 @@ td{
 .error{
     color: red;
 }
+
+.bar{
+    padding-left: 10px;
+    color: darkslategrey;
+}
+
+.password-verdict{
+    color: darkslategrey;
+}
+
+.progress {
+    margin-bottom: 5px;
+}

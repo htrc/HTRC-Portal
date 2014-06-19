@@ -34,6 +34,7 @@ import org.wso2.carbon.user.mgt.stub.UserAdminStub;
 import edu.indiana.d2i.htrc.wso2is.extensions.stub.ExtendedUserAdminStub;
 import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import org.wso2.carbon.user.mgt.stub.types.carbon.ClaimValue;
+import org.wso2.carbon.user.mgt.stub.types.carbon.FlaggedName;
 import org.wso2.carbon.user.mgt.stub.types.carbon.UserRealmInfo;
 import org.wso2.carbon.utils.NetworkUtils;
 import play.Logger;
@@ -188,13 +189,12 @@ public class HTRCUserManagerUtility {
      * @param password    The user's password
      * @param claims      The <code>ClaimValue[]</code> array of profile claims
      *                    (see <a href="https://htrc3.pti.indiana.edu:9443/carbon/claim-mgt/claim-view.jsp?store=Internal&dialect=http://wso2.org/claims">available claims</a>)
-     * @param permissions The array of permission keys to assign to the user, for example: "/permission/admin/login" (can be <code>null</code>)
+//     * @param permissions The array of permission keys to assign to the user, for example: "/permission/admin/login" (can be <code>null</code>)
      * @throws UserAlreadyExistsException Thrown if an error occurred
      * @see #getRequiredUserClaims()
      * @see #getAvailablePermissions()
      */
-    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims,
-                           String[] permissions) throws UserAlreadyExistsException { // TODO: Review this
+    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims) throws UserAlreadyExistsException { // TODO: Review this
         if (userName == null) {
             throw new NullPointerException("User name null.");
         }
@@ -229,12 +229,12 @@ public class HTRCUserManagerUtility {
             }
 
             // javadoc: addRole(String roleName, String[] userList, String[] permissions)
-            userAdmin.addRole(userName, new String[]{userName}, permissions, false);
+//            userAdmin.addRole(userName, new String[]{userName}, permissions, false);
 
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Created role: %s with permissions: %s", userName,
-                        Arrays.toString(permissions)));
-            }
+//            if (log.isDebugEnabled()) {
+//                log.debug(String.format("Created role: %s with permissions: %s", userName,
+//                        Arrays.toString(permissions)));
+//            }
 
             String regUserHome = String.format(configProperties.getProperty(PortalConstants.UR_CONFIG_HTRC_USER_HOME), userName);
             String regUserFiles = String.format(configProperties.getProperty(PortalConstants.UR_CONFIG_HTRC_USER_FILES),
@@ -275,8 +275,9 @@ public class HTRCUserManagerUtility {
 
             resourceAdmin.addRolePermission(regUserWorksets, everyone, ResourceActionPermission.GET.toString(), PermissionType.ALLOW.toString());
 
-            log.info(String.format("User %s created (permissions: %s)", userName,
-                    Arrays.toString(permissions)));
+
+//            log.info(String.format("User %s created (permissions: %s)", userName,
+//                    Arrays.toString(permissions)));
         } catch (Exception e) {
             log.error("Error adding new user: " + userName, e);
             throw new RuntimeException("createUser", e);
@@ -322,6 +323,49 @@ public class HTRCUserManagerUtility {
     }
 
     /**
+     * Add role to user
+     *
+     * @param roleName Role name of the user
+     * @param userName User's username
+     * @param permissions List of permissions
+     * @throws java.rmi.RemoteException Thrown if an error occurred
+     */
+
+    public void addRole(String roleName, String userName, String[] permissions) throws RemoteException, UserAdminUserAdminException {
+        // javadoc: addRole(String roleName, String[] userList, String[] permissions)
+            userAdmin.addRole(roleName, new String[]{userName}, permissions, false);
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Created role: %s with permissions: %s", userName,
+                    Arrays.toString(permissions)));
+        }
+    }
+
+    public org.wso2.carbon.user.mgt.stub.types.carbon.FlaggedName[] getUserRole(String userName) throws RemoteException, UserAdminUserAdminException {
+        return userAdmin.getRolesOfUser(userName,userName,10);
+    }
+
+    public boolean roleNameExists(String roleName)
+            throws Exception {
+        FlaggedName[] roles = new FlaggedName[0];
+        try {
+            roles = userAdmin.getAllRolesNames(roleName, 10);
+        } catch (RemoteException e) {
+            throw new RemoteException("Unable to get role names list", e);
+        } catch (UserAdminUserAdminException e) {
+            throw new UserAdminException("Faile to get all roles", e);
+        }
+
+        for (FlaggedName role : roles) {
+            if (role.getItemName().equals(roleName)) {
+                log.info("Role name " + roleName + " already exists");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Change User password
      *
      * @param userName    The User's username
@@ -331,9 +375,7 @@ public class HTRCUserManagerUtility {
     public void changePassword(String userName, String newPassword) throws ChangePasswordUserAdminExceptionException {
         try {
             userAdmin.changePassword(userName, newPassword);
-        } catch (RemoteException e) {
-            throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
-        } catch (UserAdminUserAdminException e) {
+        } catch (RemoteException | UserAdminUserAdminException e) {
             throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
         }
     }
@@ -355,7 +397,7 @@ public class HTRCUserManagerUtility {
                 throw new RuntimeException(e);
             }
         }
-        return "User doesn't exist";
+        return null;
     }
 
     /**
@@ -365,6 +407,16 @@ public class HTRCUserManagerUtility {
      * @throws RemoteException
      * @retun user Id
      */
+    public List<String> getUserIds(String userEmail) throws RemoteException {
+        String[] userIds = extendedUserAdminStub.getUserIdsFromEmail(userEmail);
+        if(userIds == null){
+            return Collections.EMPTY_LIST;
+        }
+
+        List<String> userIdList = Arrays.asList(userIds);
+        log.info("User IDs: " + userIds);
+        return userIdList;
+    }
 
 
 }

@@ -123,5 +123,12 @@ public class  PortalConstants {
     public static final String UR_CONFIG_WSO2IS_URL = "ur.config.wso2is.url";
     public static final String UR_CONFIG_WSO2GREG_URL = "ur.config.wso2greg.url";
 
+    //HTRC email parameters
+    public static String SUPPORT_EMAIL = "support.email";
+    public static String HTRC_EMAIL = "htrc.email.address";
+    public static String HTRC_EMAIL_USERNAME = "htrc.email.username";
+    public static String HTRC_EMAIL_PASSWORD = "htrc.email.password";
 
+    public static String HTRC_VALID_DOMAIN_FIRST_CSV = "htrc.valid.domains.csv.first";
+    public static String HTRC_VALID_DOMAIN_SECOND_CSV = "htrc.valid.domains.csv.second";
 }

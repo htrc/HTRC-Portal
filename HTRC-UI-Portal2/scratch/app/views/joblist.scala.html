@@ -13,7 +13,7 @@
                     </div>
                 </legend>
                 <div id="activejobsheader">
-                    @helper.form(routes.HTRCPortal.cancelJobs() , 'id -> "active_jobs"){
+                    @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -56,7 +56,7 @@
                     </div>
                 </legend>
                 <div id="completedjobsheader">
-                    @helper.form(routes.HTRCPortal.updateJobs(), 'id -> "completed_jobs"){
+                    @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -70,7 +70,7 @@
                         <tbody>
                             @for(job <- completedJobs){
                                 <tr>
-                                    <td><a href="@routes.HTRCPortal.viewJobDetails(job.jobId)">@job.jobName</a></td>
+                                    <td><a href="@routes.JobManagement.viewJobDetails(job.jobId)">@job.jobName</a></td>
                                     <td>@job.lastModified</td>
                                     <td>@job.status</td>
                                     <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>

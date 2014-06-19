@@ -8,6 +8,9 @@ GET         /                                                 controllers.HTRCPo
 # Login Form
 GET         /login                                            controllers.HTRCPortal.login()
 
+# Authenticate
+POST        /login                                            controllers.HTRCPortal.authenticate()
+
 # Logout Form
 
 GET         /logout                                           controllers.HTRCPortal.logout()
@@ -16,6 +19,17 @@ GET         /logout                                           controllers.HTRCPo
 GET         /signup                                           controllers.UserManagement.createSignUpForm()
 
 POST        /signupUser                                       controllers.UserManagement.signUp()
+
+# Account Request Form
+GET         /accountrequest                                   controllers.UserManagement.createAccountRequestForm()
+
+POST        /accountrequest                                   controllers.UserManagement.accountRequest()
+
+# User ID retrieve Form
+GET         /retrieveuserid                                   controllers.UserManagement.createUserIDRetrieveMailForm()
+
+POST        /retrieveuserid                                   controllers.UserManagement.userIDRetrieveMail()
+GET         /activateaccount                                  controllers.UserManagement.activateAccount(token:String ?="")
 
 GET         /passwordreset                                    controllers.UserManagement.createPasswordResetForm(token:String ?="")
 
@@ -79,9 +93,6 @@ GET         /launchvm                                         controllers.Experi
 GET         /stopvm                                           controllers.ExperimentalAnalysis.stopVM(vmId:String ?="")
 
 GET         /switchvm                                         controllers.ExperimentalAnalysis.switchVMMode(vmId:String ?="", mode:String ?="")
-
-# Authenticate
-POST        /login                                            controllers.HTRCPortal.authenticate()
 
 # Search
 POST        /search                                           controllers.HTRCWorksetBuilder.searchCorpus()

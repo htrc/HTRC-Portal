@@ -15,14 +15,23 @@
  *
  */
 
+import controllers.UserManagement;
+import edu.indiana.d2i.htrc.portal.CSVReader;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
 
+import java.util.Map;
+
 public class Global extends GlobalSettings {
+
+
     @Override
     public void onStart(Application app) {
+        UserManagement.SignUp.instDomains = CSVReader.readAndSaveInstDomains(Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_FIRST_CSV));
+        UserManagement.SignUp.instDomains.putAll(CSVReader.readAndSaveInstDomains(Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV)));
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");

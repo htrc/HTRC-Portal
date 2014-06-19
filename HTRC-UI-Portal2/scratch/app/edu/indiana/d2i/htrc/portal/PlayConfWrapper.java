@@ -83,8 +83,16 @@ public class PlayConfWrapper {
     //Portal URL
     private static String portalUrl = null;
 
+    //HTRC email parameters
+    private static String supportEmail = null;
+    private static String htrcEmail = null;
+    private static String htrcEmailUserName = null;
+    private static String htrcEmailPassword = null;
 
 
+    // Valid domain files
+    private static String validDomainsFirstCSV = null;
+    private static String validDomainsSecondCSV = null;
 
     public static String agentEndpoint() {
         if(agentEndpoint == null){
@@ -364,6 +372,48 @@ public class PlayConfWrapper {
             portalUrl = Play.application().configuration().getString(PortalConstants.PORTAL_URL);
         }
         return portalUrl;
+    }
+
+    public static String supportEmail(){
+        if(supportEmail == null){
+            supportEmail = Play.application().configuration().getString(PortalConstants.SUPPORT_EMAIL);
+        }
+        return supportEmail;
+    }
+
+    public static String htcEmailUserName(){
+        if(htrcEmailUserName == null){
+            htrcEmailUserName = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_USERNAME);
+        }
+        return htrcEmailUserName;
+    }
+
+    public static String htrcEmailPassword(){
+        if(htrcEmailPassword == null){
+            htrcEmailPassword = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_PASSWORD);
+        }
+        return htrcEmailPassword;
+    }
+
+    public static String htrcEmail(){
+        if(htrcEmail == null){
+            htrcEmail = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL);
+        }
+        return htrcEmail;
+    }
+
+    public static String validDomainsFirstCSV(){
+        if(validDomainsFirstCSV == null){
+            validDomainsFirstCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_FIRST_CSV);
+        }
+        return validDomainsFirstCSV;
+    }
+
+    public static String validDomainsSecondCSV(){
+        if(validDomainsSecondCSV == null){
+            validDomainsSecondCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV);
+        }
+        return validDomainsSecondCSV;
     }
 }
 
