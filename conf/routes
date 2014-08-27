@@ -46,13 +46,19 @@ POST        /passwordresetmail                                controllers.UserMa
 GET         /about                                            controllers.HTRCPortal.about()
 
 # Workset List Form
-GET         /listworksets                                     controllers.WorksetManagement.listWorkset(sharedPage:Int ?= 1, ownerPage:Int ?= 1)
+GET         /listworksets                                     controllers.WorksetManagement.worksets()
 
 # Create Workset from HTRC Workset builder
 GET         /createworkset                                    controllers.HTRCWorksetBuilder.createWorkset()
 
 # View Workset
 GET         /viewworkset                                      controllers.WorksetManagement.viewWorkset(worksetName:String ?="", worksetAuthor:String ?="")
+
+# Download Workset
+GET         /downloadworkset                                  controllers.WorksetManagement.downloadWorkset(worksetName:String ?="", worksetAuthor:String ?="")
+
+# View Workset
+POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()
 
 # Algorithm List Form
 GET         /listalgorithms                                   controllers.AlgorithmManagement.listAlgorithms(page:Int ?= 1)

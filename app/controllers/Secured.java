@@ -17,15 +17,42 @@
 
 package controllers;
 
+import edu.indiana.d2i.htrc.portal.PortalConstants;
+import models.User;
+import play.Play;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.about;
 
+import java.util.Date;
+
 public class Secured extends Security.Authenticator {
     @Override
     public String getUsername(Http.Context ctx) {
+        // see if user is logged in
+        if (ctx.session().get(PortalConstants.SESSION_USERNAME) == null)
+        return null;
+
+        // see if the session is expired
+        String previousTick = ctx.session().get("userTime");
+        if (previousTick != null && !previousTick.equals("")) {
+            long previousT = Long.valueOf(previousTick);
+            long currentT = new Date().getTime();
+            long timeout = Long.valueOf(Play.application().configuration().getString("sessionTimeout")) * 1000 * 60;
+            if ((currentT - previousT) > timeout) {
+                // session expired
+                ctx.session().clear();
+                return null;
+            }
+        }
+
+        // update time in session
+        String tickString = Long.toString(new Date().getTime());
+        ctx.session().put("userTime", tickString);
+
         return ctx.session().get("userId");
+//        return ctx.session().get("userId");
     }
 
     @Override

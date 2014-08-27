@@ -1,81 +1,37 @@
-@(user: User, algorithms: List[Algorithm] , totalalgorithms: Int, currentPage: Int, totalAlgorithmPages: Int)
-@import edu.indiana.d2i.htrc.portal.Utils
+@(user: User, algorithms: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean])
 
 
 @main("Algorithms", user) {
-    <style>
-            .tooltip-inner {background-color: #D18913; color: #fff; max-width: 350px;}
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Algorithms</strong>
 
-            .tooltip.top .tooltip-arrow {border-top-color: #D18913;}
-
-    </style>
-    <h2 style="border-bottom: 1px solid #ccc; margin: 25px 0;"> Available Algorithms (@totalalgorithms) </h2>
-    <div class="row-fluid">
-        <ul class="thumbnails">
-            @for((al, idx) <- algorithms.zipWithIndex) {
-                @if(idx == 0 || idx == 1 || idx == 2){
-                    <li class="span4">
-                        <div class="thumbnail" style="padding: 0px;">
-                            <div class="caption" style="padding: 0px;">
-                                <h3 class="tooltiped" style="padding: 5px; background-color: #ccc" data-toggle="tooltip" data-placement="top" title="" data-original-title="@al.name">@Utils.shortenTitle(al.name)</h3>
-                                <p style="padding: 5px;margin: 0px;">@al.description</p>
-                                <table>
-                                    <tr>
-                                        <td style="padding-left: 5px; font-weight: 600;">Author:</td>
-                                        <td style="padding-right: 5px;">@al.authors</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding-left: 5px; font-weight: 600;">Version:</td>
-                                        <td style="padding-right: 5px;">@al.version</td>
-                                    </tr>
-                                </table>
-                                <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
-                                    <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
-                                        <a href="#" class="btn btn-small disabled">Edit</a>
-                                        <a href="@routes.AlgorithmManagement.viewAlgorithm(al.name)" class="btn btn-small btn-primary">Open</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                }
-            }
-        </ul>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="worksets">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th data-sort="string">Name</th>
+                            <th>Description</th>
+                            <th data-sort="string">Author</th>
+                            <th data-sort="int">Version</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for((w, id) <- algorithms.zipWithIndex){
+                        <tr>
+                            <td>@(id + 1)</td>
+                            <td>@w.getName</td>
+                            <td>@w.getDescription</td>
+                            <td>@w.getAuthors</td>
+                            <td>@w.getVersion</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div class="row-fluid">
-        @for((al, idx) <- algorithms.zipWithIndex) {
-            @if(idx == 3 || idx == 4 || idx == 5) {
-                <li class="span4">
-                    <div class="thumbnail" style="padding: 0px;">
-                        <div class="caption" style="padding: 0px;">
-                            <h3  class="tooltiped" style="padding: 5px; background-color: #ccc" data-toggle="tooltip" data-placement="top" title="" data-original-title="@al.name">@Utils.shortenTitle(al.name)</h3>
-                            <p style="padding: 5px;margin: 0px;">@al.description</p>
-                            <table>
-                                <tr>
-                                    <td style="padding-left: 5px; font-weight: 600;">Author:</td>
-                                    <td style="padding-right: 5px;">@al.authors</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding-left: 5px; font-weight: 600;">Version:</td>
-                                    <td style="padding-right: 5px;">@al.version</td>
-                                </tr>
-                            </table>
-                            <div style="margin-left: 0px; padding-left: 5px; margin-bottom: 5px; margin-top: 7px; border-top: 1px solid #ddd; min-height: 31px; ">
-                                <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
-                                    <a href="#" class="btn btn-small disabled">Edit</a>
-                                    <a href="@routes.AlgorithmManagement.viewAlgorithm(al.name)" class="btn btn-small btn-primary">Open</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-    </div>
-    <div class="row-fluid">
-        @paginatealgorithms(currentPage, totalAlgorithmPages)
-    </div>
-    <script type="text/javascript">
-        $(".tooltiped").tooltip();
-    </script>
 }

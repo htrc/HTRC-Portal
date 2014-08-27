@@ -1,0 +1,9 @@
+.idea/
+.idea_modules/
+.settings/
+*.iml
+*.ipr
+project/
+log/
+target/
+conf/application.conf

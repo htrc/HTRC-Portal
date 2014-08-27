@@ -15,6 +15,7 @@
  *
  */
 
+import ch.ethz.ssh2.Session;
 import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
@@ -22,6 +23,7 @@ import edu.indiana.d2i.htrc.portal.PortalConstants;
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
+import play.mvc.Http;
 
 import java.util.Map;
 

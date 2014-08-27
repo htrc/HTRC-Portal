@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import play.Logger;
+import play.mvc.Http;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -43,13 +44,19 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     private HttpClient client = new HttpClient();
 
+    /**
+     * access token renew time
+     */
+    private int renew = 0;
+    private final int MAX_RENEW = 1;
+
     public int responseCode;
 
-    public String createVM(String imageName, String loginUerName, String loginPassword, String memory, String vcpu, User loggedIn) throws IOException {
+    public String createVM(String imageName, String loginUerName, String loginPassword, String memory, String vcpu, User loggedIn, Http.Session session) throws IOException {
         String createVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.createVMUrl();
 
         PostMethod post = new PostMethod(createVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -83,14 +90,14 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     }
 
-    public List<VMImageDetails> listVMImages(User loggedIn) throws IOException, GeneralSecurityException {
+    public List<VMImageDetails> listVMImages(User loggedIn, Http.Session session) throws IOException, GeneralSecurityException {
         String listVMImageUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.listVMImagesUrl();
         List<VMImageDetails> vmDetailsList = new ArrayList<VMImageDetails>();
         Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
 
         GetMethod getMethod = new GetMethod(listVMImageUrl);
-        getMethod.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        getMethod.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         getMethod.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         getMethod.addRequestHeader("htrc-remote-user", loggedIn.userId);
         getMethod.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -126,13 +133,13 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     }
 
-    public List<VMStatus> listVMs(User loggedIn) throws GeneralSecurityException, IOException {
+    public List<VMStatus> listVMs(User loggedIn, Http.Session session) throws GeneralSecurityException, IOException {
         String listVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.showVMUrl();
         Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
         Protocol.registerProtocol("https", easyhttps);
         List<VMStatus> vmList = new ArrayList<VMStatus>();
         PostMethod post = new PostMethod(listVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -178,11 +185,11 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     }
 
-    public VMStatus showVM(String vmId, User loggedIn) throws IOException {
+    public VMStatus showVM(String vmId, User loggedIn, Http.Session session) throws IOException {
         String showVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.showVMUrl();
         VMStatus vmStatus = new VMStatus();
         PostMethod post = new PostMethod(showVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -231,10 +238,10 @@ public class HTRCExperimentalAnalysisServiceClient {
 
     }
 
-    public void switchVMMode(String vmId, String mode, User loggedIn) throws IOException {
+    public void switchVMMode(String vmId, String mode, User loggedIn, Http.Session session) throws IOException {
         String switchVMModeUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.switchVMUrl();
         PostMethod post = new PostMethod(switchVMModeUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -251,10 +258,10 @@ public class HTRCExperimentalAnalysisServiceClient {
         }
     }
 
-    public void startVM(String vmId, User loggedIn) throws IOException {
+    public void startVM(String vmId, User loggedIn, Http.Session session) throws IOException {
         String launchVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.startVMUrl();
         PostMethod post = new PostMethod(launchVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -270,10 +277,10 @@ public class HTRCExperimentalAnalysisServiceClient {
         }
     }
 
-    public void stopVM(String vmId, User loggedIn) throws IOException {
+    public void stopVM(String vmId, User loggedIn, Http.Session session) throws IOException {
         String stopVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.stopVMUrl();
         PostMethod post = new PostMethod(stopVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);
@@ -289,10 +296,10 @@ public class HTRCExperimentalAnalysisServiceClient {
         }
     }
 
-    public void deleteVM(String vmId, User loggedIn) throws IOException {
+    public void deleteVM(String vmId, User loggedIn, Http.Session session) throws IOException {
         String deleteVMUrl = PlayConfWrapper.sloanWsEndpoint() + PlayConfWrapper.deleteVMUrl();
         PostMethod post = new PostMethod(deleteVMUrl);
-        post.addRequestHeader("Authorization", "Bearer " + loggedIn.accessToken);
+        post.addRequestHeader("Authorization", "Bearer " + session.get(PortalConstants.SESSION_TOKEN));
         post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         post.addRequestHeader("htrc-remote-user", loggedIn.userId);
         post.addRequestHeader("htrc-remote-user-email", loggedIn.email);

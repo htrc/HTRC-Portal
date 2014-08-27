@@ -1,64 +1,95 @@
 package controllers;
 
 
+import au.com.bytecode.opencsv.CSVWriter;
 import com.avaje.ebean.PagingList;
+import controllers.routes;
+import edu.illinois.i3.htrc.registry.entities.workset.Property;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
+import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import models.User;
 import models.Workset;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import play.Logger;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
+import views.html.gotopage;
 import views.html.workset;
-import views.html.worksets;
+import views.html.worksetstable;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 public class WorksetManagement extends Controller {
     private static Logger.ALogger log = play.Logger.of("application");
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
 
     @Security.Authenticated(Secured.class)
     public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(request().username());
-        updateWorksets(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
+        updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
         PagingList<Workset> shared = Workset.shared();
         PagingList<Workset> owned = Workset.owned(loggedInUser);
         List<Workset> allShared = Workset.listAllShared();
         List<Workset> allOwned = Workset.listAllOwned(loggedInUser.userId);
 
-        return ok(worksets.render(loggedInUser,
-                shared.getPage(sharedPage - 1).getList(),
-                owned.getPage(ownerPage - 1).getList(),
-                sharedPage,
-                ownerPage,
-                shared.getTotalPageCount(),
-                owned.getTotalPageCount(),
-                allShared.size(),
-                allOwned.size()));
+//        return ok(worksets.render(loggedInUser,
+//                shared.getPage(sharedPage - 1).getList(),
+//                owned.getPage(ownerPage - 1).getList(),
+//                sharedPage,
+//                ownerPage,
+//                shared.getTotalPageCount(),
+//                owned.getTotalPageCount(),
+//                allShared.size(),
+//                allOwned.size()));
+        return ok();
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result worksets() throws IOException, JAXBException {
+        User loggedInUser = User.findByUserID(request().username());
+        List<Workset> worksets = getWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
+        List<Workset> usersWorksets = new ArrayList<>();
+
+        return ok(worksetstable.render(loggedInUser, worksets));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(request().username());
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
-        Workset ws = Workset.findWorkset(worksetName, worksetAuthor);
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName);
         List<Volume> volumeList = new ArrayList<>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
@@ -67,7 +98,157 @@ public class WorksetManagement extends Controller {
         for (int i = 0; i <= volumeList.size() - 1; i++) {
             volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
         }
+
+        log.debug("Workset: " + ws);
+        log.debug("Volumes: " + volumeDetailsList.size());
         return ok(workset.render(loggedInUser, ws, volumeDetailsList));
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result uploadWorkset() throws ParserConfigurationException {
+        User loggedInUser = User.findByUserID(request().username());
+        Http.MultipartFormData body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart csv = body.getFile("csv");
+        String[] worksetName = body.asFormUrlEncoded().get("worksetName");
+        String[] description = body.asFormUrlEncoded().get("description");
+        boolean isPrivateWorkset = body.asFormUrlEncoded().containsKey("privateWorkset");
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+
+        if (csv != null) {
+            String wsName;
+            String wsDescription;
+            String csvFileName = csv.getFilename();
+            String contentType = csv.getContentType();
+            File csvFile = csv.getFile();
+            log.info("CSV file name: " + csvFileName + " content type: " + contentType +
+                    " is private: " + isPrivateWorkset + " workset name: " + worksetName[0]);
+            DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
+            Document worksetDoc = domBuilder.newDocument();
+
+            try {
+                Document volumesDoc = CSV2WorksetXMLConverter.convert(csvFile);
+                if(worksetName == null || worksetName[0].length() <= 0){
+                    wsName = FilenameUtils.removeExtension(csvFileName);
+                } else {
+                    wsName = worksetName[0];
+                }
+                Element worksetEle = worksetDoc.createElement("workset");
+                worksetEle.setAttribute("xmlns", "http://registry.htrc.i3.illinois.edu/entities/workset");
+                worksetDoc.appendChild(worksetEle);
+
+                Element metadataEle = worksetDoc.createElement("metadata");
+
+                Element name = worksetDoc.createElement("name");
+                name.setTextContent(wsName);
+                metadataEle.appendChild(name);
+                if(description == null || description[0].length() <= 0){
+                    wsDescription = null;
+                } else {
+                    wsDescription = description[0];
+                }
+
+                Element descriptionEle = worksetDoc.createElement("description");
+                descriptionEle.setTextContent(wsDescription);
+                metadataEle.appendChild(descriptionEle);
+
+                Element authorEle = worksetDoc.createElement("author");
+                authorEle.setTextContent(loggedInUser.userId);
+                metadataEle.appendChild(authorEle);
+
+                Element ratingEle = worksetDoc.createElement("rating");
+                ratingEle.setTextContent("0");
+                metadataEle.appendChild(ratingEle);
+
+                Element avgRatingEle = worksetDoc.createElement("avgRating");
+                avgRatingEle.setTextContent("0.0");
+                metadataEle.appendChild(avgRatingEle);
+
+                Element lastModifiedEle = worksetDoc.createElement("lastModified");
+                lastModifiedEle.setTextContent(format(new Date()));
+                metadataEle.appendChild(lastModifiedEle);
+
+                worksetEle.appendChild(metadataEle);
+
+                Node volumes = worksetDoc.adoptNode(volumesDoc.getDocumentElement());
+                Element content = worksetDoc.createElement("content");
+                content.appendChild(volumes);
+                worksetEle.appendChild(content);
+                log.debug("Workset XML: \n" + domToString(worksetDoc));
+
+                persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
+
+
+            } catch (Exception e) {
+                log.error("Error on converting to xml file.");
+                throw new RuntimeException("Error on converting to xml file.",e);
+            }
+            return redirect(routes.WorksetManagement.viewWorkset(wsName,loggedInUser.userId));
+        } else {
+            flash("error", "Missing file");
+            return ok(gotopage.render("Error occurred while uploading the file.",null,null,loggedInUser));
+        }
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result downloadWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
+        User loggedInUser = User.findByUserID(request().username());
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        List<Volume> volumes = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
+
+        File csv = File.createTempFile(worksetName + "-" + worksetAuthor, ".csv");
+        CSVWriter csvWriter = new CSVWriter(new FileWriter(csv));
+
+        if(volumes == null || volumes.isEmpty()){
+            return notFound("Workset " + worksetName + " from " + worksetAuthor + " not found.");
+        }
+
+        Set<String> headers = new HashSet<String>();
+        Map<String, Map<String, String>> volumesMap = new HashMap<String, Map<String,
+                String>>();
+
+        for (Volume volume : volumes) {
+            Map<String, String> props = new HashMap<String, String>();
+
+            if (volume.getProperties().getProperty().size() > 0) {
+                for (Property volumeProperty : volume.getProperties().getProperty()) {
+                    headers.add(volumeProperty.getName());
+                    props.put(volumeProperty.getName(), volumeProperty.getValue());
+                }
+            }
+
+
+            volumesMap.put(volume.getId(), props);
+        }
+
+        String[] headersArray = headers.toArray(new String[headers.size()]);
+        String[] volID = {"volume_id"};
+        String[] headersWithVolumeIdField = (String[]) ArrayUtils.addAll(volID, headersArray);
+
+        csvWriter.writeNext(headersWithVolumeIdField);
+
+        for(Map.Entry<String, Map<String, String>> entry : volumesMap.entrySet()){
+            String[] csvRow = new String[headersWithVolumeIdField.length];
+
+            // volume id
+            csvRow[0] = entry.getKey();
+
+            Map<String, String> propsMap = entry.getValue();
+
+            for(int i = 0; i < headersArray.length; i++){
+                csvRow[i + 1] = propsMap.get(headersArray[i]);
+            }
+
+            csvWriter.writeNext(csvRow);
+        }
+
+        csvWriter.close();
+
+        response().setContentType("text/csv");
+        response().setHeader("Content-Disposition", "attachment;filename=" + worksetName + "-" + worksetAuthor +".csv");
+        response().setHeader("Cache-control", "private");
+
+        return ok(csv);
     }
 
     public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
@@ -185,37 +366,90 @@ public class WorksetManagement extends Controller {
     }
 
     public static void updateWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, registryUrl);
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
 
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
         log.debug("Workset count: " + worksetList.size());
         for (edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList) {
             WorksetMeta metadata = w.getMetadata();
             Workset alreadyExistWorkset = Workset.findWorkset(metadata.getName(), metadata.getAuthor());
-            if (alreadyExistWorkset != null) {
-                Workset.delete(Workset.findWorkset(metadata.getName(), metadata.getAuthor()));
+            if (alreadyExistWorkset == null) {
+                List<Volume> volumeList = new ArrayList<>();
+                if (!metadata.getName().contains(" ")) {
+                    volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
+                }
+
+                Calendar calendar = metadata.getLastModified().toGregorianCalendar();
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+                formatter.setTimeZone(calendar.getTimeZone());
+                String dateString = formatter.format(calendar.getTime());
+
+                Workset ws = new Workset(
+                        metadata.getName(),
+                        metadata.getDescription(),
+                        metadata.getAuthor(),
+                        metadata.getLastModifiedBy(),
+                        dateString,
+                        volumeList.size(),
+                        metadata.isPublic());
+                Workset.create(ws);
             }
-            List<Volume> volumeList = new ArrayList<>();
-            if (!metadata.getName().contains(" ")) {
-                volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
-            }
+
+        }
+
+    }
+
+    public static List<Workset> getWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+
+        List<Workset> worksets = new ArrayList<Workset>();
+
+        for(edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList){
+            WorksetMeta metadata = w.getMetadata();
 
             Calendar calendar = metadata.getLastModified().toGregorianCalendar();
             SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
             formatter.setTimeZone(calendar.getTimeZone());
             String dateString = formatter.format(calendar.getTime());
 
-            Workset ws = new Workset(
-                    metadata.getName(),
+            List<Volume> volumeList = new ArrayList<>();
+            if (!metadata.getName().contains(" ")) {
+                volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
+            }
+
+            worksets.add(new Workset(metadata.getName(),
                     metadata.getDescription(),
                     metadata.getAuthor(),
                     metadata.getLastModifiedBy(),
                     dateString,
                     volumeList.size(),
-                    metadata.isPublic());
-            Workset.create(ws);
-
+                    metadata.isPublic()));
         }
 
+        return worksets;
+    }
+
+    private static String domToString(Document doc) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+
+        return writer.getBuffer().toString().replaceAll("\n|\r", "");
+    }
+
+    public static synchronized String format(Date xmlDateTime) throws IllegalFormatException {
+        String s =  simpleDateFormat.format(xmlDateTime);
+        StringBuilder sb = new StringBuilder(s);
+        sb.insert(22, ':');
+        return sb.toString();
+    }
+
+    public static void setSession(Map<String, String> session){
+        for(Map.Entry<String,String> entry : session.entrySet()){
+            session(entry.getKey(),entry.getValue());
+        }
     }
 }

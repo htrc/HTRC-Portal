@@ -1,24 +1,30 @@
-@(user: User, workset: Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean])
+@(user: User, workset: edu.illinois.i3.htrc.registry.entities.workset.Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean])
 @import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean
 
 @main("Workset", user) {
-    <h2 style="border-bottom: 1px solid #ccc; margin: 5px 0;">@workset.name
+    <h2 style="border-bottom: 1px solid #ccc; margin: 5px 0;">@workset.getMetadata.getName
         <span style="color: #777777;">
-            @if(workset.shared.==(true)) {
+            @if(workset.getMetadata.isPublic == true) {
                 (shared)
             }
-            @if(workset.shared.==(false)) {
+            @if(workset.getMetadata.isPublic == false) {
                 (private)
             }
+            <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
+                <a href="#" class="btn btn-small btn-primary"> Edit </a>
+                @*<a href="@routes.WorksetManagement.viewWorkset(w.name,w.author)" class="btn btn-small btn-primary"> Open </a>*@
+            </div>
         </span>
     </h2>
-    <p style="padding-top: 10px;">@workset.description</p>
     <table style="table-layout: fixed">
         <tr>
-            <td class="equal-width-cell"><span class="bold-label">Author : </span>@workset.author</td>
-            <td class="equal-width-cell"><span class="bold-label">Last Modified By : </span>@workset.lastModifiedBy</td>
-            <td class="equal-width-cell"><span class="bold-label">Last Modified Time : </span>@workset.lastModified</td>
-            <td class="equal-width-cell"><span class="bold-label">Number of Volumes : </span>@workset.numberOfVolumes</td>
+            <p style="padding-top: 10px;">@workset.getMetadata.getDescription</p>
+        </tr>
+        <tr>
+            <td class="equal-width-cell"><span class="bold-label">Author : </span>@workset.getMetadata.getAuthor</td>
+            <td class="equal-width-cell"><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>
+            <td class="equal-width-cell"><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>
+            <td class="equal-width-cell"><span class="bold-label">Number of Volumes : </span>@workset.getMetadata.getVolumeCount</td>
         </tr>
     </table>
     <table>

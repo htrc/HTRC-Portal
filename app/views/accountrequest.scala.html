@@ -1,0 +1,43 @@
+@(form: Form[UserManagement.AccountRequest], user: User, firstName: String, lastName: String, email: String, message: String)
+
+
+@main("AccountRequestMail", user) {
+    <legend>User Account Request</legend>
+    <p>@message</p>
+    @helper.form(routes.UserManagement.accountRequest(), 'class -> "form-horizontal") {
+        @if(form.hasGlobalErrors) {
+            <p class="error">
+            @form.globalError.message
+            </p>
+        }
+        @if(flash.contains("success")) {
+            <p class="success">
+            @flash.get("success")
+            </p>
+        }
+        <div class="control-group">
+            <label for="firstName" class="control-label">First Name :</label>
+            <div class="controls">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name" required="true" class="span3" value="@firstName">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="lastName" class="control-label">Last Name :</label>
+            <div class="controls">
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required="true" class="span3" value="@lastName">
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="email" class="control-label">Email :</label>
+            <div class="controls">
+                <input type="email" id="email" name="email" placeholder="Email" required="true" class="span3" value="@email">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-primary">Send Request</button>
+            </div>
+        </div>
+    }
+
+}

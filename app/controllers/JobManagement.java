@@ -14,6 +14,7 @@ import play.mvc.Security;
 import views.html.jobdetails;
 import views.html.joblist;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class JobManagement extends Controller {
             }
         }
         User loggedInUser = User.findByUserID(request().username());
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.cancelJobs(activeJobIds);
         if (response) {
             for (String jonId : activeJobIds) {
@@ -56,7 +57,7 @@ public class JobManagement extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
-    public static Result updateJobs() {
+    public static Result updateJobs() throws IOException {
         List<String> completedJobIds = new ArrayList<>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
@@ -67,7 +68,7 @@ public class JobManagement extends Controller {
             }
         }
         User loggedInUser = User.findByUserID(request().username());
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response;
         if (actionType.equals("delete")) {
             log.info("Deleting jobs: " + completedJobIds);
@@ -97,7 +98,7 @@ public class JobManagement extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result viewJobDetails(String jobId) {
         User loggedInUser = User.findByUserID(request().username());
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
         List<String> jobIds = new ArrayList<>();
         jobIds.add(jobId);
         Map<String, JobDetailsBean> jobsDetails = agentClient.getJobsDetails(jobIds);
@@ -106,7 +107,7 @@ public class JobManagement extends Controller {
 
 
     public static void updateJobList(User loggedInUser) {
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
         Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
         Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
         if (completedJobs == null) {

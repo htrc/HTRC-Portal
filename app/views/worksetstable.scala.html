@@ -1,0 +1,68 @@
+@(user: User, worksets: List[Workset])
+
+@main("Worksets", user) {
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Worksets</strong>
+                <div class="dropdown clearfix pull-right">
+                    <button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">
+                        Filter
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropDownFilter">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Private</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Owned</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Public</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="worksets">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th data-sort="string">Name</th>
+                            <th>Description</th>
+                            <th data-sort="string">Owner</th>
+                            <th data-sort="int">Volumes</th>
+                            <th data-sort="string">Shared</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for((w, id) <- worksets.zipWithIndex){
+                        <tr class="@if(w.author == user.userId){owned} else {others}">
+                            <td>@(id + 1)</td>
+                            <td><a href="@routes.WorksetManagement.viewWorkset(w.name, w.author)">@w.name</a></td>
+                            <td>@w.description</td>
+                            <td>@w.author</td>
+                            <td>@w.numberOfVolumes</td>
+                            <td>@if(w.shared){Yes} else {No}</td>
+                            <td>
+                                @if(w.author == user.userId){
+                                    <a class="btn btn-xs btn-success"><i class="icon-edit icon-white"></i> Edit</a>
+                                }
+                            <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.name, w.author)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var table = $("#worksets").stupidtable();
+        table.bind('aftertablesort', function (event, data) {
+        // data.column - the index of the column sorted after a click
+        // data.direction - the sorting direction (either asc or desc)
+
+        var th = $(this).find("th");
+        th.find(".arrow").remove();
+        var arrow = data.direction === "asc" ? "↑" : "↓";
+        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        });
+    </script>
+}

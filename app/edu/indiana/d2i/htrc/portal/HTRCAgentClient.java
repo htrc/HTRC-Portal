@@ -25,6 +25,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import play.Logger;
+import play.mvc.Http;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -35,16 +36,24 @@ import java.io.InputStream;
 import java.util.*;
 
 public class HTRCAgentClient {
-    private String accessToken = null;
+    private String accessToken;
+    private String refreshToken;
+    private Http.Session session;
     private static Logger.ALogger log = play.Logger.of("application");
     private HttpClient client = new HttpClient();
     private XMLInputFactory factory = XMLInputFactory.newInstance();
-
+    /**
+     * access token renew time
+     */
+    private int renew = 0;
+    private final int MAX_RENEW = 1;
 
     public int responseCode;
 
-    public HTRCAgentClient(String accessToken){
-        this.accessToken = accessToken;
+    public HTRCAgentClient(Http.Session session){
+        this.session = session;
+        accessToken = session.get(PortalConstants.SESSION_TOKEN);
+        refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
     }
 
     private Map<String, JobDetailsBean> parseJobDetailBeans(InputStream stream) throws XMLStreamException{
@@ -199,13 +208,22 @@ public class HTRCAgentClient {
             if (responsecode == 200) {
                 jobSubmitResponse = parseJobSubmit(putMethod.getResponseBodyAsStream());
                 log.debug(putMethod.getResponseBodyAsString());
-            }else{
-                this.responseCode = responsecode;
-                throw new IOException("Response code " + responsecode + " for " + submitJobUrl + " message: \n " + putMethod.getResponseBodyAsString());
+            }else if (responsecode == 401 && (renew < MAX_RENEW)) {
+                try {
+                    accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
+//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                    renew++;
+                    return submitJob(jobSubmitBean);
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
+            } else {
+                renew = 0;
+                log.error(String.format(
+                        "Unable to submit job %s to agent. Response code %d", jobSubmitBean.getJobName(), responsecode));
+                jobSubmitResponse = null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (XMLStreamException e) {
+        } catch (IOException | XMLStreamException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return jobSubmitResponse;
@@ -236,9 +254,18 @@ public class HTRCAgentClient {
                         log.error("Error occurs while deleting job " + id);
                         res = success;
                     }
-                } else{
-                    log.error(String.format("Unable to delete job %s from agent. Response code %d",
-                            response));
+                } else if (response == 401 && (renew < MAX_RENEW)) {
+                    try {
+                        accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
+//                        session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                        renew++;
+                        return deleteJobs(jobIds); // bugs here!
+                    } catch (Exception e) {
+                        throw new IOException(e);
+                    }
+                } else {
+                    renew = 0;
+                    log.error(String.format("Unable to delete job %s from agent. Response code %d", id, response));
                     res = false;
                 }
             } catch (Exception e) {
@@ -253,7 +280,7 @@ public class HTRCAgentClient {
         return res;
     }
 
-    public boolean saveJobs(List<String> jobIds) {
+    public boolean saveJobs(List<String> jobIds) throws IOException {
         boolean res = true;
         for (String id : jobIds) {
             PutMethod saveJobId = null;
@@ -270,9 +297,19 @@ public class HTRCAgentClient {
                 this.responseCode = response;
                 if (response == 200) {
                     log.info("Saved ActiveJob ID :  " + id);
-                }else {
-                    log.error(String.format("Unable to save job %s from agent. Response code %d",
-                            response));
+                    renew = 0;
+                } else if (response == 401 && (renew < MAX_RENEW)) {
+                    try {
+                        accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
+//                        session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                        renew++;
+                        return saveJobs(jobIds); // bugs here
+                    } catch (Exception e) {
+                        throw new IOException(e);
+                    }
+                } else {
+                    renew = 0;
+                    log.error(String.format("Unable to save job %s from agent. Response code %d",id, response));
                     res = false;
                 }
             } catch (Exception e) {
@@ -304,9 +341,20 @@ public class HTRCAgentClient {
             int response = client.executeMethod(getJobDetailsList);
             this.responseCode = response;
             if (response == 200) {
+                renew = 0;
                 jobdetailBeans = parseJobDetailBeans(getJobDetailsList
                         .getResponseBodyAsStream());
+            }else if (response == 401 && (renew < MAX_RENEW)) {
+                try {
+                    accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
+//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                    renew++;
+                    return getAllJobsDetails();
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
             } else {
+                renew = 0;
                 log.error("Unable to get job list from agent. url " + jobDetailsURL +
                         "Response code " + response);
                 jobdetailBeans = null;
@@ -343,7 +391,16 @@ public class HTRCAgentClient {
             if (response == 200) {
                 jobdetailBeans = parseJobDetailBeans(getJobDetailsList
                         .getResponseBodyAsStream());
-            } else {
+            }else if (response == 401 && (renew < MAX_RENEW)) {
+                try {
+                    accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
+//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                    renew++;
+                    return getAllJobsDetails();
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
+            }else {
                 log.error("Unable to get job list from agent. url " + jobDetailsURL +
                         "Response code " + response);
                 jobdetailBeans = null;

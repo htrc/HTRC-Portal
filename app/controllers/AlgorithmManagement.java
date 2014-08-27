@@ -39,18 +39,18 @@ public class AlgorithmManagement extends Controller{
     @Security.Authenticated(Secured.class)
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(request().username());
-        WorksetManagement.updateWorksets(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
-        updateAlgorithms(loggedInUser.accessToken, PlayConfWrapper.registryEPR());
-        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
-        List<Algorithm> algorithms = algorithmsPL.getPage(page - 1).getList();
+//        WorksetManagement.updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
+//        updateAlgorithms(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
+//        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
+//        List<Algorithm> algorithms = algorithmsPL.getPage(page - 1).getList();
 
-        return ok(views.html.algorithms.render(loggedInUser, algorithms, Algorithm.all().size(), page, algorithmsPL.getTotalPageCount()));
+        return ok(views.html.algorithms.render(loggedInUser, getAlgorithms()));
     }
 
     @Security.Authenticated(Secured.class)
     public static Result viewAlgorithm(String algorithmName) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(request().username());
-        AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(loggedInUser.accessToken, algorithmName);
+        AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         List<Workset> worksetList = Workset.all();
         return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
@@ -66,7 +66,7 @@ public class AlgorithmManagement extends Controller{
         jobSubmitBean.setAlgorithmName(requestData.get("algorithmName"));
         AlgorithmDetailsBean algorithmDetails;
         try {
-            algorithmDetails = getAlgorithmDetails(loggedInUser.get().accessToken, requestData.get("algorithmName"));
+            algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), requestData.get("algorithmName"));
         } catch (Exception e) {
             Logger.error("Error occurred during algorithm details request.", e);
             throw e;
@@ -89,7 +89,7 @@ public class AlgorithmManagement extends Controller{
             jobSubmitBean.setParameters(parameterList);
         }
 
-        HTRCAgentClient agentClient = new HTRCAgentClient(loggedInUser.get().accessToken);
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
         JobDetailsBean jobDetailsBean = agentClient.submitJob(jobSubmitBean);
         if (jobDetailsBean == null) {
             log.error(String.format("Unable to submit job %s for user %s to agent",
@@ -106,8 +106,15 @@ public class AlgorithmManagement extends Controller{
         return redirect(routes.JobManagement.listJobs());
     }
 
+    public static List<AlgorithmDetailsBean> getAlgorithms() throws JAXBException, IOException, XMLStreamException {
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
+
+        return new ArrayList<AlgorithmDetailsBean>(allAlgorithms.values());
+    }
+
     public static void updateAlgorithms(String accessToken, String registryUrl) throws JAXBException, IOException, XMLStreamException {
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, PlayConfWrapper.registryEPR());
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {
             log.warn(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY); //TODO: fix log message
@@ -127,7 +134,7 @@ public class AlgorithmManagement extends Controller{
     }
 
     public static AlgorithmDetailsBean getAlgorithmDetails(String accessToken, String algorithmName) throws JAXBException, IOException, XMLStreamException {
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(accessToken, PlayConfWrapper.registryEPR());
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         AlgorithmDetailsBean algorithmDetails = new AlgorithmDetailsBean();
         Map<String, AlgorithmDetailsBean> allAlgorithms = persistenceAPIClient.getAllAlgorithmDetails();
         if (allAlgorithms == null) {

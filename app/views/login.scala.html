@@ -1,19 +1,19 @@
 @(form: Form[HTRCPortal.Login], user: User)
 
 @main("Home", user) {
-    <!-- Main hero unit for a primary marketing message or call to action -->
-    <div class="row">
-        <div class="span3">
+    <div class="container container-panel" style="padding-top: 15px; padding-bottom: 15px;">
+    <div class="row" style="padding-left: 15px;">
+        <div class="col-md-3">
             <img src="@routes.Assets.at("images/hathi.jpg")" width="180" height="180">
         </div>
-        <div class="span9" style="margin-left: 0;">
+        <div class="col-md-9" style="margin-left: 0;">
             <h3 style="font-size: 60px; line-height: 1;margin-top: 35px;">
                     Welcome to the HathiTrust Research Center!
             </h3>
         </div>
     </div>
-    <div class="row">
-        <div class="span8">
+    <div class="row" style="padding-left: 15px;">
+        <div class="col-md-8">
             <p style="padding-top: 25px; font-size: 17px; line-height: 27px;"> The HathiTrust Research Center (HTRC) provides research access to the public domain text of the HathiTrust
                 Digital Library. The HTRC is a collaborative research center launched jointly by Indiana University and the
                 University of Illinois, along with the HathiTrust Digital Library, to help meet the technical challenges of
@@ -23,9 +23,13 @@
                 million public domain works and is intended for nonprofit and educational
                 researchers.</p>
         </div>
-        <div class="span4">
-            <div class="login-unit">
-                <h3 style="font-weight: 400">Get Started By Sign In</h3>
+        <div class="col-md-4">
+            <div class="panel panel-default" style="margin-top: 25px;">
+                @*<div class="panel-heading">*@
+                    @*<strong>Get Started By Sign In</strong>*@
+
+                @*</div>*@
+                <div class="panel-body">
                 @helper.form(routes.HTRCPortal.authenticate()) {
                     @if(form.hasGlobalErrors) {
                         <p class="error">
@@ -37,59 +41,99 @@
                             @flash.get("success")
                         </p>
                     }
-                    <div>
-                        <div>
-                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="text" name="userId" id="userId" autofocus="true" placeholder="User ID..." required="true">
-                        </div>
-                        <div>
-                            <input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="password" name="password" id="password" placeholder="Password..." required="true">
-                        </div>
-                        <div>
-                            <input name="signin" id="signin" type="submit" class="btn btn-primary" value="Sign In" />
-                            <div class="pull-right" style="margin-top: 2px;">
-                                <a href="@routes.UserManagement.createPasswordResetMailForm()" style="font-size: 14px; line-height: 26px;">Forgot Password?</a> &nbsp;
-                                <a href="@routes.UserManagement.createSignUpForm()"  style="font-size: 14px; line-height: 26px;">Sign Up</a>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="userId">Email address</label>
+                        <input type="text" class="form-control"  name="userId" id="userId" autofocus="true" placeholder="Enter User Name">
                     </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" type="password" name="password" id="password"  required="true" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Sign In</button>
+                    <div class="pull-right">
+                        <a href="@routes.UserManagement.createPasswordResetMailForm()" class="btn btn-default btn-sm">Forgot Password?</a>
+                        <a href="@routes.UserManagement.createSignUpForm()" class="btn btn-default btn-sm">Sign Up</a>
+                    </div>
+
+
+
+
+                    @*<div>*@
+                        @*<div>*@
+                            @*<input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="text" name="userId" id="userId" autofocus="true" placeholder="User ID..." required="true">*@
+                        @*</div>*@
+                        @*<div>*@
+                            @*<input style="font-size: 16px; line-height: 26px; height: auto;" class="login-input" type="password" name="password" id="password" placeholder="Password..." required="true">*@
+                        @*</div>*@
+                        @*<div>*@
+                            @*<input name="signin" id="signin" type="submit" class="btn btn-primary" value="Sign In" />*@
+                            @*<div class="pull-right" style="margin-top: 2px;">*@
+                                @*<a href="@routes.UserManagement.createPasswordResetMailForm()" style="font-size: 14px; line-height: 26px;">Forgot Password?</a> &nbsp;*@
+                                @*<a href="@routes.UserManagement.createSignUpForm()"  style="font-size: 14px; line-height: 26px;">Sign Up</a>*@
+                            @*</div>*@
+                        @*</div>*@
+                    @*</div>*@
                 }
+                </div>
             </div>
 
         </div>
     </div>
 
 
-    <div class="span12 pull-right" style="margin-top: 20px;">
-        <h2 style="margin-top: 0"> What You Can Do With HTRC Portal? </h2>
-    </div>
-    <div class="row pull-left markerting-unit">
-        <div class="span3 action-unit">
-            <div>
-                <h3> Create Workset </h3>
-                <p>Create workset using our workset builder.</p>
-            </div>
-
-        </div>
-        <div class="span3 action-unit">
-            <div>
-                <h3> Upload Workset </h3>
-                <p>Upload worksets with extra properties in CSV format.</p>
-            </div>
-
-        </div>
-        <div class="span3 action-unit">
-            <div>
-                <h3> Browse Workset </h3>
-                <p>Browse through already created worksets.</p>
+        <div class="row" style="padding-left: 15px;">
+            <div class="col-md-12" style="margin-top : 20px;">
+                <h2 style="margin-top : 0"> What You Can Do With HTRC Portal? </h2>
             </div>
         </div>
-        <div class="span3 action-unit">
-           <div>
-               <h3> Execute Algorithms </h3>
-               <p>Execute algorithms on your worksets.</p>
-           </div>
-        </div>
-    </div>
 
+        <div class="row" style="padding-left: 15px;">
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        Create Workset
+                    </div>
+                    <div class="panel-body">
+
+                        <p>Create workset using our workset builder.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        Execute Algorithms
+                    </div>
+                    <div class="panel-body">
+                        <p>Execute algorithms on your worksets.</p>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        Upload Workset
+                    </div>
+                    <div class="panel-body">
+
+                        <p>Upload worksets with extra properties in CSV format.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        Browse Workset
+                    </div>
+                    <div class="panel-body">
+                        <p>Browse through already created worksets.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
 
 }

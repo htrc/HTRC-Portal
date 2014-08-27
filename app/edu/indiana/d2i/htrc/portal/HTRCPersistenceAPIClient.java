@@ -30,9 +30,11 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import play.Logger;
-import play.Play;
-import sun.rmi.runtime.Log;
+import play.mvc.Http;
+
 
 import javax.xml.bind.*;
 import javax.xml.stream.XMLInputFactory;
@@ -48,9 +50,8 @@ public class HTRCPersistenceAPIClient {
     private static Logger.ALogger log = play.Logger.of("application");
 
     private String accessToken;
-    private String registryEPR;
     private String refreshToken;
-    private Map<String, Object> session;
+    private static Http.Session session;
     private HttpClient client = new HttpClient();
 
     public int responseCode;
@@ -67,9 +68,10 @@ public class HTRCPersistenceAPIClient {
     private int renew = 0;
     private final int MAX_RENEW = 1;
 
-    public HTRCPersistenceAPIClient(String accessToken, String registryEPR) {
-        this.accessToken = accessToken;
-        this.registryEPR = registryEPR;
+    public HTRCPersistenceAPIClient(Http.Session session) {
+        this.session = session;
+        accessToken = session.get(PortalConstants.SESSION_TOKEN);
+        refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
 
     }
 
@@ -85,7 +87,6 @@ public class HTRCPersistenceAPIClient {
     }
 
     private Object parseXML(String xmlStr) throws JAXBException {
-        System.out.println("Worset Response: \n" + xmlStr);
         if (log.isDebugEnabled()) {
             Logger.debug("Workset Response: \n" + xmlStr);
         }
@@ -122,17 +123,19 @@ public class HTRCPersistenceAPIClient {
         OAuthClient refreshTokenClient = new OAuthClient(new URLConnectionClient());
         OAuthClientResponse refreshTokenResponse = refreshTokenClient
                 .accessToken(refreshTokenRequest);
-        String refreshAccessToken = refreshTokenResponse.getParam("access_token");
-        log.info("Access token has been renewed to " + refreshAccessToken);
+        String refreshedAccessToken = refreshTokenResponse.getParam("access_token");
+        session.put(PortalConstants.SESSION_TOKEN, refreshedAccessToken);
+        session.put(PortalConstants.SESSION_REFRESH_TOKEN, refreshTokenResponse.getParam("refresh_token"));
+        log.info("Access token has been renewed to " + refreshedAccessToken);
 
-        return refreshAccessToken;
+        return refreshedAccessToken;
     }
 
 
     public List<Workset> getPublicWorksets() throws IOException,
             JAXBException {
 
-        String worksetUrl = registryEPR + "/worksets" + "?public=" + true;
+        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets" + "?public=" + true;
         log.debug("getPublicWorksets Url: " + worksetUrl);
 
         GetMethod get = new GetMethod(worksetUrl);
@@ -144,15 +147,62 @@ public class HTRCPersistenceAPIClient {
         if (response == 200) {
             String xmlStr = get.getResponseBodyAsString();
             Worksets worksets = (Worksets) parseXML(xmlStr);
+            renew = 0;
             return worksets.getWorkset();
-        } else {
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+                renew++;
+                return getPublicWorksets();
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else if (response == 404) {
+            log.info("No workset is found for request " + worksetUrl);
             return Collections.emptyList();
+        } else {
+            log.error("500 error \n" + get.getResponseBodyAsString());
+            throw new IOException("Response code is " + response + " for request "
+                    + worksetUrl);
+        }
+    }
+
+    public Workset getWorkset(String worksetId) throws IOException, JAXBException {
+        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets/" + worksetId;
+        log.debug("getPublicWorksets Url: " + worksetUrl);
+
+        GetMethod get = new GetMethod(worksetUrl);
+        get.addRequestHeader("Authorization", "Bearer " + accessToken);
+        get.addRequestHeader("Accept", "application/vnd.htrc-workset+xml");
+
+        int response = client.executeMethod(get);
+        this.responseCode = response;
+        if (response == 200) {
+            String xmlStr = get.getResponseBodyAsString();
+            Workset workset = (Workset) parseXML(xmlStr);
+            renew = 0;
+            return workset;
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+                renew++;
+                return getWorkset(worksetId);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else if (response == 404) {
+            log.info("No workset is found for request " + worksetUrl);
+            return null;
+        } else {
+            log.error("500 error \n" + get.getResponseBodyAsString());
+            throw new IOException("Response code is " + response + " for request "
+                    + worksetUrl);
         }
     }
 
 
     public List<Volume> getWorksetVolumes(String worksetName, String worksetAuthor) throws IOException, JAXBException {
-        String worksetUrl = registryEPR + "/worksets/" + worksetName + "?author=" + worksetAuthor;
+        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets/" + worksetName + "?author=" + worksetAuthor;
         log.debug("getWorkset Url: " + worksetUrl);
 
         GetMethod get = new GetMethod(worksetUrl);
@@ -165,6 +215,7 @@ public class HTRCPersistenceAPIClient {
             String xmlStr = get.getResponseBodyAsString();
             Workset workset = (Workset) parseXML(xmlStr);
             WorksetContent worksetContent = workset.getContent();
+            renew = 0;
             if (worksetContent != null) {
                 return worksetContent.getVolumes().getVolume();
             } else {
@@ -172,9 +223,22 @@ public class HTRCPersistenceAPIClient {
                 return null;
 
             }
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+//                session.put(PortalConstants.SESSION_TOKEN, accessToken);
+                renew++;
+                return getWorksetVolumes(worksetName, worksetAuthor);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else if (response == 404) {
+            log.info("No workset is found for request " + worksetUrl);
+            return Collections.emptyList();
         } else {
-            log.debug("Response Code: " + response);
-            return null;
+            log.error("500 error \n" + get.getResponseBodyAsString());
+            throw new IOException("Response code is " + response + " for request "
+                    + worksetUrl);
         }
     }
 
@@ -245,7 +309,7 @@ public class HTRCPersistenceAPIClient {
             play.Logger.info("getFilesAsString got access token expired error.");
             try {
                 accessToken = renewToken(refreshToken);
-                session.put(PortalConstants.SESSION_TOKEN, accessToken);
+//                session.put(PortalConstants.SESSION_TOKEN, accessToken);
                 renew++;
                 return getFilesAsString(repoPath, nameReg, typeReg, shared);
             } catch (Exception e) {
@@ -318,5 +382,33 @@ public class HTRCPersistenceAPIClient {
         return res;
     }
 
+    /**
+     * Create workset
+     *
+     * @param worksetContent , Give workset content as a String
+     * @param isPublic
+     */
+
+    public void createWorkset(String worksetContent, boolean isPublic) throws IOException {
+        String url;
+
+        if (isPublic) {
+            url = PlayConfWrapper.registryEPR() + "/worksets" + "?public=true";
+        } else {
+            url = PlayConfWrapper.registryEPR() + "/worksets";
+        }
+        PostMethod post = new PostMethod(url);
+        post.addRequestHeader("Authorization", "Bearer " + accessToken);
+        post.setRequestEntity(new StringRequestEntity(worksetContent,
+                "application/vnd.htrc-workset+xml", "UTF-8"));
+
+        int response = client.executeMethod(post);
+        if (response == 201) {
+            // nothing
+        } else {
+            this.responseCode = response;
+            throw new IOException("Response code " + response + " for " + url + " message: \n " + post.getResponseBodyAsString());
+        }
+    }
 
 }
