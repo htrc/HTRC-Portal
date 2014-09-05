@@ -272,7 +272,7 @@ jQuery(document).ready(function () {
         },
 
         progressWidget = function () {
-            return '<div class="progress col-sm-10" style="margin-top: 5px;float:none;margin-left: 0;"><div class="progress-bar"><span class="password-verdict"></span></div></div>';
+            return '<div class="progress col-sm-12" style="margin-top: 5px;float:none;margin-left: 0;"><div class="progress-bar"><span class="password-verdict"></span></div></div>';
         },
 
         methods = {

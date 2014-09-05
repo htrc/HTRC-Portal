@@ -24,6 +24,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.about;
+import views.html.robort;
 
 import java.util.Date;
 
@@ -59,6 +60,9 @@ public class Secured extends Security.Authenticator {
     public Result onUnauthorized(Http.Context ctx) {
         if(ctx.request().path().equals("/about")){
             return ok(about.render(null));
+        }
+        if(ctx.request().path().equals("/robort.txt")){
+            return ok("User-agent: *\nDisallow: /blacklight/");
         }
         return redirect(routes.HTRCPortal.login());
     }

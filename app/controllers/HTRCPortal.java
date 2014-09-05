@@ -29,6 +29,7 @@ import play.mvc.Security;
 import views.html.about;
 import views.html.index;
 import views.html.login;
+import views.html.robort;
 
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +44,11 @@ public class HTRCPortal extends  Controller {
     @Security.Authenticated(Secured.class)
     public static Result index() {
         return ok(index.render(User.findByUserID(request().username())));
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result robort() {
+        return ok("User-agent: *\nDisallow: /blacklight/");
     }
 
     public static Result login() {

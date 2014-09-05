@@ -3,18 +3,15 @@
 
 
 @main("JobList", user) {
-    <div class="row">
-        <div class="span12">
-            <fieldset>
-                <legend><b>Active Jobs</b>
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-warning btn-small" id="canceljobs">
-                            <i class="icon-remove icon-white"></i>Cancel</a>
-                    </div>
-                </legend>
-                <div id="activejobsheader">
-                    @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
-                    <table class="table table-striped">
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Active Jobs</strong><a href="#" class="btn btn-warning btn-xs pull-right" id="canceljobs">
+                <i class="icon-remove icon-white"></i>Cancel</a>
+            </div>
+            <div class="panel-body">
+                @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>ActiveJob Title</th>
@@ -24,40 +21,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for(job <- activeJobs){
-                                <tr>
-                                    <td>@job.jobName</td>
-                                    <td>@job.lastModified</td>
-                                    <td>@job.status</td>
-                                    <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
-                                </tr>
-                            }
+                        @for(job <- activeJobs){
+                            <tr>
+                                <td>@job.jobName</td>
+                                <td>@job.lastModified</td>
+                                <td>@job.status</td>
+                                <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
-                    }
-                </div>
+                }
                 @if(activeJobs.isEmpty){
                     <div class="alert alert-info">
-                    <p style="margin-bottom: 0;">There are no active jobs..</p>
+                        <p style="margin-bottom: 0;">There are no active jobs..</p>
                     </div>
                 }
-            </fieldset>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <fieldset>
-                <legend><b>Completed Jobs</b>
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-danger btn-small" id="deletejobs">
-                            <i class="icon-remove icon-white"></i>Delete</a>
-                        <a href="#" class="btn btn-info btn-small" id="savejobs">
-                            <i class="icon-remove icon-white"></i>Save</a>
-                    </div>
-                </legend>
-                <div id="completedjobsheader">
-                    @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
-                    <table class="table table-striped">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Completed Jobs</strong><a href="#" class="btn btn-danger btn-xs pull-right" id="deletejobs">
+                <i class="icon-remove icon-white"></i>Delete</a>
+                <a href="#" class="btn btn-info btn-xs pull-right" id="savejobs">
+                    <i class="icon-remove icon-white"></i>Save</a>
+            </div>
+            <div class="panel-body">
+                @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>ActiveJob Title</th>
@@ -68,25 +59,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for(job <- completedJobs){
-                                <tr>
-                                    <td><a href="@routes.JobManagement.viewJobDetails(job.jobId)">@job.jobName</a></td>
-                                    <td>@job.lastModified</td>
-                                    <td>@job.status</td>
-                                    <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
-                                    <td>@job.jobSavedStr</td>
-                                </tr>
-                            }
+                        @for(job <- completedJobs){
+                            <tr>
+                                <td><a href="@routes.JobManagement.viewJobDetails(job.jobId)">@job.jobName</a></td>
+                                <td>@job.lastModified</td>
+                                <td>@job.status</td>
+                                <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
+                                <td>@job.jobSavedStr</td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
-                    }
-                </div>
+                }
                 @if(completedJobs.isEmpty){
                     <div class="alert alert-info">
                         <p style="margin-bottom: 0;">There are no completed jobs..</p>
                     </div>
                 }
-            </fieldset>
+            </div>
         </div>
     </div>
 

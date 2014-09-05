@@ -6,7 +6,6 @@
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
                 <strong>Algorithms</strong>
-
             </div>
             <div class="panel-body">
                 <table class="table" id="worksets">
@@ -23,7 +22,7 @@
                     @for((w, id) <- algorithms.zipWithIndex){
                         <tr>
                             <td>@(id + 1)</td>
-                            <td>@w.getName</td>
+                            <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)">@w.getName</a></td>
                             <td>@w.getDescription</td>
                             <td>@w.getAuthors</td>
                             <td>@w.getVersion</td>

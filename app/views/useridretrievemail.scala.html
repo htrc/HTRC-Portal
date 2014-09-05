@@ -1,30 +1,37 @@
 @(form: Form[UserManagement.UserIDRetrieveMail], user: User)
 
 
-@main("UserIDRetrieve", user) {
-    <legend>Reset Password</legend>
-    @helper.form(routes.UserManagement.userIDRetrieveMail(), 'class -> "form-horizontal") {
-        @if(form.hasGlobalErrors) {
-            <p class="error">
-            @form.globalError.message
-            </p>
-        }
-        @if(flash.contains("success")) {
-            <p class="success">
-            @flash.get("success")
-            </p>
-        }
-        <div class="control-group">
-            <label for="userEmail" class="control-label">User Email:</label>
-            <div class="controls">
-                <input type="text" id="userEmail" name="userEmail" placeholder="Email" required="true">
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <button type="submit" class="btn btn-info">Retrieve UserId</button>
+    @main("UserIDRetrieve", user) {
+        <div class="container">
+            <div class="panel panel-default panel-htrc">
+                <div class="panel-heading">
+                    <strong>Retrieve User ID</strong>
+                </div>
+                <div class="panel-body">
+                @helper.form(routes.UserManagement.userIDRetrieveMail(), 'class -> "form-horizontal") {
+                    @if(form.hasGlobalErrors) {
+                        <p class="error">
+                        @form.globalError.message
+                        </p>
+                    }
+                    @if(flash.contains("success")) {
+                        <p class="success">
+                        @flash.get("success")
+                        </p>
+                    }
+                    <div class="form-group">
+                        <label for="userEmail" class="col-sm-2 control-label">User Email:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="userEmail" name="userEmail" placeholder="Email" required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary btn-sm">Retrieve UserId</button>
+                        </div>
+                    </div>
+                }
+                </div>
             </div>
         </div>
     }
-
-}

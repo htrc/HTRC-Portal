@@ -51,8 +51,8 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm">Sign In</button>
                     <div class="pull-right">
-                        <a href="@routes.UserManagement.createPasswordResetMailForm()" class="btn btn-default btn-sm">Forgot Password?</a>
-                        <a href="@routes.UserManagement.createSignUpForm()" class="btn btn-default btn-sm">Sign Up</a>
+                        <a href="@routes.UserManagement.createPasswordResetMailForm()" class="btn btn-link btn-sm">Forgot Password?</a>
+                        <a href="@routes.UserManagement.createSignUpForm()" class="btn btn-link btn-sm">Sign Up</a>
                     </div>
 
 
@@ -91,7 +91,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        Create Workset
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')">Create Workset</a>
                     </div>
                     <div class="panel-body">
 
@@ -102,19 +102,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        Execute Algorithms
-                    </div>
-                    <div class="panel-body">
-                        <p>Execute algorithms on your worksets.</p>
-
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-default panel-htrc margin-bt-0">
-                    <div class="panel-heading">
-                        Upload Workset
+                        <a href="#login-required-modal" data-toggle="modal">Upload Workset</a>
                     </div>
                     <div class="panel-body">
 
@@ -126,13 +114,26 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        Browse Workset
+                        <a href="#login-required-modal" data-toggle="modal">Browse Workset</a>
                     </div>
                     <div class="panel-body">
                         <p>Browse through already created worksets.</p>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        <a href="#login-required-modal" data-toggle="modal">Execute Algorithms</a>
+                    </div>
+                    <div class="panel-body">
+                        <p>Execute algorithms on your worksets.</p>
+
+
+                    </div>
+                </div>
+            </div>
+
         </div>
 </div>
 

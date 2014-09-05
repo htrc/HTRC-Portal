@@ -41,17 +41,17 @@
                                 <dt class="volume-author">Author:</dt>
                                 @if(v.getFemaleAuthor != null){
                                     <dd class="volume-author">@v.getFemaleAuthor
-                                    <span class="badge">F</span>
+                                    <i>(F)</i>
                                     </dd>
                                 }
                                 @if(v.getMaleAuthor != null){
                                     <dd class="volume-author">@v.getMaleAuthor
-                                    <span class="badge">M</span>
+                                        <i>(M)</i>
                                     </dd>
                                 }
-                                @if(v.getFemaleAuthor != null){
-                                    <dd class="volume-author">@v.getFemaleAuthor
-                                    <span class="badge">F</span>
+                                @if(v.getGenderUnkownAuthor != null){
+                                    <dd class="volume-author">@v.getGenderUnkownAuthor
+                                        <i>(U)</i>
                                     </dd>
                                 }
                                 <dt class="volume-pageCount">Page Count[HTRC]:</dt>

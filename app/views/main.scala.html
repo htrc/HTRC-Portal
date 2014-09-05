@@ -38,36 +38,58 @@
                             <li><a href="@routes.HTRCPortal.index()">Home</a></li>
                             <li><a href="@routes.HTRCPortal.about()">About</a>
                             </li>
-                            @if(user != null) {
+
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         Worksets <b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="@routes.WorksetManagement.worksets()">List</a></li>
+                                        @if(user==null){
+                                            <li><a href="#login-required-modal" data-toggle="modal" >List</a></li>
+                                        }else{
+                                            <li><a href="@routes.WorksetManagement.worksets()">List</a></li>
+                                        }
                                         <li class="divider"></li>
-                                        <li><a href="#upload-csv-modal" role="button" data-toggle="modal">Upload Workset</a></li>
+                                        @if(user==null){
+                                            <li><a href="#login-required-modal" data-toggle="modal">Upload Workset</a></li>
+                                        }else{
+                                            <li><a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a></li>
+                                        }
                                         <li class="divider"></li>
-                                        <li class="dropdown-submenu">
+                                        <li>
                                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')">Create Workset</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a>
-                                </li>
-                                <li><a href="@routes.JobManagement.listJobs()">Results</a>
-                                </li>
+                                @if(user==null){
+                                    <li><a href="#login-required-modal" data-toggle="modal" >Algorithms</a></li>
+                                }else{
+                                    <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a></li>
+                                }
+                                @if(user==null){
+                                    <li><a href="#login-required-modal" data-toggle="modal" >Results</a></li>
+                                }else{
+                                    <li><a href="@routes.JobManagement.listJobs()">Results</a></li>
+                                }
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         HTRC Data Capsule<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="http://wiki.htrc.illinois.edu/display/INT/HTRC+Data+Capsule">Documentation</a></li>
-                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Virtual Machines</a></li>
                                         <li class="divider"></li>
-                                        <li><a href="@routes.ExperimentalAnalysis.createVMForm()" role="button" data-toggle="modal">
-                                            Create Virtual Machine</a></li>
+                                        @if(user==null){
+                                            <li><a href="#login-required-modal" data-toggle="modal" >Virtual Machines</a></li>
+                                        }else{
+                                            <li><a href="@routes.ExperimentalAnalysis.listVMs()">Virtual Machines</a></li>
+                                        }
+                                        <li class="divider"></li>
+                                        @if(user==null){
+                                            <li><a href="#login-required-modal" data-toggle="modal" >Create Virtual Machine</a></li>
+                                        }else{
+                                            <li><a href="@routes.ExperimentalAnalysis.createVMForm()">Create Virtual Machine</a></li>
+                                        }
                                     </ul>
                                 </li>
-                            }
+
                             <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>
                         </ul>
                         @if(user == null) {
@@ -112,8 +134,7 @@
                         <h4 class="modal-title">Create Workset</h4>
                     </div>
                     <div class="modal-body">
-                        <p>Although you've already logged in to HTRC Portal, you need to log in
-                            to HTRC Workset Builder in order to create or modify a workset.</p>
+                        <p>You need to log in to HTRC Workset Builder in order to create or modify a workset. This is not depends on whether you have already logged in to HTRC Portal or not.</p>
                     </div>
                     <div class="modal-footer">
                         <span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin : -3px 0 0 ;">
@@ -144,7 +165,7 @@
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <input type="text" id="wdescription" class="form-control" name="description" placeholder="Description" maxlength="100">
+                            <input type="text" id="description" class="form-control" name="description" placeholder="Description" maxlength="100">
                         </div>
                         <div class="form-group">
                             <label for="inputCSV">CSV File:</label>
@@ -164,44 +185,27 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="login-required-modal" aria-hidden="true" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Please Sign in</h4>
+                </div>
+                <div class="modal-body">
+                    <p>You need to sign in to access this functionality.</p>
+                </div>
+                <div class="modal-footer">
+                    @*<span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin : -3px 0 0 ;">*@
+                        @*Don't Show This Again.</span>*@
+                    <a href="#" class="btn btn-link btn-sm" data-dismiss="modal" aria-hidden="true">Cancel</a>
+                    <a href="@routes.HTRCPortal.login()" class="btn btn-sm btn-primary">
+                        Go</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    @*<div class="modal hide fade" id="upload-csv-modal" tabindex="-1" role="dialog" aria-labelledby="upload-csv-label" aria-hidden="true">*@
-        @*<div class="modal-header">*@
-            @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>*@
-            @*<h3 id="upload-csv-label">Upload Workset</h3>*@
-        @*</div>*@
 
-        @*<div class="modal-body">*@
-            @*@helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {*@
-                @*<p>You can upload Workset only on CSV format.</p>*@
-                @*<div class="control-group">*@
-                    @*<label class="control-label" for="worksetName">Workset Name</label>*@
-                    @*<div class="controls">*@
-                        @*<input type="text" id="worksetName" name="worksetName" placeholder="Workset Name" required="true">*@
-                        @*<em>Only characters A-Z, 0-9, or _ allowed.</em>*@
-                    @*</div>*@
-                @*</div>*@
-                @*<div class="control-group">*@
-                    @*<label class="control-label" for="description">Description</label>*@
-                    @*<div class="controls">*@
-                        @*<input type="text" id="wdescription" name="description" placeholder="Description" maxlength="100">*@
-                    @*</div>*@
-                @*</div>*@
-                @*<div class="control-group">*@
-                    @*<label class="control-label" for="inputCSV">CSV File:</label>*@
-                    @*<div class="controls">*@
-                        @*<input type="file" accept="text/csv" name="csv" id="inputCSV" required="true">*@
-                    @*</div>*@
-                @*</div>*@
-                @*<label class="checkbox">*@
-                    @*<input type="checkbox" name="privateWorkset" checked="true"/> Private workset.*@
-                @*</label>*@
-                @*<div class="modal-footer">*@
-                    @*<a href="#" class="btn" data-dismiss="modal">Close</a>*@
-                    @*<button type="submit" class="btn btn-primary">Submit</button>*@
-                    @*</div>*@
-            @*}*@
-        @*</div>*@
-    @*</div>*@
 
 </html>

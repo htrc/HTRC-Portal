@@ -1,7 +1,7 @@
 function blacklightLoggingWarning(blacklightUrl) {
 
     if (localStorage['dont-show-create-warning']) {
-        location.href = blacklightUrl
+        location.href = blacklightUrl;
         return true;
     }
 
@@ -17,3 +17,4 @@ function goToCreateCollection() {
 
     return true;
 }
+

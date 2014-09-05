@@ -186,7 +186,7 @@ public class WorksetManagement extends Controller {
             return redirect(routes.WorksetManagement.viewWorkset(wsName,loggedInUser.userId));
         } else {
             flash("error", "Missing file");
-            return ok(gotopage.render("Error occurred while uploading the file.",null,null,loggedInUser));
+            return ok(gotopage.render("Error occurred while uploading the file. Please try again.",null,null,loggedInUser));
         }
     }
 
