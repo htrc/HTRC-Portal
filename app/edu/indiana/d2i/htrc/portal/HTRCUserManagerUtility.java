@@ -289,8 +289,8 @@ public class HTRCUserManagerUtility {
      // TODO: Fix this
      public boolean isUserExists(String userName) {
         try {
-            String[] users = userAdmin.listUsers("*", Integer.MAX_VALUE);
-            return new HashSet<String>(Arrays.asList(users)).contains(userName);
+            String[] users = userAdmin.listUsers(userName, Integer.MAX_VALUE);
+            return !new HashSet<String>(Arrays.asList(users)).isEmpty();
         } catch (Exception e) {
             String errMessage = "Error checking whether given user exists.";
             log.error(errMessage, e);
@@ -347,9 +347,11 @@ public class HTRCUserManagerUtility {
 
     public boolean roleNameExists(String roleName)
             throws Exception {
-        FlaggedName[] roles = new FlaggedName[0];
+        FlaggedName[] roles;
         try {
             roles = userAdmin.getAllRolesNames(roleName, 10);
+            System.out.println("Total number of roles: " + roles.length);
+
         } catch (RemoteException e) {
             throw new RemoteException("Unable to get role names list", e);
         } catch (UserAdminUserAdminException e) {

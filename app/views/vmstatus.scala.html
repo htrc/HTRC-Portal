@@ -1,61 +1,68 @@
 @(user: User, vmStatus: edu.indiana.d2i.htrc.sloan.bean.VMStatus)
-@import edu.indiana.d2i.htrc.sloan.bean.VMStatus
+    @import edu.indiana.d2i.htrc.sloan.bean.VMStatus
 
 
-@main("VMStatus", user) {
-    <legend>Virtual Machine Status</legend>
-    <table border="0">
-
-        <tbody>
-        <tr>
-            <td style="width: 200px;"><b>VM Id:</b></td>
-            <td>@vmStatus.getVmId</td>
-        </tr>
-        <tr>
-            <td><b>Image Name:</b></td>
-            <td>@vmStatus.getImageName</td>
-        </tr>
-        <tr>
-            <td><b>State:</b></td>
-            <td>@vmStatus.getState</td>
-        </tr>
-        <tr>
-            <td><b>VM Initial Logging User ID:</b></td>
-            <td>@vmStatus.getVmIntialLogingId</td>
-        </tr>
-        <tr>
-            <td><b>VM Initial Logging Password:</b></td>
-            <td>@vmStatus.getVmInitialLogingPassword</td>
-        </tr>
-        <tr>
-            <td><b>VM Mode:</b></td>
-            <td>@vmStatus.getMode</td>
-        </tr>
-        <tr>
-            <td><b>VNC Port:</b></td>
-            <td>@vmStatus.getVncPort</td>
-        </tr>
-        <tr>
-            <td><b>SSH Port:</b></td>
-            <td>@vmStatus.getSshPort</td>
-        </tr>
-        <tr>
-            <td><b>Host Name:</b></td>
-            <td>@vmStatus.getPublicIp</td>
-        </tr>
-        <tr>
-            <td><b>Memory:</b></td>
-            <td>@vmStatus.getMemory</td>
-        </tr>
-        <tr>
-            <td><b>VCPU:</b></td>
-            <td>@vmStatus.getVcpu</td>
-        </tr>
-        <tr>
-            <td><b>Volume Size:</b></td>
-            <td>@vmStatus.getVolumeSize</td>
-        </tr>
-        </tbody>
-    </table>
-    <a href="@routes.ExperimentalAnalysis.listVMs()" class="button btn-info btn-small">Back</a>
-}
+    @main("VMStatus", user) {
+        <div class="container">
+            <div class="panel panel-default panel-htrc panel-with-table">
+                <div class="panel-heading">
+                    <strong>Virtual Machine Status</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td style="width: 200px;"><b>VM Id:</b></td>
+                                <td>@vmStatus.getVmId</td>
+                            </tr>
+                            <tr>
+                                <td><b>Image Name:</b></td>
+                                <td>@vmStatus.getImageName</td>
+                            </tr>
+                            <tr>
+                                <td><b>State:</b></td>
+                                <td>@vmStatus.getState</td>
+                            </tr>
+                            <tr>
+                                <td><b>VM Initial Logging User ID:</b></td>
+                                <td>@vmStatus.getVmIntialLogingId</td>
+                            </tr>
+                            <tr>
+                                <td><b>VM Initial Logging Password:</b></td>
+                                <td>@vmStatus.getVmInitialLogingPassword</td>
+                            </tr>
+                            <tr>
+                                <td><b>VM Mode:</b></td>
+                                <td>@vmStatus.getMode</td>
+                            </tr>
+                            <tr>
+                                <td><b>VNC Port:</b></td>
+                                <td>@vmStatus.getVncPort</td>
+                            </tr>
+                            <tr>
+                                <td><b>SSH Port:</b></td>
+                                <td>@vmStatus.getSshPort</td>
+                            </tr>
+                            <tr>
+                                <td><b>Host Name:</b></td>
+                                <td>@vmStatus.getPublicIp</td>
+                            </tr>
+                            <tr>
+                                <td><b>Memory:</b></td>
+                                <td>@vmStatus.getMemory</td>
+                            </tr>
+                            <tr>
+                                <td><b>VCPU:</b></td>
+                                <td>@vmStatus.getVcpu</td>
+                            </tr>
+                            <tr>
+                                <td><b>Volume Size:</b></td>
+                                <td>@vmStatus.getVolumeSize</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <a href="@routes.ExperimentalAnalysis.listVMs()" class="button btn-info btn-small">Back</a>
+    }

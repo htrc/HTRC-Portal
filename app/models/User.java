@@ -51,6 +51,8 @@ public class User extends Model {
     public Long id;
     public String userId;
     public String email;
+    public String userFirstName;
+    public String userLastName;
 
     private static Logger.ALogger log = play.Logger.of("application");
 

@@ -29,7 +29,7 @@ import play.mvc.Security;
 import views.html.about;
 import views.html.index;
 import views.html.login;
-import views.html.robort;
+
 
 import java.io.IOException;
 import java.util.Map;
@@ -46,10 +46,7 @@ public class HTRCPortal extends  Controller {
         return ok(index.render(User.findByUserID(request().username())));
     }
 
-    @Security.Authenticated(Secured.class)
-    public static Result robort() {
-        return ok("User-agent: *\nDisallow: /blacklight/");
-    }
+
 
     public static Result login() {
         return ok(login.render(form(Login.class), null));
@@ -71,6 +68,7 @@ public class HTRCPortal extends  Controller {
                     String userEmail = getUserEmail(session().get(PortalConstants.SESSION_TOKEN));
                     User nu = new User(loginForm.get().userId, userEmail);
                     nu.save();
+                    log.info("New user " + nu.userId + " is added to User object.");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,6 +129,7 @@ public class HTRCPortal extends  Controller {
             session().put(PortalConstants.SESSION_USERNAME, userId);
             session().put(PortalConstants.SESSION_TOKEN,accessTokenResponse.getParam("access_token"));
             session().put(PortalConstants.SESSION_REFRESH_TOKEN,accessTokenResponse.getParam("refresh_token"));
+            log.info(accessTokenResponse.getParam("access_token"));
             return session();
 
         } catch (Exception e) {

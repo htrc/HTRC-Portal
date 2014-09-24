@@ -87,9 +87,9 @@ public class HTRCPersistenceAPIClient {
     }
 
     private Object parseXML(String xmlStr) throws JAXBException {
-        if (log.isDebugEnabled()) {
-            Logger.debug("Workset Response: \n" + xmlStr);
-        }
+//        if (log.isDebugEnabled()) {
+//            Logger.debug("Workset Response: \n" + xmlStr);
+//        }
 
         JAXBContext jaxbContext = JAXBContext
                 .newInstance("edu.illinois.i3.htrc.registry.entities.workset");
@@ -167,9 +167,9 @@ public class HTRCPersistenceAPIClient {
         }
     }
 
-    public Workset getWorkset(String worksetId) throws IOException, JAXBException {
-        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets/" + worksetId;
-        log.debug("getPublicWorksets Url: " + worksetUrl);
+    public Workset getWorkset(String worksetId, String worksetAuthor) throws IOException, JAXBException {
+        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets/" + worksetId + "?author=" + worksetAuthor;
+        log.debug("getWorkset Url: " + worksetUrl);
 
         GetMethod get = new GetMethod(worksetUrl);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);
@@ -186,7 +186,7 @@ public class HTRCPersistenceAPIClient {
             try {
                 accessToken = renewToken(refreshToken);
                 renew++;
-                return getWorkset(worksetId);
+                return getWorkset(worksetId,worksetAuthor);
             } catch (Exception e) {
                 throw new IOException(e);
             }
@@ -223,18 +223,6 @@ public class HTRCPersistenceAPIClient {
                 return null;
 
             }
-        } else if (response == 401 && (renew < MAX_RENEW)) {
-            try {
-                accessToken = renewToken(refreshToken);
-//                session.put(PortalConstants.SESSION_TOKEN, accessToken);
-                renew++;
-                return getWorksetVolumes(worksetName, worksetAuthor);
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
-        } else if (response == 404) {
-            log.info("No workset is found for request " + worksetUrl);
-            return Collections.emptyList();
         } else {
             log.error("500 error \n" + get.getResponseBodyAsString());
             throw new IOException("Response code is " + response + " for request "

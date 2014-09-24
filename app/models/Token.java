@@ -38,9 +38,10 @@ public class Token extends Model {
     public String userId;
     public String token;
     public Long createdTime;
-    public Boolean isTokenUsed;
+    public String isTokenUsed = "NO";
 
     private static Logger.ALogger log = play.Logger.of("application");
+    private static long validityPeriod = 3600; // in seconds
 
     public Token(String userId, String token, Long createdTime) {
         this.userId = userId;
@@ -101,6 +102,10 @@ public class Token extends Model {
              token1.delete();
         }
 
+    }
+
+    public static boolean isTokenExpired(Token token){
+        return validityPeriod <= (new Date().getTime() - token.createdTime);
     }
 
 

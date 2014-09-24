@@ -52,7 +52,7 @@ public class AlgorithmManagement extends Controller{
         User loggedInUser = User.findByUserID(request().username());
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
-        List<Workset> worksetList = Workset.all();
+        List<Workset> worksetList = WorksetManagement.getWorksets();
         return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
     }
 

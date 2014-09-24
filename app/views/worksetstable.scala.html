@@ -40,10 +40,10 @@
                             <td>@w.numberOfVolumes</td>
                             <td>@if(w.shared){Yes} else {No}</td>
                             <td>
-                                @if(w.author == user.userId){
-                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
+
+                                <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Edit</a>
-                                }
+
 
                                 <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.name,w.author)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
 
