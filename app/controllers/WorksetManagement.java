@@ -56,31 +56,9 @@ public class WorksetManagement extends Controller {
 
 
     @Security.Authenticated(Secured.class)
-    public static Result listWorkset(int sharedPage, int ownerPage) throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(request().username());
-        updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-        PagingList<Workset> shared = Workset.shared();
-        PagingList<Workset> owned = Workset.owned(loggedInUser);
-        List<Workset> allShared = Workset.listAllShared();
-        List<Workset> allOwned = Workset.listAllOwned(loggedInUser.userId);
-
-//        return ok(worksets.render(loggedInUser,
-//                shared.getPage(sharedPage - 1).getList(),
-//                owned.getPage(ownerPage - 1).getList(),
-//                sharedPage,
-//                ownerPage,
-//                shared.getTotalPageCount(),
-//                owned.getTotalPageCount(),
-//                allShared.size(),
-//                allOwned.size()));
-        return ok();
-    }
-
-    @Security.Authenticated(Secured.class)
     public static Result worksets() throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(request().username());
-        List<Workset> worksets = getWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-        List<Workset> usersWorksets = new ArrayList<>();
+        List<Workset> worksets = getWorksets();
 
         return ok(worksetstable.render(loggedInUser, worksets));
     }
@@ -89,7 +67,7 @@ public class WorksetManagement extends Controller {
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(request().username());
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName);
+        edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName,worksetAuthor);
         List<Volume> volumeList = new ArrayList<>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
@@ -174,7 +152,7 @@ public class WorksetManagement extends Controller {
                 Element content = worksetDoc.createElement("content");
                 content.appendChild(volumes);
                 worksetEle.appendChild(content);
-                log.debug("Workset XML: \n" + domToString(worksetDoc));
+                log.info("Workset :" + wsName + " uploaded successfully. ");
 
                 persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
 
@@ -365,41 +343,9 @@ public class WorksetManagement extends Controller {
         }
     }
 
-    public static void updateWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
 
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
-        log.debug("Workset count: " + worksetList.size());
-        for (edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList) {
-            WorksetMeta metadata = w.getMetadata();
-            Workset alreadyExistWorkset = Workset.findWorkset(metadata.getName(), metadata.getAuthor());
-            if (alreadyExistWorkset == null) {
-                List<Volume> volumeList = new ArrayList<>();
-                if (!metadata.getName().contains(" ")) {
-                    volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
-                }
 
-                Calendar calendar = metadata.getLastModified().toGregorianCalendar();
-                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
-                formatter.setTimeZone(calendar.getTimeZone());
-                String dateString = formatter.format(calendar.getTime());
-
-                Workset ws = new Workset(
-                        metadata.getName(),
-                        metadata.getDescription(),
-                        metadata.getAuthor(),
-                        metadata.getLastModifiedBy(),
-                        dateString,
-                        volumeList.size(),
-                        metadata.isPublic());
-                Workset.create(ws);
-            }
-
-        }
-
-    }
-
-    public static List<Workset> getWorksets(String accessToken, String registryUrl) throws IOException, JAXBException {
+    public static List<Workset> getWorksets() throws IOException, JAXBException {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
 
@@ -451,5 +397,9 @@ public class WorksetManagement extends Controller {
         for(Map.Entry<String,String> entry : session.entrySet()){
             session(entry.getKey(),entry.getValue());
         }
+    }
+
+    public static String getWorksetWithAuthor(String workset, String author){
+        return workset + '@' + author;
     }
 }

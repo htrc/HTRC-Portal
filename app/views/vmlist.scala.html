@@ -69,7 +69,7 @@
                                             }
 
                                         }
-                                        <a href="#" class="btn btn-danger btn-xs" id="deletevms" onclick="modalMessage ( 'Delete VM', 'Do you want to delete VM ID:  @vm.getVmId ? ',' @routes.ExperimentalAnalysis.deleteVM(vm.getVmId) ')">
+                                        <a href="#" class="btn btn-danger btn-xs" id="deletevms" onclick="modalMessage('Delete VM', 'Do you want to delete VM ID:  @vm.getVmId ?', '@routes.ExperimentalAnalysis.deleteVM(vm.getVmId)')">
                                             <i class="icon-trash icon-white"></i> Delete VM
                                         </a>
 
@@ -84,26 +84,32 @@
                     } else {
                         <p>There are no virtual machines.</p>
                     }
-                    <p class="alert alert-info">To log in to a virtual machine, you should use a VNC client. You can
+                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">To log in to a virtual machine, you should use a VNC client. You can
                         input the host name and VNC port information shown by clicking the
                         vmid link.</p>
                 </div>
             </div>
         </div>
-        @*Popup Modal for Delete VM......................................................................*@
-        <div class="modal hide fade" id="popup-modal">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="modal-header"></h3>
+        <div class="modal fade" id="popup-modal" aria-hidden="true" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="modal-header"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-body"></p>
+                    </div>
+                    <div class="modal-footer">
+                        @*<span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin : -3px 0 0 ;">*@
+                        @*Don't Show This Again.</span>*@
+                        <a href="#" class="btn btn-sm" data-dismiss="modal" aria-hidden="true">Cancel</a>
+                        <a href="" class="btn btn-primary btn-sm" id="modal-href">Go</a>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <p id="modal-body" ></p>
-            </div>
-            <div class="modal-footer">
-                @*<span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show-secureModePopup" style="margin: -3px 0 0;"> Don't Show This Again.</span>*@
-                <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
-                <a href="" class="btn btn-primary" id="modal-href">Go</a>
-            </div>
+        </div>
+
             <script type="text/javascript">
             function modalMessage(modalHeader, modalBody, locationHref){
                 $('#modal-header').text(modalHeader);
@@ -113,7 +119,7 @@
                 return true ;
             }
             </script>
-        </div>
+
 
 
     }

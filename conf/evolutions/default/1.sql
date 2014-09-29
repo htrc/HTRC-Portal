@@ -36,7 +36,7 @@ create table token (
   user_id                   varchar(255),
   token                     varchar(255),
   created_time              bigint,
-  is_token_used             boolean,
+  is_token_used             varchar(255),
   constraint pk_token primary key (id))
 ;
 
@@ -44,6 +44,8 @@ create table user (
   id                        bigint auto_increment not null,
   user_id                   varchar(255),
   email                     varchar(255),
+  user_first_name           varchar(255),
+  user_last_name            varchar(255),
   constraint pk_user primary key (id))
 ;
 

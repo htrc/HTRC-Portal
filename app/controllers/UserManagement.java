@@ -47,7 +47,7 @@ public class UserManagement extends Controller {
             }
             return badRequest(signup.render(signUpForm, null));
         }
-        log.info(signUpForm.toString());
+        log.info("User "+signUpForm.get().userId+" signed up successfully.");
         return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to " + signUpForm.get().email, null, null,null));
     }
 
@@ -81,6 +81,8 @@ public class UserManagement extends Controller {
         return ok(gotopage.render("Your account request was sent to HTRC support team. One of our team member will get back to you within 24 hours. Please visit our home page for more information about HTRC. ", "login" , "Home",null));
     }
 
+
+
     public static Result createPasswordResetMailForm() {
         return ok(passwordresetmail.render(Form.form(PasswordResetMail.class), null));
     }
@@ -90,13 +92,23 @@ public class UserManagement extends Controller {
         if (passwordResetMailForm.hasErrors()) {
             return badRequest(passwordresetmail.render(passwordResetMailForm, null));
         }
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+
         String userId = passwordResetMailForm.get().userId;
-        String userEmail = userManager.getEmail(userId);
+        String userEmail;
+        String userFirstName = userId; // User's name
+        if(User.findByUserID(userId)!= null){
+            User user = User.findByUserID(userId);
+            userEmail= user.email;
+//            userFirstName = user.userFirstName;
+        }else{
+            HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+            userEmail = userManager.getEmail(userId);
+
+        }
+
         String passwordResetToken = Token.generateToken(userId, userEmail);
         String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
-        sendMail(userEmail, "Password Reset for HTRC Portal","Please click on following url to reset your password. \n" + url );
-        log.info(passwordResetMailForm.toString());
+        sendMail(userEmail, "Password Reset for HTRC Portal","Hi " +userFirstName+",\n" +"Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url +"\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team." );
         return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")),null,null,null));
     }
 
@@ -111,20 +123,28 @@ public class UserManagement extends Controller {
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
         String userId = token1.userId;
-        log.info("User Id: "+ userId);
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-        try {
-            userManager.changePassword(userId, passwordResetForm.get().password);
-        } catch (ChangePasswordUserAdminExceptionException e) {
-            log.error("Cannot change user password due to error in User Admin");
-            throw new RuntimeException(e); // TODO: Review this.
+        log.info("Password reset token for user ID " +userId+" : " + token1.token);
+        log.info("Is token used: " + token1.isTokenUsed);
+        log.info("Token created at: " + token1.createdTime);
+        if(!Token.isTokenExpired(token1)) {
+            if (token1.isTokenUsed.equals("NO")) {
+                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+                try {
+                    userManager.changePassword(userId, passwordResetForm.get().password);
+                } catch (ChangePasswordUserAdminExceptionException e) {
+                    log.error("Cannot change user password due to error in User Admin");
+                    throw new RuntimeException(e); // TODO: Review this.
+                }
+
+                token1.isTokenUsed = "YES";
+                token1.update();
+                return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+            }
         }
+        return ok(gotopage.render("We were unable to reset your password. Please check your email for a more recent password reset email, or request a ", "passwordresetmail", "new one.", null));
 
-        token1.isTokenUsed = true;
-        token1.update();
 
-        log.info(passwordResetForm.toString());
-        return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+
     }
 
     public static Result createUserIDRetrieveMailForm() {
@@ -136,14 +156,17 @@ public class UserManagement extends Controller {
         if (userIDRetrieveMailForm.hasErrors()) {
             return badRequest(useridretrievemail.render(userIDRetrieveMailForm, null));
         }
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+
         String userEmail = userIDRetrieveMailForm.get().userEmail;
-        List<String> userIds = userManager.getUserIds(userEmail);
+        List<String> userIds = userIDRetrieveMailForm.get().userIDs;
 
         if(userIds.isEmpty()){
             return ok(gotopage.render("Cannot find user with email " + userEmail + " !", "login", "Login", null));
         }
+
         sendMail(userEmail,"Retrieve User ID.", "Your User ID: "+ userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
+//        userIds.clear();
+//        userIDRetrieveMailForm.get().userIDs.clear();
         log.info(userIDRetrieveMailForm.toString());
         return ok(gotopage.render("Your user ID is sent to " + userEmail + ". Click on the login link to begin:", "login", "Login",null));
     }
@@ -170,8 +193,11 @@ public class UserManagement extends Controller {
 
                 return "Please fill all the fields.";
             }
+            if(password.length()< 15){
+                return "Password should be more than 15 characters long.";
+            }
             if (!passwordChecker.isValidPassword(password)) {
-                return "Not a valid password";
+                return "Please use a strong password.";
             }
             if (!password.equals(confirmPassword)) {
                 return "Passwords do not match.";
@@ -250,16 +276,18 @@ public class UserManagement extends Controller {
         public String firstName;
         public String lastName;
         public String email;
-
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+        public String institution;
+        public String motivation;
 
         public String validate() throws Exception {
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-                return "Please fill all the fields.";
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || institution.isEmpty()) {
+                return "Please fill all the required fields.";
             }else{
-                sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.  " +
-                        "User's name : " + firstName + " " + lastName + ";" +
-                        "User's email : " + email + ";" );
+                sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
+                        "User's name : " + firstName + " " + lastName + ";\n" +
+                        "User's email : " + email + ";\n" +
+                        "Institution/Employer : " + institution + ";\n" +
+                        "Purpose/Motivation : " + motivation);
                 return null;
             }
         }
@@ -296,8 +324,11 @@ public class UserManagement extends Controller {
             if(password.isEmpty()){
                 return "Password is empty, Please enter password.";
             }
+            if(password.length()< 15){
+                return "Password should be more than 15 characters long.";
+            }
             if (!passwordChecker.isValidPassword(password)) {
-                return "Not a valid password";
+                return "Please use a strong password.";
             }if (!password.equals(retypePassword)) {
                 return "The Passwords do not match.";
             }
@@ -307,6 +338,7 @@ public class UserManagement extends Controller {
 
     public static class UserIDRetrieveMail {
         public String userEmail;
+        List<String> userIDs;
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
 
@@ -314,7 +346,7 @@ public class UserManagement extends Controller {
             if (userEmail.isEmpty()) {
                 return "Email is empty, Please enter your email";
             }
-            List<String> userIDs = userManager.getUserIds(userEmail);
+            userIDs = userManager.getUserIds(userEmail);
             log.info("User ID List : " + userIDs);
             if (userIDs.isEmpty()) {
                 return "User name does not exist for the email: " + userEmail;

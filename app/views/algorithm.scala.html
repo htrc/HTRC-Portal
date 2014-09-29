@@ -50,7 +50,7 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
                             parameters.indexOf(pm) + 1
                         }].paramValue">
                             @for(ws <- worksetlist) {
-                                <option> @ws.name </option>
+                                <option>@WorksetManagement.getWorksetWithAuthor(ws.name, ws.author)</option>
                             }
                         </select>
                     </label>

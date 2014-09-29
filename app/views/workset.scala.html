@@ -2,67 +2,75 @@
 @import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean
 
 @main("Workset", user) {
-    <h2 style="border-bottom: 1px solid #ccc; margin: 5px 0;">@workset.getMetadata.getName
-        <span style="color: #777777;">
-            @if(workset.getMetadata.isPublic == true) {
-                (shared)
-            }
-            @if(workset.getMetadata.isPublic == false) {
-                (private)
-            }
-            <div class="pull-right" style="margin-top: 5px; margin-right: 5px;">
-                <a href="#" class="btn btn-small btn-primary"> Edit </a>
-                @*<a href="@routes.WorksetManagement.viewWorkset(w.name,w.author)" class="btn btn-small btn-primary"> Open </a>*@
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>@workset.getMetadata.getName</strong>
+                 <span style="color: #777777;">
+                    @if(workset.getMetadata.isPublic == true) {
+                        (shared)
+                    }
+                    @if(workset.getMetadata.isPublic == false) {
+                        (private)
+                    }
+                     <a class="btn btn-xs btn-success pull-right" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
+                     target="_blank">Edit</a>
+                 </span>
             </div>
-        </span>
-    </h2>
-    <table style="table-layout: fixed">
-        <tr>
-            <p style="padding-top: 10px;">@workset.getMetadata.getDescription</p>
-        </tr>
-        <tr>
-            <td class="equal-width-cell"><span class="bold-label">Author : </span>@workset.getMetadata.getAuthor</td>
-            <td class="equal-width-cell"><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>
-            <td class="equal-width-cell"><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>
-            <td class="equal-width-cell"><span class="bold-label">Number of Volumes : </span>@workset.getMetadata.getVolumeCount</td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <td>
-                <div class="volume-list">
-                    @for(v <- volumeList){
-                        <div class="volume">
-                            <h3><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
-                            <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h3>
-                            <dl class="volume-details">
-                                <dt class="volume-id">Volume Id:</dt>
-                                <dd class="volume-id">@v.getVolumeId</dd>
-                                <dt class="volume-author">Author:</dt>
-                                @if(v.getFemaleAuthor != null){
-                                    <dd class="volume-author">@v.getFemaleAuthor
-                                    <i>(F)</i>
-                                    </dd>
-                                }
-                                @if(v.getMaleAuthor != null){
-                                    <dd class="volume-author">@v.getMaleAuthor
-                                        <i>(M)</i>
-                                    </dd>
-                                }
-                                @if(v.getGenderUnkownAuthor != null){
-                                    <dd class="volume-author">@v.getGenderUnkownAuthor
-                                        <i>(U)</i>
-                                    </dd>
-                                }
-                                <dt class="volume-pageCount">Page Count[HTRC]:</dt>
-                                <dd class="volume-pageCount">@v.getPageCount</dd>
-                                <dt class="volume-wordCount">Word Count[HTRC]:</dt>
-                                <dd class="volume-wordCount">v.getWordCount</dd>
-                            </dl>
-                        </div>
-                }
-            </td>
-        </tr>
-    </table>
+            <div class="panel-body">
+                <table class="table" id="workset">
+                    <tr>
+                        <p>@workset.getMetadata.getDescription</p>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-label">Author : </span>@workset.getMetadata.getAuthor</td>
+                        <td><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>
+                        <td><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>
+                        <td><span class="bold-label">Number of Volumes : </span>@workset.getMetadata.getVolumeCount</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <div class="volume-list">
+                            @for(v <- volumeList){
+                                <div class="volume">
+                                    <h3><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
+                                        <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h3>
+                                    <dl class="volume-details">
+                                        <dt class="volume-id">Volume Id:</dt>
+                                        <dd class="volume-id">@v.getVolumeId</dd>
+                                        <dt class="volume-author">Author:</dt>
+                                        @if(v.getFemaleAuthor != null){
+                                            <dd class="volume-author">@v.getFemaleAuthor
+                                                <i>(F)</i>
+                                            </dd>
+                                        }
+                                        @if(v.getMaleAuthor != null){
+                                            <dd class="volume-author">@v.getMaleAuthor
+                                                <i>(M)</i>
+                                            </dd>
+                                        }
+                                        @if(v.getGenderUnkownAuthor != null){
+                                            <dd class="volume-author">@v.getGenderUnkownAuthor
+                                                <i>(U)</i>
+                                            </dd>
+                                        }
+                                        <dt class="volume-pageCount">Page Count[HTRC]:</dt>
+                                        <dd class="volume-pageCount">@v.getPageCount</dd>
+                                        <dt class="volume-wordCount">Word Count[HTRC]:</dt>
+                                        <dd class="volume-wordCount">v.getWordCount</dd>
+                                    </dl>
+                                </div>
+                            }
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
 
 }

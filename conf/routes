@@ -45,7 +45,6 @@ POST        /passwordresetmail                                controllers.UserMa
 
 GET         /about                                            controllers.HTRCPortal.about()
 
-GET         /robort.txt                                       controllers.HTRCPortal.robort()
 
 # Workset List Form
 GET         /listworksets                                     controllers.WorksetManagement.worksets()
