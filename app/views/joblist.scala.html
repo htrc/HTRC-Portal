@@ -1,4 +1,4 @@
-@(user: User, activeJobs: List[ActiveJob] , completedJobs: List[CompletedJob])
+@(user: User, activeJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean] , completedJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
 
 
 
@@ -23,10 +23,10 @@
                         <tbody>
                         @for(job <- activeJobs){
                             <tr>
-                                <td>@job.jobName</td>
-                                <td>@job.lastModified</td>
-                                <td>@job.status</td>
-                                <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
+                                <td>@job.getJobTitle()</td>
+                                <td>@job.getLastUpdatedDate()</td>
+                                <td>@job.getJobStatus()</td>
+                                <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
                             </tr>
                         }
                         </tbody>
@@ -61,11 +61,11 @@
                         <tbody>
                         @for(job <- completedJobs){
                             <tr>
-                                <td><a href="@routes.JobManagement.viewJobDetails(job.jobId)">@job.jobName</a></td>
-                                <td>@job.lastModified</td>
-                                <td>@job.status</td>
-                                <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.jobId"></td>
-                                <td>@job.jobSavedStr</td>
+                                <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId())">@job.getJobTitle()</a></td>
+                                <td>@job.getLastUpdatedDate()</td>
+                                <td>@job.getJobStatus()</td>
+                                <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
+                                <td>@job.getJobSavedStr()</td>
                             </tr>
                         }
                         </tbody>

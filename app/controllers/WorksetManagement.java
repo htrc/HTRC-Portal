@@ -152,15 +152,21 @@ public class WorksetManagement extends Controller {
                 Element content = worksetDoc.createElement("content");
                 content.appendChild(volumes);
                 worksetEle.appendChild(content);
-                log.info("Workset :" + wsName + " uploaded successfully. ");
 
-                persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
+
 
 
             } catch (Exception e) {
                 log.error("Error on converting to xml file.");
                 throw new RuntimeException("Error on converting to xml file.",e);
             }
+            try {
+                persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
+            } catch (Exception e) {
+                log.error("Error when uploading workset in to registry");
+                throw new RuntimeException("Error when uploading workset in to registry");
+            }
+            log.info("Workset :" + wsName + " uploaded successfully. ");
             return redirect(routes.WorksetManagement.viewWorkset(wsName,loggedInUser.userId));
         } else {
             flash("error", "Missing file");

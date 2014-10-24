@@ -193,18 +193,21 @@ public class UserManagement extends Controller {
 
                 return "Please fill all the fields.";
             }
+            log.info("User ID: " + userId);
+            if (userManager.isUserExists(userId)) {
+                return "Username already exists.";
+            }
             if(password.length()< 15){
                 return "Password should be more than 15 characters long.";
             }
+            if(password.contains(" ")){
+                return "Password should not contain any white spaces.";}
             if (!passwordChecker.isValidPassword(password)) {
                 return "Please use a strong password.";
             }
             if (!password.equals(confirmPassword)) {
                 return "Passwords do not match.";
 
-            }
-            if (userManager.isUserExists(userId)) {
-                return "Username already exists.";
             }
             if (!isInstitutionalEmailDomain(email)) {
                 return "Email is not an institutional email. Please enter your institutional email." +
@@ -326,7 +329,8 @@ public class UserManagement extends Controller {
             }
             if(password.length()< 15){
                 return "Password should be more than 15 characters long.";
-            }
+            }if(password.contains(" ")){
+                return "Password should not contain any white spaces.";}
             if (!passwordChecker.isValidPassword(password)) {
                 return "Please use a strong password.";
             }if (!password.equals(retypePassword)) {

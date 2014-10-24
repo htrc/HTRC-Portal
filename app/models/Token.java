@@ -105,7 +105,9 @@ public class Token extends Model {
     }
 
     public static boolean isTokenExpired(Token token){
-        return validityPeriod <= (new Date().getTime() - token.createdTime);
+        log.info("Validity period = " + validityPeriod + " Current time = " + new Date().getTime());
+
+        return validityPeriod < (new Date().getTime() - token.createdTime)/1000;
     }
 
 

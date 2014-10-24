@@ -11,14 +11,12 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import views.html.gotopage;
 import views.html.jobdetails;
 import views.html.joblist;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JobManagement extends Controller {
     private static Logger.ALogger log = play.Logger.of("application");
@@ -26,14 +24,38 @@ public class JobManagement extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result listJobs() {
         User loggedInUser = User.findByUserID(request().username());
-        updateJobList(loggedInUser);
-        return ok(joblist.render(loggedInUser, ActiveJob.all(), CompletedJob.all()));
+        HTRCAgentClient agentClient = new HTRCAgentClient(session());
+        Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+        Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+        List<JobDetailsBean> activeJobsList;
+        List<JobDetailsBean> completedJobsList;
+        if(activeJobs != null && completedJobs != null) {
+            if (activeJobs.isEmpty()) {
+                activeJobsList = Collections.emptyList();
+                log.info("Active jobs are empty.");
+            } else {
+                activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
+            }
+            if (completedJobs.isEmpty()) {
+                completedJobsList = Collections.emptyList();
+                log.info("Completed jobs are empty.");
+            } else {
+                completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
+            }
+        }else{
+
+            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+                    + loggedInUser.userId);
+            return ok(gotopage.render("Sorry!! Cannot get Job details from Job Agent right now.",null,null,loggedInUser));
+        }
+       return ok(joblist.render(loggedInUser, activeJobsList,completedJobsList));
+
 
     }
 
     @Security.Authenticated(Secured.class)
     public static Result cancelJobs() {
-        List<String> activeJobIds = new ArrayList<>();
+        List<String> activeJobIds = new ArrayList<String>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
 
@@ -46,9 +68,9 @@ public class JobManagement extends Controller {
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.cancelJobs(activeJobIds);
         if (response) {
-            for (String jonId : activeJobIds) {
-                ActiveJob.delete(ActiveJob.findByJobID(jonId));
-            }
+//            for (String jobId : activeJobIds) {
+//                ActiveJob.delete(ActiveJob.findByJobID(jobId));
+//            }
             log.info("Following ActiveJob Ids are canceled successfully :" + activeJobIds);
         } else {
             log.error("Error occured during ActiveJob cancellation process");
@@ -106,38 +128,38 @@ public class JobManagement extends Controller {
     }
 
 
-    public static void updateJobList(User loggedInUser) {
-        HTRCAgentClient agentClient = new HTRCAgentClient(session());
-        Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
-        Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
-        if (completedJobs == null) {
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-                    + loggedInUser.userId);
-        } else {
-            List<JobDetailsBean> completedJobsList = new ArrayList<>(completedJobs.values());
-            for (JobDetailsBean job : completedJobsList) {
-                if (ActiveJob.findByJobID(job.getJobId()) != null) {
-                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
-                } else if (CompletedJob.findByJobID(job.getJobId()) == null) {
-                    CompletedJob completedJob = new CompletedJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus(), job.getJobSavedStr());
-                    completedJob.save();
-                }
-            }
-        }
-        if (activeJobs == null) {
-            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-                    + loggedInUser.userId);
-        } else {
-            List<JobDetailsBean> activeJobsList = new ArrayList<>(activeJobs.values());
-            for (JobDetailsBean job : activeJobsList) {
-                if (ActiveJob.findByJobID(job.getJobId()) != null) {
-                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
-                }
-                ActiveJob activeJob = new ActiveJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus());
-                activeJob.save();
-            }
-        }
-
-    }
+//    public static void updateJobList(User loggedInUser) {
+//        HTRCAgentClient agentClient = new HTRCAgentClient(session());
+//        Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+//        Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+//        if (completedJobs == null) {
+//            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+//                    + loggedInUser.userId);
+//        } else {
+//            List<JobDetailsBean> completedJobsList = new ArrayList<>(completedJobs.values());
+//            for (JobDetailsBean job : completedJobsList) {
+//                if (ActiveJob.findByJobID(job.getJobId()) != null) {
+//                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
+//                } else if (CompletedJob.findByJobID(job.getJobId()) == null) {
+//                    CompletedJob completedJob = new CompletedJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus(), job.getJobSavedStr());
+//                    completedJob.save();
+//                }
+//            }
+//        }
+//        if (activeJobs == null) {
+//            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
+//                    + loggedInUser.userId);
+//        } else {
+//            List<JobDetailsBean> activeJobsList = new ArrayList<>(activeJobs.values());
+//            for (JobDetailsBean job : activeJobsList) {
+//                if (ActiveJob.findByJobID(job.getJobId()) != null) {
+//                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
+//                }
+//                ActiveJob activeJob = new ActiveJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus());
+//                activeJob.save();
+//            }
+//        }
+//
+//    }
 
 }

@@ -252,7 +252,7 @@ public class HTRCAgentClient {
                     boolean success = parseJobDeleteResponse(deleteJobId.getResponseBodyAsStream());
                     if (!success) {
                         log.error("Error occurs while deleting job " + id);
-                        res = success;
+
                     }
                 } else if (response == 401 && (renew < MAX_RENEW)) {
                     try {
@@ -391,12 +391,21 @@ public class HTRCAgentClient {
             if (response == 200) {
                 jobdetailBeans = parseJobDetailBeans(getJobDetailsList
                         .getResponseBodyAsStream());
+                for(String key: jobdetailBeans.keySet()){
+                        if(jobdetailBeans.get(key).getJobStatus().equals("Finished")
+                                || jobdetailBeans.get(key).getJobStatus().equals("Crashed")){
+                            jobdetailBeans.remove(key);
+                        }
+                }
+               if(jobdetailBeans.isEmpty()){
+                    return jobdetailBeans = Collections.emptyMap();
+                }
             }else if (response == 401 && (renew < MAX_RENEW)) {
                 try {
                     accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
 //                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
                     renew++;
-                    return getAllJobsDetails();
+                    return getActiveJobsDetails();
                 } catch (Exception e) {
                     throw new IOException(e);
                 }
@@ -425,7 +434,7 @@ public class HTRCAgentClient {
         }else{
             Map<String, JobDetailsBean> activeJobsDetails = getActiveJobsDetails();
             if(activeJobsDetails == null){
-                log.warn("There is no active jobs");
+                log.info("There is no active jobs");
             } else{
                 List<String> activeJobIds = new ArrayList<String>(activeJobsDetails.keySet());
                 for(String id: activeJobIds){

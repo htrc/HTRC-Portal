@@ -13,14 +13,15 @@
                     @if(workset.getMetadata.isPublic == false) {
                         (private)
                     }
-                     <a class="btn btn-xs btn-success pull-right" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
+                     <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
                      target="_blank">Edit</a>
+                     <a class="btn btn-xs btn-embossed pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
                  </span>
             </div>
             <div class="panel-body">
                 <table class="table" id="workset">
                     <tr>
-                        <p>@workset.getMetadata.getDescription</p>
+                        <td><p>@workset.getMetadata.getDescription</p></td>
                     </tr>
                     <tr>
                         <td><span class="bold-label">Author : </span>@workset.getMetadata.getAuthor</td>
@@ -59,7 +60,7 @@
                                         <dt class="volume-pageCount">Page Count[HTRC]:</dt>
                                         <dd class="volume-pageCount">@v.getPageCount</dd>
                                         <dt class="volume-wordCount">Word Count[HTRC]:</dt>
-                                        <dd class="volume-wordCount">v.getWordCount</dd>
+                                        <dd class="volume-wordCount">@v.getWordCount</dd>
                                     </dl>
                                 </div>
                             }

@@ -290,7 +290,9 @@ public class HTRCUserManagerUtility {
      public boolean isUserExists(String userName) {
         try {
             String[] users = userAdmin.listUsers(userName, Integer.MAX_VALUE);
-            return !new HashSet<String>(Arrays.asList(users)).isEmpty();
+            return users != null && users.length > 0;
+//            log.info(String.valueOf(Arrays.asList(users)));
+//            return !new HashSet<String>(Arrays.asList(users)).isEmpty();
         } catch (Exception e) {
             String errMessage = "Error checking whether given user exists.";
             log.error(errMessage, e);
@@ -412,11 +414,12 @@ public class HTRCUserManagerUtility {
     public List<String> getUserIds(String userEmail) throws RemoteException {
         String[] userIds = extendedUserAdminStub.getUserIdsFromEmail(userEmail);
         if(userIds == null){
+            log.info("User Ids are null.");
             return Collections.EMPTY_LIST;
         }
 
         List<String> userIdList = Arrays.asList(userIds);
-        log.info("User IDs: " + userIds);
+        log.info("User IDs: " + Arrays.toString(userIds));
         return userIdList;
     }
 

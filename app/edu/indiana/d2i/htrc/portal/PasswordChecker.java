@@ -26,7 +26,7 @@ public class PasswordChecker {
         LengthRule lengthRule = new LengthRule(15, Integer.MAX_VALUE);
 
 //        // don't allow whitespace
-//        WhitespaceRule whitespaceRule = new WhitespaceRule();
+       WhitespaceRule whitespaceRule = new WhitespaceRule();
 
         // control allowed characters
         CharacterCharacteristicsRule charRule = new CharacterCharacteristicsRule();
@@ -66,7 +66,7 @@ public class PasswordChecker {
         List<Rule> ruleList = new ArrayList<Rule>();
         ruleList.add(charRule);
         ruleList.add(lengthRule);
-//        ruleList.add(whitespaceRule);
+        ruleList.add(whitespaceRule);
 
         PasswordValidator validator = new PasswordValidator(ruleList);
         PasswordData passwordData = new PasswordData(new Password(password));

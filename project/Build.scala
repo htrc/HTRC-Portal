@@ -38,7 +38,8 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += ("WSO2 Maven Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/"),
-    resolvers += ("Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository")
+    resolvers += ("Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"),
+    resolvers += ("HTRC Nexus Repository" at "http://htrc.illinois.edu/nexus/content/groups/public/" )
   )
 
 }
