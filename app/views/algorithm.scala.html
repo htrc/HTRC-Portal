@@ -4,6 +4,12 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
 
 
 @main("Algorithm", user) {
+<div class="container">
+    <div class="panel panel-default panel-htrc panel-with-table">
+        <div class="panel-heading">
+            <strong>@algorithmdetails.getName</strong>
+        </div>
+        <div class="panel-body">
     @helper.form(routes.AlgorithmManagement.submitAlgorithm(), 'class -> "form-horizontal") {
         @if(form.hasGlobalErrors) {
             <p class="error">
@@ -89,5 +95,8 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
             </div>
         </div>
     }
+    </div>
+    </div>
+    </div>
 
 }

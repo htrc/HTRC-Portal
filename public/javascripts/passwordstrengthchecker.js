@@ -56,7 +56,7 @@ jQuery(document).ready(function () {
     var options = {
             errors: [],
             // Options
-            minChar: 8,
+            minChar: 15,
             errorMessages: {
                 password_to_short: "The Password is too short",
                 same_as_username: "Your password cannot be the same as your username"
@@ -241,29 +241,23 @@ jQuery(document).ready(function () {
             // Calculate the score
             if (length < 8){
                 totalScore = 16;
-            } else if (length > 8 && length < 10 && noOfRulesMatched == 1 ){
+            } else if (length > 8 && length < 15 && noOfRulesMatched > 0 ){
                 totalScore = 20;
-            }  else if (length == 10 && noOfRulesMatched == 1 ){
+            }  else if (length == 15 && noOfRulesMatched == 1 ){
                 totalScore = 20;
-            } else if (length > 10 && noOfRulesMatched == 1 ){
+            } else if (length > 15 && noOfRulesMatched == 1 ){
                 totalScore = 20;
-            } else if (length > 8 && length < 10 && noOfRulesMatched == 2 ){
+            } else if (length == 15 && noOfRulesMatched == 2 ){
                 totalScore = 30;
-            } else if (length == 10 && noOfRulesMatched == 2 ){
+            }else if (length > 15 && noOfRulesMatched == 2 ){
                 totalScore = 30;
-            } else if (length > 10 && noOfRulesMatched == 2 ){
-                totalScore = 30;
-            } else if (length > 8 && length < 10 && noOfRulesMatched == 3 ){
+            } else if (length == 15 && noOfRulesMatched == 3 ){
                 totalScore = 45;
-            } else if (length == 10 && noOfRulesMatched == 3 ){
-                totalScore = 45;
-            } else if (length > 10 && noOfRulesMatched == 3 ){
+            }else if (length > 15 && noOfRulesMatched == 3 ){
                 totalScore = 55;
-            } else if (length == 8 && noOfRulesMatched == 4 ){
+            } else if (length == 15 && noOfRulesMatched == 4 ){
                 totalScore = 55;
-            } else if (length > 8 && noOfRulesMatched == 4 ){
-                totalScore = 55;
-            } else if (length > 10 && noOfRulesMatched == 4 ){
+            } else if (length > 15 && noOfRulesMatched == 4 ){
                 totalScore = 55;
             }
             console.log("Rules Matched: " + noOfRulesMatched + " Word Length: " + length);

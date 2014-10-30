@@ -391,13 +391,7 @@ public class HTRCAgentClient {
             if (response == 200) {
                 jobdetailBeans = parseJobDetailBeans(getJobDetailsList
                         .getResponseBodyAsStream());
-                for(String key: jobdetailBeans.keySet()){
-                        if(jobdetailBeans.get(key).getJobStatus().equals("Finished")
-                                || jobdetailBeans.get(key).getJobStatus().equals("Crashed")){
-                            jobdetailBeans.remove(key);
-                        }
-                }
-               if(jobdetailBeans.isEmpty()){
+                if(jobdetailBeans.isEmpty()){
                     return jobdetailBeans = Collections.emptyMap();
                 }
             }else if (response == 401 && (renew < MAX_RENEW)) {
