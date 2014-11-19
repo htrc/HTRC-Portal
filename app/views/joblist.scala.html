@@ -4,17 +4,17 @@
 
 @main("JobList", user) {
     <div class="container">
-        <div class="panel panel-default panel-htrc panel-with-table">
+        <div class="panel panel-default panel-htrc panel-with-activejobtable">
             <div class="panel-heading">
-                <strong>Active Jobs</strong><a href="#" class="btn btn-warning btn-xs pull-right" id="canceljobs">
+                <strong>Active Jobs(@activeJobs.size())</strong><a href="#" class="btn btn-warning btn-xs pull-right" id="canceljobs">
                 <i class="icon-remove icon-white"></i>Cancel</a>
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
-                    <table class="table">
+                    <activejobtable class="activejobtable" id="activeJobList">
                         <thead>
                             <tr>
-                                <th>Job Title</th>
+                                <th data-sort="string">Job Title</th>
                                 <th>Last Updated</th>
                                 <th>Status</th>
                                 <th>Cancel?</th>
@@ -29,33 +29,34 @@
                                 <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
                             </tr>
                         }
+                            @if(activeJobs.isEmpty){
+                                <tr>
+                                    <td colspan="4">There are no active jobs..</td>
+                                </tr>
+                            }
                         </tbody>
-                    </table>
-                }
-                @if(activeJobs.isEmpty){
-                    <div class="alert alert-info">
-                        <p style="margin-bottom: 0;">There are no active jobs..</p>
-                    </div>
+                    </activejobtable>
                 }
             </div>
         </div>
-        <div class="panel panel-default panel-htrc panel-with-table">
+        <div class="panel panel-default panel-htrc panel-with-activejobtable">
             <div class="panel-heading">
-                <strong>Completed Jobs</strong><a href="#" class="btn btn-danger btn-xs pull-right" id="deletejobs">
+                <strong>Completed Jobs(@completedJobs.size())</strong>
+                <a href="#" class="btn btn-danger btn-xs pull-right" id="deletejobs">
                 <i class="icon-remove icon-white"></i>Delete</a>
-                <a href="#" class="btn btn-info btn-xs pull-right" id="savejobs">
-                    <i class="icon-remove icon-white"></i>Save</a>
+                @*<a href="#" class="btn btn-info btn-xs pull-right" id="savejobs">*@
+                    @*<i class="icon-remove icon-white"></i>Save</a>*@
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
-                    <table class="table">
+                    <activejobtable class="activejobtable" id="completedJobList">
                         <thead>
                             <tr>
-                                <th>Job Title</th>
+                                <th data-sort="string">Job Title</th>
                                 <th>Last Updated</th>
                                 <th>Status</th>
-                                <th>Save/Delete?</th>
-                                <th>Saved?</th>
+                                <th>Delete?</th>
+                                @*<th>Saved?</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -65,17 +66,18 @@
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
                                 <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
-                                <td>@job.getJobSavedStr()</td>
+                                @*<td>@job.getJobSavedStr()</td>*@
                             </tr>
                         }
+                            @if(completedJobs.isEmpty){
+                                <tr>
+                                    <td colspan="4">There are no completed jobs..</td>
+                                </tr>
+                            }
                         </tbody>
-                    </table>
+                    </activejobtable>
                 }
-                @if(completedJobs.isEmpty){
-                    <div class="alert alert-info">
-                        <p style="margin-bottom: 0;">There are no completed jobs..</p>
-                    </div>
-                }
+
             </div>
         </div>
     </div>
@@ -88,18 +90,42 @@
             });
 
             $( "#deletejobs" ).click(function() {
-                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'delete'});
-                $hiddenInput.appendTo('#completed_jobs');
+//                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'delete'});
+//                $hiddenInput.appendTo('#completed_jobs');
                 $( "#completed_jobs" ).submit();
                 return false;
             });
 
-            $( "#savejobs" ).click(function() {
-                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'save'});
-                $hiddenInput.appendTo('#completed_jobs');
-                $( "#completed_jobs" ).submit();
-                return false;
-            });
+//            $( "#savejobs" ).click(function() {
+//                var $hiddenInput = $('<input/>',{type:'hidden',name:'update-type',value:'save'});
+//                $hiddenInput.appendTo('#completed_jobs');
+//                $( "#completed_jobs" ).submit();
+//                return false;
+//            });
+        });
+
+        /* activejobtable sorting */
+        var activejobtable = $("#activeJobList").stupidtable();
+        activejobtable.bind('aftertablesort', function (event, data) {
+        // data.column - the index of the column sorted after a click
+        // data.direction - the sorting direction (either asc or desc)
+
+        var th = $(this).find("th");
+        th.find(".arrow").remove();
+        var arrow = data.direction === "asc" ? "↑" : "↓";
+        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        });
+
+        /* completedjobtable sorting */
+        var completedjobtable = $("#completedJobList").stupidtable();
+        completedjobtable.bind('aftertablesort', function (event, data) {
+        // data.column - the index of the column sorted after a click
+        // data.direction - the sorting direction (either asc or desc)
+
+        var th = $(this).find("th");
+        th.find(".arrow").remove();
+        var arrow = data.direction === "asc" ? "↑" : "↓";
+        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
         });
 
 

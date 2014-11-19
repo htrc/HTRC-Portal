@@ -11,6 +11,21 @@ jQuery(document).ready(function () {
     $('#password').pwstrength(options);
 });
 
+function showalert(message) {
+
+    $('#alert_placeholder').append('<div id="alertdiv" class="alert alert-danger">' +
+        '<a class="close" data-dismiss="alert">×</a>' +
+        '<span>'+message+'</span>' +
+        '</div>');
+
+    setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+
+
+        $("#alertdiv").remove();
+
+    }, 5000);
+}
+
 /*
  jQuery(document).ready(function () {
  "use strict";
@@ -53,19 +68,23 @@ jQuery(document).ready(function () {
 (function ($) {
     "use strict";
 
+
+
     var options = {
             errors: [],
             // Options
             minChar: 15,
             errorMessages: {
                 password_to_short: "The Password is too short",
-                same_as_username: "Your password cannot be the same as your username"
+                same_as_username: "Your password cannot be included your username",
+                white_spaces_included: "Your password cannot be included any white spaces"
             },
             scores: [17, 26, 40, 50],
             verdicts: ["Weak", "Normal", "Medium", "Strong", "Very Strong"],
             showVerdicts: true,
             raisePower: 1.4,
-            usernameField: "#username",
+            usernameField: "#userId",
+//            emailField: "#email",
             onLoad: undefined,
             onKeyUp: undefined,
             viewports: {
@@ -106,11 +125,19 @@ jQuery(document).ready(function () {
                 wordNotEmail: function (options, word, score) {
                     return word.match(/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i) && score;
                 },
+//                wordSimilarToEmail: function (options, word, score) {
+//                    var email = $(options.emailField).val();
+//                    if (email && word.toLowerCase().match(email.toLowerCase())) {
+//                        return score;
+//                    }
+//                    return score+1;
+//                },
                 wordLength: function (options, word, score) {
                     var wordlen = word.length,
                         lenScore = Math.pow(wordlen, options.raisePower);
                     if (wordlen < options.minChar) {
                         lenScore = (lenScore + score);
+                        alert(options.errorMessages.password_to_short);
                         options.errors.push(options.errorMessages.password_to_short);
                     }
                     return lenScore;
@@ -118,11 +145,21 @@ jQuery(document).ready(function () {
                 wordSimilarToUsername: function (options, word, score) {
                     var username = $(options.usernameField).val();
                     if (username && word.toLowerCase().match(username.toLowerCase())) {
-                        options.errors.push(options.errorMessages.same_as_username);
+//                        options.errors.push(options.errorMessages.same_as_username);
+                       showalert(options.errorMessages.same_as_username);
+                       return score;
+                    }
+                    return score+1;
+                },
+
+                wordHasWhiteSpace: function(options,word,score){
+                    if(word.indexOf(' ')>= 0){
+                        showalert(options.errorMessages.white_spaces_included);
                         return score;
                     }
-                    return true;
+                    return score+1;
                 },
+
                 wordLowercase: function (options, word, score) {
                     return word.match(/[a-z]/) && score;
                 },
@@ -227,6 +264,13 @@ jQuery(document).ready(function () {
             rulesMatched[2] = options.validationRules.wordOneNumber(options, word, 1);
             rulesMatched[3] = options.validationRules.wordOneSpecialChar(options, word, 1);
 
+            var compulsoryRules = [0,0];
+
+
+
+            compulsoryRules[0] = options.validationRules.wordHasWhiteSpace(options,word,0);
+            compulsoryRules[1] = options.validationRules.wordSimilarToUsername(options,word,0);
+
 
             // Now we have number of rules matched.
             var noOfRulesMatched = 0;
@@ -235,31 +279,56 @@ jQuery(document).ready(function () {
                 noOfRulesMatched = noOfRulesMatched + rulesMatched[i];
             }
 
+            var noOfCompRulesMatched = 0;
+            for(var j= 0; j < compulsoryRules.length; j++){
+                console.log('' + j + ': ' + compulsoryRules[j]);
+                noOfCompRulesMatched = noOfCompRulesMatched + compulsoryRules[j];
+            }
+
+
+//            if(noOfCompRulesMatched<3){
+//                alert("It looks like your password has white spaces.");
+//            }
+
+
             // Check the length
             var length = word.length;
 
             // Calculate the score
-            if (length < 8){
+            if(noOfCompRulesMatched == 2){
+                if (length < 8){
+                    totalScore = 16;
+                } else if (length > 8 && length < 15 && noOfRulesMatched > 0 ){
+                    totalScore = 20;
+                }  else if (length == 15 && noOfRulesMatched == 1 ){
+                    totalScore = 20;
+                } else if (length > 15 && noOfRulesMatched == 1 ){
+                    totalScore = 20;
+                } else if (length == 15 && noOfRulesMatched == 2 ){
+                    totalScore = 30;
+                }else if (length > 15 && noOfRulesMatched == 2 ){
+                    totalScore = 30;
+                } else if (length == 15 && noOfRulesMatched == 3 ){
+                    totalScore = 45;
+                }else if (length > 15 && noOfRulesMatched == 3 ){
+                    totalScore = 55;
+                } else if (length == 15 && noOfRulesMatched == 4 ){
+                    totalScore = 55;
+                } else if (length > 15 && noOfRulesMatched == 4 ){
+                    totalScore = 55;
+                }
+            }else{
                 totalScore = 16;
-            } else if (length > 8 && length < 15 && noOfRulesMatched > 0 ){
-                totalScore = 20;
-            }  else if (length == 15 && noOfRulesMatched == 1 ){
-                totalScore = 20;
-            } else if (length > 15 && noOfRulesMatched == 1 ){
-                totalScore = 20;
-            } else if (length == 15 && noOfRulesMatched == 2 ){
-                totalScore = 30;
-            }else if (length > 15 && noOfRulesMatched == 2 ){
-                totalScore = 30;
-            } else if (length == 15 && noOfRulesMatched == 3 ){
-                totalScore = 45;
-            }else if (length > 15 && noOfRulesMatched == 3 ){
-                totalScore = 55;
-            } else if (length == 15 && noOfRulesMatched == 4 ){
-                totalScore = 55;
-            } else if (length > 15 && noOfRulesMatched == 4 ){
-                totalScore = 55;
             }
+
+
+//            if(noOfCompRulesMatched<3){
+//                alert("It looks like your password include either of following things. \n\n -White space " +
+//                    "\n -Username \n -Email \n\n Please consider you can't include any of above things in your password. " +
+//                    "\n\n Thank you!");
+//
+//            }
+
             console.log("Rules Matched: " + noOfRulesMatched + " Word Length: " + length);
             setProgressBar($el, totalScore);
             return totalScore;

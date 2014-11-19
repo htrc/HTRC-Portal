@@ -8,10 +8,10 @@
                 <strong>Algorithms</strong>
             </div>
             <div class="panel-body">
-                <table class="table" id="worksets">
+                <table class="table" id="algorithms">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sort="int">#</th>
                             <th data-sort="string">Name</th>
                             <th>Description</th>
                             <th data-sort="string">Author</th>
@@ -23,8 +23,18 @@
                         <tr>
                             <td>@(id + 1)</td>
                             <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)">@w.getName</a></td>
-                            <td>@w.getDescription</td>
-                            <td>@w.getAuthors</td>
+                            <td><div class=" text-content short-text">@w.getDescription</div>
+                                <div class="show-more"><a href="#">Show more</a></div></td>
+                            <td>
+                                @if(w.getAuthors.size() > 1){
+                                    @for(au <- w.getAuthors){
+                                        @au,
+                                    }
+                                }else{
+                                    @w.getAuthors.get(0)
+                                }
+                            </td>
+
                             <td>@w.getVersion</td>
                         </tr>
                     }
@@ -33,4 +43,60 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+    $(".show-more a").each(function() {
+    var $link = $(this);
+    var $content = $link.parent().prev("div.text-content");
+    console.log($link);
+
+    var visibleHeight = $content[0].clientHeight;
+    var actualHide = $content[0].scrollHeight - 1;
+
+    console.log(actualHide);
+    console.log(visibleHeight);
+
+    if (actualHide > visibleHeight) {
+    $link.show();
+    } else {
+    $link.hide();
+    }
+    });
+
+    $(".show-more a").on("click", function() {
+    var $link = $(this);
+    var $content = $link.parent().prev("div.text-content");
+    var linkText = $link.text();
+
+    $content.toggleClass("short-text, full-text");
+
+    $link.text(getShowLinkText(linkText));
+
+    return false;
+    });
+
+    function getShowLinkText(currentText) {
+    var newText = '';
+
+    if (currentText.toUpperCase() === "SHOW MORE") {
+    newText = "Show less";
+    } else {
+    newText = "Show more";
+    }
+
+    return newText;
+    }
+
+    /* table sorting */
+    var table = $("#algorithms").stupidtable();
+    table.bind('aftertablesort', function (event, data) {
+    // data.column - the index of the column sorted after a click
+    // data.direction - the sorting direction (either asc or desc)
+
+    var th = $(this).find("th");
+    th.find(".arrow").remove();
+    var arrow = data.direction === "asc" ? "↑" : "↓";
+    th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+    });
+
+    </script>
 }

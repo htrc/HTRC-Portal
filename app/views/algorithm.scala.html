@@ -21,10 +21,10 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
                 @flash.get("success")
             </p>
         }
+        <input type="hidden" name="userName" value="@user.id">
+        <input type="hidden" name="algorithmName" value="@algorithmdetails.getName"/>
         <table>
-            <input type="hidden" name="userName" value="@user.id">
             <tr>
-                <input type="hidden" name="algorithmName" value="@algorithmdetails.getName"/>
                 <td><b>Name: </b></td>
                 <td>@algorithmdetails.getName</td>
             </tr>
@@ -38,7 +38,15 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
             </tr>
             <tr>
                 <td><b>Author:</b></td>
-                <td>@algorithmdetails.getAuthors.remove(0)</td>
+                <td>
+                    @if(algorithmdetails.getAuthors.size() > 1){
+                        @for(au <- algorithmdetails.getAuthors){
+                            @au ,
+                        }
+                    }else{
+                        @algorithmdetails.getAuthors.get(0)
+                    }
+                </td>
             </tr>
         </table>
         <div id="param">
@@ -91,7 +99,7 @@ parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter
         }
         <div class="control-group">
             <div class="controls">
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-primary btn-sm pull-left">Submit</button>
             </div>
         </div>
     }

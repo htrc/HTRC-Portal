@@ -13,7 +13,7 @@
                             <table class="table">
                             @for(details <- jobDetails) {
                                 <tr>
-                                    <td><b>ActiveJob Title: </b></td>
+                                    <td><b>Job Title: </b></td>
                                     <td>@details.getJobTitle</td>
                                 </tr>
                                 <tr>
@@ -26,40 +26,48 @@
                                 </tr>
                                 <tr>
                                     <td><b>Results: </b></td>
-                                    <table>
-                                    @for(results <- details.getResults) {
-                                        <tr><td><a href="@results._2">@results._1</a> </td></tr>
-                                    }
-                                    </table>
-                                </tr>
-                                <tr>
-                                    <td><b>ActiveJob Parameters: </b></td>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        @for(parameters <- details.getJobParams) {
-                                            <tr>
-                                                <td>@parameters._1</td>
-                                                <td>@parameters._2</td>
-                                            </tr>
+                                    <td>
+                                        <table>
+                                        @for(results <- details.getResults) {
+                                            <tr><td><a id="resultlink" href="@results._2" target="iframeresult">@results._1</a> </td></tr>
                                         }
-                                        </tbody>
-                                    </table>
+                                        </table>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td><b>ActiveJob Id: </b></td>
+                                    <td><b>Job Parameters: </b></td>
+                                    <td>
+                                        <table class="table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            @for(parameters <- details.getJobParams) {
+                                                <tr>
+                                                    <td>@parameters._1</td>
+                                                    <td>@parameters._2</td>
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Job Id: </b></td>
+                                    <td>@details.getJobId</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Status: </b></td>
                                     <td><span class="label label-info"><b>@details.getJobStatus</b></span></td>
                                 </tr>
                             }
                             </table>
                         </div>
                         <div class="col-sm-8">
-                            <iframe id="iframeresult" src="" style="width : 100 % ; height : 500 px ;">
+                            <iframe name="iframeresult" id="iframeresult" src="" height="400" width="648">
                                 <p>Your browser does not support iframes.</p>
                             </iframe>
                         </div>
@@ -68,4 +76,12 @@
                 </div>
             </div>
         </div>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $("#resultlink").click(function(e) {
+            e.preventDefault();
+            $("#iframeresult").attr("src", $(this).attr("href"));
+         });
+    });
+    </script>
     }

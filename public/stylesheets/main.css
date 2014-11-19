@@ -306,3 +306,26 @@ td{
     border-bottom-width: 1px;
 }
 
+.text-content{
+    line-height: 1em;
+}
+
+.short-text {
+    overflow: hidden;
+    height: 2em;
+}
+
+.full-text{
+    height: auto;
+}
+
+
+
+.show-more {
+    padding: 10px 0;
+    text-align: center;
+}
+
+
+
+

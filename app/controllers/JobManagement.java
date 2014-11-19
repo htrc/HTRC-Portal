@@ -30,6 +30,8 @@ public class JobManagement extends Controller {
         List<JobDetailsBean> activeJobsList;
         List<JobDetailsBean> completedJobsList;
         if(activeJobs != null && completedJobs != null) {
+            loggedInUser.noOfResults = activeJobs.size() + completedJobs.size();
+            loggedInUser.save();
             if (activeJobs.isEmpty()) {
                 activeJobsList = Collections.emptyList();
                 log.info("Active jobs are empty.");
@@ -72,10 +74,12 @@ public class JobManagement extends Controller {
 //                ActiveJob.delete(ActiveJob.findByJobID(jobId));
 //            }
             log.info("Following ActiveJob Ids are canceled successfully :" + activeJobIds);
+            return redirect(routes.JobManagement.listJobs());
         } else {
-            log.error("Error occured during ActiveJob cancellation process");
+            log.error("Error occurred during ActiveJob cancellation process");
+            return ok(gotopage.render("Error occurred during ActiveJob cancellation process. Please try again later.", "routes.JobManagement.listJobs()","View Job Results", loggedInUser));
         }
-        return redirect(routes.JobManagement.listJobs());
+
     }
 
     @Security.Authenticated(Secured.class)
@@ -83,7 +87,7 @@ public class JobManagement extends Controller {
         List<String> completedJobIds = new ArrayList<>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
-        String actionType = form.get("update-type")[0].trim();
+//        String actionType = form.get("update-type")[0].trim();
         for (String key : keys) {
             if (form.get(key).length > 0 && !key.equals("update-type")) {
                 completedJobIds.add(form.get(key)[0]);
@@ -91,30 +95,40 @@ public class JobManagement extends Controller {
         }
         User loggedInUser = User.findByUserID(request().username());
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
-        boolean response;
-        if (actionType.equals("delete")) {
-            log.info("Deleting jobs: " + completedJobIds);
-            response = agentClient.deleteJobs(completedJobIds);
-            if (response) {
-                for (String jobId : completedJobIds) {
-                    CompletedJob.delete(CompletedJob.findByJobID(jobId));
-                }
-                log.info("Following Completed Job Ids are deleted successfully :" + completedJobIds);
-            } else {
-                log.error("Error occured during Completed Job deletion process");
-            }
+        boolean response = agentClient.deleteJobs(completedJobIds);
+        if (response) {
+//            for (String jobId : activeJobIds) {
+//                ActiveJob.delete(ActiveJob.findByJobID(jobId));
+//            }
+            log.info("Following Completed Job Ids are deleted successfully :" + completedJobIds);
+            return redirect(routes.JobManagement.listJobs());
+        } else {
+            log.error("Error occurred during Completed Job cancellation process");
+            return ok(gotopage.render("Error occurred during Job deletion process. Please try again later.", "routes.JobManagement.listJobs()","View Job Results", loggedInUser));
         }
-        if (actionType.equals("save")) {
-            log.info("Saving jobs: " + completedJobIds);
-            response = agentClient.saveJobs(completedJobIds);
-            if (response) {
-                log.info("Following Completed Job Ids are saved successfully :" + completedJobIds);
-            } else {
-                log.error("Error occured during Completed Job saving process");
-            }
-        }
+//        if (actionType.equals("delete")) {
+//            log.info("Deleting jobs: " + completedJobIds);
+//            response = agentClient.deleteJobs(completedJobIds);
+//            if (response) {
+//                for (String jobId : completedJobIds) {
+//                    CompletedJob.delete(CompletedJob.findByJobID(jobId));
+//                }
+//                log.info("Following Completed Job Ids are deleted successfully :" + completedJobIds);
+//            } else {
+//                log.error("Error occured during Completed Job deletion process");
+//            }
+//        }
+//        if (actionType.equals("save")) {
+//            log.info("Saving jobs: " + completedJobIds);
+//            response = agentClient.saveJobs(completedJobIds);
+//            if (response) {
+//                log.info("Following Completed Job Ids are saved successfully :" + completedJobIds);
+//            } else {
+//                log.error("Error occured during Completed Job saving process");
+//            }
+//        }
 
-        return redirect(routes.JobManagement.listJobs());
+
     }
 
     @Security.Authenticated(Secured.class)

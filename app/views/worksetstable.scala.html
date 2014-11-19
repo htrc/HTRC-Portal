@@ -5,23 +5,23 @@
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
                 <strong>Worksets</strong>
-                <div class="dropdown clearfix pull-right">
-                    <button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">
-                        Filter
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropDownFilter">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Private</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Owned</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Public</a></li>
-                    </ul>
-                </div>
+                @*<div class="dropdown clearfix pull-right">*@
+                    @*<button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">*@
+                        @*Filter*@
+                        @*<span class="caret"></span>*@
+                    @*</button>*@
+                    @*<ul class="dropdown-menu" role="menu" aria-labelledby="dropDownFilter">*@
+                        @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Private</a></li>*@
+                        @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Owned</a></li>*@
+                        @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Public</a></li>*@
+                    @*</ul>*@
+                @*</div>*@
             </div>
             <div class="panel-body">
                 <table class="table" id="worksets">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sort="int">#</th>
                             <th data-sort="string">Name</th>
                             <th>Description</th>
                             <th data-sort="string">Owner</th>

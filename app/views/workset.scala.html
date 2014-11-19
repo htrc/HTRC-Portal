@@ -24,10 +24,11 @@
                         <td><p>@workset.getMetadata.getDescription</p></td>
                     </tr>
                     <tr>
-                        <td><span class="bold-label">Author : </span>@workset.getMetadata.getAuthor</td>
-                        <td><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>
+                        <td><span class="bold-label">Owner : </span>@workset.getMetadata.getAuthor</td>
+                        @*<td><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>*@
                         <td><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>
                         <td><span class="bold-label">Number of Volumes : </span>@workset.getMetadata.getVolumeCount</td>
+                        <td><span class="bold-label">Tags : </span>@workset.getMetadata.getTags</td>
                     </tr>
                 </table>
                 <table>

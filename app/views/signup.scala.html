@@ -29,6 +29,8 @@
                     <label for="password" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
                         <input type="password" id="password" name="password" placeholder="Password" required="true" class="form-control" min="15">
+                        <div id="alert_placeholder">
+                        </div>
                         <span class="help-block">
                             <ul>
                                 <li>
@@ -36,6 +38,9 @@
                                 </li>
                                 <li>
                                     Password must not contain any white spaces.
+                                </li>
+                                <li>
+                                    Password must not contain your user ID.
                                 </li>
                                 <li>
                                     Password must contain characters from three of the following five categories:
@@ -46,7 +51,8 @@
                                         </li>
                                         <li> Nonalphanumeric characters
                                         </li>
-                                        <li> Any Unicode character that is categorized as an alphabetic character but is not uppercase or lowercase. This includes Unicode characters from Asian languages.
+                                        <li>
+                                            Any Unicode character that is categorized as an alphabetic character but is not uppercase or lowercase. This includes Unicode characters from Asian languages.
                                         </li>
                                     </ul>
                                 </li>
@@ -94,7 +100,8 @@
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary btn-sm">Sign Up</button>
-                        <a href="@routes.UserManagement.createAccountRequestForm()" class="btn btn-link">Request Account</a>
+                        <a href="@routes.UserManagement.createAccountRequestForm()" class="btn btn-link">
+                            Request Account</a>
                     </div>
                 </div>
                 <script src="@routes.Assets.at("javascripts/passwordstrengthchecker.js")"></script>
