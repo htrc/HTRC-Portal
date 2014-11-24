@@ -30,8 +30,6 @@ public class JobManagement extends Controller {
         List<JobDetailsBean> activeJobsList;
         List<JobDetailsBean> completedJobsList;
         if(activeJobs != null && completedJobs != null) {
-            loggedInUser.noOfResults = activeJobs.size() + completedJobs.size();
-            loggedInUser.save();
             if (activeJobs.isEmpty()) {
                 activeJobsList = Collections.emptyList();
                 log.info("Active jobs are empty.");

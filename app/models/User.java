@@ -53,7 +53,6 @@ public class User extends Model {
     public String email;
     public String userFirstName;
     public String userLastName;
-    public int noOfResults;
 
     private static Logger.ALogger log = play.Logger.of("application");
 
