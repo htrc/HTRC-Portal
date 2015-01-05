@@ -77,9 +77,9 @@
                                         <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">Documentation</a></li>
                                         <li class="divider"></li>
                                         @if(user==null){
-                                            <li><a href="#login-required-modal" data-toggle="modal" >Virtual Machines</a></li>
+                                            <li><a href="#login-required-modal" data-toggle="modal" >Show Virtual Machines</a></li>
                                         }else{
-                                            <li><a href="@routes.ExperimentalAnalysis.listVMs()">Virtual Machines</a></li>
+                                            <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
                                         }
                                         <li class="divider"></li>
                                         @if(user==null){

@@ -19,6 +19,8 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,22 +52,22 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class WorksetManagement extends Controller {
+public class WorksetManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result worksets() throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         List<Workset> worksets = getWorksets();
 
         return ok(worksetstable.render(loggedInUser, worksets));
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName,worksetAuthor);
         List<Volume> volumeList = new ArrayList<>();
@@ -82,9 +84,9 @@ public class WorksetManagement extends Controller {
         return ok(workset.render(loggedInUser, ws, volumeDetailsList));
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result uploadWorkset() throws ParserConfigurationException {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart csv = body.getFile("csv");
         String[] worksetName = body.asFormUrlEncoded().get("worksetName");
@@ -174,9 +176,9 @@ public class WorksetManagement extends Controller {
         }
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result downloadWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<Volume> volumes = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
 

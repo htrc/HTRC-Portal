@@ -20,6 +20,8 @@ package edu.indiana.d2i.htrc.portal;
 
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
+import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoRequest;
+import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoResponse;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -411,7 +413,7 @@ public class HTRCUserManagerUtility {
      * @throws RemoteException
      * @retun user Id
      */
-    public List<String> getUserIds(String userEmail) throws RemoteException {
+    public List<String> getUserIdsFromEmail(String userEmail) throws RemoteException {
         String[] userIds = extendedUserAdminStub.getUserIdsFromEmail(userEmail);
         if(userIds == null){
             log.info("User Ids are null.");
@@ -423,5 +425,14 @@ public class HTRCUserManagerUtility {
         return userIdList;
     }
 
+    public UserInfoResponse getUserInformation(UserInfoRequest userInfoRequest) throws RemoteException {
+        UserInfoResponse userInfoResponse = extendedUserAdminStub.getUserInformation(userInfoRequest);
+        if(userInfoResponse.getError()){
+            log.info("Cannot retrieve user Information.");
+            return null;
+        }
+        log.info("User information retrieved successfully. Use Name: " + userInfoResponse.getAuthorizedUser() + ", User Email: " + userInfoResponse.getUserEmail());
+        return userInfoResponse;
+    }
 
 }

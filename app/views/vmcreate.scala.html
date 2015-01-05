@@ -39,7 +39,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    Note: This is different from the login user name of OS in VM. </td>
+                                    Note: This is different from the login user name of VM. </td>
                             </tr>
                         </table>
                     </div>
@@ -54,7 +54,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    Note: This is different from the login password of OS in VM. Password should be less than 8 characters.</td>
+                                    Note: This is different from the login password of VM. Password must be less than 8 characters. This is due to a VNC limitation.</td>
                             </tr>
                         </table>
                     </div>
@@ -78,16 +78,24 @@
                 <div class="form-group">
                     <label for="numberOfVCPUs" class="col-sm-2 control-label">VCPUs</label>
                     <div class="col-sm-10">
-                        <select id="numberOfVCPUs" name="numberOfVCPUs" class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                        </select>
+                        <table>
+                            <tr>
+                                <select id="numberOfVCPUs" name="numberOfVCPUs" class="form-control">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                </select>
+                            </tr>
+                            <tr>
+                                Note: Virtual Machine CPUs
+                            </tr>
+                        </table>
+
                     </div>
                 </div>
                 <div class="form-group">

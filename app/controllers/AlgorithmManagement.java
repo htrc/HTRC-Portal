@@ -13,6 +13,8 @@ import models.ActiveJob;
 import models.Algorithm;
 import models.User;
 import models.Workset;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.play.java.JavaController;
 import org.springframework.util.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
@@ -32,13 +34,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static play.data.Form.form;
 
-public class AlgorithmManagement extends Controller{
+public class AlgorithmManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
 
     @Security.Authenticated(Secured.class)
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
-        User loggedInUser = User.findByUserID(request().username());
+        CommonProfile userProfile = getUserProfile();
+        User loggedInUser = User.findByUserID(userProfile.getId());
 //        WorksetManagement.updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
 //        updateAlgorithms(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
 //        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();

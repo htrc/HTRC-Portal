@@ -1,20 +1,15 @@
 package controllers;
 
 
-import controllers.*;
-import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import edu.indiana.d2i.htrc.portal.PasswordChecker;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
-import edu.vt.middleware.password.*;
 import models.Token;
 import models.User;
-import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import play.Logger;
 import play.data.Form;
-import play.data.validation.Constraints;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
@@ -22,8 +17,6 @@ import views.html.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.xml.bind.annotation.XmlElementDecl;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
@@ -350,7 +343,7 @@ public class UserManagement extends Controller {
             if (userEmail.isEmpty()) {
                 return "Email is empty, Please enter your email";
             }
-            userIDs = userManager.getUserIds(userEmail);
+            userIDs = userManager.getUserIdsFromEmail(userEmail);
             log.info("User ID List : " + userIDs);
             if (userIDs.isEmpty()) {
                 return "User name does not exist for the email: " + userEmail;
