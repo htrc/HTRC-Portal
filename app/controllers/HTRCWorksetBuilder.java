@@ -18,9 +18,12 @@
 package controllers;
 
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.PortalConstants;
 import models.Doc;
 import models.SearchOption;
 import models.User;
+import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HTRCWorksetBuilder extends Controller {
+public class HTRCWorksetBuilder extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
     private static final String solrMeta = PlayConfWrapper.solrMetaQueryUrl();
@@ -54,9 +57,9 @@ public class HTRCWorksetBuilder extends Controller {
         searchOptions.put("subject", "Subject");
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result searchCorpus(){
-        final User loggedInUser = User.findByUserID(request().username());
+        final User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         final List<Doc> searchResults = new ArrayList<Doc>();
         final Form<SearchCorpus> searchCorpusForm = Form.form(SearchCorpus.class).bindFromRequest();
         if(searchCorpusForm.hasErrors()){
@@ -163,9 +166,9 @@ public class HTRCWorksetBuilder extends Controller {
         ));
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result createWorkset(){
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         List<Doc> searchResults = new ArrayList<Doc>();
         return ok(search.render(searchResults,loggedInUser,Form.form(SearchCorpus.class)));
     }

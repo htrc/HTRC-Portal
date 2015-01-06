@@ -20,6 +20,9 @@ import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
+import org.pac4j.core.client.Clients;
+import org.pac4j.play.Config;
+import org.pac4j.saml.client.Saml2Client;
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
@@ -42,5 +45,24 @@ public class Global extends GlobalSettings {
         System.setProperty("javax.net.ssl.trustStorePassword", Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE_PWD));
         System.setProperty("javax.net.ssl.trustStoreType", "JKS");
         play.Logger.info("Java Trust Store", System.getProperty("javax.net.ssl.trustStore"));
+
+
+        final Saml2Client saml2Client = new Saml2Client();
+        saml2Client.setKeystorePath(PlayConfWrapper.saml2KeyStorePath());
+        saml2Client.setKeystorePassword(PlayConfWrapper.saml2KeyStorePassword());
+        saml2Client.setPrivateKeyPassword(PlayConfWrapper.saml2PrivateKeyPassword());
+        saml2Client.setIdpMetadataPath(PlayConfWrapper.idpMetadataPath());
+
+        // Enable SAML2 Assertion to OAuth2 access token exchange
+        saml2Client.setOauth2ExchangeEnabled(true);
+        saml2Client.setOauth2ClientID(PlayConfWrapper.oauthClientID());
+        saml2Client.setOauth2ClientSecret(PlayConfWrapper.oauthClientSecrete());
+        saml2Client.setOauth2TokenEndpoint(PlayConfWrapper.tokenEndpoint());
+        saml2Client.setDevMode(true);
+
+        final Clients clients = new Clients(PlayConfWrapper.portalUrl() + "/callback", saml2Client);
+        Config.setClients(clients);
+
+        super.onStart(app);
     }
 }

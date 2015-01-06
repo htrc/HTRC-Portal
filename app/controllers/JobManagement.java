@@ -7,6 +7,8 @@ import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import models.ActiveJob;
 import models.CompletedJob;
 import models.User;
+import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -18,12 +20,12 @@ import views.html.joblist;
 import java.io.IOException;
 import java.util.*;
 
-public class JobManagement extends Controller {
+public class JobManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listJobs() {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
         Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
@@ -53,7 +55,7 @@ public class JobManagement extends Controller {
 
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result cancelJobs() {
         List<String> activeJobIds = new ArrayList<String>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
@@ -64,7 +66,7 @@ public class JobManagement extends Controller {
                 activeJobIds.add(form.get(key)[0]);
             }
         }
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.cancelJobs(activeJobIds);
         if (response) {
@@ -80,7 +82,7 @@ public class JobManagement extends Controller {
 
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result updateJobs() throws IOException {
         List<String> completedJobIds = new ArrayList<>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
@@ -91,7 +93,7 @@ public class JobManagement extends Controller {
                 completedJobIds.add(form.get(key)[0]);
             }
         }
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.deleteJobs(completedJobIds);
         if (response) {
@@ -129,9 +131,9 @@ public class JobManagement extends Controller {
 
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewJobDetails(String jobId) {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         List<String> jobIds = new ArrayList<>();
         jobIds.add(jobId);
