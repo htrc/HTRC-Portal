@@ -86,6 +86,7 @@ public class  PortalConstants {
     // error message
     public static String CANNOT_GETDATA_FROM_AGENT = "Unable to get data from agent.";
     public static String CANNOT_GETDATA_FROM_REGISTRY = "Unable to get data from registry.";
+    public static String CANNOT_GETDATA_FROM_SERVER = "Unable to get data from server.";
 
     public static final String PORTAL_CACHED_JOB_DETAILS = "portal.job.details";
     public static final String PORTAL_JOB_DETAILS_CACHED_TIME = "portal.job.details.cached.time";

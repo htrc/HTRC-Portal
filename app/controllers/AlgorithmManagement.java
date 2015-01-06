@@ -15,6 +15,7 @@ import models.User;
 import models.Workset;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
 import org.springframework.util.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
@@ -38,7 +39,7 @@ public class AlgorithmManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         CommonProfile userProfile = getUserProfile();
         User loggedInUser = User.findByUserID(userProfile.getId());
@@ -50,18 +51,18 @@ public class AlgorithmManagement extends JavaController {
         return ok(views.html.algorithms.render(loggedInUser, getAlgorithms()));
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewAlgorithm(String algorithmName) throws JAXBException, IOException, XMLStreamException {
-        User loggedInUser = User.findByUserID(request().username());
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         List<Workset> worksetList = WorksetManagement.getWorksets();
         return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
     }
 
-    @Security.Authenticated(Secured.class)
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result submitAlgorithm() throws Exception {
-        AtomicReference<User> loggedInUser = new AtomicReference<>(User.findByUserID(request().username()));
+        AtomicReference<User> loggedInUser = new AtomicReference<>(User.findByUserID(session(PortalConstants.SESSION_USERNAME)));
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
         jobSubmitBean.setJobName(requestData.get("jobName"));

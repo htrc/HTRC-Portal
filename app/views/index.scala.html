@@ -74,7 +74,11 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Upload Workset</a>
+                        }else{
+                            <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
+                        }
                     </div>
                     <div class="panel-body">
 
@@ -86,7 +90,11 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        <a href="@routes.WorksetManagement.worksets()">Browse Workset</a>
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Browse Workset</a>
+                        }else{
+                            <a href="@routes.WorksetManagement.worksets()">Browse Workset</a>
+                        }
                     </div>
                     <div class="panel-body">
                         <p>Browse through already created worksets.</p>
@@ -96,7 +104,11 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Execute Algorithms</a>
+                        }else{
+                            <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>
+                        }
                     </div>
                     <div class="panel-body">
                         <p>Execute algorithms on your worksets.</p>

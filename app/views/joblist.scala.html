@@ -11,7 +11,7 @@
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
-                    <activejobtable class="activejobtable" id="activeJobList">
+                    <table class="activejobtable" id="activeJobList">
                         <thead>
                             <tr>
                                 <th data-sort="string">Job Title</th>
@@ -35,7 +35,7 @@
                                 </tr>
                             }
                         </tbody>
-                    </activejobtable>
+                    </table>
                 }
             </div>
         </div>
@@ -49,7 +49,7 @@
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
-                    <activejobtable class="activejobtable" id="completedJobList">
+                    <table class="completedjobtable" id="completedJobList">
                         <thead>
                             <tr>
                                 <th data-sort="string">Job Title</th>
@@ -75,7 +75,7 @@
                                 </tr>
                             }
                         </tbody>
-                    </activejobtable>
+                    </table>
                 }
 
             </div>

@@ -178,8 +178,9 @@ public class HTRCExperimentalAnalysisServiceClient {
 
         } else {
             this.responseCode = response;
-            log.error(post.getResponseBodyAsString());
-            throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
+            log.error("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
+            vmList = null;
+//            throw new IOException("Response code " + response + " for " + listVMUrl + " message: \n " + post.getResponseBodyAsString());
         }
         return vmList;
 

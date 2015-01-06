@@ -8,6 +8,7 @@ import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionExc
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Token;
 import models.User;
+import org.pac4j.play.java.JavaController;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Controller;
@@ -24,7 +25,7 @@ import java.util.*;
 
 import static play.data.Form.form;
 
-public class UserManagement extends Controller {
+public class UserManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
     public static Result createSignUpForm() {
