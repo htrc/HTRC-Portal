@@ -37,8 +37,8 @@
                             <div class="volume-list">
                             @for(v <- volumeList){
                                 <div class="volume">
-                                    <h3><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
-                                        <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h3>
+                                    <h4><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
+                                        <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h4>
                                     <dl class="volume-details">
                                         <dt class="volume-id">Volume Id:</dt>
                                         <dd class="volume-id">@v.getVolumeId</dd>
