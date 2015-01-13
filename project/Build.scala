@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     javaJdbc,
     javaEbean,
     cache,
-    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv1"
+    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv2"
    exclude("com.typesafe.play", "play-jdbc")
    exclude("com.typesafe.play", "play-cache"),
     "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv2",

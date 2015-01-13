@@ -196,13 +196,15 @@ public class WorksetManagement extends JavaController {
         for (Volume volume : volumes) {
             Map<String, String> props = new HashMap<String, String>();
 
-            if (volume.getProperties().getProperty().size() > 0) {
-                for (Property volumeProperty : volume.getProperties().getProperty()) {
-                    headers.add(volumeProperty.getName());
-                    props.put(volumeProperty.getName(), volumeProperty.getValue());
+            if(volume.getProperties() != null){
+                if (volume.getProperties().getProperty().size() > 0) {
+                    for (Property volumeProperty : volume.getProperties().getProperty()) {
+                        headers.add(volumeProperty.getName());
+                        props.put(volumeProperty.getName(), volumeProperty.getValue());
+                    }
                 }
-            }
 
+            }
 
             volumesMap.put(volume.getId(), props);
         }

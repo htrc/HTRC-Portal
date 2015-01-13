@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<md:EntityDescriptor entityID="https://localhost:9443/samlsso" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" validUntil="2023-09-23T06:57:15.396Z">
+<md:EntityDescriptor entityID="localhost" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" validUntil="2023-09-23T06:57:15.396Z">
     <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <md:KeyDescriptor use="signing">
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
