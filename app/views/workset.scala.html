@@ -15,16 +15,16 @@
                     }
                      <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
                      target="_blank">Edit</a>
-                     <a class="btn btn-xs btn-embossed pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
+                     <a class="btn btn-xs btn-info pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
                  </span>
             </div>
             <div class="panel-body">
                 <table class="table" id="workset">
                     <tr>
-                        <td><p>@workset.getMetadata.getDescription</p></td>
+                        <td style="padding-left: 5px;"><p>@workset.getMetadata.getDescription</p></td>
                     </tr>
                     <tr>
-                        <td><span class="bold-label">Owner : </span>@workset.getMetadata.getAuthor</td>
+                        <td style="padding-left: 5px;"><span class="bold-label">Owner : </span>@workset.getMetadata.getAuthor</td>
                         @*<td><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>*@
                         <td><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>
                         <td><span class="bold-label">Number of Volumes : </span>@workset.getMetadata.getVolumeCount</td>

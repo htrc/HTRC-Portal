@@ -157,6 +157,7 @@ td{
 .volume{
     border-bottom: 1px #ccc dashed;
     margin-bottom: 10px;
+    padding-left: 15px;
 }
 
 .volume h3{
