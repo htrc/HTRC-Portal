@@ -15,8 +15,8 @@ object ApplicationBuild extends Build {
     "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv2"
    exclude("com.typesafe.play", "play-jdbc")
    exclude("com.typesafe.play", "play-cache"),
-    "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv2",
-    "edu.indiana.d2i.htrc.security" % "useradmin-ext-stub" % "1.0.0-SNAPSHOT",
+    "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv1",
+    "edu.indiana.d2i.htrc" % "useradmin-ext-stub" % "1.0.0-SNAPSHOT",
     "org.apache.amber.wso2" % "amber" % "0.22.1358727.wso2v3",
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
     "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v3",
@@ -30,7 +30,7 @@ object ApplicationBuild extends Build {
 	exclude("org.eclipse.core","org.eclipse.core.runtime")
 	exclude("uddi","uddi4j")
 	exclude("org.apache.maven.scm", "maven-scm-api"),
-    "org.wso2.carbon" % "org.wso2.carbon.registry.core" % "4.2.0" 
+    "org.wso2.carbon" % "org.wso2.carbon.registry.core" % "4.2.0"
 	exclude("org.eclipse.core","org.eclipse.core.runtime")
 	exclude("uddi","uddi4j")
 	exclude("org.apache.maven.scm", "maven-scm-api"),
