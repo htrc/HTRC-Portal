@@ -64,6 +64,7 @@ public class HTRCPortal extends JavaController {
         session().put(PortalConstants.SESSION_REFRESH_TOKEN,refreshToken);
         String userId = userProfile.getId();
         log.info("User "+ userId + " is successfully logged in.");
+        log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));
         }
@@ -122,7 +123,7 @@ public class HTRCPortal extends JavaController {
 
 //    @Security.Authenticated(Secured.class)
     public static Result about() {
-        return ok(about.render(User.findByUserID(request().username())));
+        return ok(about.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
     }
 
 //    public static class Login {
