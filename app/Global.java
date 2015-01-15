@@ -20,18 +20,39 @@ import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
+import models.User;
 import org.pac4j.core.client.Clients;
 import org.pac4j.play.Config;
 import org.pac4j.saml.client.Saml2Client;
 import play.Application;
 import play.GlobalSettings;
+import play.Logger;
 import play.Play;
+import play.libs.F;
 import play.mvc.Http;
+import play.mvc.SimpleResult;
 
-import java.util.Map;
+import static play.mvc.Results.*;
+import static play.mvc.Controller.*;
+
 
 public class Global extends GlobalSettings {
+    private static Logger.ALogger log = play.Logger.of("global");
 
+    @Override
+    public F.Promise<SimpleResult> onError(Http.RequestHeader requestHeader, Throwable throwable) {
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+
+        if(loggedInUser != null) {
+            log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
+        } else {
+            log.error("Internal server error.", throwable);
+        }
+
+        return F.Promise.<SimpleResult>pure(internalServerError(
+                views.html.error500.render(throwable, loggedInUser)
+        ));
+    }
 
     @Override
     public void onStart(Application app) {
