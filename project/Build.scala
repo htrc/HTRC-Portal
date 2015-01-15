@@ -12,9 +12,9 @@ object ApplicationBuild extends Build {
     javaJdbc,
     javaEbean,
     cache,
-    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv2"
-   exclude("com.typesafe.play", "play-jdbc")
-   exclude("com.typesafe.play", "play-cache"),
+    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv3"
+      exclude("com.typesafe.play", "play-jdbc")
+      exclude("com.typesafe.play", "play-cache"),
     "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv1",
     "edu.indiana.d2i.htrc" % "useradmin-ext-stub" % "1.0.0-SNAPSHOT",
     "org.apache.amber.wso2" % "amber" % "0.22.1358727.wso2v3",
@@ -27,16 +27,33 @@ object ApplicationBuild extends Build {
     "edu.vt.middleware" % "vt-password" % "3.1.2",
     "net.sourceforge.javacsv" % "javacsv" % "2.0",
     "org.wso2.carbon" % "org.wso2.carbon.registry.ws.client" % "4.2.0"
-	exclude("org.eclipse.core","org.eclipse.core.runtime")
-	exclude("uddi","uddi4j")
-	exclude("org.apache.maven.scm", "maven-scm-api"),
+      exclude("org.eclipse.core", "org.eclipse.core.runtime")
+      exclude("uddi", "uddi4j")
+      exclude("org.wso2.carbon", "org.wso2.carbon.registry.uddi")
+      exclude("org.apache.juddi.wso2", "juddi")
+      exclude("org.apache.maven.scm", "maven-scm-api")
+      exclude("org.wso2.carbon", "org.wso2.carbon.feature.mgt.core")
+      exclude("org.wso2.carbon", "org.wso2.carbon.feature.mgt.services")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ndatasource.common")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ndatasource.rdbms")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ntask.common")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ntask.core"),
     "org.wso2.carbon" % "org.wso2.carbon.registry.core" % "4.2.0"
-	exclude("org.eclipse.core","org.eclipse.core.runtime")
-	exclude("uddi","uddi4j")
-	exclude("org.apache.maven.scm", "maven-scm-api"),
+      exclude("org.eclipse.core", "org.eclipse.core.runtime")
+      exclude("uddi", "uddi4j")
+      exclude("org.apache.maven.scm", "maven-scm-api")
+      exclude("org.wso2.carbon", "org.wso2.carbon.registry.uddi")
+      exclude("org.wso2.carbon", "org.wso2.carbon.feature.mgt.core")
+      exclude("org.wso2.carbon", "org.wso2.carbon.feature.mgt.services")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ndatasource.common")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ndatasource.rdbms")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ntask.common")
+      exclude("org.wso2.carbon", "org.wso2.carbon.ntask.core"),
     "org.wso2.carbon" % "org.wso2.carbon.registry.extensions.stub" % "4.2.0",
-    "org.wso2.carbon" % "org.wso2.carbon.identity.authenticator.token.stub" % "4.2.0"
-)
+    "org.wso2.carbon" % "org.wso2.carbon.identity.authenticator.token.stub" % "4.2.0",
+    "org.apache.axis2.wso2" % "axis2-client" % "1.6.1.wso2v10",
+    "org.apache.woden.wso2" % "woden" % "1.0.0.M8-wso2v1"
+  )
 
   /* Add repositories in following format
   * "repository_name" at "repository path"*/
@@ -44,7 +61,7 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += ("WSO2 Maven Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/"),
     resolvers += ("Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"),
-    resolvers += ("HTRC Nexus Repository" at "http://htrc.illinois.edu/nexus/content/groups/public/" ),
+    resolvers += ("HTRC Nexus Repository" at "http://htrc.illinois.edu/nexus/content/groups/public/"),
     resolvers += ("typesafe" at "http://repo.typesafe.com/typesafe/releases/"),
     resolvers += Resolver.mavenLocal
   )

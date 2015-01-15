@@ -161,7 +161,7 @@ public class HTRCPersistenceAPIClient {
             log.info("No workset is found for request " + worksetUrl);
             return Collections.emptyList();
         } else {
-            log.error("500 error \n" + get.getResponseBodyAsString());
+            log.error("Response code is " + response + "\n" + get.getResponseBodyAsString());
             throw new IOException("Response code is " + response + " for request "
                     + worksetUrl);
         }
@@ -194,7 +194,7 @@ public class HTRCPersistenceAPIClient {
             log.info("No workset is found for request " + worksetUrl);
             return null;
         } else {
-            log.error("500 error \n" + get.getResponseBodyAsString());
+            log.error("Response code is " + response + "\n" + get.getResponseBodyAsString());
             throw new IOException("Response code is " + response + " for request "
                     + worksetUrl);
         }
@@ -223,8 +223,19 @@ public class HTRCPersistenceAPIClient {
                 return null;
 
             }
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+                renew++;
+                return getWorksetVolumes(worksetName,worksetAuthor);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else if (response == 404) {
+            log.info("No workset is found for request " + worksetUrl);
+            return null;
         } else {
-            log.error("500 error \n" + get.getResponseBodyAsString());
+            log.error("Response code is " + response + "\n" + get.getResponseBodyAsString());
             throw new IOException("Response code is " + response + " for request "
                     + worksetUrl);
         }
@@ -247,6 +258,7 @@ public class HTRCPersistenceAPIClient {
         String algoFolder = PlayConfWrapper.registryAlgFolder();
         log.debug("setting repo path to algofolder");
         String str = getFilesAsString(algoFolder, ".*.xml", null, true);
+        log.debug(str);
 
         while (true) {
             int start = str.indexOf("<algorithm>");

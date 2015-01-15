@@ -21,119 +21,136 @@
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top navbar-htrc" role="navigation">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
-                        width="36" height="32" style="padding-right : 5px; margin-top: -1px;"> HTRC Portal</a>
-                    </div>
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
+                    width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;"> HTRC Portal</a>
+                </div>
 
-                    <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav">
-                            <li><a href="@routes.HTRCPortal.index()">Home</a></li>
-                            <li><a href="@routes.HTRCPortal.about()">About</a>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="@routes.HTRCPortal.index()">Home</a></li>
+                        <li><a href="@routes.HTRCPortal.about()">About</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Worksets <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                @if(user == null) {
+                                    <li><a href="#login-required-modal" data-toggle="modal" >List</a></li>
+                                } else {
+                                    <li><a href="@routes.WorksetManagement.worksets()">List</a></li>
+                                }
+                                <li class="divider"></li>
+                                @if(user == null) {
+                                    <li><a href="#login-required-modal" data-toggle="modal">Upload Workset</a></li>
+                                } else {
+                                    <li><a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a></li>
+                                }
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.url") ')">
+                                        Create Workset</a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if(user == null) {
+                            <li><a href="#login-required-modal" data-toggle="modal" >Algorithms</a></li>
+                        } else {
+                            <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a></li>
+                        }
+                        @if(user == null) {
+                            <li><a href="#login-required-modal" data-toggle="modal" >Results</a></li>
+                        } else {
+                            <li><a href="@routes.JobManagement.listJobs()">Results</a></li>
+                        }
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                HTRC Data Capsule<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">
+                                    Documentation</a></li>
+                                <li class="divider"></li>
+                                @if(user == null) {
+                                    <li><a href="#login-required-modal" data-toggle="modal" >Show Virtual Machines</a></li>
+                                } else {
+                                    <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
+                                }
+                                <li class="divider"></li>
+                                @if(user == null) {
+                                    <li><a href="#login-required-modal" data-toggle="modal" >
+                                        Create Virtual Machine</a></li>
+                                } else {
+                                    <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
+                                        Create Virtual Machine</a></li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Help<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">
+                                    Knowledge Base</a></li>
+                                <li class="divider"></li>
+                                <li><a href="mailto:htrc-tech-help-l@@list.indiana.edu?Subject=Contact">
+                                    Contact</a></li>
+                            </ul>
+                        </li>
+
+                        @*<li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>*@
+                    </ul>
+                    @if(user == null) {
+                        <ul class="nav pull-right navbar-nav">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    Sign In<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@routes.HTRCPortal.login()">Sign In</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="@routes.UserManagement.createPasswordResetMailForm()">
+                                        Forgot Password?</a></li>
+                                </ul>
                             </li>
 
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        Worksets <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        @if(user==null){
-                                            <li><a href="#login-required-modal" data-toggle="modal" >List</a></li>
-                                        }else{
-                                            <li><a href="@routes.WorksetManagement.worksets()">List</a></li>
-                                        }
-                                        <li class="divider"></li>
-                                        @if(user==null){
-                                            <li><a href="#login-required-modal" data-toggle="modal">Upload Workset</a></li>
-                                        }else{
-                                            <li><a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a></li>
-                                        }
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')">Create Workset</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                @if(user==null){
-                                    <li><a href="#login-required-modal" data-toggle="modal" >Algorithms</a></li>
-                                }else{
-                                    <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a></li>
-                                }
-                                @if(user==null){
-                                    <li><a href="#login-required-modal" data-toggle="modal" >Results</a></li>
-                                }else{
-                                    <li><a href="@routes.JobManagement.listJobs()">Results</a></li>
-                                }
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        HTRC Data Capsule<b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">Documentation</a></li>
-                                        <li class="divider"></li>
-                                        @if(user==null){
-                                            <li><a href="#login-required-modal" data-toggle="modal" >Show Virtual Machines</a></li>
-                                        }else{
-                                            <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
-                                        }
-                                        <li class="divider"></li>
-                                        @if(user==null){
-                                            <li><a href="#login-required-modal" data-toggle="modal" >Create Virtual Machine</a></li>
-                                        }else{
-                                            <li><a href="@routes.ExperimentalAnalysis.createVMForm()">Create Virtual Machine</a></li>
-                                        }
-                                    </ul>
-                                </li>
 
-                            <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>
+                            <li><a href="@routes.UserManagement.createSignUpForm()"><span>Sign Up</span></a></li>
                         </ul>
-                        @if(user == null) {
-                            <ul class="nav pull-right navbar-nav">
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In<b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="@routes.HTRCPortal.login()">Sign In</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="@routes.UserManagement.createPasswordResetMailForm()">Forgot Password?</a></li>
-                                    </ul>
-                                </li>
-
-
-                                <li><a href="@routes.UserManagement.createSignUpForm()"><span>Sign Up</span></a></li>
-                            </ul>
-                        } else {
-                            <ul class="nav pull-right">
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle loggedin-user" data-toggle="dropdown" style="color : #FF9933 ;">@user.userId <span>
-                                        (@user.email)</span> <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="@routes.HTRCPortal.logout()">Logout</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        }
-                    </div>
-                        <!--/.nav-collapse -->
+                    } else {
+                        <ul class="nav pull-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle loggedin-user" data-toggle="dropdown" style="color : #FF9933 ;">@user.userId <span>
+                                    (@user.email)</span> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@routes.HTRCPortal.logout()">Logout</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
                 </div>
+                    <!--/.nav-collapse -->
+            </div>
         </nav>
         @*<div class="container" style="padding-top : 15 px ;">*@
         @content
         @*</div>*@
         <div id="push"></div>
         @*<div id="footer">*@
-            @*<div class="container">*@
-                @*<hr/>*@
-                @*<ul class="pull-right nav-footer">*@
-                    @*<li> <a href="http://www.hathitrust.org/htrc"*@
-                    @*title="About Hathi Trust Research Center"> About </a> | </li>*@
-                    @*<li> <a href="#"> Contact </a> </li>*@
-                @*</ul>*@
-            @*</div>*@
+        @*<div class="container">*@
+        @*<hr/>*@
+        @*<ul class="pull-right nav-footer">*@
+        @*<li> <a href="http://www.hathitrust.org/htrc"*@
+        @*title="About Hathi Trust Research Center"> About </a> | </li>*@
+        @*<li> <a href="#"> Contact </a> </li>*@
+        @*</ul>*@
+        @*</div>*@
         @*</div>*@
         <div class="modal fade" id="create-collection-modal" aria-hidden="true" tabindex="-1" role="dialog">
             <div class="modal-dialog">
@@ -146,10 +163,10 @@
                         <p>You need to log in to HTRC Workset Builder in order to create or modify a workset. This is not depends on whether you have already logged in to HTRC Portal or not.</p>
                     </div>
                     <div class="modal-footer">
-                        <span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin : -3px 0 0 ;">
+                        <span class="pull-left" style="padding-top : 5 px ;"><input type="checkbox" id="dont-show" style="margin : - 3 px 0 0 ;">
                             Don't Show This Again.</span>
                         <a href="#" class="btn btn-link btn-sm" data-dismiss="modal" aria-hidden="true">Cancel</a>
-                        <a href="@play.Play.application().configuration().getString("blacklight.url")" class="btn btn-sm btn-primary" onclick="goToCreateCollection()">
+                        <a href="@play.Play.application().configuration().getString("blacklight.url")" class="btn btn-sm btn-primary" onclick="goToCreateCollection ( )">
                             Go</a>
                     </div>
                 </div>
@@ -161,7 +178,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">
+                        Close</span></button>
                     <h4 class="modal-title">Upload Workset</h4>
                 </div>
                 @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
@@ -186,10 +204,10 @@
                             </label>
                         </div>
                     </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn btn-link btn-sm" data-dismiss="modal">Close</a>
-                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn btn-link btn-sm" data-dismiss="modal">Close</a>
+                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                    </div>
                 }
             </div>
         </div>
@@ -206,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                     @*<span class="pull-left" style="padding-top: 5px;"><input type="checkbox" id="dont-show" style="margin : -3px 0 0 ;">*@
-                        @*Don't Show This Again.</span>*@
+                    @*Don't Show This Again.</span>*@
                     <a href="#" class="btn btn-link btn-sm" data-dismiss="modal" aria-hidden="true">Cancel</a>
                     <a href="@routes.HTRCPortal.login()" class="btn btn-sm btn-primary">
                         Go</a>
@@ -214,7 +232,6 @@
             </div>
         </div>
     </div>
-
 
 
 </html>
