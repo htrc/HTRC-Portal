@@ -172,6 +172,7 @@ public class HTRCUserManagerUtility {
                     .createConfigurationContextFromFileSystem(null, null);
             AuthenticationAdminStub adminStub = new AuthenticationAdminStub(configContext, authAdminEPR);
             adminStub._getServiceClient().getOptions().setManageSession(true);
+            adminStub._getServiceClient().getOptions().setProperty(HTTPConstants.CHUNKED,false);
             if (adminStub.login(userName, password, remoteAddress)) {
                 return (String) adminStub._getServiceClient().getServiceContext().getProperty
                         (HTTPConstants.COOKIE_STRING);

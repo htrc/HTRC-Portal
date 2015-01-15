@@ -258,6 +258,7 @@ public class HTRCPersistenceAPIClient {
         String algoFolder = PlayConfWrapper.registryAlgFolder();
         log.debug("setting repo path to algofolder");
         String str = getFilesAsString(algoFolder, ".*.xml", null, true);
+        log.debug(str);
 
         while (true) {
             int start = str.indexOf("<algorithm>");

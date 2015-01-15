@@ -17,7 +17,7 @@
     </appender>
 
     <logger name="play" level="INFO" />
-    <logger name="application" level="INFO" />
+    <logger name="application" level="DEBUG" />
     <logger name="org.opensaml.common.binding.security.SAMLProtocolMessageXMLSignatureSecurityPolicyRule" level="DEBUG"/>
     <logger name="org.opensaml.common.binding.decoding.BaseSAMLMessageDecoder" level="DEBUG"/>
     <logger name="org.opensaml.saml2.binding.decoding.BaseSAML2MessageDecoder" level="ALL"/>
