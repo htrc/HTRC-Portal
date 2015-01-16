@@ -34,12 +34,12 @@
                     @for((w, id) <- worksets.zipWithIndex){
                         <tr class="@if(w.author == user.userId){owned} else {others}">
                             <td>@(id + 1)</td>
-                            <td><a href="@routes.WorksetManagement.viewWorkset(w.name, w.author)">@w.name</a></td>
+                            <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.name, w.author)">@w.name</a></td>
                             <td>@w.description</td>
                             <td>@w.author</td>
                             <td>@w.numberOfVolumes</td>
                             <td>@if(w.shared){Yes} else {No}</td>
-                            <td>
+                            <td style="min-width: 132px;">
 
                                 <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Edit</a>
