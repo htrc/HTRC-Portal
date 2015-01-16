@@ -374,13 +374,15 @@ public class WorksetManagement extends JavaController {
                 volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
             }
 
-            worksets.add(new Workset(metadata.getName(),
-                    metadata.getDescription(),
-                    metadata.getAuthor(),
-                    metadata.getLastModifiedBy(),
-                    dateString,
-                    volumeList.size(),
-                    metadata.isPublic()));
+            if(volumeList != null) {
+                worksets.add(new Workset(metadata.getName(),
+                        metadata.getDescription(),
+                        metadata.getAuthor(),
+                        metadata.getLastModifiedBy(),
+                        dateString,
+                        volumeList.size(),
+                        metadata.isPublic()));
+            }
         }
 
         return worksets;
