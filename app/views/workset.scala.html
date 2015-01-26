@@ -15,6 +15,7 @@
                     }
                      <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
                      target="_blank">Edit</a>
+                     <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(workset.getMetadata.getName,workset.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
                      <a class="btn btn-xs btn-info pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
                  </span>
             </div>

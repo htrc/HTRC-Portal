@@ -79,15 +79,17 @@
                                 </select>
                             } else {
                                 @if(pm.isRequired) {
+                                    (required)
                                     <input type="text" name="parameters[@{
                                         parameters.indexOf(pm) + 1
                                     }].paramValue" required="true" value="@pm.getDefaultValue" id="paramInput@id" class="form-control">
-                                    (required)
+
                                 } else {
+                                    (optional)
                                     <input type="text"  name="parameters[@{
                                         parameters.indexOf(pm) + 1
                                     }].paramValue" value="@pm.getDefaultValue" id="paramInput@id" class="form-control">
-                                    (optional)
+
                                 }
                             }
                         }
