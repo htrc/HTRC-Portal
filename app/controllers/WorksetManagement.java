@@ -74,6 +74,7 @@ public class WorksetManagement extends JavaController {
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
         }
+        
         List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
         for (int i = 0; i <= volumeList.size() - 1; i++) {
             volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));

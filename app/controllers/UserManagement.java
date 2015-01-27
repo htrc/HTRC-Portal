@@ -1,6 +1,7 @@
 package controllers;
 
 
+import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import edu.indiana.d2i.htrc.portal.PasswordChecker;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
@@ -250,7 +251,7 @@ public class UserManagement extends JavaController {
 
         public static boolean isInstitutionalEmailDomain(String email) {
 
-//            Map<String,Integer> instDomains = CSVReader.readAndSaveInstDomains("/Users/shliyana/Downloads/Accreditation_2014_03/Accreditation_2014_03.csv");
+            instDomains.putAll(CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsThirdCSV()));
             if (email.isEmpty()) {
                 log.warn("Email is empty");
                 return false;

@@ -93,6 +93,7 @@ public class PlayConfWrapper {
     // Valid domain files
     private static String validDomainsFirstCSV = null;
     private static String validDomainsSecondCSV = null;
+    private static String validDomainsThirdCSV = null;
 
     // SAML2 Credentials
     private static String saml2KeyStorePath = null;
@@ -420,6 +421,13 @@ public class PlayConfWrapper {
             validDomainsSecondCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV);
         }
         return validDomainsSecondCSV;
+    }
+
+    public static String validDomainsThirdCSV(){
+        if(validDomainsThirdCSV == null){
+            validDomainsThirdCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_THIRD_CSV);
+        }
+        return validDomainsThirdCSV;
     }
 
     public static String saml2KeyStorePath(){

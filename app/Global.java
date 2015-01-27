@@ -28,6 +28,7 @@ import play.Application;
 import play.GlobalSettings;
 import play.Logger;
 import play.Play;
+import play.api.mvc.EssentialFilter;
 import play.libs.F;
 import play.mvc.Http;
 import play.mvc.SimpleResult;
@@ -56,8 +57,8 @@ public class Global extends GlobalSettings {
 
     @Override
     public void onStart(Application app) {
-        UserManagement.SignUp.instDomains = CSVReader.readAndSaveInstDomains(Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_FIRST_CSV));
-        UserManagement.SignUp.instDomains.putAll(CSVReader.readAndSaveInstDomains(Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV)));
+        UserManagement.SignUp.instDomains = CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsFirstCSV());
+        UserManagement.SignUp.instDomains.putAll(CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsSecondCSV()));
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "debug");

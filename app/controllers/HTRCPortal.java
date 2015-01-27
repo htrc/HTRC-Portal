@@ -47,6 +47,7 @@ import static play.data.Form.form;
 public class HTRCPortal extends JavaController {
 
     private static Logger.ALogger log = play.Logger.of("application");
+    private static Logger.ALogger auditLog = play.Logger.of("access");
 
 
 
@@ -63,7 +64,7 @@ public class HTRCPortal extends JavaController {
         session().put(PortalConstants.SESSION_TOKEN,accessToken);
         session().put(PortalConstants.SESSION_REFRESH_TOKEN,refreshToken);
         String userId = userProfile.getId();
-        log.info("User "+ userId + " is successfully logged in.");
+        auditLog.info("User "+ userId + " is successfully logged in.");
         log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));

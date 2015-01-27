@@ -132,6 +132,7 @@ public class  PortalConstants {
 
     public static String HTRC_VALID_DOMAIN_FIRST_CSV = "htrc.valid.domains.csv.first";
     public static String HTRC_VALID_DOMAIN_SECOND_CSV = "htrc.valid.domains.csv.second";
+    public static String HTRC_VALID_DOMAIN_THIRD_CSV = "htrc.valid.domains.csv.third";
 
     //SAML2 Credentials
     public static String SAML2_KEYSTORE_PATH = "saml2.keystore.path";
