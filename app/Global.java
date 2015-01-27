@@ -20,6 +20,7 @@ import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
+import filters.LoggingFilter;
 import models.User;
 import org.pac4j.core.client.Clients;
 import org.pac4j.play.Config;
@@ -28,6 +29,7 @@ import play.Application;
 import play.GlobalSettings;
 import play.Logger;
 import play.Play;
+import play.api.mvc.EssentialFilter;
 import play.libs.F;
 import play.mvc.Http;
 import play.mvc.SimpleResult;
@@ -38,6 +40,11 @@ import static play.mvc.Controller.*;
 
 public class Global extends GlobalSettings {
     private static Logger.ALogger log = play.Logger.of("global");
+
+    @Override
+    public <T extends EssentialFilter> Class<T>[] filters() {
+        return new Class[]{LoggingFilter.class};
+    }
 
     @Override
     public F.Promise<SimpleResult> onError(Http.RequestHeader requestHeader, Throwable throwable) {
