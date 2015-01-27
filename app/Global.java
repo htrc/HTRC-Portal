@@ -42,6 +42,11 @@ public class Global extends GlobalSettings {
     private static Logger.ALogger log = play.Logger.of("global");
 
     @Override
+    public <T extends EssentialFilter> Class<T>[] filters() {
+        return new Class[]{LoggingFilter.class};
+    }
+
+    @Override
     public F.Promise<SimpleResult> onError(Http.RequestHeader requestHeader, Throwable throwable) {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
 
