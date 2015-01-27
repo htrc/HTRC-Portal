@@ -20,6 +20,7 @@ import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
+import filters.LoggingFilter;
 import models.User;
 import org.pac4j.core.client.Clients;
 import org.pac4j.play.Config;
