@@ -189,21 +189,18 @@ public class UserManagement extends JavaController {
                 return "Please fill all the fields.";
             }
             log.info("User ID: " + userId);
+            if(userId.contains("@")){
+                return "User ID must not contain '@' sign. ";
+            }
             if (userManager.isUserExists(userId)) {
                 return "Username already exists.";
             }
-            if(password.length()< 15){
-                return "Password should be more than 15 characters long.";
-            }
-            if(password.contains(" ")){
-                return "Password should not contain any white spaces.";}
-            if (!passwordChecker.isValidPassword(password)) {
-                return "Please use a strong password.";
-            }
-            if (!password.equals(confirmPassword)) {
-                return "Passwords do not match.";
 
+            if (userManager.roleNameExists(userId)) {
+                return "There's a role name already exists with this name. Please use another username.";
             }
+
+
             if (!isInstitutionalEmailDomain(email)) {
                 return "Email is not an institutional email. Please enter your institutional email." +
                         "If you don't have an institutional email or if your email is not recognized by our system, " +
@@ -229,7 +226,7 @@ public class UserManagement extends JavaController {
                 }
 
             }
-            return null;
+            return passwordValidate(password,confirmPassword);
         }
 
         public void sendUserRegistrationEmail(String userEmail, String userId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -319,19 +316,7 @@ public class UserManagement extends JavaController {
 
         public String validate() {
             log.debug("Token in the form: "+ token);
-            if(password.isEmpty()){
-                return "Password is empty, Please enter password.";
-            }
-            if(password.length()< 15){
-                return "Password should be more than 15 characters long.";
-            }if(password.contains(" ")){
-                return "Password should not contain any white spaces.";}
-            if (!passwordChecker.isValidPassword(password)) {
-                return "Please use a strong password.";
-            }if (!password.equals(retypePassword)) {
-                return "The Passwords do not match.";
-            }
-            return null;
+            return passwordValidate(password,retypePassword);
         }
     }
 
@@ -392,5 +377,23 @@ public class UserManagement extends JavaController {
             throw new RuntimeException(e);  // TODO: Review exception handling logic.
         }
 
+    }
+
+    public static String passwordValidate(String password, String retypePassword){
+        PasswordChecker passwordChecker = new PasswordChecker();
+
+        if(password.isEmpty()){
+            return "Password is empty, Please enter password.";
+        }
+        if(password.length()< 15){
+            return "Password should be more than 15 characters long.";
+        }if(password.contains(" ")){
+            return "Password should not contain any white spaces.";}
+        if (!passwordChecker.isValidPassword(password)) {
+            return "Please use a strong password.";
+        }if (!password.equals(retypePassword)) {
+            return "The Passwords do not match.";
+        }
+        return null;
     }
 }

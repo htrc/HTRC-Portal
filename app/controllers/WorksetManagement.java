@@ -2,8 +2,6 @@ package controllers;
 
 
 import au.com.bytecode.opencsv.CSVWriter;
-import com.avaje.ebean.PagingList;
-import controllers.routes;
 import edu.illinois.i3.htrc.registry.entities.workset.Property;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
@@ -13,7 +11,6 @@ import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import models.User;
-import models.Workset;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -26,10 +23,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import play.Logger;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Security;
 import views.html.gotopage;
 import views.html.workset;
 import views.html.worksetstable;
@@ -48,7 +43,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -60,9 +54,11 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result worksets() throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
-        List<Workset> worksets = getWorksets();
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
 
-        return ok(worksetstable.render(loggedInUser, worksets));
+
+        return ok(worksetstable.render(loggedInUser, worksetList));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
@@ -73,16 +69,58 @@ public class WorksetManagement extends JavaController {
         List<Volume> volumeList = new ArrayList<>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
-        }
-        
-        List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
-        for (int i = 0; i <= volumeList.size() - 1; i++) {
-            volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
-        }
+            int totalNoOfVolumes = volumeList.size();
+            if(totalNoOfVolumes > 200){
+                List<Volume> first200VolumeList = new ArrayList<>();
+                List<VolumeDetailsBean> first200VolumeDetailsList = new ArrayList<>();
+                for (int i = 0; i <= 199; i++) {
+                    String volumeId = volumeList.get(i).getId();
+                    models.Volume alreadyExistVolume = models.Volume.findByVolumeID(volumeId);
+                    if(alreadyExistVolume != null){
+                        VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
+                        volumeDetailsBean.setVolumeId(alreadyExistVolume.volumeId);
+                        volumeDetailsBean.setTitle(alreadyExistVolume.title);
+                        volumeDetailsBean.setMaleAuthor(alreadyExistVolume.maleAuthor);
+                        volumeDetailsBean.setFemaleAuthor(alreadyExistVolume.femaleAuthor);
+                        volumeDetailsBean.setGenderUnkownAuthor(alreadyExistVolume.genderUnkownAuthor);
+                        volumeDetailsBean.setPageCount(alreadyExistVolume.pageCount);
+                        volumeDetailsBean.setWordCount(alreadyExistVolume.wordCount);
+                        first200VolumeDetailsList.add(volumeDetailsBean);
+                        log.info("Volume Id: "+ volumeId + " is already exists in Volume object in portal.");
+                    }else{
+                        first200VolumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
+                        models.Volume nVolume = new models.Volume();
+                        nVolume.volumeId = getVolumeDetails(volumeList.get(i).getId()).getVolumeId();
+                        nVolume.title = getVolumeDetails(volumeList.get(i).getId()).getTitle();
+                        nVolume.maleAuthor = getVolumeDetails(volumeList.get(i).getId()).getMaleAuthor();
+                        nVolume.femaleAuthor = getVolumeDetails(volumeList.get(i).getId()).getFemaleAuthor();
+                        nVolume.genderUnkownAuthor = getVolumeDetails(volumeList.get(i).getId()).getGenderUnkownAuthor();
+                        nVolume.pageCount = getVolumeDetails(volumeList.get(i).getId()).getPageCount();
+                        nVolume.wordCount = getVolumeDetails(volumeList.get(i).getId()).getWordCount();
+                        nVolume.save();
+                        log.info("Volume Id: "+ volumeId + " details retrieved from Solr and saved to Volume object.");
+                    }
+                }
+                log.debug("Workset: " + ws);
+                log.debug("Volumes: " + totalNoOfVolumes);
+                log.info("Workset" + worksetName + " has more than 200 volumes.");
+                 return ok(workset.render(loggedInUser, ws, first200VolumeDetailsList));
+            }else{
+                List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
+                for (int i = 0; i <= volumeList.size() - 1; i++) {
+                    volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
+                }
 
-        log.debug("Workset: " + ws);
-        log.debug("Volumes: " + volumeDetailsList.size());
-        return ok(workset.render(loggedInUser, ws, volumeDetailsList));
+                log.debug("Workset: " + ws);
+                log.debug("Volumes: " + totalNoOfVolumes);
+                log.info("Workset" + worksetName + " has lesser than 200 volumes.");
+                return ok(workset.render(loggedInUser, ws, volumeDetailsList));
+
+            }
+        }
+        return ok(gotopage.render("Error occurred retrieving "+ worksetName +" workset. Please try again later.", "routes.WorksetManagement.worksets()","Go to Workset List page.", loggedInUser));
+        
+
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
@@ -356,38 +394,38 @@ public class WorksetManagement extends JavaController {
 
 
 
-    public static List<Workset> getWorksets() throws IOException, JAXBException {
-        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
-
-        List<Workset> worksets = new ArrayList<Workset>();
-
-        for(edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList){
-            WorksetMeta metadata = w.getMetadata();
-
-            Calendar calendar = metadata.getLastModified().toGregorianCalendar();
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
-            formatter.setTimeZone(calendar.getTimeZone());
-            String dateString = formatter.format(calendar.getTime());
-
-            List<Volume> volumeList = new ArrayList<>();
-            if (!metadata.getName().contains(" ")) {
-                volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
-            }
-
-            if(volumeList != null) {
-                worksets.add(new Workset(metadata.getName(),
-                        metadata.getDescription(),
-                        metadata.getAuthor(),
-                        metadata.getLastModifiedBy(),
-                        dateString,
-                        volumeList.size(),
-                        metadata.isPublic()));
-            }
-        }
-
-        return worksets;
-    }
+//    public static List<Workset> getWorksets() throws IOException, JAXBException {
+//        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+//        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+//
+//        List<Workset> worksets = new ArrayList<Workset>();
+//
+//        for(edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList){
+//            WorksetMeta metadata = w.getMetadata();
+//
+//            Calendar calendar = metadata.getLastModified().toGregorianCalendar();
+//            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+//            formatter.setTimeZone(calendar.getTimeZone());
+//            String dateString = formatter.format(calendar.getTime());
+//
+//            List<Volume> volumeList = new ArrayList<>();
+//            if (!metadata.getName().contains(" ")) {
+//                volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
+//            }
+//
+//            if(volumeList != null) {
+//                worksets.add(new Workset(metadata.getName(),
+//                        metadata.getDescription(),
+//                        metadata.getAuthor(),
+//                        metadata.getLastModifiedBy(),
+//                        dateString,
+//                        volumeList.size(),
+//                        metadata.isPublic()));
+//            }
+//        }
+//
+//        return worksets;
+//    }
 
     private static String domToString(Document doc) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();

@@ -57,16 +57,16 @@ create table virtual_machine (
   constraint pk_virtual_machine primary key (id))
 ;
 
-create table workset (
+create table volume (
   id                        bigint auto_increment not null,
-  name                      varchar(255),
-  description               varchar(255),
-  author                    varchar(255),
-  last_modified_by          varchar(255),
-  last_modified             varchar(255),
-  number_of_volumes         integer,
-  shared                    boolean,
-  constraint pk_workset primary key (id))
+  title                     TEXT,
+  volume_id                 varchar(255),
+  male_author               TEXT,
+  female_author             TEXT,
+  gender_unkown_author      TEXT,
+  page_count                varchar(255),
+  word_count                varchar(255),
+  constraint pk_volume primary key (id))
 ;
 
 
@@ -88,7 +88,7 @@ drop table if exists user;
 
 drop table if exists virtual_machine;
 
-drop table if exists workset;
+drop table if exists volume;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 

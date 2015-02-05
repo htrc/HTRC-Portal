@@ -12,7 +12,6 @@ import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
 import models.ActiveJob;
 import models.Algorithm;
 import models.User;
-import models.Workset;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
@@ -56,7 +55,9 @@ public class AlgorithmManagement extends JavaController {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
-        List<Workset> worksetList = WorksetManagement.getWorksets();
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+
         return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
     }
 

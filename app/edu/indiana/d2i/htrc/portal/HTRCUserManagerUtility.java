@@ -19,6 +19,7 @@ package edu.indiana.d2i.htrc.portal;
 
 
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
+import edu.indiana.d2i.htrc.portal.exception.RoleNameAlreadyExistsException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoRequest;
 import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoResponse;
@@ -197,7 +198,7 @@ public class HTRCUserManagerUtility {
      * @see #getRequiredUserClaims()
      * @see #getAvailablePermissions()
      */
-    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims) throws UserAlreadyExistsException { // TODO: Review this
+    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims) throws Exception { // TODO: Review this
         if (userName == null) {
             throw new NullPointerException("User name null.");
         }
@@ -210,6 +211,13 @@ public class HTRCUserManagerUtility {
             String message = "User with name " + userName + " already exists.";
             log.warn(message);
             throw new UserAlreadyExistsException(message);
+        }
+
+        if (roleNameExists(userName)){
+            String message = userName + " is a already exist role name.";
+            log.warn(message);
+            throw new RoleNameAlreadyExistsException(message);
+
         }
 
         ClaimValue[] claimValues = new ClaimValue[claims.size()];
@@ -350,17 +358,16 @@ public class HTRCUserManagerUtility {
         return userAdmin.getRolesOfUser(userName,userName,10);
     }
 
-    public boolean roleNameExists(String roleName)
-            throws Exception {
+    public boolean roleNameExists(String roleName){
         FlaggedName[] roles;
         try {
             roles = userAdmin.getAllRolesNames(roleName, 10);
             System.out.println("Total number of roles: " + roles.length);
 
-        } catch (RemoteException e) {
-            throw new RemoteException("Unable to get role names list", e);
-        } catch (UserAdminUserAdminException e) {
-            throw new UserAdminException("Faile to get all roles", e);
+        }catch (Exception e) {
+            String errMessage = "Error checking whether given role exists.";
+            log.error(errMessage, e);
+            throw new RuntimeException(errMessage, e);
         }
 
         for (FlaggedName role : roles) {
@@ -382,7 +389,7 @@ public class HTRCUserManagerUtility {
     public void changePassword(String userName, String newPassword) throws ChangePasswordUserAdminExceptionException {
         try {
             userAdmin.changePassword(userName, newPassword);
-        } catch (RemoteException | UserAdminUserAdminException e) {
+            } catch (RemoteException | UserAdminUserAdminException e) {
             throw new ChangePasswordUserAdminExceptionException("Cannot change password for userId: " + userName, e);
         }
     }

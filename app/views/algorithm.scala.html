@@ -1,5 +1,5 @@
 @(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean,
-        parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], worksetlist: List[Workset], form: Form[AlgorithmManagement.SubmitJob])
+        parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], worksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob])
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
 
 
@@ -67,7 +67,7 @@
                                 parameters.indexOf(pm) + 1
                             }].paramValue" id="paramInput@id" class="form-control">
                             @for(ws <- worksetlist) {
-                                <option>@WorksetManagement.getWorksetWithAuthor(ws.name, ws.author)</option>
+                                <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName, ws.getMetadata.getAuthor)</option>
                             }
                             </select>
                         } else {

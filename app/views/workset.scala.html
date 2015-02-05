@@ -17,6 +17,10 @@
                      target="_blank">Edit</a>
                      <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(workset.getMetadata.getName,workset.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
                      <a class="btn btn-xs btn-info pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
+                     @if(workset.getMetadata.getVolumeCount > 200){
+                         <a class="btn btn-xs btn-info" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
+                         target="_blank" title="You can view details of upto 200 volumes. To view details of all the volumes, please goto HTRC Workset Builder and select the workset in 'Manage Worksets' ">View Workset</a>
+                     }
                  </span>
             </div>
             <div class="panel-body">
@@ -39,17 +43,10 @@
                         <tr style="border-bottom: 1pt solid lightgrey">
                             <td>@workset.getMetadata.getAuthor</td>
                             <td>@workset.getMetadata.getLastModified</td>
-                            <td>@volumeList.size()</td>
+                            <td>@workset.getMetadata.getVolumeCount</td>
                             <td>@workset.getMetadata.getTags</td>
                         </tr>
                     </tbody>
-                    @*<tr>*@
-                        @*<td style="padding-left: 5px;"><span class="bold-label">Owner : </span>@workset.getMetadata.getAuthor</td>*@
-                        @*<td><span class="bold-label">Last Modified By : </span>@workset.getMetadata.getLastModifiedBy</td>*@
-                        @*<td><span class="bold-label">Last Modified Time : </span>@workset.getMetadata.getLastModified</td>*@
-                        @*<td><span class="bold-label">Number of Volumes : </span>@volumeList.size()</td>*@
-                        @*<td><span class="bold-label">Tags : </span>@workset.getMetadata.getTags</td>*@
-                    @*</tr>*@
                 </table>
                 <table>
                     <tr>

@@ -2,10 +2,10 @@ package filters
 
 import play.Logger
 import play.api.mvc._
-
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
-object LoggingFilter extends Filter{
+class LoggingFilter extends Filter{
   override def apply(next: (RequestHeader) => Future[SimpleResult])(rh: RequestHeader): Future[SimpleResult] = {
     val startTime = System.currentTimeMillis
     next(rh).map { result =>

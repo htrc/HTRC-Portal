@@ -301,15 +301,15 @@ function showalert(message) {
                 } else if (length > 8 && length < 15 && noOfRulesMatched > 0 ){
                     totalScore = 20;
                 }  else if (length == 15 && noOfRulesMatched == 1 ){
-                    totalScore = 20;
+                    totalScore = 30;
                 } else if (length > 15 && noOfRulesMatched == 1 ){
-                    totalScore = 20;
+                    totalScore = 30;
                 } else if (length == 15 && noOfRulesMatched == 2 ){
-                    totalScore = 30;
-                }else if (length > 15 && noOfRulesMatched == 2 ){
-                    totalScore = 30;
-                } else if (length == 15 && noOfRulesMatched == 3 ){
                     totalScore = 45;
+                }else if (length > 15 && noOfRulesMatched == 2 ){
+                    totalScore = 45;
+                } else if (length == 15 && noOfRulesMatched == 3 ){
+                    totalScore = 55;
                 }else if (length > 15 && noOfRulesMatched == 3 ){
                     totalScore = 55;
                 } else if (length == 15 && noOfRulesMatched == 4 ){

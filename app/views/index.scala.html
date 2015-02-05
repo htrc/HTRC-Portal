@@ -14,15 +14,15 @@
         </div>
         <div class="row" style="padding-left: 15px; padding-top : 25px; font-size : 17px; line-height : 27px;">
             <div class="col-md-12">
-                <p>The HathiTrust Research Center (HTRC) provides research access to the public domain text of the HathiTrust
+                <p>The HathiTrust Research Center (HTRC) provides research access to the public domain corpus of the HathiTrust
                     Digital Library. The HTRC is a collaborative research center launched jointly by Indiana University and the
                     University of Illinois, along with the HathiTrust Digital Library, to help meet the technical challenges of
                     dealing with massive amounts of digital text that researchers face by developing cutting-edge software tools
-                    and cyber infrastructure to enable advanced computational access to the growing digital record of human
+                    and cyber-infrastructure to enable advanced computational access to the growing digital record of human
                     knowledge. The HTRC provides an infrastructure to search, collect, analyze, and visualize the full text of nearly 3
                     million public domain works and is intended for nonprofit and educational
                     researchers. </p>
-                <p class="alert alert-warning" role="alert" style="border-width: 2pt; margin-top: 20px; font-weight: bold; padding: 10px; color: black">This portal is under beta testing till Jan/31/2015. We highly appreciate your comments and issue reporting during this beta testing period. Please contact us by email (<a href="mailto:htrc-tech-help-l@@list.indiana.edu?Subject=Contact">htrc-tech-help-l@@list.indiana.edu</a>).</p>
+                @*<p class="alert alert-warning" role="alert" style="border-width: 2pt; margin-top: 20px; font-weight: bold; padding: 10px; color: black">This portal is under beta testing till Jan/31/2015. We highly appreciate your comments and issue reporting during this beta testing period. Please contact us by email (<a href="mailto:htrc-tech-help-l@@list.indiana.edu?Subject=Contact">htrc-tech-help-l@@list.indiana.edu</a>).</p>*@
             </div>
         </div>
         @*<div class="row" style="padding-top : 25px; font-size : 17px; line-height : 27px;">*@
@@ -68,7 +68,8 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')">Create Workset</a>
                     </div>
                     <div class="panel-body">
-                        <p>Create workset using our workset builder.</p>
+                        <div class="text-content short-text">Create workset using our workset builder.</div>
+                        <div class="show-more"><a href="#">Show more</a></div>
                     </div>
                 </div>
             </div>
@@ -83,7 +84,12 @@
                     </div>
                     <div class="panel-body">
 
-                        <p>Upload worksets with extra properties in CSV format.</p>
+                        <div class="text-content short-text">Upload a workset by specifying a text file in CSV format.
+                            In addition to volume ids, optional additional information
+                            consisting of class labels for each volume (for use with
+                            classification algorithms) can be part of the CSV-format file to be
+                            uploaded.</div>
+                        <div class="show-more"><a href="#">Show more</a></div>
 
                     </div>
                 </div>
@@ -98,7 +104,8 @@
                         }
                     </div>
                     <div class="panel-body">
-                        <p>Browse through already created worksets.</p>
+                        <div class="text-content short-text">Browse through already created worksets.</div>
+                        <div class="show-more"><a href="#">Show more</a></div>
                     </div>
                 </div>
             </div>
@@ -112,7 +119,13 @@
                         }
                     </div>
                     <div class="panel-body">
-                        <p>Execute algorithms on your worksets.</p>
+
+                                    <div class="text-content short-text">Execute text analysis algorithms on worksets (either your own or public ones).
+                                        The algorithms provided are powered by the <a href="http://dev-tools.seasr.org/confluence/display/Outreach/DHSI-SEASR">
+                                        SEASR toolkit</a>.</div>
+                                    <div class="show-more">
+                                        <a href="#">Show more</a>
+                                    </div>
 
 
                     </div>
@@ -121,4 +134,5 @@
 
         </div>
     </div>
+    <script src="@routes.Assets.at("javascripts/showmoreoption.js")"></script>
 }
