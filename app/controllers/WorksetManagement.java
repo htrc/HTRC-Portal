@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class WorksetManagement extends JavaController {
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
-    public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
+    public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException{
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName,worksetAuthor);
@@ -75,6 +76,7 @@ public class WorksetManagement extends JavaController {
                 List<VolumeDetailsBean> first200VolumeDetailsList = new ArrayList<>();
                 for (int i = 0; i <= 199; i++) {
                     String volumeId = volumeList.get(i).getId();
+                    log.debug("Volume Id: "+volumeId);
                     models.Volume alreadyExistVolume = models.Volume.findByVolumeID(volumeId);
                     if(alreadyExistVolume != null){
                         VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
@@ -88,18 +90,21 @@ public class WorksetManagement extends JavaController {
                         first200VolumeDetailsList.add(volumeDetailsBean);
                         log.info("Volume Id: "+ volumeId + " is already exists in Volume object in portal.");
                     }else{
-                        first200VolumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
+                        VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
+                        volumeDetailsBean = getVolumeDetails(volumeList.get(i).getId());
+                        first200VolumeDetailsList.add(volumeDetailsBean);
                         models.Volume nVolume = new models.Volume();
-                        nVolume.volumeId = getVolumeDetails(volumeList.get(i).getId()).getVolumeId();
-                        nVolume.title = getVolumeDetails(volumeList.get(i).getId()).getTitle();
-                        nVolume.maleAuthor = getVolumeDetails(volumeList.get(i).getId()).getMaleAuthor();
-                        nVolume.femaleAuthor = getVolumeDetails(volumeList.get(i).getId()).getFemaleAuthor();
-                        nVolume.genderUnkownAuthor = getVolumeDetails(volumeList.get(i).getId()).getGenderUnkownAuthor();
-                        nVolume.pageCount = getVolumeDetails(volumeList.get(i).getId()).getPageCount();
-                        nVolume.wordCount = getVolumeDetails(volumeList.get(i).getId()).getWordCount();
+                        nVolume.volumeId = volumeDetailsBean.getVolumeId();
+                        nVolume.title = volumeDetailsBean.getTitle();
+                        nVolume.maleAuthor = volumeDetailsBean.getMaleAuthor();
+                        nVolume.femaleAuthor = volumeDetailsBean.getFemaleAuthor();
+                        nVolume.genderUnkownAuthor = volumeDetailsBean.getGenderUnkownAuthor();
+                        nVolume.pageCount = volumeDetailsBean.getPageCount();
+                        nVolume.wordCount = volumeDetailsBean.getWordCount();
                         nVolume.save();
                         log.info("Volume Id: "+ volumeId + " details retrieved from Solr and saved to Volume object.");
                     }
+
                 }
                 log.debug("Workset: " + ws);
                 log.debug("Volumes: " + totalNoOfVolumes);
@@ -279,8 +284,7 @@ public class WorksetManagement extends JavaController {
     }
 
     public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
-        String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + volid.replace(":", "%20") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
-
+        String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + URLEncoder.encode(volid.replace(":", "%20"), "UTF-8") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
         VolumeDetailsBean volDetails = new VolumeDetailsBean();
 
         HttpClient httpClient = new HttpClient();
