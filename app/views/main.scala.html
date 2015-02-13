@@ -187,7 +187,8 @@
                         <p>You can upload Workset only on CSV format.</p>
                         <div class="form-group">
                             <label for="worksetName">Workset Name</label>
-                            <input type="text" id="worksetName" class="form-control" name="worksetName" placeholder="Workset Name" required="true">
+                            <input type="text" id="worksetName" class="form-control" name="worksetName" placeholder="Workset Name" oninput="checkworksetname(this.value)" required="true">
+                            <div id="workset_name_alert_placeholder">
                             <em>Only characters A-Z, 0-9, or _ allowed.</em>
                         </div>
                         <div class="form-group">
@@ -232,6 +233,26 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        function checkworksetname(worksetname){
+            if(worksetname.indexOf(' ')>= 0){
+                showwsnamealert("Workset name must not contain any white spaces.");
+            }
+            if(worksetname.match("[!,@@,#,$,%,\^,&,*,?,~]")) {
+                showwsnamealert ( "Workset name must not contain any special characters. Please use only letters, numbers and '_' in your workset name(a-z,A-Z,0-9,_)." ) ;
+            }
+        }
+        function showwsnamealert(message) {
 
+            $('#workset_name_alert_placeholder').append('<div id="useridalertdiv" class="alert alert-danger">' +
+            '<a class="close" data-dismiss="alert">×</a>' +
+            '<span>'+message+'</span>' +
+            '</div>');
+
+            setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+            $("#useridalertdiv").remove();
+            }, 5000);
+        }
+    </script>
 
 </html>

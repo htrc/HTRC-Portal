@@ -77,34 +77,37 @@ public class WorksetManagement extends JavaController {
                 for (int i = 0; i <= 199; i++) {
                     String volumeId = volumeList.get(i).getId();
                     log.debug("Volume Id: "+volumeId);
-                    models.Volume alreadyExistVolume = models.Volume.findByVolumeID(volumeId);
-                    if(alreadyExistVolume != null){
-                        VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
-                        volumeDetailsBean.setVolumeId(alreadyExistVolume.volumeId);
-                        volumeDetailsBean.setTitle(alreadyExistVolume.title);
-                        volumeDetailsBean.setMaleAuthor(alreadyExistVolume.maleAuthor);
-                        volumeDetailsBean.setFemaleAuthor(alreadyExistVolume.femaleAuthor);
-                        volumeDetailsBean.setGenderUnkownAuthor(alreadyExistVolume.genderUnkownAuthor);
-                        volumeDetailsBean.setPageCount(alreadyExistVolume.pageCount);
-                        volumeDetailsBean.setWordCount(alreadyExistVolume.wordCount);
-                        first200VolumeDetailsList.add(volumeDetailsBean);
-                        log.info("Volume Id: "+ volumeId + " is already exists in Volume object in portal.");
+                    if(volumeId.isEmpty()){
+                        log.error("Volume Id is empty.");
                     }else{
-                        VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
-                        volumeDetailsBean = getVolumeDetails(volumeList.get(i).getId());
-                        first200VolumeDetailsList.add(volumeDetailsBean);
-                        models.Volume nVolume = new models.Volume();
-                        nVolume.volumeId = volumeDetailsBean.getVolumeId();
-                        nVolume.title = volumeDetailsBean.getTitle();
-                        nVolume.maleAuthor = volumeDetailsBean.getMaleAuthor();
-                        nVolume.femaleAuthor = volumeDetailsBean.getFemaleAuthor();
-                        nVolume.genderUnkownAuthor = volumeDetailsBean.getGenderUnkownAuthor();
-                        nVolume.pageCount = volumeDetailsBean.getPageCount();
-                        nVolume.wordCount = volumeDetailsBean.getWordCount();
-                        nVolume.save();
-                        log.info("Volume Id: "+ volumeId + " details retrieved from Solr and saved to Volume object.");
+                        models.Volume alreadyExistVolume = models.Volume.findByVolumeID(volumeId);
+                        if(alreadyExistVolume != null){
+                            VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
+                            volumeDetailsBean.setVolumeId(alreadyExistVolume.volumeId);
+                            volumeDetailsBean.setTitle(alreadyExistVolume.title);
+                            volumeDetailsBean.setMaleAuthor(alreadyExistVolume.maleAuthor);
+                            volumeDetailsBean.setFemaleAuthor(alreadyExistVolume.femaleAuthor);
+                            volumeDetailsBean.setGenderUnkownAuthor(alreadyExistVolume.genderUnkownAuthor);
+                            volumeDetailsBean.setPageCount(alreadyExistVolume.pageCount);
+                            volumeDetailsBean.setWordCount(alreadyExistVolume.wordCount);
+                            first200VolumeDetailsList.add(volumeDetailsBean);
+                            log.info("Volume Id: "+ volumeId + " is already exists in Volume object in portal.");
+                        }else{
+                            VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
+                            volumeDetailsBean = getVolumeDetails(volumeList.get(i).getId());
+                            first200VolumeDetailsList.add(volumeDetailsBean);
+                            models.Volume nVolume = new models.Volume();
+                            nVolume.volumeId = volumeDetailsBean.getVolumeId();
+                            nVolume.title = volumeDetailsBean.getTitle();
+                            nVolume.maleAuthor = volumeDetailsBean.getMaleAuthor();
+                            nVolume.femaleAuthor = volumeDetailsBean.getFemaleAuthor();
+                            nVolume.genderUnkownAuthor = volumeDetailsBean.getGenderUnkownAuthor();
+                            nVolume.pageCount = volumeDetailsBean.getPageCount();
+                            nVolume.wordCount = volumeDetailsBean.getWordCount();
+                            nVolume.save();
+                            log.info("Volume Id: "+ volumeId + " details retrieved from Solr and saved to Volume object.");
+                        }
                     }
-
                 }
                 log.debug("Workset: " + ws);
                 log.debug("Volumes: " + totalNoOfVolumes);
@@ -113,7 +116,14 @@ public class WorksetManagement extends JavaController {
             }else{
                 List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
                 for (int i = 0; i <= volumeList.size() - 1; i++) {
-                    volumeDetailsList.add(getVolumeDetails(volumeList.get(i).getId()));
+                    String volumeId = volumeList.get(i).getId();
+                    log.debug("Volume Id: " + volumeId);
+                    if(volumeId.isEmpty()){
+                        log.error("Volume Id is null.");
+                    }else{
+                        volumeDetailsList.add(getVolumeDetails(volumeId));
+                    }
+
                 }
 
                 log.debug("Workset: " + ws);

@@ -200,6 +200,10 @@ public class UserManagement extends JavaController {
                 return "There's a role name already exists with this name. Please use another username.";
             }
 
+            if (passwordValidate(password,confirmPassword) != null){
+                return passwordValidate(password,confirmPassword);
+            }
+
 
             if (!isInstitutionalEmailDomain(email)) {
                 return "Email is not an institutional email. Please enter your institutional email." +
@@ -226,7 +230,7 @@ public class UserManagement extends JavaController {
                 }
 
             }
-            return passwordValidate(password,confirmPassword);
+            return null;
         }
 
         public void sendUserRegistrationEmail(String userEmail, String userId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -316,7 +320,10 @@ public class UserManagement extends JavaController {
 
         public String validate() {
             log.debug("Token in the form: "+ token);
-            return passwordValidate(password,retypePassword);
+            if(passwordValidate(password,retypePassword) != null){
+                return passwordValidate(password,retypePassword);
+            }
+            return null;
         }
     }
 
