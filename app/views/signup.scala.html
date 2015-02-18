@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <label for="password" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
-                        <input type="password" id="password" name="password" placeholder="Password" required="true" class="form-control" min="15">
+                        <input type="password" id="password" name="password" placeholder="Password" required class="form-control" min="15">
                         <div id="alert_placeholder">
                         </div>
                         <span class="help-block">
@@ -70,16 +70,29 @@
                 <div class="form-group">
                     <label for="confirmPassword" class="col-sm-2 control-label">Confirm Password</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)" >
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Password" required>
                         <script language='javascript' type='text/javascript'>
-                        function check ( input ) {
-                        if ( input.value != document.getElementById ( 'password' ).value ) {
-                        input.setCustomValidity ( 'Password Must be Matching.' ) ;
+                        var password = document.getElementById("password")
+                        , confirm_password = document.getElementById("confirmPassword");
+
+                        function validatePassword(){
+                        if(password.value != confirm_password.value) {
+                        confirm_password.setCustomValidity("Passwords Don't Match");
                         } else {
-                        // input is valid -- reset the error message
-                        input.setCustomValidity ( '' ) ;
+                        confirm_password.setCustomValidity('');
                         }
                         }
+
+                        password.onchange = validatePassword;
+                        confirm_password.onkeyup = validatePassword;
+//                        function checkpassword ( input ) {
+//                        if ( input.value != document.getElementById ( 'password' ).value ) {
+//                        input.setCustomValidity ( 'Password Must be Matching.' ) ;
+//                        } else {
+//                        // input is valid -- reset the error message
+//                        input.setCustomValidity ( '' ) ;
+//                        }
+//                        }
                         </script>
                     </div>
                 </div>
@@ -101,41 +114,85 @@
                         <input type="email" class="form-control" id="email" name="email" placeholder="Email" required="true" value="@form.data().get("email")">
                         <span class="help-block">Please enter your institutional email.
                             If you don't have an institutional email or if your email is not recognized by our system,
-                            please press 'Request Account' with your current email address.</span>
+                            please <a href="@routes.UserManagement.createAccountRequestForm()">
+                            request account</a> with your current email address.</span>
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="confirmEmail" class="col-sm-2 control-label">Confirm Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="confirmEmail" name="confirmEmail" placeholder="Email" required="true" value="@form.data().get("ConfirmEmail")" oninput="checkemail(this)">
+                        <script language='javascript' type='text/javascript'>
+                        function checkemail ( input ) {
+                        if ( input.value != document.getElementById ( 'email' ).value ) {
+                        input.setCustomValidity ( 'Email Must be Matching.' ) ;
+                        } else {
+                        // input is valid -- reset the error message
+                        input.setCustomValidity ( '' ) ;
+                        }
+                        }
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10 help-block">
+                        <input type="checkbox" name="acknowledgement" id="acknowledgement">&nbsp; &nbsp; I acknowledge that I am being
+                        granted access to HathiTrust (HT) texts and/or data and will not knowingly copy
+                        HT page text, HT page images, or primary bibliographic metadata (MARC catalog
+                        records) from my workspace to another computing system, nor will I remove these
+                        from the SHARC (Secure HathiTrust Analytic Research Commons) environment.
+                        I also understand that some of the data may be determined at a later date to be
+                        in copyright and that the HathiTrust Research Center (HTRC) will delete these
+                        items and any copies that have been made upon notification from the HathiTrust
+                    </div>
+
+                </div>
+                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-sm">Sign Up</button>
-                        <a href="@routes.UserManagement.createAccountRequestForm()" class="btn btn-link">
-                            Request Account</a>
+                        <button type="submit" class="btn btn-primary btn-sm" id="submit" disabled>Sign Up</button>
+                        <a href="@routes.UserManagement.createSignUpForm()" class="btn btn-default btn-sm">
+                            Reset</a>
+                        <a href="@routes.HTRCPortal.index()" class="btn btn-inverse btn-sm">
+                            Cancel</a>
                     </div>
                 </div>
                 <script src="@routes.Assets.at("javascripts/passwordstrengthchecker.js")"></script>
                 <script type="text/javascript">
-                    function checkuserid(userid){
-                        if(userid.indexOf(' ')>= 0){
-                            showuseridalert("User ID must not contain any white spaces.");
-                        }
-                        if(userid.match("[!,@@,#,$,%,\^,&,*,?,_,~,-]")) {
-                            showuseridalert("User ID must not contain any special characters. Please use only letters and numbers in your user ID(a-z,A-Z,0-9).");
-                        }
-                    }
-                    function showuseridalert(message) {
+                function checkuserid ( userid ) {
+                if ( userid.indexOf(' ') >= 0 ) {
+                showuseridalert ( "User ID must not contain any white spaces." ) ;
+                }
+                if ( userid.match("[!,@@,#,$,%,\,/,^,&,*,?,~,(,),-]")) {
+                showuseridalert ( "User ID must not contain any special characters. Please use only letters and numbers in your user ID(a-z,A-Z,0-9)." ) ;
+                }
+                }
+                function showuseridalert ( message ) {
 
-                        $('#user_id_alert_placeholder').append('<div id="useridalertdiv" class="alert alert-danger">' +
-                        '<a class="close" data-dismiss="alert">×</a>' +
-                        '<span>'+message+'</span>' +
-                        '</div>');
+                $ ( '#user_id_alert_placeholder' ).append ( '<div id="useridalertdiv" class="alert alert-danger">' +
+                '<a class="close" data-dismiss="alert">×</a>' +
+                '<span>' + message + '</span>' +
+                '</div>' ) ;
 
-                        setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+                setTimeout ( function ( ) { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
 
 
-                        $("#useridalertdiv").remove();
+                $ ( "#useridalertdiv" ).remove ( ) ;
 
-                        }, 5000);
-                    }
-                </script>
+                }, 5000 ) ;
+                }
+
+                $(document).ready(function(){
+                $('input[type=checkbox]').attr('checked',false);
+                });
+
+                var checker = document.getElementById ( 'acknowledgement' ) ;
+                var submitbtn = document.getElementById ( 'submit' ) ;
+                // when unchecked or checked, run the function
+                checker.onchange = function ( ) {
+                submitbtn.disabled = !this.checked ;
+
+                };
+               </script>
             }
             </div>
         </div>

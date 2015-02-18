@@ -14,10 +14,10 @@
                     <table class="table" id="activeJobList">
                         <thead>
                             <tr>
-                                <th data-sort="string">Job Name</th>
-                                <th>Last Updated</th>
-                                <th>Status</th>
-                                <th>Cancel?</th>
+                                <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
+                                <th id="cancelaction">Cancel?</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,10 +52,10 @@
                     <table class="table" id="completedJobList">
                         <thead>
                             <tr>
-                                <th data-sort="string">Job Name</th>
-                                <th>Last Updated</th>
-                                <th>Status</th>
-                                <th>Delete?</th>
+                                <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
+                                <th id="deleteaction">Delete?</th>
                                 @*<th>Saved?</th>*@
                             </tr>
                         </thead>
@@ -112,8 +112,11 @@
 
         var th = $(this).find("th");
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#cancelaction").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
         });
 
         /* completedjobtable sorting */
@@ -124,8 +127,11 @@
 
         var th = $(this).find("th");
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#deleteaction").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
         });
 
 

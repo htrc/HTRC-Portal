@@ -42,8 +42,9 @@ fieldset[disabled] .btn {
     top: 2px;
 }
 .btn-default {
-    color: #ffffff;
-    background-color: #bdc3c7;
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }
 .btn-default:hover,
 .btn-default:focus,

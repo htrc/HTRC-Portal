@@ -175,6 +175,8 @@ public class UserManagement extends JavaController {
         public String firstName;
         public String lastName;
         public String email;
+        public String confirmEmail;
+        public String acknowledgement;
 //        private final String[] permissions = {"/permission/admin/login"};
         private String status = null;
 
@@ -184,7 +186,7 @@ public class UserManagement extends JavaController {
         public String validate() {
             if (userId.isEmpty() || password.isEmpty()
                     || confirmPassword.isEmpty() || firstName.isEmpty()
-                    || lastName.isEmpty() || email.isEmpty()) {
+                    || lastName.isEmpty() || email.isEmpty() || confirmEmail.isEmpty()) {
 
                 return "Please fill all the fields.";
             }
@@ -204,6 +206,18 @@ public class UserManagement extends JavaController {
                 return passwordValidate(password,confirmPassword);
             }
 
+            if(!email.equals(confirmEmail)){
+                return "Emails are not matching.";
+            }
+
+
+            if(acknowledgement == null){
+                return "You have not acknowledge the user registration acknowledgement. Please acknowledge.";
+            }
+
+
+            log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
+                    + " User ID: " + userId);
 
             if (!isInstitutionalEmailDomain(email)) {
                 return "Email is not an institutional email. Please enter your institutional email." +
@@ -357,7 +371,7 @@ public class UserManagement extends JavaController {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
 
-        log.info("Email: " + PlayConfWrapper.htrcEmail() + " password: " + PlayConfWrapper.htrcEmailPassword());
+        log.info("Email: " + PlayConfWrapper.htrcEmail());
 
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {

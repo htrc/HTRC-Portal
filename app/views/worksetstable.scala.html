@@ -21,13 +21,14 @@
                 <table class="table" id="worksets">
                     <thead>
                         <tr>
-                            <th data-sort="int">#</th>
-                            <th data-sort="string">Name</th>
-                            <th>Description</th>
-                            <th data-sort="string">Owner</th>
-                            <th data-sort="int">Volumes</th>
-                            <th data-sort="string">Shared</th>
-                            <th>Actions</th>
+                            <th data-sort="int" >#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                            <th id="description">Description</th>
+                            <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="int">Volumes<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Visibility<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                            <th id="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,13 +39,13 @@
                             <td>@w.getMetadata.getDescription</td>
                             <td>@w.getMetadata.getAuthor</td>
                             <td>@w.getMetadata.getVolumeCount</td>
-                            <td>@if(w.getMetadata.isPublic){Yes} else {No}</td>
+                            <td>@if(w.getMetadata.isPublic){Public} else {Private}</td>
+                            <td>@w.getMetadata.getLastModified.toString.substring(0,19)</td>
                             <td style="min-width: 132px;">
-
-                                <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
+                                @if(w.getMetadata.getAuthor == user.userId){
+                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Edit</a>
-
-
+                                }
                                 <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
 
                             </td>
@@ -109,9 +110,15 @@
         // data.direction - the sorting direction (either asc or desc)
 
         var th = $(this).find("th");
+
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#description").find(".arrow").remove();
+        $("#actions").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
+
         });
     </script>
 }
