@@ -1,6 +1,7 @@
 package controllers;
 
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import edu.indiana.d2i.htrc.portal.PasswordChecker;
@@ -12,6 +13,7 @@ import models.User;
 import org.pac4j.play.java.JavaController;
 import play.Logger;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
@@ -164,6 +166,19 @@ public class UserManagement extends JavaController {
 //        userIDRetrieveMailForm.get().userIDs.clear();
         log.info(userIDRetrieveMailForm.toString());
         return ok(gotopage.render("Your user ID is sent to " + userEmail + ". Click on the login link to begin:", "login", "Login",null));
+    }
+
+    public static Result validateEmail(String email){
+        // Validate the email and set isValid.
+        boolean isValid = SignUp.isInstitutionalEmailDomain(email);
+        ObjectNode result = Json.newObject();
+        if(isValid){
+            result.put("email-valid", true);
+        } else {
+            result.put("email-valid", false);
+        }
+
+        return ok(result);
     }
 
 

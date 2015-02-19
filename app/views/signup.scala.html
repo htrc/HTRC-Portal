@@ -111,11 +111,32 @@
                 <div class="form-group">
                     <label for="email" class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required="true" value="@form.data().get("email")">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required="true" value="@form.data().get("email")" onchange="checkEmailValidity()">
                         <span class="help-block">Please enter your institutional email.
                             If you don't have an institutional email or if your email is not recognized by our system,
                             please <a href="@routes.UserManagement.createAccountRequestForm()">
                             request account</a> with your current email address.</span>
+                        <a href="@routes.UserManagement.createAccountRequestForm()" id="requestAccount" class="btn btn-info btn-sm" style="visibility: hidden">
+                            Request Account</a>
+                        <script language="javascript" type="text/javascript">
+                            function checkEmailValidity() {
+                                var email = document.getElementById ( 'email' ).value;
+                                var request = $.ajax({
+                                    url: "/isvalidemaildomain?email="+email,
+                                    type: "GET",
+                                    success: function (result) {
+                                /* if result is a JSon object */
+                                    if(result.valid){
+                                    document.getElementById('requestAccount').style.visibility='visible';
+                                    }
+                                }
+                                    } );
+                                alert(request.response);
+                                request.fail(function( jqXHR, textStatus ) {
+                                    alert( "Request failed: " + textStatus );
+                                });
+                          }
+                        </script>
                     </div>
                 </div>
                 <div class="form-group">
