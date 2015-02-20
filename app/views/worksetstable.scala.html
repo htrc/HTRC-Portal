@@ -4,7 +4,7 @@
     <div class="container">
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
-                <strong>Worksets</strong>
+                <strong>Worksets (@worksets.size())</strong>
                 @*<div class="dropdown clearfix pull-right">*@
                     @*<button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">*@
                         @*Filter*@
@@ -21,13 +21,13 @@
                 <table class="table" id="worksets">
                     <thead>
                         <tr>
-                            <th data-sort="int" >#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
                             <th id="description">Description</th>
                             <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="int">Volumes<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="string">Visibility<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="int" style="min-width: 100px;">Volumes<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width: 150px;">Last Updated<i class="fa fa-sort arrow"></i></th>
                             <th id="actions">Actions</th>
                         </tr>
                     </thead>

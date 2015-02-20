@@ -45,7 +45,10 @@ public class UserManagement extends JavaController {
             return badRequest(signup.render(signUpForm, null));
         }
         log.info("User "+signUpForm.get().userId+" signed up successfully.");
-        return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to " + signUpForm.get().email, null, null,null));
+        return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to "
+                + signUpForm.get().email+
+                ". If you don't receive your activation link within 5 minutes, please contact us by email " +
+                " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
     }
 
     public static Result activateAccount(String token) {
@@ -173,9 +176,9 @@ public class UserManagement extends JavaController {
         boolean isValid = SignUp.isInstitutionalEmailDomain(email);
         ObjectNode result = Json.newObject();
         if(isValid){
-            result.put("email-valid", true);
+            result.put("valid", true);
         } else {
-            result.put("email-valid", false);
+            result.put("valid", false);
         }
 
         return ok(result);

@@ -191,7 +191,7 @@
                     </div>
                     @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
                         <div class="modal-body">
-                            <p>You can upload Workset only on CSV format.</p>
+                            <p>You can only upload worksets as text files in CSV format.</p>
                             <div class="form-group">
                                 <label for="worksetName">Workset Name</label>
                                 <input type="text" id="worksetName" class="form-control" name="worksetName" placeholder="Workset Name" oninput="checkworksetname(this.value)" required="true">

@@ -1,57 +1,27 @@
-jQuery(document).ready(function () {
-    var options = {
-        onLoad: function () {
-            $('#messages').text('Start typing password');
-        },
-        onKeyUp: function (evt) {
-            $(evt.target).pwstrength("changeScore");
-        }
-
-    };
-    $('#password').pwstrength(options);
-});
+//jQuery(document).ready(function () {
+//    var options = {
+//        onLoad: function () {
+//            $('#messages').text('Start typing password');
+//        },
+//        onKeyUp: function (evt) {
+//            $(evt.target).pwstrength("changeScore");
+//        }
+//
+//    };
+//    $('#password').pwstrength(options);
+//});
 
 function showalert(message) {
 
     $('#alert_placeholder').append('<div id="alertdiv" class="alert alert-danger">' +
-        '<a class="close" data-dismiss="alert">×</a>' +
-        '<span>'+message+'</span>' +
-        '</div>');
+    '<a class="close" data-dismiss="alert">×</a>' +
+    '<span>'+message+'</span>' +
+    '</div>');
 
     setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
-
-
         $("#alertdiv").remove();
-
     }, 5000);
 }
-
-/*
- jQuery(document).ready(function () {
- "use strict";
- var $password = $(':password').pwstrength(),
- common_words = ["password", "god", "123456"];
-
- $password.pwstrength("addRule", "notEmail", function (options, word, score) {
- return word.match(/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i) && score;
- }, -100, true);
-
- $password.pwstrength("addRule", "commonWords", function (options, word, score) {
- var result = false;
- $.each(common_words, function (i, item) {
- var re = new RegExp(item, "gi");
- if (word.match(re)) {
- result = score;
- }
- });
- return result;
- }, -500, true);
- });
-
- */
-
-
-
 
 /*jslint vars: false, browser: true, nomen: true, regexp: true */
 /*global jQuery */

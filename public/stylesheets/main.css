@@ -332,6 +332,12 @@ td{
 
 }
 
+.warn-block{
+    font-weight: bold;
+    font-style: italic;
+    padding-top: 5px;
+}
+
 
 
 

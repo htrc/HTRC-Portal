@@ -14,6 +14,7 @@
                     <table class="table" id="activeJobList">
                         <thead>
                             <tr>
+                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
@@ -23,6 +24,7 @@
                         <tbody>
                         @for(job <- activeJobs){
                             <tr>
+                                <td>@(activeJobs.indexOf(job)+1)</td>
                                 <td>@job.getJobTitle()</td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
@@ -52,6 +54,7 @@
                     <table class="table" id="completedJobList">
                         <thead>
                             <tr>
+                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
@@ -62,6 +65,7 @@
                         <tbody>
                         @for(job <- completedJobs){
                             <tr>
+                                <td>@(completedJobs.indexOf(job)+1)</td>
                                 <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId())">@job.getJobTitle()</a></td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
