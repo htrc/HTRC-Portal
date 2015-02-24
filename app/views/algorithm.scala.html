@@ -46,7 +46,7 @@
                     </tr>
                 </table>
                 <div id="param" class="form-group" style="margin-top : 10 px ;">
-                    <label for="jobName">Please enter a job name:  </label>(required)
+                    <label for="jobName">Please enter a job name: (required)</label>
                     <input type="text" name="jobName" required="true" id="jobName" class="form-control">
                 </div>
                 @for((pm, id) <- parameters.zipWithIndex) {
@@ -57,8 +57,15 @@
                         <input type="hidden" name="parameters[@{
                             parameters.indexOf(pm) + 1
                         }].paramType" value="@pm.getType"/>
-                        <label for="paramInput@id">@pm.getLabel</label>
+                        <label for="paramInput@id">@pm.getLabel
+                            @if(pm.isRequired) {
+                                (required)
+                            }else {
+                                (optional)
+                            }
+                        </label>
                         @if(pm.getType == "collection") {
+
                             <select name="parameters[@{
                                 parameters.indexOf(pm) + 1
                             }].paramValue" id="paramInput@id" class="form-control">
@@ -75,13 +82,13 @@
                                 </select>
                             } else {
                                 @if(pm.isRequired) {
-                                    (required)
+
                                     <input type="text" name="parameters[@{
                                         parameters.indexOf(pm) + 1
                                     }].paramValue" required="true" value="@pm.getDefaultValue" id="paramInput@id" class="form-control">
 
                                 } else {
-                                    (optional)
+
                                     <input type="text"  name="parameters[@{
                                         parameters.indexOf(pm) + 1
                                     }].paramValue" value="@pm.getDefaultValue" id="paramInput@id" class="form-control">
