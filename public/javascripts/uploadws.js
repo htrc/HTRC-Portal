@@ -53,7 +53,7 @@ var wsNameInputKeyUp = function () {
 };
 
 var worksetNameValidation = function () {
-   $('#worksetName').bind("change keyup" ,wsNameInputKeyUp);
+   $('#uploadWorksetName').bind("change keyup" ,wsNameInputKeyUp);
 };
 
 $(document).ready(function () {

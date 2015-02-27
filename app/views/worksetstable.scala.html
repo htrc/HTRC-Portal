@@ -35,8 +35,8 @@
                     @for((w, id) <- worksets.zipWithIndex){
                         <tr class="@if(w.getMetadata.getAuthor == user.userId){owned} else {others}">
                             <td>@(id + 1)</td>
-                            <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
-                            <td>@w.getMetadata.getDescription</td>
+                            <td style="max-width: 150px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
+                            <td style="max-width: 250px; word-wrap: break-word">@w.getMetadata.getDescription</td>
                             <td>@w.getMetadata.getAuthor</td>
                             <td>@w.getMetadata.getVolumeCount</td>
                             <td>@if(w.getMetadata.isPublic){Public} else {Private}</td>
@@ -59,9 +59,9 @@
                                     </div>
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <input type="hidden" id="worksetName" class="form-control" name="worksetName" value="@w.getMetadata.getName"
+                                                <input type="hidden" id="downloadWorksetName" class="form-control" name="downloadWorksetName" value="@w.getMetadata.getName"
                                             <div class="form-group">
-                                                <input type="hidden" id="worksetAuthor" class="form-control" name="worksetAuthor" value="@w.getMetadata.getAuthor">
+                                                <input type="hidden" id="downloadWorksetAuthor" class="form-control" name="worksetAuthor" value="@w.getMetadata.getAuthor">
                                             </div>
                                             <p>Please select the download content option you want in selected workset.</p>
                                             <div class="radio">

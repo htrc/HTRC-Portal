@@ -143,8 +143,8 @@ public class WorksetManagement extends JavaController {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart csv = body.getFile("csv");
-        String[] worksetName = body.asFormUrlEncoded().get("worksetName");
-        String[] description = body.asFormUrlEncoded().get("description");
+        String[] worksetName = body.asFormUrlEncoded().get("uploadWorksetName");
+        String[] description = body.asFormUrlEncoded().get("uploadWSdescription");
         boolean isPrivateWorkset = body.asFormUrlEncoded().containsKey("privateWorkset");
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
 

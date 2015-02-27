@@ -18,6 +18,8 @@
                          target="_blank">Edit</a>
                      }
                      <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(workset.getMetadata.getName,workset.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
+                     <a class="btn btn-xs btn-info" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
+                     target="_blank">View Workset</a>
                      <a class="btn btn-xs btn-info pull-right" href="@routes.WorksetManagement.worksets()" target="_self">Back to List</a>
                  </span>
             </div>
@@ -26,8 +28,7 @@
                 <p style="border-bottom-color: #ddd; background-color: #fcf8e3; padding-left: 10px; padding-right: 10px; margin-bottom: 0;padding-bottom:
                 5px;padding-top: 5px;">Only 200 volumes are listed. To view details of all the volumes, please go to the HTRC Workset
                     Builder and select the workset in 'Manage Worksets'.
-                    <a class="btn btn-xs btn-info pull-right" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')"
-                target="_blank">View Workset</a></p>
+                    </p>
             }
                 <table class="table" id="workset">
                     <tr>
