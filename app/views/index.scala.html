@@ -14,14 +14,15 @@
         </div>
         <div class="row" style="padding-left: 15px; padding-top : 25px; font-size : 17px; line-height : 27px;">
             <div class="col-md-12">
-                <p>The HathiTrust Research Center (HTRC) provides research access to the public domain text of the HathiTrust
+                <p>The HathiTrust Research Center (HTRC) provides research access to the public domain corpus of the HathiTrust
                     Digital Library. The HTRC is a collaborative research center launched jointly by Indiana University and the
                     University of Illinois, along with the HathiTrust Digital Library, to help meet the technical challenges of
                     dealing with massive amounts of digital text that researchers face by developing cutting-edge software tools
-                    and cyber infrastructure to enable advanced computational access to the growing digital record of human
+                    and cyber-infrastructure to enable advanced computational access to the growing digital record of human
                     knowledge. The HTRC provides an infrastructure to search, collect, analyze, and visualize the full text of nearly 3
                     million public domain works and is intended for nonprofit and educational
                     researchers. </p>
+                @*<p class="alert alert-warning" role="alert" style="border-width: 2pt; margin-top: 20px; font-weight: bold; padding: 10px; color: black">This portal is under beta testing till Jan/31/2015. We highly appreciate your comments and issue reporting during this beta testing period. Please contact us by email (<a href="mailto:htrc-tech-help-l@@list.indiana.edu?Subject=Contact">htrc-tech-help-l@@list.indiana.edu</a>).</p>*@
             </div>
         </div>
         @*<div class="row" style="padding-top : 25px; font-size : 17px; line-height : 27px;">*@
@@ -67,40 +68,54 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')">Create Workset</a>
                     </div>
                     <div class="panel-body">
-                        <p>Create workset using our workset builder.</p>
+                        <div class="text-content">Create workset using our workset builder.</div>
+                     </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Upload Workset</a>
+                        }else{
+                            <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
+                        }
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="text-content">Upload a workset by specifying the
+                            necessary data about its volumes through a text file.</div>
+                        </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-default panel-htrc margin-bt-0">
+                    <div class="panel-heading">
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Browse Workset</a>
+                        }else{
+                            <a href="@routes.WorksetManagement.worksets()">Browse Workset</a>
+                        }
+                    </div>
+                    <div class="panel-body">
+                        <div class="text-content">Browse through already created worksets.</div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
+                        @if(user==null){
+                            <a href="#login-required-modal" data-toggle="modal">Execute Algorithms</a>
+                        }else{
+                            <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>
+                        }
                     </div>
                     <div class="panel-body">
 
-                        <p>Upload worksets with extra properties in CSV format.</p>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-default panel-htrc margin-bt-0">
-                    <div class="panel-heading">
-                        <a href="@routes.WorksetManagement.worksets()">Browse Workset</a>
-                    </div>
-                    <div class="panel-body">
-                        <p>Browse through already created worksets.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-default panel-htrc margin-bt-0">
-                    <div class="panel-heading">
-                        <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>
-                    </div>
-                    <div class="panel-body">
-                        <p>Execute algorithms on your worksets.</p>
-
+                                    <div class="text-content">Select and execute
+                                        text analysis algorithms for word count to more sophisticated
+                                        approaches.</div>
 
                     </div>
                 </div>
@@ -108,4 +123,5 @@
 
         </div>
     </div>
+
 }

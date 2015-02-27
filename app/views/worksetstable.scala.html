@@ -1,10 +1,10 @@
-@(user: User, worksets: List[Workset])
+@(user: User, worksets: List[edu.illinois.i3.htrc.registry.entities.workset.Workset])
 
 @main("Worksets", user) {
     <div class="container">
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
-                <strong>Worksets</strong>
+                <strong>Worksets (@worksets.size())</strong>
                 @*<div class="dropdown clearfix pull-right">*@
                     @*<button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">*@
                         @*Filter*@
@@ -21,31 +21,32 @@
                 <table class="table" id="worksets">
                     <thead>
                         <tr>
-                            <th data-sort="int">#</th>
-                            <th data-sort="string">Name</th>
-                            <th>Description</th>
-                            <th data-sort="string">Owner</th>
-                            <th data-sort="int">Volumes</th>
-                            <th data-sort="string">Shared</th>
-                            <th>Actions</th>
+                            <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                            <th id="description">Description</th>
+                            <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="int" style="min-width: 100px;">Volumes<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width: 150px;">Last Updated<i class="fa fa-sort arrow"></i></th>
+                            <th id="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                     @for((w, id) <- worksets.zipWithIndex){
-                        <tr class="@if(w.author == user.userId){owned} else {others}">
+                        <tr class="@if(w.getMetadata.getAuthor == user.userId){owned} else {others}">
                             <td>@(id + 1)</td>
-                            <td><a href="@routes.WorksetManagement.viewWorkset(w.name, w.author)">@w.name</a></td>
-                            <td>@w.description</td>
-                            <td>@w.author</td>
-                            <td>@w.numberOfVolumes</td>
-                            <td>@if(w.shared){Yes} else {No}</td>
-                            <td>
-
-                                <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
+                            <td style="max-width: 150px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
+                            <td style="max-width: 250px; word-wrap: break-word">@w.getMetadata.getDescription</td>
+                            <td>@w.getMetadata.getAuthor</td>
+                            <td>@w.getMetadata.getVolumeCount</td>
+                            <td>@if(w.getMetadata.isPublic){Public} else {Private}</td>
+                            <td>@w.getMetadata.getLastModified.toString.substring(0,19)</td>
+                            <td style="min-width: 132px;">
+                                @if(w.getMetadata.getAuthor == user.userId){
+                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning('@play.Play.application().configuration().getString("blacklight.url")')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Edit</a>
-
-
-                                <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.name,w.author)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
+                                }
+                                <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>
 
                             </td>
                         </tr>
@@ -58,10 +59,9 @@
                                     </div>
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <input type="hidden" id="worksetName" class="form-control" name="worksetName" value="@w.name">
-                                            </div>
+                                                <input type="hidden" id="downloadWorksetName" class="form-control" name="downloadWorksetName" value="@w.getMetadata.getName"
                                             <div class="form-group">
-                                                <input type="hidden" id="worksetAuthor" class="form-control" name="worksetAuthor" value="@w.author">
+                                                <input type="hidden" id="downloadWorksetAuthor" class="form-control" name="worksetAuthor" value="@w.getMetadata.getAuthor">
                                             </div>
                                             <p>Please select the download content option you want in selected workset.</p>
                                             <div class="radio">
@@ -87,9 +87,9 @@
                             function downloadWorkset(worksetName){
                                 var  contentFilter = $("input:radio[name=contentFilter]").val();
                                 if(contentFilter === 'volumeIdsOnly'){
-                                    location.href = '@routes.WorksetManagement.downloadWorkset(w.name,w.author)';
+                                    location.href = '@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)';
                                 } else {
-                                    location.href = '@routes.WorksetManagement.downloadWorkset(w.name,w.author)'
+                                    location.href = '@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)'
                                 }
 
                             }
@@ -110,9 +110,15 @@
         // data.direction - the sorting direction (either asc or desc)
 
         var th = $(this).find("th");
+
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#description").find(".arrow").remove();
+        $("#actions").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
+
         });
     </script>
 }

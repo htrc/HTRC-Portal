@@ -36,34 +36,44 @@ public class CSV2WorksetXMLConverter {
                 throw new Exception("Empty Workset CSV.");
             }
 
-            String[] headers = rows.remove(0);
-            if (headers.length <= 0) {
-                log.warn("Empty headers list.");
-                throw new Exception("Empty headers list.");
+            String[] headers = rows.get(0);
+            if(headers[0].startsWith("volume")||headers[0].contains("volume")||headers[0].contains("id")){
+               rows.remove(0);
+            }else{
+                headers = new String[headers.length];
+                for(int i = 0; i < headers.length; i++){
+                    headers[i] = "header-"+i;
+                }
+                log.warn("No headers for the workset");
             }
-
             for (String[] row : rows) {
+                if(!row[0].isEmpty()){
                 Element volumeEle = volumesDoc.createElement("volume");
                 volumesEle.appendChild(volumeEle);
 
                 Element propsEle = volumesDoc.createElement("properties");
 
-                for (int i = 0; i < row.length; i++) {
-                    if (i == 0) {
-                        Element idEle = volumesDoc.createElement("id");
-                        idEle.setTextContent(row[i]);
-                        volumeEle.appendChild(idEle);
-                    } else {
-                        Element propertyEle = volumesDoc.createElement("property");
-                        propertyEle.setAttribute("name", headers[i]);
-                        propertyEle.setAttribute("value", row[i]);
-                        propsEle.appendChild(propertyEle);
+                    for (int i = 0; i < row.length; i++) {
+                        if (i == 0) {
+                            Element idEle = volumesDoc.createElement("id");
+                            idEle.setTextContent(row[i]);
+                            volumeEle.appendChild(idEle);
+                        } else{
+                            Element propertyEle = volumesDoc.createElement("property");
+                            propertyEle.setAttribute("name", headers[i]);
+                            propertyEle.setAttribute("value", row[i]);
+                            propsEle.appendChild(propertyEle);
+                        }
                     }
+
+                    if (row.length > 1) {
+                        volumeEle.appendChild(propsEle);
+                    }
+                }else{
+                    log.warn("There are empty rows in CSV file.");
                 }
 
-                if (row.length > 1) {
-                    volumeEle.appendChild(propsEle);
-                }
+
             }
 
             return volumesDoc;

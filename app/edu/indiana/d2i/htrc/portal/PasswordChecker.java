@@ -42,11 +42,11 @@ public class PasswordChecker {
         // require at least 2 of the previous rules be met if there is an Unicode in the password
         // if there is no Unicode in the password, require at least 3 of previous rules.
         if (atLeastOneUniCodeCharacter(password) && atLeastOneNonAlphaNumericCharacter(password)) {
-            charRule.setNumberOfCharacteristics(1);
+            charRule.setNumberOfCharacteristics(0);
         } else if (atLeastOneUniCodeCharacter(password) || atLeastOneNonAlphaNumericCharacter(password)) {
-            charRule.setNumberOfCharacteristics(2);
+            charRule.setNumberOfCharacteristics(1);
         } else {
-            charRule.setNumberOfCharacteristics(3);
+            charRule.setNumberOfCharacteristics(2);
         }
 
 

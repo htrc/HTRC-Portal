@@ -7,12 +7,12 @@ GET         /                                                 controllers.HTRCPo
 
 # Login Form
 GET         /login                                            controllers.HTRCPortal.login()
-
-# Authenticate
-POST        /login                                            controllers.HTRCPortal.authenticate()
-
-# Logout Form
-
+#
+## Authenticate
+#POST        /login                                            controllers.HTRCPortal.authenticate()
+#
+## Logout Form
+#
 GET         /logout                                           controllers.HTRCPortal.logout()
 
 # Signup Form
@@ -40,6 +40,9 @@ GET         /passwordresetmail                                controllers.UserMa
 
 # Send Password reset link
 POST        /passwordresetmail                                controllers.UserManagement.passwordResetMail()
+
+# Validate email domain
+GET         /isvalidemaildomain                               controllers.UserManagement.validateEmail(email:String ?="")
 
 # About Form
 
@@ -111,3 +114,8 @@ GET         /assets/*file                                     controllers.Assets
 GET         /assets/img/glyphicons-halflings.png              controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
 GET         /assets/img/glyphicons-halflings-white.png        controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
 
+# SAML2 Authentication
+GET         /callback                                         org.pac4j.play.CallbackController.callback()
+POST        /callback                                         org.pac4j.play.CallbackController.callback()
+
+#GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()

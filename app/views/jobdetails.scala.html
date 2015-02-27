@@ -8,24 +8,25 @@
                     <strong>Job Details</strong>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
+                    <div class="container">
+                        <div class="row">
                         <div class="col-sm-4">
                             <table class="table">
                             @for(details <- jobDetails) {
                                 <tr>
-                                    <td><b>Job Title: </b></td>
+                                    <td style="padding-left:15px;"><b>Job Name: </b></td>
                                     <td>@details.getJobTitle</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Algorithm Name: </b></td>
+                                    <td style="padding-left:15px;"><b>Algorithm Name: </b></td>
                                     <td>@details.getAlgorithmName</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Last Updated: </b></td>
+                                    <td style="padding-left:15px;"><b>Last Updated: </b></td>
                                     <td>@details.getLastUpdatedDate</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Results: </b></td>
+                                    <td style="padding-left:15px;"><b>Results: </b></td>
                                     <td>
                                         <table>
                                         @for(results <- details.getResults) {
@@ -35,7 +36,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><b>Job Parameters: </b></td>
+                                    <td style="padding-left:15px;"><b>Job Parameters: </b></td>
                                     <td>
                                         <table class="table-bordered">
                                             <thead>
@@ -56,11 +57,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><b>Job Id: </b></td>
+                                    <td style="padding-left:15px;"><b>Job Id: </b></td>
                                     <td>@details.getJobId</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Status: </b></td>
+                                    <td style="padding-left:15px;"><b>Status: </b></td>
                                     <td><span class="label label-info"><b>@details.getJobStatus</b></span></td>
                                 </tr>
                             }
@@ -72,7 +73,7 @@
                             </iframe>
                         </div>
                     </div>
-
+                    </div>
                 </div>
             </div>
         </div>

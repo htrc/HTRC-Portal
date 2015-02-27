@@ -157,6 +157,7 @@ td{
 .volume{
     border-bottom: 1px #ccc dashed;
     margin-bottom: 10px;
+    padding-left: 15px;
 }
 
 .volume h3{
@@ -322,8 +323,23 @@ td{
 
 
 .show-more {
-    padding: 10px 0;
+    padding: 1px 0;
     text-align: center;
+}
+
+.arrow{
+    padding-left: 8px;
+
+}
+
+.warn-block{
+    font-weight: bold;
+    font-style: italic;
+    padding-top: 5px;
+}
+
+.active{
+    disabled : false;
 }
 
 

@@ -7,6 +7,9 @@
             <div class="panel panel-default panel-htrc panel-with-table">
                 <div class="panel-heading">
                     <strong>Virtual Machine Status</strong>
+                    <span>
+                        <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">Back to List</a>
+                    </span>
                 </div>
                 <div class="panel-body">
                     <table class="table">
@@ -40,10 +43,6 @@
                                 <td>@vmStatus.getVncPort</td>
                             </tr>
                             <tr>
-                                <td><b>SSH Port:</b></td>
-                                <td>@vmStatus.getSshPort</td>
-                            </tr>
-                            <tr>
                                 <td><b>Host Name:</b></td>
                                 <td>@vmStatus.getPublicIp</td>
                             </tr>
@@ -61,7 +60,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="@routes.ExperimentalAnalysis.listVMs()" class="button btn-info btn-small pull-left">Back</a>
                 </div>
             </div>
         </div>

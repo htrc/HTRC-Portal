@@ -93,6 +93,13 @@ public class PlayConfWrapper {
     // Valid domain files
     private static String validDomainsFirstCSV = null;
     private static String validDomainsSecondCSV = null;
+    private static String validDomainsThirdCSV = null;
+
+    // SAML2 Credentials
+    private static String saml2KeyStorePath = null;
+    private static String saml2KeyStorePassword = null;
+    private static String saml2PrivateKeyPassword = null;
+    private static String idpMetadataPath = null;
 
     public static String agentEndpoint() {
         if(agentEndpoint == null){
@@ -414,6 +421,41 @@ public class PlayConfWrapper {
             validDomainsSecondCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV);
         }
         return validDomainsSecondCSV;
+    }
+
+    public static String validDomainsThirdCSV(){
+        if(validDomainsThirdCSV == null){
+            validDomainsThirdCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_THIRD_CSV);
+        }
+        return validDomainsThirdCSV;
+    }
+
+    public static String saml2KeyStorePath(){
+        if(saml2KeyStorePath == null){
+            saml2KeyStorePath = Play.application().configuration().getString(PortalConstants.SAML2_KEYSTORE_PATH);
+        }
+        return saml2KeyStorePath;
+    }
+
+    public static String saml2KeyStorePassword(){
+        if(saml2KeyStorePassword == null){
+            saml2KeyStorePassword = Play.application().configuration().getString(PortalConstants.SAML2_KEYSTORE_PASSWORD);
+        }
+        return saml2KeyStorePassword;
+    }
+
+    public static String saml2PrivateKeyPassword(){
+        if(saml2PrivateKeyPassword == null){
+            saml2PrivateKeyPassword = Play.application().configuration().getString(PortalConstants.SAML2_PRIVATEKEY_PASSWORD);
+        }
+        return saml2PrivateKeyPassword;
+    }
+
+    public static String idpMetadataPath(){
+        if(idpMetadataPath == null){
+            idpMetadataPath = Play.application().configuration().getString(PortalConstants.IDP_METADATA_PATH);
+        }
+        return idpMetadataPath;
     }
 }
 

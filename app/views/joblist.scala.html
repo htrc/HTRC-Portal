@@ -11,18 +11,20 @@
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.cancelJobs() , 'id -> "active_jobs"){
-                    <activejobtable class="activejobtable" id="activeJobList">
+                    <table class="table" id="activeJobList">
                         <thead>
                             <tr>
-                                <th data-sort="string">Job Title</th>
-                                <th>Last Updated</th>
-                                <th>Status</th>
-                                <th>Cancel?</th>
+                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
+                                <th id="cancelaction">Cancel?</th>
                             </tr>
                         </thead>
                         <tbody>
                         @for(job <- activeJobs){
                             <tr>
+                                <td>@(activeJobs.indexOf(job)+1)</td>
                                 <td>@job.getJobTitle()</td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
@@ -35,7 +37,7 @@
                                 </tr>
                             }
                         </tbody>
-                    </activejobtable>
+                    </table>
                 }
             </div>
         </div>
@@ -49,19 +51,21 @@
             </div>
             <div class="panel-body">
                 @helper.form(routes.JobManagement.updateJobs(), 'id -> "completed_jobs"){
-                    <activejobtable class="activejobtable" id="completedJobList">
+                    <table class="table" id="completedJobList">
                         <thead>
                             <tr>
-                                <th data-sort="string">Job Title</th>
-                                <th>Last Updated</th>
-                                <th>Status</th>
-                                <th>Delete?</th>
+                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
+                                <th id="deleteaction">Delete?</th>
                                 @*<th>Saved?</th>*@
                             </tr>
                         </thead>
                         <tbody>
                         @for(job <- completedJobs){
                             <tr>
+                                <td>@(completedJobs.indexOf(job)+1)</td>
                                 <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId())">@job.getJobTitle()</a></td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
@@ -75,7 +79,7 @@
                                 </tr>
                             }
                         </tbody>
-                    </activejobtable>
+                    </table>
                 }
 
             </div>
@@ -112,8 +116,11 @@
 
         var th = $(this).find("th");
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#cancelaction").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
         });
 
         /* completedjobtable sorting */
@@ -124,8 +131,11 @@
 
         var th = $(this).find("th");
         th.find(".arrow").remove();
-        var arrow = data.direction === "asc" ? "↑" : "↓";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+        th.append('<i class="arrow fa fa-sort"></i>');
+        th.eq(data.column).find(".arrow").remove();
+        $("#deleteaction").find(".arrow").remove();
+        th.eq(data.column).append(arrow);
         });
 
 

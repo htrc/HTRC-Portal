@@ -1,20 +1,19 @@
 package controllers;
 
 
-import controllers.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import edu.indiana.d2i.htrc.portal.PasswordChecker;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
-import edu.vt.middleware.password.*;
 import models.Token;
 import models.User;
-import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
+import org.pac4j.play.java.JavaController;
 import play.Logger;
 import play.data.Form;
-import play.data.validation.Constraints;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
@@ -22,8 +21,6 @@ import views.html.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.xml.bind.annotation.XmlElementDecl;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +28,7 @@ import java.util.*;
 
 import static play.data.Form.form;
 
-public class UserManagement extends Controller {
+public class UserManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
     public static Result createSignUpForm() {
@@ -48,7 +45,10 @@ public class UserManagement extends Controller {
             return badRequest(signup.render(signUpForm, null));
         }
         log.info("User "+signUpForm.get().userId+" signed up successfully.");
-        return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to " + signUpForm.get().email, null, null,null));
+        return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to "
+                + signUpForm.get().email+
+                ". If you don't receive your activation link within 5 minutes, please contact us by email " +
+                " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
     }
 
     public static Result activateAccount(String token) {
@@ -171,6 +171,19 @@ public class UserManagement extends Controller {
         return ok(gotopage.render("Your user ID is sent to " + userEmail + ". Click on the login link to begin:", "login", "Login",null));
     }
 
+    public static Result validateEmail(String email){
+        // Validate the email and set isValid.
+        boolean isValid = SignUp.isInstitutionalEmailDomain(email);
+        ObjectNode result = Json.newObject();
+        if(isValid){
+            result.put("valid", true);
+        } else {
+            result.put("valid", false);
+        }
+
+        return ok(result);
+    }
+
 
     public static class SignUp {
         public static Map<String,Integer> instDomains;
@@ -180,6 +193,8 @@ public class UserManagement extends Controller {
         public String firstName;
         public String lastName;
         public String email;
+        public String confirmEmail;
+        public String acknowledgement;
 //        private final String[] permissions = {"/permission/admin/login"};
         private String status = null;
 
@@ -189,26 +204,39 @@ public class UserManagement extends Controller {
         public String validate() {
             if (userId.isEmpty() || password.isEmpty()
                     || confirmPassword.isEmpty() || firstName.isEmpty()
-                    || lastName.isEmpty() || email.isEmpty()) {
+                    || lastName.isEmpty() || email.isEmpty() || confirmEmail.isEmpty()) {
 
                 return "Please fill all the fields.";
             }
             log.info("User ID: " + userId);
+            if(userId.contains("@")){
+                return "User ID must not contain '@' sign. ";
+            }
             if (userManager.isUserExists(userId)) {
                 return "Username already exists.";
             }
-            if(password.length()< 15){
-                return "Password should be more than 15 characters long.";
-            }
-            if(password.contains(" ")){
-                return "Password should not contain any white spaces.";}
-            if (!passwordChecker.isValidPassword(password)) {
-                return "Please use a strong password.";
-            }
-            if (!password.equals(confirmPassword)) {
-                return "Passwords do not match.";
 
+            if (userManager.roleNameExists(userId)) {
+                return "There's a role name already exists with this name. Please use another username.";
             }
+
+            if (passwordValidate(password,confirmPassword) != null){
+                return passwordValidate(password,confirmPassword);
+            }
+
+            if(!email.equals(confirmEmail)){
+                return "Emails are not matching.";
+            }
+
+
+            if(acknowledgement == null){
+                return "You have not acknowledge the user registration acknowledgement. Please acknowledge.";
+            }
+
+
+            log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
+                    + " User ID: " + userId);
+
             if (!isInstitutionalEmailDomain(email)) {
                 return "Email is not an institutional email. Please enter your institutional email." +
                         "If you don't have an institutional email or if your email is not recognized by our system, " +
@@ -256,7 +284,7 @@ public class UserManagement extends Controller {
 
         public static boolean isInstitutionalEmailDomain(String email) {
 
-//            Map<String,Integer> instDomains = CSVReader.readAndSaveInstDomains("/Users/shliyana/Downloads/Accreditation_2014_03/Accreditation_2014_03.csv");
+            instDomains.putAll(CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsThirdCSV()));
             if (email.isEmpty()) {
                 log.warn("Email is empty");
                 return false;
@@ -324,17 +352,8 @@ public class UserManagement extends Controller {
 
         public String validate() {
             log.debug("Token in the form: "+ token);
-            if(password.isEmpty()){
-                return "Password is empty, Please enter password.";
-            }
-            if(password.length()< 15){
-                return "Password should be more than 15 characters long.";
-            }if(password.contains(" ")){
-                return "Password should not contain any white spaces.";}
-            if (!passwordChecker.isValidPassword(password)) {
-                return "Please use a strong password.";
-            }if (!password.equals(retypePassword)) {
-                return "The Passwords do not match.";
+            if(passwordValidate(password,retypePassword) != null){
+                return passwordValidate(password,retypePassword);
             }
             return null;
         }
@@ -350,7 +369,7 @@ public class UserManagement extends Controller {
             if (userEmail.isEmpty()) {
                 return "Email is empty, Please enter your email";
             }
-            userIDs = userManager.getUserIds(userEmail);
+            userIDs = userManager.getUserIdsFromEmail(userEmail);
             log.info("User ID List : " + userIDs);
             if (userIDs.isEmpty()) {
                 return "User name does not exist for the email: " + userEmail;
@@ -370,7 +389,7 @@ public class UserManagement extends Controller {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
 
-        log.info("Email: " + PlayConfWrapper.htrcEmail() + " password: " + PlayConfWrapper.htrcEmailPassword());
+        log.info("Email: " + PlayConfWrapper.htrcEmail());
 
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
@@ -397,5 +416,23 @@ public class UserManagement extends Controller {
             throw new RuntimeException(e);  // TODO: Review exception handling logic.
         }
 
+    }
+
+    public static String passwordValidate(String password, String retypePassword){
+        PasswordChecker passwordChecker = new PasswordChecker();
+
+        if(password.isEmpty()){
+            return "Password is empty, Please enter password.";
+        }
+        if(password.length()< 15){
+            return "Password should be more than 15 characters long.";
+        }if(password.contains(" ")){
+            return "Password should not contain any white spaces.";}
+        if (!passwordChecker.isValidPassword(password)) {
+            return "Please use a strong password.";
+        }if (!password.equals(retypePassword)) {
+            return "The Passwords do not match.";
+        }
+        return null;
     }
 }

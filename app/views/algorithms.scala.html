@@ -11,19 +11,19 @@
                 <table class="table" id="algorithms">
                     <thead>
                         <tr>
-                            <th data-sort="int">#</th>
-                            <th data-sort="string">Name</th>
-                            <th>Description</th>
-                            <th data-sort="string">Author</th>
-                            <th data-sort="int">Version</th>
+                            <th data-sort="int">#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                            <th id="description">Description</th>
+                            <th data-sort="string">Author<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="int">Version<i class="fa fa-sort arrow"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                     @for((w, id) <- algorithms.zipWithIndex){
                         <tr>
                             <td>@(id + 1)</td>
-                            <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)">@w.getName</a></td>
-                            <td><div class=" text-content short-text">@w.getDescription</div>
+                            <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)">@w.getName</a></td>
+                            <td><div class=" text-content short-text" style="max-width: 400px; word-wrap: break-word">@w.getDescription</div>
                                 <div class="show-more"><a href="#">Show more</a></div></td>
                             <td>
                                 @if(w.getAuthors.size() > 1){
@@ -94,8 +94,11 @@
 
     var th = $(this).find("th");
     th.find(".arrow").remove();
-    var arrow = data.direction === "asc" ? "↑" : "↓";
-    th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+    var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>';
+    th.append('<i class="arrow fa fa-sort"></i>');
+    th.eq(data.column).find(".arrow").remove();
+    $("#description").find(".arrow").remove();
+    th.eq(data.column).append(arrow);
     });
 
     </script>

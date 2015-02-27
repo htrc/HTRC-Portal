@@ -86,6 +86,7 @@ public class  PortalConstants {
     // error message
     public static String CANNOT_GETDATA_FROM_AGENT = "Unable to get data from agent.";
     public static String CANNOT_GETDATA_FROM_REGISTRY = "Unable to get data from registry.";
+    public static String CANNOT_GETDATA_FROM_SERVER = "Unable to get data from server.";
 
     public static final String PORTAL_CACHED_JOB_DETAILS = "portal.job.details";
     public static final String PORTAL_JOB_DETAILS_CACHED_TIME = "portal.job.details.cached.time";
@@ -131,4 +132,11 @@ public class  PortalConstants {
 
     public static String HTRC_VALID_DOMAIN_FIRST_CSV = "htrc.valid.domains.csv.first";
     public static String HTRC_VALID_DOMAIN_SECOND_CSV = "htrc.valid.domains.csv.second";
+    public static String HTRC_VALID_DOMAIN_THIRD_CSV = "htrc.valid.domains.csv.third";
+
+    //SAML2 Credentials
+    public static String SAML2_KEYSTORE_PATH = "saml2.keystore.path";
+    public static String SAML2_KEYSTORE_PASSWORD = "saml2.keystore.password";
+    public static String SAML2_PRIVATEKEY_PASSWORD = "saml2.privatekey.password";
+    public static String IDP_METADATA_PATH = "idp.metadata.path";
 }

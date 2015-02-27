@@ -1,0 +1,66 @@
+<saml2:Assertion ID="bpmnofnofoiejbeljpdidnkhmnmddgmbadkjkebh" IssueInstant="2014-10-29T12:26:11.870Z" Version="2.0"
+                 xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">ssoidp.com</saml2:Issuer>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:SignedInfo>
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <ds:Reference URI="#bpmnofnofoiejbeljpdidnkhmnmddgmbadkjkebh">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                        <ec:InclusiveNamespaces PrefixList="xs" xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    </ds:Transform>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <ds:DigestValue>DFn+PkMiGv1QSOh0phyp2MOyWR0=</ds:DigestValue>
+            </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>
+            F6mV8lkr23Df+pJ1rdLsJuNnUZev7rNhrojgsl1DJ44uam7AXN+QQ2MXEpB9XWFzTD3Ja7tVU2rCe3NxPpTIsigJJ7CAgNWZT6djPx9FRFmXXZMCTrGiWB8AKEAQeoH+vJnwgDamcxNkDW5tKMhmsnZb4ogvtAmuKR+6YinGprE=
+        </ds:SignatureValue>
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate>
+                    MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxvY2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzENMAsGA1UECgwEV1NPMjESMBAGA1UEAwwJbG9jYWxob3N0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUp/oV1vWc8/TkQSiAvTousMzOM4asB2iltr2QKozni5aVFu818MpOLZIr8LMnTzWllJvvaA5RAAdpbECb+48FjbBe0hseUdN5HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQIDAQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44iQlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJRO4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo=
+                </ds:X509Certificate>
+            </ds:X509Data>
+        </ds:KeyInfo>
+    </ds:Signature>
+    <saml2:Subject>
+        <saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">asela</saml2:NameID>
+        <saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+            <saml2:SubjectConfirmationData InResponseTo="0" NotOnOrAfter="2014-10-29T12:56:11.870Z"
+                                           Recipient="http://localhost:8080/travelocity.com/home.jsp"/>
+        </saml2:SubjectConfirmation>
+        <saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+            <saml2:SubjectConfirmationData InResponseTo="0" NotOnOrAfter="2014-10-29T12:56:11.870Z"
+                                           Recipient="https://oauthidm.com/oauth/token"/>
+        </saml2:SubjectConfirmation>
+    </saml2:Subject>
+    <saml2:Conditions NotBefore="2014-10-29T12:26:11.870Z" NotOnOrAfter="2014-10-29T12:56:11.870Z">
+        <saml2:AudienceRestriction>
+            <saml2:Audience>travelocity.com</saml2:Audience>
+            <saml2:Audience>https://oauthidm.com/oauth/token</saml2:Audience>
+        </saml2:AudienceRestriction>
+    </saml2:Conditions>
+    <saml2:AuthnStatement AuthnInstant="2014-10-29T12:26:11.870Z" SessionIndex="f58108ac-da02-4f22-9ed2-ecf2f8848947">
+        <saml2:AuthnContext>
+            <saml2:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml2:AuthnContextClassRef>
+        </saml2:AuthnContext>
+    </saml2:AuthnStatement>
+    <saml2:AttributeStatement>
+        <saml2:Attribute Name="http://wso2.org/claims/role"
+                         NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">
+                Pathberiya
+            </saml2:AttributeValue>
+        </saml2:Attribute>
+        <saml2:Attribute Name="http://wso2.org/claims/emailaddress"
+                         NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">
+                asela@soasecurity.org
+            </saml2:AttributeValue>
+        </saml2:Attribute>
+    </saml2:AttributeStatement>
+</saml2:Assertion>
