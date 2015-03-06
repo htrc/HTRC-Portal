@@ -207,6 +207,10 @@ var userIdInputKeyUp = function () {
         userIdCorrect = false;
         hasError(userIdControlGroup, userIdFeedback);
         userIdWarnBlock.html('User ID cannot be empty!');
+    }else if(userId.length < 3){
+        userIdCorrect = false;
+        hasError(userIdControlGroup, userIdFeedback);
+        userIdWarnBlock.html('User ID must be at least 5 characters long!');
     }else {
         userIdCorrect = true;
         hasSuccess(userIdControlGroup, userIdFeedback);
