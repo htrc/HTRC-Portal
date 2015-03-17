@@ -1,0 +1,13 @@
+/* START SANDBOX */
+.sandbox-banner a {
+	color: darkred;
+	font-weight: bold;
+}
+.sandbox-banner {
+	background: orange;
+	text-align: center;
+	margin-top: -16px;
+	padding: 7px 10px 2px 10px;
+	font-size: smaller;
+}
+/* END SANDBOX */

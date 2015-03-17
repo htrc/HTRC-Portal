@@ -11,6 +11,7 @@
             <!-- Bootstrap -->
         <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
+        <link href="@routes.Assets.at("stylesheets/sandbox.css")" rel="stylesheet" media="screen">
         <link href="@routes.Assets.at("stylesheets/flat.css")" rel="stylesheet" media="screen">
         <link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
@@ -34,7 +35,7 @@
                     </button>
                     <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
                     width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;">
-                        HTRC Sandbox
+                        HTRC Sandbox Portal
                     </a>
                 </div>
 
@@ -146,6 +147,10 @@
                     <!--/.nav-collapse -->
             </div>
         </nav>
+        <!-- SANDBOX BANNER -->
+        <div class="sandbox-banner">You are on the HTRC Sandbox. This is where new functionality is introduced on a smaller <a href="http://www.hathitrust.org/datasets">public domain</a> subset of the HathiTrust.<br><a href="http://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=10649690#HathiTrustResearchCenterFrequentlyAskedQuestion(FAQ)-Q:WhatarethedifferencesbetweentheProductionStackandtheSandbox?">Read more about the Sandbox</a> or visit the <strong><a href="https://htrc2.pti.indiana.edu/HTRC-UI-Portal2/">main HTRC Portal</a></strong>.</div>
+        <!-- END SANDBOX -->
+
         @*<div class="container" style="padding-top : 15 px ;">*@
         @content
         @*</div>*@
