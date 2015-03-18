@@ -47,6 +47,19 @@
                                 <td>@vmStatus.getPublicIp</td>
                             </tr>
                             <tr>
+                                <td><strong>VNC URL:</strong></td>
+                                <td id="vnc-url">@vmStatus.getPublicIp:@vmStatus.getVncPort</td>
+                                <script type="text/javascript">
+                                    $(document).ready(function(){
+                                        if(bowser.safari){
+                                            var td = $("#vnc-url");
+                                            var url = $("#vnc-url").text();
+                                            td.html("<a href='vnc://" + url +"'>" + url + "</a>");
+                                        }
+                                    });
+                                </script>
+                            </tr>
+                            <tr>
                                 <td><b>Memory:</b></td>
                                 <td>@vmStatus.getMemory</td>
                             </tr>
