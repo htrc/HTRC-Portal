@@ -101,6 +101,17 @@ public class PlayConfWrapper {
     private static String saml2PrivateKeyPassword = null;
     private static String idpMetadataPath = null;
 
+    //Documentations
+    private static String releaseDocument = null;
+    private static String announcementsDocument = null;
+
+    // Custom CSS
+    private static String customCSSTheme = null;
+
+    // Feature Activations
+    private static boolean isDataCapsuleEnabled = false;
+
+
     public static String agentEndpoint() {
         if(agentEndpoint == null){
             agentEndpoint = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_EPR);
@@ -456,6 +467,32 @@ public class PlayConfWrapper {
             idpMetadataPath = Play.application().configuration().getString(PortalConstants.IDP_METADATA_PATH);
         }
         return idpMetadataPath;
+    }
+
+    public static String releaseDocument(){
+        if(releaseDocument == null){
+            releaseDocument = Play.application().configuration().getString(PortalConstants.RELEASE_DOCUMENT);
+        }
+        return releaseDocument;
+    }
+
+    public static String announcementDocument(){
+        if(announcementsDocument == null){
+            announcementsDocument = Play.application().configuration().getString(PortalConstants.ANNOUNCEMENTS_DOCUMENT);
+        }
+        return announcementsDocument;
+    }
+
+    public static String customCSSTheme(){
+        if(customCSSTheme == null){
+            customCSSTheme = Play.application().configuration().getString(PortalConstants.CUSTOM_CSS_THEME);
+        }
+        return customCSSTheme;
+    }
+
+    public static boolean isDataCapsuleEnable(){
+        isDataCapsuleEnabled = Play.application().configuration().getBoolean(PortalConstants.IS_DATA_CAPSULE_ENABLE);
+        return isDataCapsuleEnabled;
     }
 }
 

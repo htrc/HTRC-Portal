@@ -49,8 +49,11 @@ GET         /isvalidemaildomain                               controllers.UserMa
 GET         /about                                            controllers.HTRCPortal.about()
 
 
-# Workset List Form
-GET         /listworksets                                     controllers.WorksetManagement.worksets()
+# All Worksets List Form
+GET         /listallworksets                                  controllers.WorksetManagement.allWorksets()
+
+# User's Worksets List Form
+GET         /listuserworksets                                 controllers.WorksetManagement.userWorksets()
 
 # Create Workset from HTRC Workset builder
 GET         /createworkset                                    controllers.HTRCWorksetBuilder.createWorkset()
@@ -118,4 +121,7 @@ GET         /assets/img/glyphicons-halflings-white.png        controllers.Assets
 GET         /callback                                         org.pac4j.play.CallbackController.callback()
 POST        /callback                                         org.pac4j.play.CallbackController.callback()
 
+GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
+
+GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()
