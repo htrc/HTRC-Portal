@@ -4,7 +4,6 @@ package controllers;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.illinois.i3.htrc.registry.entities.workset.Property;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
-import edu.illinois.i3.htrc.registry.entities.workset.WorksetMeta;
 import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
@@ -25,9 +24,7 @@ import org.w3c.dom.NodeList;
 import play.Logger;
 import play.mvc.Http;
 import play.mvc.Result;
-import views.html.gotopage;
-import views.html.workset;
-import views.html.worksetstable;
+import views.html.*;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
@@ -53,13 +50,19 @@ public class WorksetManagement extends JavaController {
 
 
     @RequiresAuthentication(clientName = "Saml2Client")
-    public static Result worksets() throws IOException, JAXBException {
+    public static Result allWorksets() throws IOException, JAXBException {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
+        return ok(allworksetstable.render(loggedInUser, worksetList));
+    }
 
-
-        return ok(worksetstable.render(loggedInUser, worksetList));
+    @RequiresAuthentication(clientName = "Saml2Client")
+    public static Result userWorksets() throws IOException, JAXBException {
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getUserWorksets();
+        return ok(userworksetstable.render(loggedInUser, worksetList));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
@@ -133,7 +136,7 @@ public class WorksetManagement extends JavaController {
 
             }
         }
-        return ok(gotopage.render("Error occurred retrieving "+ worksetName +" workset. Please try again later.", "routes.WorksetManagement.worksets()","Go to Workset List page.", loggedInUser));
+        return ok(gotopage.render("Error occurred retrieving "+ worksetName +" workset. Please try again later.", "routes.WorksetManagement.allWorksets()","Go to Workset List page.", loggedInUser));
         
 
     }
@@ -410,9 +413,9 @@ public class WorksetManagement extends JavaController {
 
 //    public static List<Workset> getWorksets() throws IOException, JAXBException {
 //        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-//        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+//        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
 //
-//        List<Workset> worksets = new ArrayList<Workset>();
+//        List<Workset> allWorksets = new ArrayList<Workset>();
 //
 //        for(edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList){
 //            WorksetMeta metadata = w.getMetadata();
@@ -428,7 +431,7 @@ public class WorksetManagement extends JavaController {
 //            }
 //
 //            if(volumeList != null) {
-//                worksets.add(new Workset(metadata.getName(),
+//                allWorksets.add(new Workset(metadata.getName(),
 //                        metadata.getDescription(),
 //                        metadata.getAuthor(),
 //                        metadata.getLastModifiedBy(),
@@ -438,7 +441,7 @@ public class WorksetManagement extends JavaController {
 //            }
 //        }
 //
-//        return worksets;
+//        return allWorksets;
 //    }
 
     private static String domToString(Document doc) throws TransformerException {

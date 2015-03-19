@@ -1,0 +1,94 @@
+@(user: User, worksets: List[edu.illinois.i3.htrc.registry.entities.workset.Workset])
+
+@main("Worksets", user) {
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>My Worksets (@worksets.size())</strong>
+                @*<div class="dropdown clearfix pull-right">*@
+                @*<button class="btn btn-xs btn-link dropdown-toggle" type="button" id="dropDownFilter" data-toggle="dropdown">*@
+                @*Filter*@
+                @*<span class="caret"></span>*@
+                @*</button>*@
+                @*<ul class="dropdown-menu" role="menu" aria-labelledby="dropDownFilter">*@
+                @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Private</a></li>*@
+                @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Owned</a></li>*@
+                @*<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Public</a></li>*@
+                @*</ul>*@
+                @*</div>*@
+            </div>
+            <div class="panel-body">
+                <table class="table" id="allWorksets">
+                    <thead>
+                        <tr>
+                            <th data-sort="int" style="min-width : 40 px ;">#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                            <th id="description">Description</th>
+                            <th data-sort="int" style="min-width : 100 px ;">Volumes<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string-ins" style="min-width : 100 px ;">
+                                Visibility<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width : 150 px ;">
+                                Last Updated<i class="fa fa-sort arrow"></i></th>
+                            <th id="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for((w, id) <- worksets.zipWithIndex) {
+                        <tr class="@if(w.getMetadata.getAuthor == user.userId) {owned} else {others}">
+                            <td>@(id + 1)</td>
+                            <td style="max-width : 150 px ; word-wrap : break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
+                            <td style="max-width : 250 px ; word-wrap : break-word">@w.getMetadata.getDescription</td>
+                            <td>@w.getMetadata.getVolumeCount</td>
+                            <td>@if(w.getMetadata.isPublic) {Public} else {Private}</td>
+                            <td>@w.getMetadata.getLastModified.toString.substring(0, 19)</td>
+                            <td style="min-width : 132 px ;">
+                                @if(w.getMetadata.getAuthor == user.userId) {
+                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.url") ')" target="_blank">
+                                        <i class="icon-edit icon-white"></i> Edit</a>
+                                }
+                            <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                                Download</a>
+
+                            </td>
+                        </tr>
+
+
+
+                        <script type="text/javascript">
+                        function downloadWorkset ( worksetName ) {
+                        var contentFilter = $ ( "input:radio[name=contentFilter]" ).val ( ) ;
+                        if ( contentFilter === 'volumeIdsOnly' ) {
+                        location.href = ' @routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor) ';
+                        } else {
+                        location.href = ' @routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor) '
+                        }
+                        }
+                        </script>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+    var table = $ ( "#allWorksets" ).stupidtable ( ) ;
+    table.bind ( 'aftertablesort', function ( event, data ) {
+    // data.column - the index of the column sorted after a click
+    // data.direction - the sorting direction (either asc or desc)
+
+    var th = $ ( this ).find ( "th" ) ;
+
+    th.find ( ".arrow" ).remove ( ) ;
+    var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>' ;
+    th.append ( '<i class="arrow fa fa-sort"></i>' ) ;
+    th.eq ( data.column ).find ( ".arrow" ).remove ( ) ;
+    $ ( "#description" ).find ( ".arrow" ).remove ( ) ;
+    $ ( "#actions" ).find ( ".arrow" ).remove ( ) ;
+    th.eq ( data.column ).append ( arrow ) ;
+
+    } ) ;
+    </script>
+}

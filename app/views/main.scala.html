@@ -1,4 +1,5 @@
 @(title: String, user: User)(content: Html)
+@import edu.indiana.d2i.htrc.portal.PlayConfWrapper
 @import play.api.Play
 
 
@@ -16,12 +17,14 @@
         <link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
         <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/bowser.min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/uploadws.js")"></script>
+        <link href="@routes.Assets.at(PlayConfWrapper.releaseDocument())">
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top navbar-htrc" role="navigation">
@@ -50,9 +53,15 @@
                                 Worksets <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >List</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal" >My Worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.worksets()">List</a></li>
+                                    <li><a href="@routes.WorksetManagement.userWorksets()">My Worksets(@user.noOfMyWorksets)</a></li>
+                                }
+                                <li class="divider"></li>
+                                @if(user == null) {
+                                    <li><a href="#login-required-modal" data-toggle="modal" >All Worksets</a></li>
+                                } else {
+                                    <li><a href="@routes.WorksetManagement.allWorksets()">All Worksets(@user.noOfAllWorksets)</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
@@ -77,30 +86,32 @@
                         } else {
                             <li><a href="@routes.JobManagement.listJobs()">Results</a></li>
                         }
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                HTRC Data Capsule<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">
-                                    Documentation</a>
-                                </li>
-                                <li class="divider"></li>
-                                @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >
-                                        Show Virtual Machines</a></li>
-                                } else {
-                                    <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
-                                }
-                                <li class="divider"></li>
-                                @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >
-                                        Create Virtual Machine</a></li>
-                                } else {
-                                    <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
-                                        Create Virtual Machine</a></li>
-                                }
-                            </ul>
-                        </li>
+                        @if(PlayConfWrapper.isDataCapsuleEnable) {
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    HTRC Data Capsule<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">
+                                        Documentation</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    @if(user == null) {
+                                        <li><a href="#login-required-modal" data-toggle="modal" >
+                                            Show Virtual Machines</a></li>
+                                    } else {
+                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
+                                    }
+                                    <li class="divider"></li>
+                                    @if(user == null) {
+                                        <li><a href="#login-required-modal" data-toggle="modal" >
+                                            Create Virtual Machine</a></li>
+                                    } else {
+                                        <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
+                                            Create Virtual Machine</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Help<b class="caret"></b></a>
@@ -153,6 +164,10 @@
 
         @*<div class="container" style="padding-top : 15 px ;">*@
         @content
+        <span class="fa-align-center">
+            <p style="text-align: center; font-size: small;">HTRC Portal(<a href="@routes.HTRCPortal.getReleaseDocument()" target="_blank">v3.0</a> )</p>
+        </span>
+
         @*</div>*@
         <div id="push"></div>
         @*<div id="footer">*@
@@ -196,7 +211,7 @@
                     </div>
                     @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
                         <div class="modal-body">
-                            <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
+                            <p>You can only upload allWorksets as text files that are in CSV (comma-separated-values) format.</p>
                             <div class="form-group has-feedback" id="wsname-control-group">
                                 <label for="worksetName" class="control-label">Workset Name</label>
                                 <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="true" aria-describedby="wsname-feedback-status"/>

@@ -132,11 +132,11 @@ public class HTRCPersistenceAPIClient {
     }
 
 
-    public List<Workset> getPublicWorksets() throws IOException,
+    public List<Workset> getAllWorksets() throws IOException,
             JAXBException {
 
         String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets" + "?public=" + true;
-        log.debug("getPublicWorksets Url: " + worksetUrl);
+        log.debug("getAllWorksets Url: " + worksetUrl);
 
         GetMethod get = new GetMethod(worksetUrl);
         get.addRequestHeader("Authorization", "Bearer " + accessToken);
@@ -153,7 +153,7 @@ public class HTRCPersistenceAPIClient {
             try {
                 accessToken = renewToken(refreshToken);
                 renew++;
-                return getPublicWorksets();
+                return getAllWorksets();
             } catch (Exception e) {
                 throw new IOException(e);
             }
@@ -165,6 +165,50 @@ public class HTRCPersistenceAPIClient {
             throw new IOException("Response code is " + response + " for request "
                     + worksetUrl);
         }
+    }
+
+    public List<Workset> getUserWorksets() throws IOException,
+            JAXBException {
+
+        String worksetUrl = PlayConfWrapper.registryEPR() + "/worksets";
+        log.debug("getUserWorksets Url: " + worksetUrl);
+
+        GetMethod get = new GetMethod(worksetUrl);
+        get.addRequestHeader("Authorization", "Bearer " + accessToken);
+        get.addRequestHeader("Accept", "application/vnd.htrc-workset+xml");
+
+        int response = client.executeMethod(get);
+        this.responseCode = response;
+        if (response == 200) {
+            String xmlStr = get.getResponseBodyAsString();
+            Worksets worksets = (Worksets) parseXML(xmlStr);
+            renew = 0;
+            return worksets.getWorkset();
+        } else if (response == 401 && (renew < MAX_RENEW)) {
+            try {
+                accessToken = renewToken(refreshToken);
+                renew++;
+                return getUserWorksets();
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        } else if (response == 404) {
+            log.info("No workset is found for request " + worksetUrl);
+            return Collections.emptyList();
+        } else {
+            log.error("Response code is " + response + "\n" + get.getResponseBodyAsString());
+            throw new IOException("Response code is " + response + " for request "
+                    + worksetUrl);
+        }
+    }
+/** Get all the other allWorksets other than user's allWorksets
+ *
+ */
+
+    public List<Workset> getPublicWorksets() throws IOException, JAXBException {
+        List<Workset> allWorksets = getAllWorksets();
+        allWorksets.removeAll(getUserWorksets());
+        return allWorksets;
     }
 
     public Workset getWorkset(String worksetId, String worksetAuthor) throws IOException, JAXBException {

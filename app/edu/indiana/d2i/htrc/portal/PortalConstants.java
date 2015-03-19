@@ -62,13 +62,13 @@ public class  PortalConstants {
     // registry entries
     public static String REGISTRY_ENDPOINT = "reg.epr";
     public static String REGISTRY_ALGO_FOLDER = "reg.alg.folder";
-    public static String WORKSETS_URL = "/worksets";
+    public static String WORKSETS_URL = "/allWorksets";
     public static String FILES_URL = "/files";
     public static String PUBLIC_WORKSET = "?public=true";
     public static String VOLUME_DETAILS_QUERY_SOLR_URL = "?q=id:";
 
     // workset entries
-    public static String WORKSETS_PER_PAGE = "worksets.per.page";
+    public static String WORKSETS_PER_PAGE = "allWorksets.per.page";
 
     // algorithm entries
     public static String ALGORITHMS_PER_PAGE = "algorithms.per.page";
@@ -118,7 +118,7 @@ public class  PortalConstants {
     // User Manager Constants
     public static final String UR_CONFIG_HTRC_USER_HOME = "user.home";
     public static final String UR_CONFIG_HTRC_USER_FILES = "user.files";
-    public static final String UR_CONFIG_HTRC_USER_WORKSETS = "user.worksets";
+    public static final String UR_CONFIG_HTRC_USER_WORKSETS = "user.allWorksets";
     public static final String UR_CONFIG_HTRC_USER_JOBS = "user.jobs";
 
     public static final String UR_CONFIG_WSO2IS_URL = "ur.config.wso2is.url";
@@ -139,4 +139,14 @@ public class  PortalConstants {
     public static String SAML2_KEYSTORE_PASSWORD = "saml2.keystore.password";
     public static String SAML2_PRIVATEKEY_PASSWORD = "saml2.privatekey.password";
     public static String IDP_METADATA_PATH = "idp.metadata.path";
+
+    //Documentations
+    public static String RELEASE_DOCUMENT = "release.document";
+    public static String ANNOUNCEMENTS_DOCUMENT = "announcements.document";
+
+    // Custom CSS
+    public static String CUSTOM_CSS_THEME = "custom.css.theme";
+
+    // Feature Activations
+    public static String IS_DATA_CAPSULE_ENABLE = "datacapsule.enable";
 }

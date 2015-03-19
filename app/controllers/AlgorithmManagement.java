@@ -1,10 +1,8 @@
 package controllers;
 
 
-import com.avaje.ebean.PagingList;
 import edu.indiana.d2i.htrc.portal.HTRCAgentClient;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
@@ -19,9 +17,7 @@ import org.springframework.util.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
-import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.Security;
 import views.html.algorithm;
 
 import javax.xml.bind.JAXBException;
@@ -56,7 +52,7 @@ public class AlgorithmManagement extends JavaController {
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getPublicWorksets();
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
 
         return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
     }
