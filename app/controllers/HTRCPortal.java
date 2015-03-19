@@ -1,19 +1,13 @@
 package controllers;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
-import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoRequest;
-import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoResponse;
-import htrc.security.oauth2.client.OAuth2Client;
 import models.User;
-import org.apache.amber.oauth2.client.URLConnectionClient;
-import org.apache.amber.oauth2.client.request.OAuthClientRequest;
-import org.apache.amber.oauth2.client.response.OAuthClientResponse;
 import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.exception.OAuthProblemException;
-import org.apache.amber.oauth2.common.exception.OAuthSystemException;
-import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.amber.oauth2.common.utils.JSONUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -23,41 +17,35 @@ import org.codehaus.jettison.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
-import org.pac4j.saml.profile.Saml2Profile;
 import play.Logger;
 import play.Play;
-import play.data.Form;
-import play.data.validation.Constraints;
-import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Security;
 import views.html.about;
 import views.html.gotopage;
 import views.html.index;
-//import views.html.login;
 
-
+import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
-import java.rmi.RemoteException;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
-import static play.data.Form.form;
+//import views.html.login;
 
 public class HTRCPortal extends JavaController {
 
     private static Logger.ALogger log = play.Logger.of("application");
 
-
-
-
-    public static Result index() {
-        return ok(index.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
+    public static Result index() throws IOException {
+        List<String> announcements = java.nio.file.Files.readAllLines(Paths.get(PlayConfWrapper.announcementDocument()), Charset.defaultCharset());
+        return ok(index.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)), announcements));
     }
 
 
     @RequiresAuthentication(clientName = "Saml2Client")
-    public static Result login() {
+    public static Result login() throws IOException, JAXBException {
         CommonProfile userProfile = getUserProfile();
         String accessToken = (String) userProfile.getAttribute("access_token");
         String refreshToken = (String) userProfile.getAttribute("refresh_token");
@@ -76,6 +64,9 @@ public class HTRCPortal extends JavaController {
         if(User.findByUserID(userId) == null){
             String userEmail = userManager.getEmail(userId);
             User nu = new User(userId, userEmail);
+            HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+            nu.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
+            nu.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
             nu.save();
             log.info("New user " + nu.userId + " is added to User object.");
         }
@@ -211,6 +202,16 @@ public class HTRCPortal extends JavaController {
 
     }
 
+    public static Result getCustomTheme() throws IOException {
+        String cssContent = Files.toString(new File(PlayConfWrapper.customCSSTheme()), Charsets.UTF_8);
+        return ok(cssContent).as("text/css");
+    }
+
+    public static Result getReleaseDocument() throws IOException {
+        String releaseDocURL = Files.toString(new File(PlayConfWrapper.releaseDocument()), Charsets.UTF_8);
+        System.out.println("Release Doc URL: " + releaseDocURL);
+        return redirect(releaseDocURL) ;
+    }
 
 
 

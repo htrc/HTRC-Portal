@@ -18,6 +18,7 @@
 package controllers;
 
 import edu.indiana.d2i.htrc.portal.HTRCExperimentalAnalysisServiceClient;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.sloan.bean.VMImageDetails;
 import edu.indiana.d2i.htrc.sloan.bean.VMStatus;
@@ -48,6 +49,9 @@ public class ExperimentalAnalysis extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listVMs() throws IOException, GeneralSecurityException {
+        if(!PlayConfWrapper.isDataCapsuleEnable()){
+            return notFound();
+        }
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMStatus> vmList = serviceClient.listVMs(loggedInUser, session());

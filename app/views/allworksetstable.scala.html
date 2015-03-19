@@ -18,7 +18,7 @@
                 @*</div>*@
             </div>
             <div class="panel-body">
-                <table class="table" id="worksets">
+                <table class="table" id="allWorksets">
                     <thead>
                         <tr>
                             <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
@@ -26,7 +26,7 @@
                             <th id="description">Description</th>
                             <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="int" style="min-width: 100px;">Volumes<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="string" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>
+                            @*<th data-sort="string-ins" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>*@
                             <th data-sort="string" style="min-width: 150px;">Last Updated<i class="fa fa-sort arrow"></i></th>
                             <th id="actions">Actions</th>
                         </tr>
@@ -39,7 +39,7 @@
                             <td style="max-width: 250px; word-wrap: break-word">@w.getMetadata.getDescription</td>
                             <td>@w.getMetadata.getAuthor</td>
                             <td>@w.getMetadata.getVolumeCount</td>
-                            <td>@if(w.getMetadata.isPublic){Public} else {Private}</td>
+                            @*<td>@if(w.getMetadata.isPublic){Public} else {Private}</td>*@
                             <td>@w.getMetadata.getLastModified.toString.substring(0,19)</td>
                             <td style="min-width: 132px;">
                                 @if(w.getMetadata.getAuthor == user.userId){
@@ -50,39 +50,9 @@
 
                             </td>
                         </tr>
-                        <div class="modal fade" id="download-workset-modal" aria-labelledby="download-workset" aria-hidden="true" tabindex="-1" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                        <h4 class="modal-title">Download Workset</h4>
-                                    </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <input type="hidden" id="downloadWorksetName" class="form-control" name="downloadWorksetName" value="@w.getMetadata.getName"
-                                            <div class="form-group">
-                                                <input type="hidden" id="downloadWorksetAuthor" class="form-control" name="worksetAuthor" value="@w.getMetadata.getAuthor">
-                                            </div>
-                                            <p>Please select the download content option you want in selected workset.</p>
-                                            <div class="radio">
-                                                <label >
-                                                    <input type="radio" name="contentFilter" value="volumeIdsOnly"/> With Volume IDs only.
-                                                </label>
 
-                                            </div>
-                                            <div class="radio">
-                                                <label >
-                                                    <input type="radio" name="contentFilter" value="withMetaData"/> With Volume IDs and other metadata (Title and Authors).
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a href="#" class="btn btn-link btn-sm" data-dismiss="modal">Close</a>
-                                            <a href="#" class="btn btn-sm btn-primary" onclick="">Go</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
+
+
                         <script type="text/javascript">
                             function downloadWorkset(worksetName){
                                 var  contentFilter = $("input:radio[name=contentFilter]").val();
@@ -95,6 +65,7 @@
                             }
                         </script>
                     }
+
                     </tbody>
                 </table>
             </div>
@@ -104,7 +75,7 @@
 
 
     <script type="text/javascript">
-        var table = $("#worksets").stupidtable();
+        var table = $("#allWorksets").stupidtable();
         table.bind('aftertablesort', function (event, data) {
         // data.column - the index of the column sorted after a click
         // data.direction - the sorting direction (either asc or desc)

@@ -342,6 +342,10 @@ td{
     disabled : false;
 }
 
+.pull-text-left{
+    text-align: left;
+}
+
 
 
 

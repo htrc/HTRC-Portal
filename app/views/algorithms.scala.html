@@ -15,7 +15,8 @@
                             <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
                             <th id="description">Description</th>
                             <th data-sort="string">Author<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="int">Version<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="float">Version<i class="fa fa-sort arrow"></i></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +37,7 @@
                             </td>
 
                             <td>@w.getVersion</td>
+                            <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)" class="btn btn-xs btn-primary" title="Execute the algorithm: @w.getName">Execute</a> </td>
                         </tr>
                     }
                     </tbody>
