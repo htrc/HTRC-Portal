@@ -210,8 +210,12 @@ var userIdInputKeyUp = function () {
     }else if(userId.length < 3){
         userIdCorrect = false;
         hasError(userIdControlGroup, userIdFeedback);
-        userIdWarnBlock.html('User ID must be at least 5 characters long!');
-    }else {
+        userIdWarnBlock.html('User ID must be at least 3 characters long!');
+    }else if(userId.match(/[A-Z]/)) {
+        userIdCorrect = false;
+        hasError(userIdControlGroup, userIdFeedback);
+        userIdWarnBlock.html('User ID contains a uppercase character.');
+    }else{
         userIdCorrect = true;
         hasSuccess(userIdControlGroup, userIdFeedback);
         userIdWarnBlock.html('');
