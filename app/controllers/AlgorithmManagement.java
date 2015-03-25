@@ -59,7 +59,7 @@ public class AlgorithmManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result submitAlgorithm() throws Exception {
-        AtomicReference<User> loggedInUser = new AtomicReference<>(User.findByUserID(session(PortalConstants.SESSION_USERNAME)));
+        AtomicReference<User> loggedInUser = new AtomicReference<User>(User.findByUserID(session(PortalConstants.SESSION_USERNAME)));
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
         jobSubmitBean.setJobName(requestData.get("jobName"));

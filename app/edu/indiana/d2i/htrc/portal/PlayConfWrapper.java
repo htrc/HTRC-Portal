@@ -95,6 +95,9 @@ public class PlayConfWrapper {
     private static String validDomainsSecondCSV = null;
     private static String validDomainsThirdCSV = null;
 
+    // Approved email
+    private static String approvedEmailsCSV = null;
+
     // SAML2 Credentials
     private static String saml2KeyStorePath = null;
     private static String saml2KeyStorePassword = null;
@@ -108,8 +111,8 @@ public class PlayConfWrapper {
     // Custom CSS
     private static String customCSSTheme = null;
 
-    // Feature Activations
-    private static boolean isDataCapsuleEnabled = false;
+    // Released Version
+    private static String releasedVersion = null;
 
 
     public static String agentEndpoint() {
@@ -441,6 +444,13 @@ public class PlayConfWrapper {
         return validDomainsThirdCSV;
     }
 
+    public static String approvedEmailsCSV(){
+        if(approvedEmailsCSV == null){
+            approvedEmailsCSV = Play.application().configuration().getString(PortalConstants.HTRC_APPROVED_EMAILS);
+        }
+        return approvedEmailsCSV;
+    }
+
     public static String saml2KeyStorePath(){
         if(saml2KeyStorePath == null){
             saml2KeyStorePath = Play.application().configuration().getString(PortalConstants.SAML2_KEYSTORE_PATH);
@@ -491,8 +501,14 @@ public class PlayConfWrapper {
     }
 
     public static boolean isDataCapsuleEnable(){
-        isDataCapsuleEnabled = Play.application().configuration().getBoolean(PortalConstants.IS_DATA_CAPSULE_ENABLE);
-        return isDataCapsuleEnabled;
+        return Play.application().configuration().getBoolean(PortalConstants.IS_DATA_CAPSULE_ENABLE);
+    }
+
+    public static String releasedVersion(){
+        if(releasedVersion == null){
+            releasedVersion= Play.application().configuration().getString(PortalConstants.RELESED_VERSION);
+        }
+        return releasedVersion;
     }
 }
 

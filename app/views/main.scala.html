@@ -24,7 +24,6 @@
         <script src="@routes.Assets.at("javascripts/bowser.min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/uploadws.js")"></script>
-        <link href="@routes.Assets.at(PlayConfWrapper.releaseDocument())">
     </head>
     <body>
         <nav class="navbar navbar-default navbar-htrc" role="navigation">
@@ -84,7 +83,7 @@
                         @if(user == null) {
                             <li><a href="#login-required-modal" data-toggle="modal" >Results</a></li>
                         } else {
-                            <li><a href="@routes.JobManagement.listJobs()">Results</a></li>
+                            <li ><a href="@routes.JobManagement.listJobs()">Results</a></li>
                         }
                         @if(PlayConfWrapper.isDataCapsuleEnable) {
                             <li class="dropdown">
@@ -164,9 +163,11 @@
 
         @*<div class="container" style="padding-top : 15 px ;">*@
         @content
-        <span class="fa-align-center">
-            <p style="text-align: center; font-size: small;">HTRC Portal(<a href="@routes.HTRCPortal.getReleaseDocument()" target="_blank">v3.0</a> )</p>
-        </span>
+
+        <div class="container">
+        <p style="text-align: center; font-size: small; margin-top: 10px;">HTRC Portal(<a href="@PlayConfWrapper.releaseDocument()" target="_blank">@PlayConfWrapper.releasedVersion()</a> )
+        </p>
+        </div>
 
         @*</div>*@
         <div id="push"></div>
@@ -188,7 +189,7 @@
                         <h4 class="modal-title">Create Workset</h4>
                     </div>
                     <div class="modal-body">
-                        <p>You need to log in to HTRC Workset Builder in order to create or modify a workset. This is not depends on whether you have already logged in to HTRC Portal or not.</p>
+                        <p>You need to log in to HTRC Workset Builder in order to create or modify a workset. This depends on whether you have already logged in to HTRC Portal or not.</p>
                     </div>
                     <div class="modal-footer">
                         <span class="pull-left" style="padding-top : 5 px ;"><input type="checkbox" id="dont-show" style="margin : - 3 px 0 0 ;">

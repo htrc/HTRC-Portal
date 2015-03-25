@@ -62,13 +62,13 @@ public class  PortalConstants {
     // registry entries
     public static String REGISTRY_ENDPOINT = "reg.epr";
     public static String REGISTRY_ALGO_FOLDER = "reg.alg.folder";
-    public static String WORKSETS_URL = "/allWorksets";
+    public static String WORKSETS_URL = "/worksets";
     public static String FILES_URL = "/files";
     public static String PUBLIC_WORKSET = "?public=true";
     public static String VOLUME_DETAILS_QUERY_SOLR_URL = "?q=id:";
 
     // workset entries
-    public static String WORKSETS_PER_PAGE = "allWorksets.per.page";
+    public static String WORKSETS_PER_PAGE = "worksets.per.page";
 
     // algorithm entries
     public static String ALGORITHMS_PER_PAGE = "algorithms.per.page";
@@ -118,7 +118,7 @@ public class  PortalConstants {
     // User Manager Constants
     public static final String UR_CONFIG_HTRC_USER_HOME = "user.home";
     public static final String UR_CONFIG_HTRC_USER_FILES = "user.files";
-    public static final String UR_CONFIG_HTRC_USER_WORKSETS = "user.allWorksets";
+    public static final String UR_CONFIG_HTRC_USER_WORKSETS = "user.worksets";
     public static final String UR_CONFIG_HTRC_USER_JOBS = "user.jobs";
 
     public static final String UR_CONFIG_WSO2IS_URL = "ur.config.wso2is.url";
@@ -133,6 +133,7 @@ public class  PortalConstants {
     public static String HTRC_VALID_DOMAIN_FIRST_CSV = "htrc.valid.domains.csv.first";
     public static String HTRC_VALID_DOMAIN_SECOND_CSV = "htrc.valid.domains.csv.second";
     public static String HTRC_VALID_DOMAIN_THIRD_CSV = "htrc.valid.domains.csv.third";
+    public static String HTRC_APPROVED_EMAILS = "htrc.approved.emails";
 
     //SAML2 Credentials
     public static String SAML2_KEYSTORE_PATH = "saml2.keystore.path";
@@ -149,4 +150,8 @@ public class  PortalConstants {
 
     // Feature Activations
     public static String IS_DATA_CAPSULE_ENABLE = "datacapsule.enable";
+
+    // Released Version
+    public static String RELESED_VERSION = "released.version";
+
 }

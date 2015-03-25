@@ -27,6 +27,11 @@ public class JobManagement extends JavaController {
     public static Result listJobs() {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
+
+        loggedInUser.noOfActiveJobs = 0;
+        loggedInUser.noOfCompletedJobs = 0;
+        loggedInUser.update();
+
         Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
         Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
         List<JobDetailsBean> activeJobsList;
@@ -37,12 +42,16 @@ public class JobManagement extends JavaController {
                 log.info("Active jobs are empty.");
             } else {
                 activeJobsList = new ArrayList<JobDetailsBean>(activeJobs.values());
+                loggedInUser.noOfActiveJobs = activeJobsList.size();
+                loggedInUser.update();
             }
             if (completedJobs.isEmpty()) {
                 completedJobsList = Collections.emptyList();
                 log.info("Completed jobs are empty.");
             } else {
                 completedJobsList = new ArrayList<JobDetailsBean>(completedJobs.values());
+                loggedInUser.noOfCompletedJobs = completedJobsList.size();
+                loggedInUser.update();
             }
         }else{
 
@@ -84,7 +93,7 @@ public class JobManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result updateJobs() throws IOException {
-        List<String> completedJobIds = new ArrayList<>();
+        List<String> completedJobIds = new ArrayList<String>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
 //        String actionType = form.get("update-type")[0].trim();
@@ -135,10 +144,52 @@ public class JobManagement extends JavaController {
     public static Result viewJobDetails(String jobId) {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
-        List<String> jobIds = new ArrayList<>();
+        List<String> jobIds = new ArrayList<String>();
         jobIds.add(jobId);
         Map<String, JobDetailsBean> jobsDetails = agentClient.getJobsDetails(jobIds);
-        return ok(jobdetails.render(loggedInUser, jobsDetails.values()));
+        Map<String, String> jobResults = jobsDetails.get(jobId).getResults();
+        List<Map.Entry<String,String>> outputs = new ArrayList<Map.Entry<String, String>>();
+
+        Map<String, String> htmls = new TreeMap<String, String>();
+        Map<String, String> csvs = new TreeMap<String, String>();
+        Map<String, String> zips = new TreeMap<String, String>();
+        Map<String, String> txts = new TreeMap<String, String>();
+        Map<String, String> others = new TreeMap<String, String>();
+        for(Map.Entry<String, String> result : jobResults.entrySet()){
+            if(result.getKey().contains(".html")){
+                htmls.put(result.getKey(),result.getValue());
+            } else if(result.getKey().contains(".csv")){
+                csvs.put(result.getKey(),result.getValue());
+            } else if(result.getKey().contains(".zip")){
+                zips.put(result.getKey(),result.getValue());
+            } else if(result.getKey().contains(".txt")){
+                txts.put(result.getKey(),result.getValue());
+            } else {
+                others.put(result.getKey(),result.getValue());
+            }
+        }
+
+        for(Map.Entry<String, String> e: htmls.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: csvs.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: zips.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: txts.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: others.entrySet()){
+            outputs.add(e);
+        }
+
+        return ok(jobdetails.render(loggedInUser, jobsDetails.get(jobId), outputs));
     }
 
 

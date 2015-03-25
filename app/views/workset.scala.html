@@ -54,7 +54,14 @@
                             <td>@workset.getMetadata.getAuthor</td>
                             <td>@workset.getMetadata.getLastModified</td>
                             <td>@workset.getMetadata.getVolumeCount</td>
-                            <td>@workset.getMetadata.getTags</td>
+                            @if(workset.getMetadata.getTags != null){
+                                <td>@for(tag <- workset.getMetadata.getTags.getTag){
+                                    <span class="badge">@tag</span>
+                                }</td>
+                            }else{
+                                <td>No Tags</td>
+                            }
+
                         </tr>
                     </tbody>
                 </table>
@@ -65,7 +72,12 @@
                             @for(v <- volumeList){
                                 <div class="volume">
                                     <h4><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
-                                        <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a></h4>
+                                        @if(v.getTitle != null){
+                                            <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a>
+                                        }else{
+                                            Error: No Title available for this volume ID
+                                        }
+                                        </h4>
                                     <dl class="volume-details">
                                         <dt class="volume-id">Volume Id:</dt>
                                         <dd class="volume-id">@v.getVolumeId</dd>

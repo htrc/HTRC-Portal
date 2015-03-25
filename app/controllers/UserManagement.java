@@ -14,7 +14,6 @@ import org.pac4j.play.java.JavaController;
 import play.Logger;
 import play.data.Form;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
 
@@ -39,36 +38,36 @@ public class UserManagement extends JavaController {
         Form<SignUp> signUpForm = form(SignUp.class).bindFromRequest();
 
         if (signUpForm.hasErrors()) {
-            if(!SignUp.isInstitutionalEmailDomain(signUpForm.data().get("email"))){
-                return badRequest(accountrequest.render(Form.form(AccountRequest.class),null,signUpForm.data().get("firstName"),signUpForm.data().get("lastName"),signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
+            if (!SignUp.isValidEmail(signUpForm.data().get("email"))) {
+                return badRequest(accountrequest.render(Form.form(AccountRequest.class), null, signUpForm.data().get("firstName"), signUpForm.data().get("lastName"), signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
             }
             return badRequest(signup.render(signUpForm, null));
         }
-        log.info("User "+signUpForm.get().userId+" signed up successfully.");
+        log.info("User " + signUpForm.get().userId + " signed up successfully.");
         return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to "
-                + signUpForm.get().email+
+                + signUpForm.get().email +
                 ". If you don't receive your activation link within 5 minutes, please contact us by email " +
-                " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
+                " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
     }
 
     public static Result activateAccount(String token) {
         Token token1 = Token.findByToken(token);
-        if(token1 != null){
+        if (token1 != null) {
             String[] permissions = {"/permission/admin/login"};
             String userName = token1.userId;
 //            Token.deleteToken(token);
             HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
             try {
-                userManager.addRole(userName,userName,permissions);
+                userManager.addRole(userName, userName, permissions);
             } catch (Exception e) {
                 log.error("Cannot add role to the user: " + userName);
             }
             return ok(gotopage.render("Your account is activated successfully. Click on the login link to begin:", "login", "Login", null));
         }
-        return ok(gotopage.render("Error on your activation link.",null,null,null));
+        return ok(gotopage.render("Error on your activation link.", null, null, null));
     }
 
-    public static Result createAccountRequestForm(){
+    public static Result createAccountRequestForm() {
         return ok(accountrequest.render(Form.form(AccountRequest.class), null, null, null, null, null));
     }
 
@@ -78,9 +77,8 @@ public class UserManagement extends JavaController {
             return badRequest(accountrequest.render(accountRequestForm, null, accountRequestForm.data().get("firstName"), accountRequestForm.data().get("lastName"), accountRequestForm.data().get("email"), null));
         }
         log.info(accountRequestForm.toString());
-        return ok(gotopage.render("Your account request was sent to HTRC support team. One of our team member will get back to you within 24 hours. Please visit our home page for more information about HTRC. ", "login" , "Home",null));
+        return ok(gotopage.render("Your account request was sent to HTRC support team. One of our team member will get back to you within 24 hours. Please visit our home page for more information about HTRC. ", "login", "Home", null));
     }
-
 
 
     public static Result createPasswordResetMailForm() {
@@ -96,11 +94,11 @@ public class UserManagement extends JavaController {
         String userId = passwordResetMailForm.get().userId;
         String userEmail;
         String userFirstName = userId; // User's name
-        if(User.findByUserID(userId)!= null){
+        if (User.findByUserID(userId) != null) {
             User user = User.findByUserID(userId);
-            userEmail= user.email;
+            userEmail = user.email;
 //            userFirstName = user.userFirstName;
-        }else{
+        } else {
             HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
             userEmail = userManager.getEmail(userId);
 
@@ -108,8 +106,8 @@ public class UserManagement extends JavaController {
 
         String passwordResetToken = Token.generateToken(userId, userEmail);
         String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
-        sendMail(userEmail, "Password Reset for HTRC Portal","Hi " +userFirstName+",\n" +"Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url +"\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team." );
-        return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")),null,null,null));
+        sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
+        return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
     }
 
     public static Result createPasswordResetForm(String token) {
@@ -123,10 +121,10 @@ public class UserManagement extends JavaController {
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
         String userId = token1.userId;
-        log.info("Password reset token for user ID " +userId+" : " + token1.token);
+        log.info("Password reset token for user ID " + userId + " : " + token1.token);
         log.info("Is token used: " + token1.isTokenUsed);
         log.info("Token created at: " + token1.createdTime);
-        if(!Token.isTokenExpired(token1)) {
+        if (!Token.isTokenExpired(token1)) {
             if (token1.isTokenUsed.equals("NO")) {
                 HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
                 try {
@@ -144,7 +142,6 @@ public class UserManagement extends JavaController {
         return ok(gotopage.render("We were unable to reset your password. Please check your email for a more recent password reset email, or request a ", "passwordresetmail", "new one.", null));
 
 
-
     }
 
     public static Result createUserIDRetrieveMailForm() {
@@ -160,24 +157,24 @@ public class UserManagement extends JavaController {
         String userEmail = userIDRetrieveMailForm.get().userEmail;
         List<String> userIds = userIDRetrieveMailForm.get().userIDs;
 
-        if(userIds.isEmpty()){
+        if (userIds.isEmpty()) {
             return ok(gotopage.render("Cannot find user with email " + userEmail + " !", "login", "Login", null));
         }
 
-        sendMail(userEmail,"Retrieve User ID.", "Your User ID: "+ userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
+        sendMail(userEmail, "Retrieve User ID.", "Your User ID: " + userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
 //        userIds.clear();
 //        userIDRetrieveMailForm.get().userIDs.clear();
         log.info(userIDRetrieveMailForm.toString());
-        return ok(gotopage.render("Your user ID is sent to " + userEmail + ". Click on the login link to begin:", "login", "Login",null));
+        return ok(gotopage.render("Your user ID is sent to " + userEmail + ". Click on the login link to begin:", "login", "Login", null));
     }
 
-    public static Result validateEmail(String email){
+    public static Result validateEmail(String email) {
         // Validate the email and set isValid.
-        boolean isValid = SignUp.isInstitutionalEmailDomain(email);
+        boolean isValid = SignUp.isValidEmail(email);
         ObjectNode result = Json.newObject();
-        if(isValid){
+        if (isValid) {
             result.put("valid", true);
-        } else {
+        }else{
             result.put("valid", false);
         }
 
@@ -186,7 +183,8 @@ public class UserManagement extends JavaController {
 
 
     public static class SignUp {
-        public static Map<String,Integer> instDomains;
+        public static Map<String, Integer> instDomains;
+        public static Map<String, Integer> approvedEmails;
         public String userId;
         public String password;
         public String confirmPassword;
@@ -195,7 +193,7 @@ public class UserManagement extends JavaController {
         public String email;
         public String confirmEmail;
         public String acknowledgement;
-//        private final String[] permissions = {"/permission/admin/login"};
+        //        private final String[] permissions = {"/permission/admin/login"};
         private String status = null;
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
@@ -209,7 +207,7 @@ public class UserManagement extends JavaController {
                 return "Please fill all the fields.";
             }
             log.info("User ID: " + userId);
-            if(userId.contains("@")){
+            if (userId.contains("@")) {
                 return "User ID must not contain '@' sign. ";
             }
             if (userManager.isUserExists(userId)) {
@@ -220,28 +218,21 @@ public class UserManagement extends JavaController {
                 return "There's a role name already exists with this name. Please use another username.";
             }
 
-            if (passwordValidate(password,confirmPassword) != null){
-                return passwordValidate(password,confirmPassword);
+            if (passwordValidate(password, confirmPassword) != null) {
+                return passwordValidate(password, confirmPassword);
             }
 
-            if(!email.equals(confirmEmail)){
+            if (!email.equals(confirmEmail)) {
                 return "Emails are not matching.";
             }
-
-
-            if(acknowledgement == null){
-                return "You have not acknowledge the user registration acknowledgement. Please acknowledge.";
+            if (!isValidEmail(email)) {
+               return "Email is not an institutional email. Please enter your institutional email." +
+                            "If you don't have an institutional email or if your email is not recognized by our system, " +
+                            "please press 'Request Account' with your current email address ";
             }
-
-
-            log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
-                    + " User ID: " + userId);
-
-            if (!isInstitutionalEmailDomain(email)) {
-                return "Email is not an institutional email. Please enter your institutional email." +
-                        "If you don't have an institutional email or if your email is not recognized by our system, " +
-                        "please press 'Request Account' with your current email address ";
-            } else {
+            if (acknowledgement == null) {
+                return "You have not acknowledge the user registration acknowledgement. Please acknowledge.";
+            }else {
                 List<Map.Entry<String, String>> claims = new ArrayList<>();
                 claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/givenname", firstName));
@@ -252,6 +243,8 @@ public class UserManagement extends JavaController {
                 try {
                     userManager.createUser(userId, password, claims);
                     sendUserRegistrationEmail(email, userId);
+                    log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
+                            + " User ID: " + userId);
                     setStatus("Success");
 
                 } catch (UserAlreadyExistsException e) {
@@ -268,7 +261,7 @@ public class UserManagement extends JavaController {
         public void sendUserRegistrationEmail(String userEmail, String userId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Welcome to HTRC. Please click on following url to activate your account. \n" + url );
+            sendMail(userEmail, "User Registration for HTRC Portal", "Welcome to HTRC. Please click on following url to activate your account. \n" + url);
 
         }
 
@@ -281,29 +274,43 @@ public class UserManagement extends JavaController {
         }
 
 
-
-        public static boolean isInstitutionalEmailDomain(String email) {
+        public static boolean isValidEmail(String email) {
 
             instDomains.putAll(CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsThirdCSV()));
+            approvedEmails = CSVReader.readAndSaveApprovedEmails(PlayConfWrapper.approvedEmailsCSV());
             if (email.isEmpty()) {
-                log.warn("Email is empty");
+                log.info("Email is empty");
                 return false;
             } else {
                 String domainName = email.substring(email.indexOf("@") + 1);
-                if(domainName.indexOf(".") != domainName.lastIndexOf(".")){
+                if (domainName.indexOf(".") != domainName.lastIndexOf(".")) {
                     domainName = domainName.substring(domainName.indexOf(".") + 1);
                 }
                 if(instDomains.containsKey(domainName)){
-                    log.info(domainName + " is an institutional email domain");
+                    log.info(domainName + " is an institutional email domain.");
                     return true;
+                }else if(approvedEmails.containsKey(email)){
+                    log.info(email + " is an approved email.");
+                    return true;
+                }else{
+                    log.info(domainName + " is not an institutional email domain or " +
+                            email + " is not an approved email.");
+                    return false;
                 }
-                log.warn(domainName + " is not an institutional email domain");
-                return false;
+//                if (!instDomains.containsKey(domainName)) {
+//                    log.info(domainName + " is not an institutional email domain. ");
+//                    if(!approvedEmails.containsKey(email)){
+//                        log.info(email + " is not an approved email.");
+//                        return false;
+//                    }
+//
+//                }
+//                return true;
             }
         }
     }
 
-    public static class AccountRequest{
+    public static class AccountRequest {
         public String firstName;
         public String lastName;
         public String email;
@@ -313,7 +320,7 @@ public class UserManagement extends JavaController {
         public String validate() throws Exception {
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || institution.isEmpty()) {
                 return "Please fill all the required fields.";
-            }else{
+            } else {
                 sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
                         "User's name : " + firstName + " " + lastName + ";\n" +
                         "User's email : " + email + ";\n" +
@@ -351,9 +358,9 @@ public class UserManagement extends JavaController {
 
 
         public String validate() {
-            log.debug("Token in the form: "+ token);
-            if(passwordValidate(password,retypePassword) != null){
-                return passwordValidate(password,retypePassword);
+            log.debug("Token in the form: " + token);
+            if (passwordValidate(password, retypePassword) != null) {
+                return passwordValidate(password, retypePassword);
             }
             return null;
         }
@@ -379,58 +386,57 @@ public class UserManagement extends JavaController {
         }
     }
 
-    public static void sendMail(String recipientEmail, String subject, String emailBody){
+    public static void sendMail(String recipientEmail, String subject, String emailBody) {
         Properties props = new Properties();
 
-        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.host", "mail-relay.iu.edu");
         props.put("mail.smtp.socketFactory.port", "465");
         props.put("mail.smtp.socketFactory.class",
                 "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", "465");
+        //props.put("mail.smtp.port", "25");
 
-        log.info("Email: " + PlayConfWrapper.htrcEmail());
 
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(PlayConfWrapper.htcEmailUserName(), PlayConfWrapper.htrcEmailPassword());
+                        return new PasswordAuthentication(PlayConfWrapper.htcEmailUserName().trim(), PlayConfWrapper.htrcEmailPassword().trim());
                     }
                 }
         );
 
         try {
-
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(PlayConfWrapper.htrcEmail()));
+            message.setFrom(new InternetAddress("sharc@indiana.edu"));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(recipientEmail));
             message.setSubject(subject);
             message.setText(emailBody);
             Transport.send(message);
-
             log.info("Message with subject : " + subject + " is sent successfully.");
-
-
         } catch (MessagingException e) {
             throw new RuntimeException(e);  // TODO: Review exception handling logic.
         }
 
     }
 
-    public static String passwordValidate(String password, String retypePassword){
+    public static String passwordValidate(String password, String retypePassword) {
         PasswordChecker passwordChecker = new PasswordChecker();
 
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             return "Password is empty, Please enter password.";
         }
-        if(password.length()< 15){
+        if (password.length() < 15) {
             return "Password should be more than 15 characters long.";
-        }if(password.contains(" ")){
-            return "Password should not contain any white spaces.";}
+        }
+        if (password.contains(" ")) {
+            return "Password should not contain any white spaces.";
+        }
         if (!passwordChecker.isValidPassword(password)) {
             return "Please use a strong password.";
-        }if (!password.equals(retypePassword)) {
+        }
+        if (!password.equals(retypePassword)) {
             return "The Passwords do not match.";
         }
         return null;

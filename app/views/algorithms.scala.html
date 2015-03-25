@@ -16,7 +16,7 @@
                             <th id="description">Description</th>
                             <th data-sort="string">Author<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="float">Version<i class="fa fa-sort arrow"></i></th>
-                            <th></th>
+                            <th id="action"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,6 +100,7 @@
     th.append('<i class="arrow fa fa-sort"></i>');
     th.eq(data.column).find(".arrow").remove();
     $("#description").find(".arrow").remove();
+    $("#action" ).find(".arrow" ).remove();
     th.eq(data.column).append(arrow);
     });
 

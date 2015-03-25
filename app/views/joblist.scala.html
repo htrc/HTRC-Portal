@@ -14,8 +14,8 @@
                     <table class="table" id="activeJobList">
                         <thead>
                             <tr>
-                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Algorithm<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
                                 <th id="cancelaction">Cancel?</th>
@@ -24,8 +24,8 @@
                         <tbody>
                         @for(job <- activeJobs){
                             <tr>
-                                <td>@(activeJobs.indexOf(job)+1)</td>
                                 <td>@job.getJobTitle()</td>
+                                <td>@job.getAlgorithmName</td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
                                 <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
@@ -54,9 +54,9 @@
                     <table class="table" id="completedJobList">
                         <thead>
                             <tr>
-                                <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
-                                <th data-sort="string">Last Updated<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">Algorithm<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string">End Time<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
                                 <th id="deleteaction">Delete?</th>
                                 @*<th>Saved?</th>*@
@@ -65,8 +65,8 @@
                         <tbody>
                         @for(job <- completedJobs){
                             <tr>
-                                <td>@(completedJobs.indexOf(job)+1)</td>
                                 <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId())">@job.getJobTitle()</a></td>
+                                <td>@job.getAlgorithmName</td>
                                 <td>@job.getLastUpdatedDate()</td>
                                 <td>@job.getJobStatus()</td>
                                 <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
