@@ -34,6 +34,11 @@ import play.libs.F;
 import play.mvc.Http;
 import play.mvc.SimpleResult;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import static play.mvc.Results.*;
 import static play.mvc.Controller.*;
 
@@ -49,13 +54,16 @@ public class Global extends GlobalSettings {
     @Override
     public F.Promise<SimpleResult> onError(Http.RequestHeader requestHeader, Throwable throwable) {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        dateFormat.setTimeZone(TimeZone.getTimeZone("US/Eastern"));
 
         if(loggedInUser != null) {
             log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
-            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception","Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email + "Error: " + throwable.getMessage());
+            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception","Internal server error.Date and time in Madrid: " + dateFormat.format(date) + " Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email + "Error: " + throwable);
         } else {
             log.error("Internal server error.", throwable);
-            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception",throwable.getMessage());
+            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception","Internal server error.Date and time in Madrid: " + dateFormat.format(date) +" Error: "+ throwable);
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
