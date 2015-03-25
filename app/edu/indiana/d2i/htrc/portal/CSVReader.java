@@ -40,4 +40,31 @@ public class CSVReader {
         }
         return null;
     }
+
+    public static Map<String,Integer> readAndSaveApprovedEmails(String filePath){
+        CsvReader approvedEmailList = null;
+        try {
+            approvedEmailList = new CsvReader(filePath);
+            approvedEmailList.readHeaders();
+            Map<String,Integer> approvedEmails = new HashMap<>();
+
+            while (approvedEmailList.readRecord())
+            {
+                String approvedEmail = approvedEmailList.get("Approved_Emails");
+
+                if(!approvedEmails.containsKey(approvedEmail)){
+                    approvedEmails.put(approvedEmail,1);
+                }
+            }
+
+            approvedEmailList.close();
+            return approvedEmails;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
 }
