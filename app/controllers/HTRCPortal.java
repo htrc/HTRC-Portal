@@ -2,10 +2,8 @@ package controllers;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
-import edu.indiana.d2i.htrc.portal.PortalConstants;
+import edu.indiana.d2i.htrc.portal.*;
+import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import models.User;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.utils.JSONUtils;
@@ -64,9 +62,22 @@ public class HTRCPortal extends JavaController {
         if(User.findByUserID(userId) == null){
             String userEmail = userManager.getEmail(userId);
             User nu = new User(userId, userEmail);
+
+            // Get the no of worksets
             HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
             nu.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
             nu.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
+
+            // Get the no of job results
+            HTRCAgentClient agentClient = new HTRCAgentClient(session());
+            Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
+            Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
+            if(activeJobs != null){
+                nu.noOfActiveJobs = activeJobs.size();
+            }
+            if(completedJobs != null){
+                nu.noOfCompletedJobs = completedJobs.size();
+            }
             nu.save();
             log.info("New user " + nu.userId + " is added to User object.");
         }
@@ -207,11 +218,11 @@ public class HTRCPortal extends JavaController {
         return ok(cssContent).as("text/css");
     }
 
-    public static Result getReleaseDocument() throws IOException {
-        String releaseDocURL = Files.toString(new File(PlayConfWrapper.releaseDocument()), Charsets.UTF_8);
-        System.out.println("Release Doc URL: " + releaseDocURL);
-        return redirect(releaseDocURL) ;
-    }
+//    public static Result getReleaseDocument() throws IOException {
+//        String releaseDocURL = Files.toString(new File(PlayConfWrapper.releaseDocument()), Charsets.UTF_8);
+//        System.out.println("Release Doc URL: " + releaseDocURL);
+//        return redirect(releaseDocURL) ;
+//    }
 
 
 

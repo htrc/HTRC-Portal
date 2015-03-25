@@ -54,6 +54,9 @@ public class WorksetManagement extends JavaController {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
+        loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
+        loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
+        loggedInUser.update();
         return ok(allworksetstable.render(loggedInUser, worksetList));
     }
 
@@ -62,6 +65,9 @@ public class WorksetManagement extends JavaController {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getUserWorksets();
+        loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
+        loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
+        loggedInUser.update();
         return ok(userworksetstable.render(loggedInUser, worksetList));
     }
 
@@ -221,6 +227,9 @@ public class WorksetManagement extends JavaController {
             }
             try {
                 persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
+                loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
+                loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
+                loggedInUser.update();
             } catch (Exception e) {
                 log.error("Error when uploading workset in to registry");
                 throw new RuntimeException("Error when uploading workset in to registry");
