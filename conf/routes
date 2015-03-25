@@ -123,5 +123,5 @@ POST        /callback                                         org.pac4j.play.Cal
 
 GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
 
-GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
+#GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()

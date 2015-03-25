@@ -18,7 +18,7 @@
                 @*</div>*@
             </div>
             <div class="panel-body">
-                <table class="table" id="allWorksets">
+                <table class="table" id="userWorksets">
                     <thead>
                         <tr>
                             <th data-sort="int" style="min-width : 40 px ;">#<i class="fa fa-sort arrow"></i></th>
@@ -74,7 +74,7 @@
 
 
     <script type="text/javascript">
-    var table = $ ( "#allWorksets" ).stupidtable ( ) ;
+    var table = $ ( "#userWorksets" ).stupidtable ( ) ;
     table.bind ( 'aftertablesort', function ( event, data ) {
     // data.column - the index of the column sorted after a click
     // data.direction - the sorting direction (either asc or desc)
