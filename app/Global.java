@@ -52,8 +52,10 @@ public class Global extends GlobalSettings {
 
         if(loggedInUser != null) {
             log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
+            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception","Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email + "Error: " + throwable.getMessage());
         } else {
             log.error("Internal server error.", throwable);
+            UserManagement.sendMail(PlayConfWrapper.supportEmail(),"Exception",throwable.getMessage());
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
