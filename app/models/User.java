@@ -55,6 +55,8 @@ public class User extends Model {
     public String userLastName;
     public int noOfMyWorksets;
     public int noOfAllWorksets;
+    public int noOfActiveJobs;
+    public int noOfCompletedJobs;
 
     private static Logger.ALogger log = play.Logger.of("application");
 
