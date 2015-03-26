@@ -46,6 +46,10 @@ create table user (
   email                     varchar(255),
   user_first_name           varchar(255),
   user_last_name            varchar(255),
+  no_of_my_worksets         integer,
+  no_of_all_worksets        integer,
+  no_of_active_jobs         integer,
+  no_of_completed_jobs      integer,
   constraint pk_user primary key (id))
 ;
 

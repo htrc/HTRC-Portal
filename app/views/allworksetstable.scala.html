@@ -22,12 +22,12 @@
                     <thead>
                         <tr>
                             <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
-                            <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" id="wsName">Name<i class="fa fa-sort arrow"></i></th>
                             <th id="description">Description</th>
                             <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="int" style="min-width: 100px;">Volumes<i class="fa fa-sort arrow"></i></th>
                             @*<th data-sort="string-ins" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>*@
-                            <th data-sort="string" style="min-width: 150px;">Last Updated<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string" style="min-width: 150px;" id="lastUpdated">Last Updated<i class="fa fa-sort arrow"></i></th>
                             <th id="actions">Actions</th>
                         </tr>
                     </thead>
@@ -76,6 +76,7 @@
 
     <script type="text/javascript">
         var table = $("#allWorksets").stupidtable();
+         //$("#lastUpdated" ).stupidsort('desc');
         table.bind('aftertablesort', function (event, data) {
         // data.column - the index of the column sorted after a click
         // data.direction - the sorting direction (either asc or desc)

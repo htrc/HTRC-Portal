@@ -125,6 +125,7 @@ public class  PortalConstants {
     public static final String UR_CONFIG_WSO2GREG_URL = "ur.config.wso2greg.url";
 
     //HTRC email parameters
+    public static String ERROR_HANDLING_EMAIL = "error.handling.email";
     public static String SUPPORT_EMAIL = "support.email";
     public static String HTRC_EMAIL = "htrc.email.address";
     public static String HTRC_EMAIL_USERNAME = "htrc.email.username";

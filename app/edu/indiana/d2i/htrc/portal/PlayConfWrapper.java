@@ -84,6 +84,7 @@ public class PlayConfWrapper {
     private static String portalUrl = null;
 
     //HTRC email parameters
+    private static String errorHandlingEmail = null;
     private static String supportEmail = null;
     private static String htrcEmail = null;
     private static String htrcEmailUserName = null;
@@ -393,6 +394,13 @@ public class PlayConfWrapper {
             portalUrl = Play.application().configuration().getString(PortalConstants.PORTAL_URL);
         }
         return portalUrl;
+    }
+
+    public static String errorHandlingEmail(){
+        if(errorHandlingEmail == null){
+            errorHandlingEmail = Play.application().configuration().getString(PortalConstants.ERROR_HANDLING_EMAIL);
+        }
+        return errorHandlingEmail;
     }
 
     public static String supportEmail(){
