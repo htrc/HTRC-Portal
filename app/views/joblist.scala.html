@@ -56,7 +56,7 @@
                             <tr>
                                 <th data-sort="string">Job Name<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Algorithm<i class="fa fa-sort arrow"></i></th>
-                                <th data-sort="string">End Time<i class="fa fa-sort arrow"></i></th>
+                                <th data-sort="string" id="endTime">End Time<i class="fa fa-sort arrow"></i></th>
                                 <th data-sort="string">Status<i class="fa fa-sort arrow"></i></th>
                                 <th id="deleteaction">Delete?</th>
                                 @*<th>Saved?</th>*@
@@ -125,6 +125,9 @@
 
         /* completedjobtable sorting */
         var completedjobtable = $("#completedJobList").stupidtable();
+        $("#endTime").stupidsort('desc');
+//        var column_to_sort = completedjobtable.find("thead th").eq(2);
+//        column_to_sort.stupidsort();
         completedjobtable.bind('aftertablesort', function (event, data) {
         // data.column - the index of the column sorted after a click
         // data.direction - the sorting direction (either asc or desc)
