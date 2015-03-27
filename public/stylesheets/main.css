@@ -35,6 +35,21 @@ body {
     }
 }
 
+@media (min-width: 960px) {
+	h1 {
+	    font-size: 52px;
+	}
+}
+@media(max-width:960px) {
+  h1 {
+    font-size: 32pt;
+  }
+}
+@media(max-width: 480px) {
+  h1 {
+    font-size: 24pt;
+  }
+}
 
 .navbar .nav > li {
     line-height: 25px;

@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName = "htrc-portal"
-  val appVersion = "3.0.0-SNAPSHOT"
+  val appVersion = "3.1"
 
   val appDependencies = Seq(
     javaCore,
