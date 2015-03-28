@@ -54,13 +54,13 @@
                                 @if(user == null) {
                                     <li><a href="#login-required-modal" data-toggle="modal" >My Worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.userWorksets()">My Worksets(@user.noOfMyWorksets)</a></li>
+                                    <li><a href="@routes.WorksetManagement.userWorksets()">My Worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
                                     <li><a href="#login-required-modal" data-toggle="modal" >All Worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.allWorksets()">All Worksets(@user.noOfAllWorksets)</a></li>
+                                    <li><a href="@routes.WorksetManagement.allWorksets()">All Worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
@@ -221,7 +221,7 @@
                     </div>
                     @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
                         <div class="modal-body">
-                            <p>You can only upload allWorksets as text files that are in CSV (comma-separated-values) format.</p>
+                            <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
                             <div class="form-group has-feedback" id="wsname-control-group">
                                 <label for="worksetName" class="control-label">Workset Name</label>
                                 <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="true" aria-describedby="wsname-feedback-status"/>
