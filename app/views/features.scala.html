@@ -25,7 +25,7 @@
         <span class="contact">(Need javascript to show)</span>.</p>
 
 
-      <p>A great deal of useful research can be performed non-consumptively with pre-extracted features. For this reason, we've prepared a data export of features in an out-of-copyright English collection of digitized text from the Hathitrust.</p>
+      <p>A great deal of useful research can be performed non-consumptively with pre-extracted features. For this reason, we've prepared a data export of features in an out-of-copyright collection of digitized text from the Hathitrust.</p>
       <p>
         <em>Features</em> are notable or informative characteristics of the text. We have processed a number of useful features, including part-of-speech tagged token counts, header and footer identification, and various line-level information. This is all
         provided
@@ -34,7 +34,7 @@
       <p>The primary precalculated feature that we are providing is the token (unigram) count, on a per-page basis. Term counts are specific to the part-of-speech usage for that term, so that a term used as both a noun and a verb, for example, with have
         separate counts provided for both these modalities of its use. We also include line information, such as the number of lines with text on each page, and a count of characters that start and end lines on each page. This information can illuminate
         genre and volume structure: for instance, it helps distinguish poetry from prose, or body text from an index.</p>
-      <p>The present release is an alpha release, and we would love to hear about how you use it, or what else you would like to see!</p>
+      <p>The present release is a beta release, and we would love to hear about how you use it, or what else you would like to see!</p>
       <p>Review the documentation below or jump straight to the <a href="#downloads">downloads</a>.</p>
 
 
@@ -45,6 +45,10 @@
       <h3>Data Stats</h3>
       <table class="table">
         <tr>
+          <td># of volumes</td>
+          <td>4,801,237</td>
+        </tr>
+        <tr>
           <td># of pages</td>
           <td>1,825,317,899</td>
         </tr>
@@ -52,15 +56,7 @@
           <td>Median pages/volume</td>
           <td>330</td>
         </tr>
-        <tr>
-          <td># of volumes</td>
-          <td>4,801,237</td>
-        </tr>
-        <!--<tr>
-                <td>Years</td><td>1431-2010</td>
-              </tr><tr>
-              <td>Median Date</td><td>1899</td>-->
-        </tr>
+
       </table>
       <p><a href="http://www.hathitrust.org/datasets">More information about HathiTrust datasets.</a>
       </p>
@@ -209,29 +205,31 @@
         <a href="http://sandbox.htrc.illinois.edu/data/EF/EEBO_samples.tar">ECCO</a> (505 volumes).</p>
       <h3 id="rsync">Rsync</h3>
 
-      <p>Rsync will sync each feature file individually, following a pairtree directory structure.</p>
+      <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
       <p>To sync all the basic feature files:</p>
-      <pre>
+      <pre style="padding-bottom: 1px;">
         <code>rsync -av sandbox.htrc.illinois.edu::pd-features/basic/ .</code>
       </pre>
 
       <p>
-        <em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you're doing.</p>
+        <b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you're doing.</b></p>
       <p>To sync all the advanced feature files:</p>
-      <pre>
+      <pre style="padding-bottom: 1px;">
         <code>rsync -av sandbox.htrc.illinois.edu::pd-features/advanced/ .</code>
       </pre>
 
       <p>A randomly sorted listing of all the basic files is available in the following location:</p>
-      <pre>
+      <pre style="padding-bottom: 1px;">
         <code>rsync -azv sandbox.htrc.illinois.edu::pd-features/listing/pd-basic-file-listing.txt .</code>
       </pre>
 
       There is also an advanced file listing at
-      <pre>pd-features/listing/pd-advanced-file-listing.txt</pre>
-      <p>. Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
+      <pre style="padding-bottom: 1px;">
+          <code>pd-features/listing/pd-advanced-file-listing.txt</code>
+      </pre>
+      <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
       <p>To rsync only the files in a given text file:</p>
-      <pre>
+      <pre style="padding-bottom: 1px;">
         <code>rsync -av --files-from FILE.TXT sandbox.htrc.illinois.edu::pd-features/ .</code>
       </pre>
 
@@ -341,6 +339,6 @@
   ga('send', 'pageview');
 </script>
 
-</div>
+
 
 }
