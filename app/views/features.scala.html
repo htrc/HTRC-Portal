@@ -6,19 +6,19 @@
 <script>
   hljs.initHighlightingOnLoad();
 </script>
-
-<div class="container">
+<div class="container container-panel">
+    <div class="container">
   <div class="row">
     <div class="col-md-12">
 
       <h1 id="page-level-features-from-the-htrc">HTRC Extracted Features Dataset (2015)
-        <small>Page-level features from 4.8 million volumes</small>
+        <br><small>Page-level features from 4.8 million volumes</small>
       </h1>
 
     </div>
   </div>
   <!-- End Header Row-->
-  <div class="row">
+  <div class="row" style="padding-right: 20px;">
     <div class="col-md-9">
       <p class="text-info">Note that this is an
         <strong>beta</strong> data release. Please send feedback to
@@ -41,7 +41,7 @@
     </div>
     <!-- END intro col -->
 
-    <div class="col-md-3">
+    <div class="col-md-3" >
       <h3>Data Stats</h3>
       <table class="table">
         <tr>
@@ -68,15 +68,15 @@
     <!--End About the Data-->
 
   </div>
-  <div class="row">
-    <div class="col-md-12">
+  <div class="row" style="padding-right: 20px;">
+    <div class="col-md-12" >
       <h1>Feature File Documentation</h1>
       <p>The HTRC Extracted Features dataset has two data files for each volume: a basic features files and an advanced features file. For most users, the basic features should suffice. Both files include the volume metadata.</p>
 
     </div>
   </div>
 
-  <div class="row">
+  <div class="row" style="padding-right: 20px;">
     <div class="col-md-3">
       <h2 id="documentation-for-metadata">Metadata</h2>
       <p>A small amount of bibliographic metadata for identifying the volume is included in this dataset. See also: <a href="#metadata">“Where can I find detailed bibliographic metadata?”</a>.</p>
@@ -161,7 +161,7 @@
     <!-- End basic documentation -->
 
 
-    <div id="advanced-documentation" class="col-md-3">
+    <div id="advanced-documentation" class="col-md-3" >
       <h2>Advanced Features</h2>
       <p>This extracted features data is also provided in JSON form. The volume and metadata are the same as included basic extracted features. In the features data, we are providing the page count information again.</p>
       <h3 id="features-1">Features</h3>
@@ -194,9 +194,10 @@
     <!--End advanced documentation -->
   </div>
   <!-- End row-->
-  <hr />
-  <div class="row">
-    <div class="col-md-12">
+
+  <div class="row" style="padding-right: 20px;">
+      <hr />
+    <div class="col-md-12" >
       <h2 id="downloads">Get the Data</h2>
 
       <p class="text-info">This feature dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
@@ -246,7 +247,7 @@
     </div>
 
   </div>
-  <div class="row">
+  <div class="row" style="padding-right: 20px;">
     <div class="col-md-12">
       <!-- START DOCUMENTATION/QUESTION -->
 
@@ -292,8 +293,9 @@
     <!-- End documentation col-->
   </div>
   <!-- End documentation row-->
-  <hr />
-  <div class="row-fluid">
+
+  <div class="row-fluid"  style="padding-right: 20px;">
+      <hr />
     <div class="col-md-4">
       <h4>Contact Us</h4>
       <p class='contact'>Need JavaScript to show</p>
@@ -312,10 +314,11 @@
   </div>
 
 </div>
+</div>
 <!-- End body container-->
 <script>
   $(document).ready(function() {
-    var a = "@";
+    var a = "@@";
     $(".contact").text("htrc-support-l" + a + "list.indiana.edu");
   });
 </script>
