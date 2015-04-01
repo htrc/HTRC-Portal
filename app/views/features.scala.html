@@ -20,7 +20,7 @@
   <!-- End Header Row-->
   <div class="row" style="padding-right: 20px;">
     <div class="col-md-9">
-      <p class="text-info">Note that this is an
+      <p class="text-info">Note that this is a
         <strong>beta</strong> data release. Please send feedback to
         <span class="contact">(Need javascript to show)</span>.</p>
 
@@ -202,36 +202,37 @@
       <h3 id="sample-files">Sample Files</h3>
       <p>A sample of 100 extracted feature files is available for download through your browser: <a href="http://sandbox.htrc.illinois.edu/data/EF/sample.tar">sample.tar</a>.</p>
       <p>Also, thematic collections are available to download: <a href="http://sandbox.htrc.illinois.edu/data/EF/docsouth_samples.tar">DocSouth</a> (87 volumes), <a href="http://sandbox.htrc.illinois.edu/data/EF/EEBO_samples.tar">EEBO</a> (355 volumes),
-        <a href="http://sandbox.htrc.illinois.edu/data/EF/EEBO_samples.tar">ECCO</a> (505 volumes).</p>
+        <a href="http://sandbox.htrc.illinois.edu/data/EF/ECCO_samples.tar">ECCO</a> (505 volumes).</p>
       <h3 id="rsync">Rsync</h3>
 
       <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
       <p>To sync all the basic feature files:</p>
-      <pre style="padding-bottom: 1px;">
-        <code>rsync -av sandbox.htrc.illinois.edu::pd-features/basic/ .</code>
-      </pre>
+        <div class="row" style="padding-left: 28px;">
+            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/basic/ .</pre>
+        </div>
+
 
       <p>
         <b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you're doing.</b></p>
       <p>To sync all the advanced feature files:</p>
-      <pre style="padding-bottom: 1px;">
-        <code>rsync -av sandbox.htrc.illinois.edu::pd-features/advanced/ .</code>
-      </pre>
+        <div class="row" style="padding-left: 28px;">
+            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/advanced/ .</pre>
+        </div>
 
       <p>A randomly sorted listing of all the basic files is available in the following location:</p>
-      <pre style="padding-bottom: 1px;">
-        <code>rsync -azv sandbox.htrc.illinois.edu::pd-features/listing/pd-basic-file-listing.txt .</code>
-      </pre>
+        <div class="row" style="padding-left: 28px;">
+            <pre class="col-xs-8">rsync -azv sandbox.htrc.illinois.edu::pd-features/listing/pd-basic-file-listing.txt .</pre>
+        </div>
 
       There is also an advanced file listing at
-      <pre style="padding-bottom: 1px;">
-          <code>pd-features/listing/pd-advanced-file-listing.txt</code>
-      </pre>
+        <div class="row" style="padding-left: 28px;">
+            <pre class="col-xs-8">pd-features/listing/pd-advanced-file-listing.txt</pre>
+        </div>
       <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
       <p>To rsync only the files in a given text file:</p>
-      <pre style="padding-bottom: 1px;">
-        <code>rsync -av --files-from FILE.TXT sandbox.htrc.illinois.edu::pd-features/ .</code>
-      </pre>
+        <div class="row" style="padding-left: 28px;">
+            <pre class="col-xs-8">rsync -av --files-from FILE.TXT sandbox.htrc.illinois.edu::pd-features/ .</pre>
+        </div>
 
       <h4 id="file-names">File names</h4>
       <p>Volume feature files are use that volume's ID, with the following characters substituted:
