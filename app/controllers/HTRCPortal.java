@@ -19,6 +19,7 @@ import play.Logger;
 import play.Play;
 import play.mvc.Result;
 import views.html.about;
+import views.html.features;
 import views.html.gotopage;
 import views.html.index;
 
@@ -127,6 +128,10 @@ public class HTRCPortal extends JavaController {
 //    @Security.Authenticated(Secured.class)
     public static Result about() {
         return ok(about.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
+    }
+
+    public static Result features() {
+        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
     }
 
 //    public static class Login {
