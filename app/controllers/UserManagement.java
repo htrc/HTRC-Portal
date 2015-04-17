@@ -39,7 +39,8 @@ public class UserManagement extends JavaController {
 
         if (signUpForm.hasErrors()) {
             if (!SignUp.isValidEmail(signUpForm.data().get("email"))) {
-                return badRequest(accountrequest.render(Form.form(AccountRequest.class), null, signUpForm.data().get("firstName"), signUpForm.data().get("lastName"), signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
+                return badRequest(accountrequest.render(Form.form(AccountRequest.class), null, signUpForm.data().get("firstName"), signUpForm.data().get("lastName"),
+                        signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
             }
             return badRequest(signup.render(signUpForm, null));
         }
@@ -242,7 +243,7 @@ public class UserManagement extends JavaController {
                         "http://wso2.org/claims/emailaddress", email));
                 try {
                     userManager.createUser(userId, password, claims);
-                    sendUserRegistrationEmail(email, userId);
+                    sendUserRegistrationEmail(email, userId, firstName);
                     log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
                             + " User ID: " + userId);
                     setStatus("Success");
@@ -258,10 +259,10 @@ public class UserManagement extends JavaController {
             return null;
         }
 
-        public void sendUserRegistrationEmail(String userEmail, String userId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Welcome to HTRC. Please click on following url to activate your account. \n" + url);
+            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n" + "Welcome to HTRC. Please click on the following url to activate your account. \n" + url);
 
         }
 
@@ -297,15 +298,6 @@ public class UserManagement extends JavaController {
                             email + " is not an approved email.");
                     return false;
                 }
-//                if (!instDomains.containsKey(domainName)) {
-//                    log.info(domainName + " is not an institutional email domain. ");
-//                    if(!approvedEmails.containsKey(email)){
-//                        log.info(email + " is not an approved email.");
-//                        return false;
-//                    }
-//
-//                }
-//                return true;
             }
         }
     }
@@ -352,15 +344,15 @@ public class UserManagement extends JavaController {
     public static class PasswordReset {
         public String token;
         public String password;
-        public String retypePassword;
+        public String confirmPassword;
 
         PasswordChecker passwordChecker = new PasswordChecker();
 
 
         public String validate() {
             log.debug("Token in the form: " + token);
-            if (passwordValidate(password, retypePassword) != null) {
-                return passwordValidate(password, retypePassword);
+            if (passwordValidate(password, confirmPassword) != null) {
+                return passwordValidate(password, confirmPassword);
             }
             return null;
         }
@@ -424,14 +416,18 @@ public class UserManagement extends JavaController {
     public static String passwordValidate(String password, String retypePassword) {
         PasswordChecker passwordChecker = new PasswordChecker();
 
+
         if (password.isEmpty()) {
             return "Password is empty, Please enter password.";
         }
         if (password.length() < 15) {
-            return "Password should be more than 15 characters long.";
+            return "Password must be more than 15 characters long.";
         }
         if (password.contains(" ")) {
-            return "Password should not contain any white spaces.";
+            return "Password must not contain any white spaces.";
+        }
+        if (password.length() > 30) {
+            return "Password must not be more than 30 characters long.";
         }
         if (!passwordChecker.isValidPassword(password)) {
             return "Please use a strong password.";

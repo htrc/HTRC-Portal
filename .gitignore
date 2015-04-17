@@ -7,3 +7,12 @@ project/
 log/
 target/
 conf/application.conf
+*.gz
+
+*.log
+
+public/javascripts/algorithm/d3.v2.min.js
+
+public/javascripts/algorithm/wordcloud/d3.layout.cloud.js
+
+public/stylesheets/fonts-googleapis.css

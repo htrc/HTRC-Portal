@@ -1,16 +1,19 @@
 package edu.indiana.d2i.htrc.portal;
 
-import edu.vt.middleware.password.*;
+
 import play.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by shliyana on 6/6/14.
  */
 public class PasswordChecker {
     private static Logger.ALogger log = play.Logger.of("application");
+
+    int successCount = 0;
+    int numberOfRulesToSatisfy = 2;
+
+
     /**
      * Check password strength.
      * Check whether password contain characters from three of the following five categories:
@@ -22,73 +25,33 @@ public class PasswordChecker {
      */
 
     public boolean isValidPassword(String password) {
-        // password must be more than 15 chars long
-        LengthRule lengthRule = new LengthRule(15, Integer.MAX_VALUE);
 
-//        // don't allow whitespace
-       WhitespaceRule whitespaceRule = new WhitespaceRule();
-
-        // control allowed characters
-        CharacterCharacteristicsRule charRule = new CharacterCharacteristicsRule();
-        // require at least 1 digit in passwords
-        charRule.getRules().add(new DigitCharacterRule(1));
-        // require at least 1 non-alphanumeric char
-//            charRule.getRules().add(new NonAlphanumericCharacterRule(1));
-        // require at least 1 upper case char
-        charRule.getRules().add(new UppercaseCharacterRule(1));
-        // require at least 1 lower case char
-        charRule.getRules().add(new LowercaseCharacterRule(1));
-
-        // require at least 2 of the previous rules be met if there is an Unicode in the password
-        // if there is no Unicode in the password, require at least 3 of previous rules.
-        if (atLeastOneUniCodeCharacter(password) && atLeastOneNonAlphaNumericCharacter(password)) {
-            charRule.setNumberOfCharacteristics(0);
-        } else if (atLeastOneUniCodeCharacter(password) || atLeastOneNonAlphaNumericCharacter(password)) {
-            charRule.setNumberOfCharacteristics(1);
-        } else {
-            charRule.setNumberOfCharacteristics(2);
+        if(atLeastOneUppercaseCharacter(password)){
+            successCount++;
+        }
+        if(atLeastOneLowercaseCharacter(password)){
+            successCount++;
+        }
+        if(atLeastOneDigit(password)){
+            successCount++;
+        }
+        if(atLeastOneNonAlphaNumericCharacter(password)){
+            successCount++;
+        }
+        if(atLeastOneUniCodeCharacter(password)){
+            successCount++;
         }
 
-
-//            // don't allow alphabetical sequences
-//            AlphabeticalSequenceRule alphaSeqRule = new AlphabeticalSequenceRule();
-//
-//            // don't allow numerical sequences of length 3
-//            NumericalSequenceRule numSeqRule = new NumericalSequenceRule();
-//
-//            // don't allow qwerty sequences
-//            QwertySequenceRule qwertySeqRule = new QwertySequenceRule();
-//
-//            // don't allow 4 repeat characters
-//            RepeatCharacterRegexRule repeatRule = new RepeatCharacterRegexRule(4);
-
-        // group all rules together in a List
-        List<Rule> ruleList = new ArrayList<Rule>();
-        ruleList.add(charRule);
-        ruleList.add(lengthRule);
-        ruleList.add(whitespaceRule);
-
-        PasswordValidator validator = new PasswordValidator(ruleList);
-        PasswordData passwordData = new PasswordData(new Password(password));
-
-        RuleResult result = validator.validate(passwordData);
-        if (result.isValid()) {
-            for (String msg : validator.getMessages(result)) {
-                log.info(msg);
-            }
-            return result.isValid();
-        } else {
-            for (String msg : validator.getMessages(result)) {
-                log.warn(msg);
-            }
-            return result.isValid();
+        if(successCount >= numberOfRulesToSatisfy){
+            log.info("Password satisfies "+successCount+ " rules out of 5 rules.");
         }
+        return successCount >= 2;
     }
 
     public boolean atLeastOneUniCodeCharacter(String password) {
         for (char c : password.toCharArray()) {
             if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.BASIC_LATIN) {
-                log.info("Password include Unicodes");
+                log.info("Password include an Unicode");
                 return true;
             }
         }
@@ -100,12 +63,48 @@ public class PasswordChecker {
         for (char c : password.toCharArray()) {
             if (!Character.isLetterOrDigit(c)) {
                 if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN) {
-                    log.info("Password include NonAlphaNumeric character");
+                    log.info("Password include a NonAlphaNumeric character");
                     return true;
                 }
             }
         }
-        log.info("Password doesn't include NonAlphaNumeric character");
+        log.info("Password doesn't include a NonAlphaNumeric character");
+        return false;
+    }
+
+    public boolean atLeastOneUppercaseCharacter(String password) {
+
+        for (char c : password.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN && Character.isUpperCase(c)) {
+                log.info("Password include an uppercase character");
+                return true;
+            }
+        }
+        log.info("Password doesn't include an uppercase character");
+        return false;
+    }
+
+    public boolean atLeastOneLowercaseCharacter(String password) {
+
+        for (char c : password.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN && Character.isLowerCase(c)) {
+                log.info("Password include a lowercase character");
+                return true;
+            }
+        }
+        log.info("Password doesn't include a lowercase character");
+        return false;
+    }
+
+    public boolean atLeastOneDigit(String password) {
+
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) {
+                log.info("Password include a digit.");
+                return true;
+            }
+        }
+        log.info("Password doesn't include a digit.");
         return false;
     }
 
