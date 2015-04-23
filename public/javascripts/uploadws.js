@@ -31,6 +31,20 @@ var wsSubmitButtonVisibility = function () {
     }
 };
 
+var checkWsNameValidity = function (wsname, onInvalidWSName, onValidWSName) {
+    var request = $.ajax({
+        url: "/iswsnamevalid?wsName=" + wsname,
+        type: "GET",
+        success: function (result) {
+            if (!result.valid) {
+                onInvalidWSName();
+            } else {
+                onValidWSName();
+            }
+        }
+    });
+};
+
 var wsNameInputKeyUp = function () {
     var wsName = $(this).val();
     var wsNameControlGroup = $('#wsname-control-group');
@@ -46,9 +60,14 @@ var wsNameInputKeyUp = function () {
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name cannot be empty!');
     }else{
+        checkWsNameValidity(wsName,function () {
+            wsNameCorrect = false;
+            uploadHasError(wsNameControlGroup, wsNameFeedback);
+            wsNameWarnBlock.html('You already have a workset with this name. Please choose an another name.');
+        },function(){
         wsNameCorrect = true;
         uploadHasSuccess(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('');
+        wsNameWarnBlock.html('');});
     }
 };
 

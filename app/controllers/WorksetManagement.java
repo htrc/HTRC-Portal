@@ -2,8 +2,10 @@ package controllers;
 
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.illinois.i3.htrc.registry.entities.workset.Property;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
+import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
@@ -22,6 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import play.Logger;
+import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
 import views.html.*;
@@ -75,7 +78,7 @@ public class WorksetManagement extends JavaController {
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException{
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName,worksetAuthor);
+        edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName, worksetAuthor);
         List<Volume> volumeList = new ArrayList<>();
         if (!worksetName.contains(" ")) {
             volumeList = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
@@ -305,6 +308,22 @@ public class WorksetManagement extends JavaController {
         return ok(csv);
     }
 
+    /**
+     * This is to check whether user already has a workset in with the given name
+     * @param wsName Workset's name
+     * @return
+     */
+    @RequiresAuthentication(clientName = "Saml2Client")
+    public static Result validateWSName(String wsName) throws IOException, JAXBException {
+        User user = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        Workset ws = persistenceAPIClient.getWorkset(wsName, user.userId);
+        // Validate the Workset Name and set isValid.
+        ObjectNode result = Json.newObject();
+        result.put("valid", ws == null);
+        return ok(result);
+    }
+
     public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
         String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + URLEncoder.encode(volid.replace(":", "%20"), "UTF-8") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
         VolumeDetailsBean volDetails = new VolumeDetailsBean();
@@ -479,4 +498,5 @@ public class WorksetManagement extends JavaController {
     public static String getWorksetWithAuthor(String workset, String author){
         return workset + '@' + author;
     }
+
 }
