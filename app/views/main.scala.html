@@ -219,13 +219,13 @@
                             <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
                             <div class="form-group has-feedback" id="wsname-control-group">
                                 <label for="worksetName" class="control-label">Workset Name</label>
-                                <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="true" aria-describedby="wsname-feedback-status"/>
+                                <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="required" aria-describedby="wsname-feedback-status"/>
                                 <span id="wsname-feedback" class="form-control-feedback" aria-hidden="true"></span>
                                 <span id="wsname-feedback-status" class="sr-only">(success)</span>
                                 @*<div id="workset_name_alert_placeholder">*@
                                 @*</div>*@
                                 <span class="help-block">
-                                    Only characters A-Z, 0-9, or _ allowed.
+                                    Only characters A-Z, 0-9, or _ allowed.<br>
                                     <span id="wsname-warn-block" class="warn-block"></span>
                                 </span>
                             </div>
@@ -235,11 +235,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="inputCSV">CSV File:</label>
-                                <input type="file" accept="text/csv" name="csv" id="inputCSV" required="true">
+                                <input type="file" accept="text/csv" name="csv" id="inputCSV" required="required">
                             </div>
                             <div class="checkbox">
                                 <label >
-                                    <input type="checkbox" name="privateWorkset" checked="true"/> Private workset.
+                                    <input type="checkbox" name="privateWorkset" checked="checked"/> Private workset.
                                 </label>
                             </div>
 
