@@ -204,7 +204,7 @@
       <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
       <p>To sync all the basic feature files:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/basic/ .</pre>
+            <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/basic/ .</pre>
         </div>
 
 
@@ -212,12 +212,12 @@
         <b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you're doing.</b></p>
       <p>To sync all the advanced feature files:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/advanced/ .</pre>
+            <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/advanced/ .</pre>
         </div>
 
       <p>A randomly sorted listing of all the basic files is available in the following location:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -azv sandbox.htrc.illinois.edu::pd-features/listing/pd-basic-file-listing.txt .</pre>
+            <pre class="col-xs-8">rsync -azv data.sharc.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre>
         </div>
 
       There is also an advanced file listing at
@@ -227,7 +227,7 @@
       <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
       <p>To rsync only the files in a given text file:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av --files-from FILE.TXT sandbox.htrc.illinois.edu::pd-features/ .</pre>
+            <pre class="col-xs-8">rsync -av --files-from FILE.TXT data.sharc.hathitrust.org::pd-features/ .</pre>
         </div>
 
       <h4 id="file-names">File names</h4>
