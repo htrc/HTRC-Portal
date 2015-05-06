@@ -34,11 +34,11 @@
       <p>Review the documentation below or jump straight to the <a href="#downloads">downloads</a>.</p>
 
       <h3>Attribution</h3>
-      <p>This feature dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. For attribution, please use the following citation:</p>
       <p class="text-info">
       <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>  
       Boris Capitanu, Ted Underwood, Peter Organisciak, Sayan Bhattacharyya, Loretta Auvil, Colleen Fallaw, J. Stephen Downie (2015). <em>Extracted Feature Dataset from 4.8 Million HathiTrust Digital Library Public Domain Volumes</em>. [Dataset]. HathiTrust Research Center, doi:10.13012/j8td9v7m.
       </p>
+      <p>This feature dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
       </div>
     <!-- END intro col -->
 
@@ -117,7 +117,7 @@
         <strong>pageCount</strong>: The number of pages in the volume.</p>
       <p>
         <strong>pages</strong>: An array of JSON objects, each representing a page of the volume.</p>
-      <h3 id="page">Pagei-Level Features</h3>
+      <h3 id="page">Page-Level Features</h3>
       <p>Pages are contained within volumes, they have a sequence number, and information about their header, body, and footer.</p>
       <h4 id="page-level-information">Page-level information</h4>
       <p>
@@ -172,7 +172,7 @@
       <p>
         <strong>seq</strong>: The sequence number.</p>
       <p>
-        <strong>beginLineChars</strong>: Frequency counts of non-whitespace characters at the starts of lines. Characters with zero counts are not shown.</p>
+      <strong>beginLineChars</strong>: Aggregated frequency counts of the first non-whitespace character on each line.</p>
       <p>
         <strong>endLineChars</strong>: Count of the last character on each line in this page section (ignoring whitespace).</p>
       <p>
@@ -242,6 +242,16 @@
 
   </div>
   <div class="row" style="padding-right: 20px;">
+
+	  <!-- START ACKNOWLEDGEMENTS-->
+	<div class="col-md-12"><h2>Acknowledgements</h2>
+  
+  <p>Computation was supported by the Cline Center for Democracy through its allocation on the Blue Waters sustained-petascale computing project, which is funded by the National Science Foundation (awards OCI-0725070 and ACI-1238993) and the state of Illinois. Blue Waters is a joint effort of the University of Illinois at Urbana-Champaign and its National Center for Supercomputing Applications.</p>
+
+<p>This release has been made possible, in part, by the National Endowment for the Humanities: Celebrating 50 Years of Excellence. Any views, findings, conclusions, or recommendations expressed in this release do not necessarily represent those of the National Endowment for the Humanities.</p>
+  </div>
+  <!-- END ACKNOWLEDGEMENTS-->
+
     <div class="col-md-12">
       <!-- START DOCUMENTATION/QUESTION -->
 
