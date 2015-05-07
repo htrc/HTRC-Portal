@@ -11,8 +11,8 @@
   <div class="row">
     <div class="col-md-12">
 
-      <h1 id="page-level-features-from-the-htrc">HTRC Extracted Features Dataset (2015)
-        <br><small>Page-level features from 4.8 million volumes</small>
+      <h1 id="page-level-features-from-the-htrc">HTRC Extracted Features Dataset
+        <br><small>Page-level features from 4.8 million volumes [v.0.2]</small>
       </h1>
 
     </div>
@@ -25,23 +25,20 @@
         <span class="contact">(Need javascript to show)</span>.</p>
 
 
-      <p>A great deal of useful research can be performed non-consumptively with pre-extracted features. For this reason, we've prepared a data export of features in an out-of-copyright collection of digitized text from the Hathitrust.</p>
+      <p>A great deal of useful research can be performed non-consumptively with pre-extracted features. For this reason, we've prepared a data export of features for the public domain volumes of the HathiTrust Digital Library.</p>
       <p>
-        <em>Features</em> are notable or informative characteristics of the text. We have processed a number of useful features, including part-of-speech tagged token counts, header and footer identification, and various line-level information. This is all
-        provided
-        <em>per-page</em>. Providing token information at the page level makes it possible to separate text from paratext. (An example of the latter may be: thirty pages of publishers’ ads at the back of a book). We have also decided to break each page into
-        a collection of three parts: header, body, and footer. The specific features that we extract from the text are described in more detail below.</p>
-      <p>The primary precalculated feature that we are providing is the token (unigram) count, on a per-page basis. Term counts are specific to the part-of-speech usage for that term, so that a term used as both a noun and a verb, for example, with have
-        separate counts provided for both these modalities of its use. We also include line information, such as the number of lines with text on each page, and a count of characters that start and end lines on each page. This information can illuminate
+        <em>Features</em> are notable or informative characteristics of the text. Also, we have processed a number of useful features, including part-of-speech tagged token counts, header and footer identification, and various line-level information. These are provided <em>per-page</em>. Providing token information at the page-level makes it possible to separate text from paratext; for instance, a researcher may use the information to identify publishers' ads at the back of a book. For cleaner text, headers and footers are also identified distinctly from page content. The specific features that we extract for each page are described in more detail below.</p>
+      <p>The most useful extracted feature that we are provide is the token (unigram) count, on a per-page basis. Term counts are specific to the part-of-speech usage for that term, so that a term used as both a noun and a verb, for example, will have separate counts provided for both these modalities of its use. We also include line information, such as the number of lines with text on each page, and a count of characters that start and end lines on each page. This information can illuminate
         genre and volume structure: for instance, it helps distinguish poetry from prose, or body text from an index.</p>
       <p>The present release is a beta release, and we would love to hear about how you use it, or what else you would like to see!</p>
       <p>Review the documentation below or jump straight to the <a href="#downloads">downloads</a>.</p>
 
-      <h3>Citation</h3>
-      <p>
+      <h3>Attribution</h3>
+      <p class="text-info">
       <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>  
-      Boris Capitanu, Ted Underwood, Peter Organisciak, Sayan Bhattacharyya, Loretta Auvil, Colleen Fallaw, J. Stephen Downie (2015). <em>Extracted Feature Dataset from 4.8 Million HathiTrust Digital Library Public Domain Volumes (v0.2)</em>. [Dataset]. Retrieved from https://htrc2.pti.indiana.edu/features.
+      Boris Capitanu, Ted Underwood, Peter Organisciak, Sayan Bhattacharyya, Loretta Auvil, Colleen Fallaw, J. Stephen Downie (2015). <em>Extracted Feature Dataset from 4.8 Million HathiTrust Digital Library Public Domain Volumes</em>. [Dataset]. HathiTrust Research Center, doi:10.13012/j8td9v7m.
       </p>
+      <p>This feature dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
       </div>
     <!-- END intro col -->
 
@@ -71,7 +68,7 @@
   <div class="row" style="padding-right: 20px;">
     <div class="col-md-12" >
       <h1>Feature File Documentation</h1>
-      <p>The HTRC Extracted Features dataset has two data files for each volume: a basic features files and an advanced features file. For most users, the basic features should suffice. Both files include the volume metadata.</p>
+      <p>The HTRC Extracted Features provides two JSON files for each volume: a basic features files and an advanced features file. For most users, the basic features should suffice. Both files include the volume metadata.</p>
 
     </div>
   </div>
@@ -80,11 +77,8 @@
     <div class="col-md-3">
       <h2 id="documentation-for-metadata">Metadata</h2>
       <p>A small amount of bibliographic metadata for identifying the volume is included in this dataset. See also: <a href="#metadata">“Where can I find detailed bibliographic metadata?”</a>.</p>
-      <h3 id="volume">Volume</h3>
-      <p>The volume represents the current work (e.g. book) as represented in the HathiTrust index.</p>
       <p>
         <strong>id</strong>: A unique identifier for the current volume. This is the same identifier used in the HathiTrust and HathiTrust Research Center corpora.</p>
-      <h3 id="metadata">Metadata</h3>
       <p>
         <strong>schemaVersion</strong>: A version identifier for the format and structure of this metadata object.
         <em>metadata.schemaVersion</em> is separate from
@@ -94,11 +88,11 @@
         <em>metadata.dateCreated</em> is not necessarily the same as the
         <em>features.dataCreated</em> below.</p>
       <p>
-        <strong>title</strong>: Title of the given volume.</p>
+        <strong>title</strong>: Title of the volume.</p>
       <p>
         <strong>pubDate</strong>: The publication year.</p>
       <p>
-        <strong>language</strong>: The primary language of the given volume.</p>
+        <strong>language</strong>: The primary language of the volume.</p>
       <p>
         <strong>htBibUrl</strong>: The HathiTrust Bibliographic API call for the volume.</p>
       <p>
@@ -106,7 +100,7 @@
       <p>
         <strong>oclc</strong>: The array of <a href="https://oclc.org/en-US/home.html">OCLC</a> number(s).</p>
       <p>
-        <strong>imprint</strong>: The publication place, publisher, and publication date of the given volume.</p>
+        <strong>imprint</strong>: The place of publication, publisher, and publication date of the given volume.</p>
 
     </div>
     <!--End Metadata-->
@@ -114,9 +108,7 @@
     <div class="col-md-6">
       <!-- START BASIC DOCUMENTATION -->
       <h2 id="documentation-for-basic-extracted-features">Basic Features</h2>
-      <p>The extracted features data is provided in JSON form.</p>
-      <h3 id="features">Features</h3>
-      <p>The features extracted from the content of the volume.</p>
+      <h3 id="features">Volume-Level Features</h3>
       <p>
         <strong>schemaVersion</strong>: A version identifier for the format and structure of the feature data (HTRC generated).</p>
       <p>
@@ -125,30 +117,30 @@
         <strong>pageCount</strong>: The number of pages in the volume.</p>
       <p>
         <strong>pages</strong>: An array of JSON objects, each representing a page of the volume.</p>
-      <h3 id="page">Page</h3>
+      <h3 id="page">Page-Level Features</h3>
       <p>Pages are contained within volumes, they have a sequence number, and information about their header, body, and footer.</p>
       <h4 id="page-level-information">Page-level information</h4>
       <p>
-        <strong>seq</strong>: The sequence number. <a href="#page-id">See notes on ID usage</a>.</p>
+        <strong>seq</strong>: The sequence number. <a href="#page-id">More details on this value.</a>.</p>
       <p>
-        <strong>tokenCount</strong>: The total number of tokens in the page.</p>
+        <strong>tokenCount</strong>: The total number of tokens on the page.</p>
       <p>
-        <strong>lineCount</strong>: The total number of non-empty lines in the page.</p>
+        <strong>lineCount</strong>: The total number of non-empty lines on the page.</p>
       <p>
-        <strong>emptyLineCount</strong>: The total number of empty lines in the page.</p>
+        <strong>emptyLineCount</strong>: The total number of empty lines on the page.</p>
       <p>
-        <strong>sentenceCount</strong>: Total number of sentences identified in the page using OpenNLP. <a href="#sentence-parse">Details on parsing</a>.</p>
+        <strong>sentenceCount</strong>: Total number of sentences identified on the page using OpenNLP. <a href="#token-parse">Details on parsing</a>.</p>
       <p>
-        <strong>languages</strong>: Automatically inferred language likelihood for the page, Shuyo Nakatani's <a href="https://code.google.com/p/language-detection/">Language Detection</a> library. <a href="https://code.google.com/p/language-detection/wiki/LanguageListn">Language code reference</a>.</p>
+        <strong>languages</strong>: Automatically inferred language likelihood for the page, Shuyo Nakatani's <a href="https://code.google.com/p/language-detection/">Language Detection</a> library. <a href="https://code.google.com/p/language-detection/wiki/LanguageList">Language code reference</a>.</p>
       <h4 id="header-body-and-footer-information">Header, Body, and Footer information</h4>
       <p>The fields for
         <em>header</em>,
         <em>body</em>, and
-        <em>footer</em> are the same, but apply to different parts of the page. <a href="#header-q">Read about the differences between the sections</a>.</p>
+        <em>footer</em> are the same, but pertain to different parts of the page. <a href="#header-q">Read about the differences between the sections</a>.</p>
       <p>
         <strong>tokenCount</strong>: The total number of tokens in this page section.</p>
       <p>
-        <strong>lineCount</strong>: The number of lines containing characters of any kind in this page section. This represents the layout of the page, for sentence counts, see the
+        <strong>lineCount</strong>: The number of lines containing characters of any kind in this page section. This pertains to the layout of the page; for sentence counts, see the
         <em>sentenceCount</em> field.</p>
       <p>
         <strong>emptyLineCount</strong>: The number of lines without text in this page section.</p>
@@ -163,8 +155,8 @@
 
     <div id="advanced-documentation" class="col-md-3" >
       <h2>Advanced Features</h2>
-      <p>This extracted features data is also provided in JSON form. The volume and metadata are the same as included basic extracted features. In the features data, we are providing the page count information again.</p>
-      <h3 id="features-1">Features</h3>
+      <p>The advanced features data provides additional page-level features, while including the same volume-level that is included with the basic features set.</p>
+      <h3 id="features-1">Volume-Level Features</h3>
       <p>The features extracted from the content of the volume.</p>
       <p>
         <strong>schemaVersion</strong>: A version identifier for the format and structure of the feature data (HTRC generated).</p>
@@ -174,17 +166,17 @@
         <strong>pageCount</strong>: The number of pages in the volume.</p>
       <p>
         <strong>pages</strong>: An array of JSON objects, each representing a page of the volume.</p>
-      <h3 id="page-1">Page</h3>
+      <h3 id="page-1">Page-Level Features</h3>
       <p>Pages are contained within volumes, they have a sequence number, and information about their header, body, and footer.</p>
       <h4 id="page-level-information-1">Page-level information</h4>
       <p>
-        <strong>seq</strong>: The sequence number. <a href="#page-id">See notes on ID usage</a>.</p>
+        <strong>seq</strong>: The sequence number.</p>
       <p>
-        <strong>beginLineChars</strong>: Count of the initial character of each line in this page section (ignoring whitespace).</p>
+      <strong>beginLineChars</strong>: Aggregated frequency counts of the first non-whitespace character on each line.</p>
       <p>
         <strong>endLineChars</strong>: Count of the last character on each line in this page section (ignoring whitespace).</p>
       <p>
-        <strong>capAlphaSeq</strong>: (body only) Maximum length of the alphabetical sequence of capital characters starting a line.</p>
+        <strong>capAlphaSeq</strong>: (body only) The longest length of the alphabetical sequence of capital characters starting a line.</p>
 
 
 
@@ -200,32 +192,31 @@
     <div class="col-md-12" >
       <h2 id="downloads">Get the Data</h2>
 
-      <p class="text-info">This feature dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
       <p>The data is accessible using rsync. Rsync should be installed already on your Mac or Linux system; Windows users can use it through <a href="https://cygwin.com/install.html">Cygwin</a>.</p>
 
       <h3 id="sample-files">Sample Files</h3>
-      <p>A sample of 100 extracted feature files is available for download through your browser: <a href="http://sandbox.htrc.illinois.edu/data/EF/sample.tar">sample.tar</a>.</p>
-      <p>Also, thematic collections are available to download: <a href="http://sandbox.htrc.illinois.edu/data/EF/docsouth_samples.tar">DocSouth</a> (87 volumes), <a href="http://sandbox.htrc.illinois.edu/data/EF/EEBO_samples.tar">EEBO</a> (355 volumes),
-        <a href="http://sandbox.htrc.illinois.edu/data/EF/ECCO_samples.tar">ECCO</a> (505 volumes).</p>
+      <p>A sample of 100 extracted feature files is available for download through your browser: <a href="http://data.sharc.hathitrust.org/data/EF/sample.tar">sample.tar</a>.</p>
+      <p>Also, thematic collections are available to download: <a href="http://data.sharc.hathitrust.org/data/EF/docsouth_samples.tar">DocSouth</a> (87 volumes), <a href="http://data.sharc.hathitrust.org/data/EF/EEBO_samples.tar">EEBO</a> (355 volumes),
+        <a href="http://data.sharc.hathitrust.org/data/EF/ECCO_samples.tar">ECCO</a> (505 volumes).</p>
       <h3 id="rsync">Rsync</h3>
 
       <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
       <p>To sync all the basic feature files:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/basic/ .</pre>
+            <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/basic/ .</pre>
         </div>
 
 
       <p>
-        <b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you're doing.</b></p>
+        <b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you are doing.</b></p>
       <p>To sync all the advanced feature files:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av sandbox.htrc.illinois.edu::pd-features/advanced/ .</pre>
+            <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/advanced/ .</pre>
         </div>
 
       <p>A randomly sorted listing of all the basic files is available in the following location:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -azv sandbox.htrc.illinois.edu::pd-features/listing/pd-basic-file-listing.txt .</pre>
+            <pre class="col-xs-8">rsync -azv data.sharc.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre>
         </div>
 
       There is also an advanced file listing at
@@ -235,22 +226,32 @@
       <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
       <p>To rsync only the files in a given text file:</p>
         <div class="row" style="padding-left: 28px;">
-            <pre class="col-xs-8">rsync -av --files-from FILE.TXT sandbox.htrc.illinois.edu::pd-features/ .</pre>
+            <pre class="col-xs-8">rsync -av --files-from FILE.TXT data.sharc.hathitrust.org::pd-features/ .</pre>
         </div>
 
       <h4 id="file-names">File names</h4>
-      <p>Volume feature files are use that volume's ID, with the following characters substituted:
+      <p>Volume feature files use the volume's ID, with the following characters substituted:
         <em>:</em> to
         <em>+</em>, and
         <em>/</em> to
-        <em>=</em>. This means that any list of Hathitrust public domain files can be used to download the corresponding feature files.</p>
+        <em>=</em>. This means that any list of HathiTrust public domain files can be used to download the corresponding feature files.</p>
 
-
-
+	<h3 id="workset-download">Workset Download</h3>
+	To download the Extracted Features data for a specific workset in the HTRC Portal, there is an algorithm that generates the Rsync download script: <a href="https://htrc2.pti.indiana.edu/viewalgorithm?algorithmName=EF_Rsync_Script_Generator">EF Rsync Script Generator</a>.
     </div>
 
   </div>
   <div class="row" style="padding-right: 20px;">
+
+	  <!-- START ACKNOWLEDGEMENTS-->
+	<div class="col-md-12"><h2>Acknowledgements</h2>
+  
+  <p>Computation was supported by the Cline Center for Democracy through its allocation on the Blue Waters sustained-petascale computing project, which is funded by the National Science Foundation (awards OCI-0725070 and ACI-1238993) and the state of Illinois. Blue Waters is a joint effort of the University of Illinois at Urbana-Champaign and its National Center for Supercomputing Applications.</p>
+
+<p>This release has been made possible, in part, by the National Endowment for the Humanities: Celebrating 50 Years of Excellence. Any views, findings, conclusions, or recommendations expressed in this release do not necessarily represent those of the National Endowment for the Humanities.</p>
+  </div>
+  <!-- END ACKNOWLEDGEMENTS-->
+
     <div class="col-md-12">
       <!-- START DOCUMENTATION/QUESTION -->
 
@@ -259,23 +260,20 @@
 
       <h2 id="questions">Questions</h2>
       <h3 id="token-parse">How are tokens parsed?</h3>
-      <p>Hyphenation of tokens at end of line was corrected using custom code. <a href="http://opennlp.apache.org/">Apache OpenNLP</a> was used for sentence segmentation, tokenization, and part of speech (POS) tagging. No additional data cleaning or OCR
-        corrections was performed.</p>
+      <p>Hyphenation of tokens at end of line was corrected using custom code. <a href="http://opennlp.apache.org/">Apache OpenNLP</a> was used for sentence segmentation, tokenization, and part of speech (POS) tagging. No additional data cleaning or OCR correction was performed.</p>
       <p>OpenNLP uses <a href="http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">the Penn Treebank POS tags</a>.</p>
       <h3 id="page-id">Can I use the page sequence as a unique identifier?</h3>
       <p>The
-        <em>seq</em> value is always sequential from the start. In this version of processing, the seq value was extracted from the filename. In some limited cases, if the labeling of the filenames doesn’t align with the seq given in the METS file, then our
-        pages are not in alignment with HT. In the future, we will change and use the METS file to specify the seq number. Each scanned page of a volume has a unique sequence number, but it is specific to the
-        <em>current</em> version of the full text. In theory, updates to the OCR that add or remove pages will change the sequence. The practical likelihood of sequential changes is low, but uses of the page as an id should be cautious.</p>
-      <p>A future release of this data will include persistent page identifiers that remain unchanged when there are sequential changes.</p>
-      <h3 id="metadata">Where’s the bibliographic metadata? Who wrote the book, when is it from, etc.?</h3>
+        <em>seq</em> value is always sequential from the start. Each scanned page of a volume has a unique sequence number, but it is specific to the <em>current</em> version of the full text. In theory, updates to the OCR that add or remove pages will change the sequence. The practical likelihood of changes in the sequence is low, but uses of the page as an id should be cautious.</p>
+      <p>A future release of this data will include persistent page identifiers that remain unchanged even when page sequence changes.</p>
+      <h3 id="metadata">Where is the bibliographic metadata? Who wrote the book?; When was it published, etc.?</h3>
       <p>This dataset is foremost an extracted features dataset, with minimal metadata included as a convenience. For additional metadata information, i.e. subject classifications, etc., HT offers <a href="http://www.hathitrust.org/hathifiles">Hathifiles</a>,
         which can be paired to our feature dataset through the volume
         <em>id</em> field.</p>
       <p>The metadata that
-        <em>is</em> included in this data includes MARC metadata from Hathitrust and additional information from Hathifiles:</p>
+        <em>is</em> included in this data includes MARC metadata from HathiTrust and additional information from Hathifiles:</p>
       <ul>
-        <li>imprint: 260a from Hathitrust MARC record, 260b and 260c from Hathifiles.</li>
+        <li>imprint: 260a from HathiTrust MARC record, 260b and 260c from Hathifiles.</li>
         <li>language: MARC control field 008 from Hathifiles.</li>
         <li>pubDate: extracted from Hathifiles. See also: <a href="http://www.hathitrust.org/bib_rights_determination">details on HathiTrust's rights-determination</a>.</li>
         <li>oclc: extracted from Hathifiles.</li>
@@ -327,20 +325,30 @@
 </script>
 
 <!-- Google Analytics tracking code -->
-<script>
-  (function(i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r;
-    i[r] = i[r] || function() {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date();
-    a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0];
-    a.async = 1;
-    a.src = g;
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+<!--<script>-->
+  <!--(function(i, s, o, g, r, a, m) {-->
+    <!--i['GoogleAnalyticsObject'] = r;-->
+    <!--i[r] = i[r] || function() {-->
+      <!--(i[r].q = i[r].q || []).push(arguments)-->
+    <!--}, i[r].l = 1 * new Date();-->
+    <!--a = s.createElement(o),-->
+      <!--m = s.getElementsByTagName(o)[0];-->
+    <!--a.async = 1;-->
+    <!--a.src = g;-->
+    <!--m.parentNode.insertBefore(a, m)-->
+  <!--})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');-->
 
-  ga('create', 'UA-42842720-3', 'illinois.edu');
+  <!--ga('create', 'UA-42842720-3', 'illinois.edu');-->
+  <!--ga('send', 'pageview');-->
+<!--</script>-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-42842720-1', 'indiana.edu');
   ga('send', 'pageview');
 </script>
 
