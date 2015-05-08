@@ -1,5 +1,5 @@
 @(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean,
-        parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], worksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob])
+        parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], userWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], allWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob])
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
 
 
@@ -45,9 +45,12 @@
                         </td>
                     </tr>
                 </table>
-                <div id="param" class="form-group" style="margin-top : 10 px ;">
+                <div id="jobname-control-group" class="form-group has-feedback" style="margin-top : 10 px ;">
                     <label for="jobName">Please enter a job name: (required)</label>
-                    <input type="text" name="jobName" required="true" id="jobName" class="form-control">
+                    <input type="text" name="jobName" required="required" id="jobName" class="form-control" aria-describedby="jobname-feedback-status">
+                    <span id="jobname-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                    <span id="jobname-feedback-status" class="sr-only">(success)</span>
+                    <span id="jobname-warn-block" class="warn-block"></span>
                 </div>
                 @for((pm, id) <- parameters.zipWithIndex) {
                     <div class="form-group">
@@ -65,14 +68,31 @@
                             }
                         </label>
                         @if(pm.getType == "collection") {
+                            <div class="row">
+                                <div class="span5">
+                                    <input type="radio" name="worksetsCollection" id="myWorksetsCollection" value="myworkset" checked> Select a workset from my worksets
+                                </div>
+                                <div class="span5">
+                                    <input type="radio" name="worksetsCollection" id="allWorksetsCollection" value="allworkset"> Select a workset from all worksets
+                                </div>
+                            </div>
+                            <select name="myWorksetsMenu" id="myWorksetsMenu" class="form-control"  style='display:block;'>
+                                <option name="myWSDefault" id="myWSDefault" selected>Select a workset from my worksets</option>
+                                @for(ws <- userWorksetlist){
+                                    <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
+                                }
 
-                            <select name="parameters[@{
-                                parameters.indexOf(pm) + 1
-                            }].paramValue" id="paramInput@id" class="form-control">
-                            @for(ws <- worksetlist) {
-                                <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName, ws.getMetadata.getAuthor)</option>
-                            }
                             </select>
+                            <select name="allWorksetsMenu" id="allWorksetsMenu" class="form-control"  style='display:none;'>
+                                <option name="allWSDefault" id="allWSDefault" selected>Select a workset from all worksets</option>
+                                @for(ws <- allWorksetlist){
+                                    <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
+                                }
+
+                            </select>
+
+
+
                         } else {
                             @if(pm.getType == "boolean") {
                                 <select name="parameters[@{
@@ -100,11 +120,35 @@
                     </div>
                 }
 
-                <button type="submit" class="btn btn-primary btn-xs pull-left">Submit</button>
+                <button type="submit" class="btn btn-primary btn-xs pull-left" id="job-submit">Submit</button>
+
+
 
             }
             </div>
         </div>
     </div>
+    @*<script type="text/javascript" src="@routes.Assets.at("javascripts/jobsubmit.js")"></script>*@
+    <script type="text/javascript">
 
-}
+                              function selectMyWorksets() {
+                                    document.getElementById("myWorksetsMenu").style.display="block";
+                                    document.getElementById("allWorksetsMenu").style.display="none";
+                                }
+
+                              function selectAllWorksets() {
+                                document.getElementById("allWorksetsMenu").style.display="block";
+                                document.getElementById("myWorksetsMenu").style.display="none";
+                                }
+
+
+                               document.getElementById("myWorksetsCollection").onclick = selectMyWorksets;
+                                document.getElementById("allWorksetsCollection").onclick = selectAllWorksets;
+
+
+
+
+</script>
+
+
+    }

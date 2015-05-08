@@ -77,21 +77,21 @@ create table volume (
 
 # --- !Downs
 
-SET FOREIGN_KEY_CHECKS=0;
+SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table active_job;
+drop table if exists active_job;
 
-drop table algorithm;
+drop table if exists algorithm;
 
-drop table completed_job;
+drop table if exists completed_job;
 
-drop table token;
+drop table if exists token;
 
-drop table user;
+drop table if exists user;
 
-drop table virtual_machine;
+drop table if exists virtual_machine;
 
-drop table volume;
+drop table if exists volume;
 
-SET FOREIGN_KEY_CHECKS=1;
+SET REFERENTIAL_INTEGRITY TRUE;
 

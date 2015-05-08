@@ -2,10 +2,7 @@ package controllers;
 
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import edu.indiana.d2i.htrc.portal.CSVReader;
-import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
-import edu.indiana.d2i.htrc.portal.PasswordChecker;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Token;
@@ -112,13 +109,15 @@ public class UserManagement extends JavaController {
     }
 
     public static Result createPasswordResetForm(String token) {
-        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token));
+        Token token1 = Token.findByToken(token);
+        String userId = token1.userId;
+        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
     }
 
     public static Result passwordReset() {
         Form<PasswordReset> passwordResetForm = form(PasswordReset.class).bindFromRequest();
         if (passwordResetForm.hasErrors()) {
-            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token")));
+            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
         String userId = token1.userId;
@@ -219,8 +218,8 @@ public class UserManagement extends JavaController {
                 return "There's a role name already exists with this name. Please use another username.";
             }
 
-            if (passwordValidate(password, confirmPassword) != null) {
-                return passwordValidate(password, confirmPassword);
+            if (passwordValidate(password, confirmPassword,userId) != null) {
+                return passwordValidate(password, confirmPassword,userId);
             }
 
             if (!email.equals(confirmEmail)) {
@@ -342,6 +341,7 @@ public class UserManagement extends JavaController {
     }
 
     public static class PasswordReset {
+        public String userId;
         public String token;
         public String password;
         public String confirmPassword;
@@ -351,8 +351,9 @@ public class UserManagement extends JavaController {
 
         public String validate() {
             log.debug("Token in the form: " + token);
-            if (passwordValidate(password, confirmPassword) != null) {
-                return passwordValidate(password, confirmPassword);
+
+            if (passwordValidate(password, confirmPassword,userId) != null) {
+                return passwordValidate(password, confirmPassword,userId);
             }
             return null;
         }
@@ -413,7 +414,7 @@ public class UserManagement extends JavaController {
 
     }
 
-    public static String passwordValidate(String password, String retypePassword) {
+    public static String passwordValidate(String password, String retypePassword, String userId) {
         PasswordChecker passwordChecker = new PasswordChecker();
 
 
@@ -433,7 +434,10 @@ public class UserManagement extends JavaController {
             return "Please use a strong password.";
         }
         if (!password.equals(retypePassword)) {
-            return "The Passwords do not match.";
+            return "Passwords do not match.";
+        }
+        if (password.equals(userId)){
+            return "Password includes your user ID.";
         }
         return null;
     }

@@ -51,7 +51,7 @@ var wsNameInputKeyUp = function () {
     var wsNameWarnBlock = $('#wsname-warn-block');
     var wsNameFeedback = $('#wsname-feedback');
 
-    if (wsName.indexOf(' ') >= 0 || wsName.match('[!,@@,#,$,%,\\,\/,^,&,*,?,~,(,),-]')) {
+    if (wsName.indexOf(' ') >= 0 || wsName.match('[^a-zA-Z0-9_]')) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name contains a space or a special character!');
@@ -63,7 +63,7 @@ var wsNameInputKeyUp = function () {
         checkWsNameValidity(wsName,function () {
             wsNameCorrect = false;
             uploadHasError(wsNameControlGroup, wsNameFeedback);
-            wsNameWarnBlock.html('You already have a workset with this name. Please choose an another name.');
+            wsNameWarnBlock.html('You already have a workset with this name. Please choose another name.');
         },function(){
         wsNameCorrect = true;
         uploadHasSuccess(wsNameControlGroup, wsNameFeedback);
