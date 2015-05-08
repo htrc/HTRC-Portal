@@ -114,7 +114,7 @@ var userIdInputKeyUp = function () {
     var userIdWarnBlock = $('#userid-warn-block');
     var userIdFeedback = $('#user-id-feedback');
 
-    if (userId.indexOf(' ') >= 0 || userId.match('[!,@@,#,$,%,\\,\/,^,&,*,?,~,(,),-]')) {
+    if (userId.indexOf(' ') >= 0 || userId.match('[^a-zA-Z0-9]')) {
         userIdCorrect = false;
         hasError(userIdControlGroup, userIdFeedback);
         userIdWarnBlock.html('User ID contains a space or a special character!');
