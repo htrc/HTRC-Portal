@@ -87,14 +87,13 @@ public class AlgorithmManagement extends JavaController {
                 parameter.setParamName(requestData.field("parameters[" + index + "].paramName").value());
                 parameter.setParamType(requestData.field("parameters[" + index + "].paramType").value());
                 if(Objects.equals(parameter.getParamType(), "collection")){
-                    String myWSDefault = "Select a workset from my worksets";
-                    String myWSValue = requestData.field("myWorksetsMenu").value();
-                    String allWSDefault = "Select a workset from all worksets";
-                    String allWSValue = requestData.field("allWorksetsMenu").value();
-                    if(!Objects.equals(myWSValue, myWSDefault)){
+                    String collectionType = requestData.field("worksetsCollection" + (index - 1)).value();
+                    String myWSValue = requestData.field("myWorksetsMenu" + (index - 1)).value();
+                    String allWSValue = requestData.field("allWorksetsMenu" + (index - 1)).value();
+                    if(collectionType.equals("myworksets")){
                         parameter.setParamValue(myWSValue);
                         log.info("Workset has selected from my worksets:" + myWSValue);
-                    }else if(!Objects.equals(allWSValue, allWSDefault)){
+                    }else if(collectionType.equals("allworksets")){
                         parameter.setParamValue(allWSValue);
                         log.info("Workset has selected from all worksets:" + allWSValue);
                     }else{

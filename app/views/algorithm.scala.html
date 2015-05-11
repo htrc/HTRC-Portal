@@ -52,6 +52,21 @@
                     <span id="jobname-feedback-status" class="sr-only">(success)</span>
                     <span id="jobname-warn-block" class="warn-block"></span>
                 </div>
+                <script type="text/javascript">
+                    function selectMyWorksets(n) {
+                        return function(){
+                            document.getElementById("myWorksetsMenu" + n).style.display="block";
+                            document.getElementById("allWorksetsMenu" + n).style.display="none";
+                        }
+                    }
+
+                    function selectAllWorksets(n) {
+                        return function(){
+                            document.getElementById("allWorksetsMenu" + n).style.display="block";
+                            document.getElementById("myWorksetsMenu" + n).style.display="none";
+                        }
+                    }
+                </script>
                 @for((pm, id) <- parameters.zipWithIndex) {
                     <div class="form-group">
                         <input type="hidden" name="parameters[@{
@@ -70,28 +85,31 @@
                         @if(pm.getType == "collection") {
                             <div class="row">
                                 <div class="span5">
-                                    <input type="radio" name="worksetsCollection" id="myWorksetsCollection" value="myworkset" checked> Select a workset from my worksets
+                                    <input type="radio" name="worksetsCollection@parameters.indexOf(pm)" id="myWorksetsCollection@parameters.indexOf(pm)" checked value="myworksets"> Select a workset from my worksets
                                 </div>
                                 <div class="span5">
-                                    <input type="radio" name="worksetsCollection" id="allWorksetsCollection" value="allworkset"> Select a workset from all worksets
+                                    <input type="radio" name="worksetsCollection@parameters.indexOf(pm)" id="allWorksetsCollection@parameters.indexOf(pm)" value="allworksets"> Select a workset from all worksets
                                 </div>
                             </div>
-                            <select name="myWorksetsMenu" id="myWorksetsMenu" class="form-control"  style='display:block;'>
-                                <option name="myWSDefault" id="myWSDefault" selected>Select a workset from my worksets</option>
+                            <select name="myWorksetsMenu@parameters.indexOf(pm)" id="myWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:block;'>
+                                <option selected>Select a workset from my worksets</option>
                                 @for(ws <- userWorksetlist){
                                     <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
                                 }
 
                             </select>
-                            <select name="allWorksetsMenu" id="allWorksetsMenu" class="form-control"  style='display:none;'>
-                                <option name="allWSDefault" id="allWSDefault" selected>Select a workset from all worksets</option>
+                            <select name="allWorksetsMenu@parameters.indexOf(pm)" id="allWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:none;'>
+                                <option selected>Select a workset from all worksets</option>
                                 @for(ws <- allWorksetlist){
                                     <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
                                 }
 
                             </select>
 
-
+                            <script type="text/javascript">
+                                document.getElementById("myWorksetsCollection@parameters.indexOf(pm)").onclick = selectMyWorksets(@parameters.indexOf(pm));
+                                document.getElementById("allWorksetsCollection@parameters.indexOf(pm)").onclick = selectAllWorksets(@parameters.indexOf(pm));
+                            </script>
 
                         } else {
                             @if(pm.getType == "boolean") {
@@ -129,26 +147,7 @@
         </div>
     </div>
     @*<script type="text/javascript" src="@routes.Assets.at("javascripts/jobsubmit.js")"></script>*@
-    <script type="text/javascript">
 
-                              function selectMyWorksets() {
-                                    document.getElementById("myWorksetsMenu").style.display="block";
-                                    document.getElementById("allWorksetsMenu").style.display="none";
-                                }
-
-                              function selectAllWorksets() {
-                                document.getElementById("allWorksetsMenu").style.display="block";
-                                document.getElementById("myWorksetsMenu").style.display="none";
-                                }
-
-
-                               document.getElementById("myWorksetsCollection").onclick = selectMyWorksets;
-                                document.getElementById("allWorksetsCollection").onclick = selectAllWorksets;
-
-
-
-
-</script>
 
 
     }
