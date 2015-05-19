@@ -261,7 +261,11 @@ public class UserManagement extends JavaController {
         public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n" + "Welcome to HTRC. Please click on the following url to activate your account. \n" + url);
+            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
+                    "\n \n Please click on the following url to activate your account. \n" + url + "\n" +
+                    " \n \n" +
+                    " Cheers, \n" +
+                    " HTRC Team.");
 
         }
 
