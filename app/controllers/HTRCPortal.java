@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
+import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import play.Logger;
 import play.Play;
 import play.mvc.Result;
@@ -49,17 +50,23 @@ public class HTRCPortal extends JavaController {
         String accessToken = (String) userProfile.getAttribute("access_token");
         String refreshToken = (String) userProfile.getAttribute("refresh_token");
         session().put(PortalConstants.SESSION_TOKEN,accessToken);
-        session().put(PortalConstants.SESSION_REFRESH_TOKEN,refreshToken);
+        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
+        log.debug("User's roles:" + userProfile.toString());
         String userId = userProfile.getId();
         log.info("User "+ userId + " is successfully logged in.");
         log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));
         }
-        session().put(PortalConstants.SESSION_USERNAME, userId);
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-
+        if(!userManager.roleNameExists(userId)){
+            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userManager.getEmail(userId) + ". Please check your email and activate account. " +
+                    "If you have not received your activation link, please contact us by email " +
+                    " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
+        }
+        log.debug("Role name exists: " + userManager.roleNameExists(userId));
+        session().put(PortalConstants.SESSION_USERNAME, userId);
         if(User.findByUserID(userId) == null){
             String userEmail = userManager.getEmail(userId);
             User nu = new User(userId, userEmail);
