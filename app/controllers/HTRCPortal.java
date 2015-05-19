@@ -137,8 +137,9 @@ public class HTRCPortal extends JavaController {
         return ok(about.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
     }
 
-    public static Result features() {
-        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
+    public static Result features() throws IOException {
+        String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
+        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)),featurePage));
     }
 
 //    public static class Login {

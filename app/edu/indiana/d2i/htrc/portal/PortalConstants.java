@@ -155,4 +155,10 @@ public class  PortalConstants {
     // Released Version
     public static String RELESED_VERSION = "released.version";
 
+    // Google Analytics code
+    public static String GA_CODE = "google.analytics.code";
+
+    // Features page
+    public static String FEATURES_PAGE = "features.page";
+
 }
