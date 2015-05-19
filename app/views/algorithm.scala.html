@@ -146,7 +146,25 @@
             </div>
         </div>
     </div>
-    @*<script type="text/javascript" src="@routes.Assets.at("javascripts/jobsubmit.js")"></script>*@
+   <script type="text/javascript">
+                         var currentTime = new Date();
+                                    var d = new Date(currentTime),
+                                        month = '' + (d.getMonth() + 1),
+                                        day = '' + d.getDate(),
+                                        year = d.getFullYear(),
+                                        time = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+
+                                    if (month.length < 2) month = '0' + month;
+                                    if (day.length < 2) day = '0' + day;
+
+
+                               document.getElementById("jobName").value = "@algorithmdetails.getName-" + year + "-" + month + "-" + day + "-" + time;
+
+
+
+
+
+    </script>
 
 
 
