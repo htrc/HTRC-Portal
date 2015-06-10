@@ -9,6 +9,7 @@
         <title> HTRC Portal - @title </title>
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="refresh" content="600">
             <!-- Bootstrap -->
         <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
@@ -36,7 +37,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
-                    width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;">
+                    width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;" alt=" ">
                         HTRC Portal
                     </a>
                 </div>
@@ -206,7 +207,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="upload-csv-modal" aria-labelledby="upload-csv-label" aria-hidden="true" tabindex="-1" role="dialog">
+        <div class="modal fade" id="upload-csv-modal" aria-hidden="true" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -218,7 +219,7 @@
                         <div class="modal-body">
                             <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
                             <div class="form-group has-feedback" id="wsname-control-group">
-                                <label for="worksetName" class="control-label">Workset Name</label>
+                                <label for="uploadWorksetName" class="control-label">Workset Name</label>
                                 <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="required" aria-describedby="wsname-feedback-status"/>
                                 <span id="wsname-feedback" class="form-control-feedback" aria-hidden="true"></span>
                                 <span id="wsname-feedback-status" class="sr-only">(success)</span>
@@ -230,7 +231,7 @@
                                 </span>
                             </div>
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="uploadWSdescription">Description</label>
                                 <input type="text" id="uploadWSdescription" class="form-control" name="uploadWSdescription" placeholder="Description" maxlength="100">
                             </div>
                             <div class="form-group">
@@ -247,8 +248,9 @@
                                 <a href="#" class="btn btn-link btn-sm" data-dismiss="modal">Close</a>
                                 <button type="submit" class="btn btn-primary btn-sm" id="ws-submit">Submit</button>
                             </div>
-                            }
-                </div>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>
@@ -272,17 +274,18 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', '@PlayConfWrapper.googleAnalyticsCode()', 'auto');
+            ga('send', 'pageview');
+        </script>
     </body>
 
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        ga('create', '@PlayConfWrapper.googleAnalyticsCode()', 'auto');
-        ga('send', 'pageview');
-
-    </script>
 
 </html>
