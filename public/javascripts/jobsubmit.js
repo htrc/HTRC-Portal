@@ -1,52 +1,21 @@
-var jobNameNotNull = true;
-var worksetSelected = false;
-var parametersNotNull = true;
+var jobNameNotNull = false;
 
-var checkSelectedMyWorkset = function (myworksets) {
-    var myWorksetDefault;
-
-    if(myworksets[0].defaultSelected){
-        alert(myworksets.value);
-        myWorksetDefault = myworksets[0];
-        if(myworksets.value != myWorksetDefault){
-            worksetSelected = true;
-        }
-    }
+var jobSubmitHasError = function (element, iconElement) {
+    jobSubmitButtonVisibility();
+    element.addClass('has-error');
+    element.removeClass('has-success');
+    iconElement.addClass('glyphicon');
+    iconElement.addClass('glyphicon-remove');
+    iconElement.removeClass('glyphicon-ok');
 };
 
-var checkSelectedAllWorkset = function (allworksets) {
-    var allWorksetDefault;
-
-    if(allworksets[0].defaultSelected){
-        allWorksetDefault = myworksets[0];
-        if(allworksets.value != allWorksetDefault){
-            worksetSelected = true;
-        }
-    }
-};
-
-var selectMyWorksets = function (myworksets,allworksets) {
-    myworksets.show();
-    allworksets.hide();
-    //checkSelectedMyWorkset(myworksets)
-};
-
-function selectAllWorksets(myworksets,allworksets) {
-    allworksets.show();
-    myworksets.hide();
-}
-
-var selectTypeOfWorksets = function (){
-    var myWorksetRadio = $('#myWorksetsCollection');
-    var allWorksetRadio = $('#allWorksetsCollection');
-    var myWorksetsMenu = $('#myWorksetsMenu');
-    var allWorksetsMenu = $('#allWorksetsMenu');
-    if(myWorksetRadio.prop("checked", true)){
-        selectMyWorksets(myWorksetsMenu,allWorksetsMenu);
-    }
-    if(allWorksetRadio.prop("checked", true)){
-        selectAllWorksets(myWorksetsMenu, allWorksetsMenu);
-    }
+var jobSubmitHasSuccess = function (element, iconElement) {
+    jobSubmitButtonVisibility();
+    element.addClass('has-success');
+    element.removeClass('has-error');
+    iconElement.addClass('glyphicon');
+    iconElement.addClass('glyphicon-ok');
+    iconElement.removeClass('glyphicon-remove');
 };
 
 var jobSubmitButtonVisibility = function () {
@@ -55,37 +24,41 @@ var jobSubmitButtonVisibility = function () {
     // disable submit button at start
     jobSubmitButton.prop("disabled",true);
 
-    if (worksetSelected && jobNameNotNull && parametersNotNull) {
+    if (jobNameNotNull) {
         jobSubmitButton.prop("disabled",false);
     }else{
         jobSubmitButton.prop("disabled",true);
     }
 };
 
-//var jobNameInputKeyUp = function () {
-//    var jobName = $(this).val();
-//    var jobNameControlGroup = $('#jobname-control-group');
-//    var jobNameWarnBlock = $('#jobname-warn-block');
-//    var jobNameFeedback = $('#jobname-feedback');
-//
-//    if(jobName.length == 0) {
-//        jobNameNotNull = false;
-//        uploadHasError(jobNameControlGroup, jobNameFeedback);
-//        jobNameWarnBlock.html('Job name cannot be empty!');
-//    }else{
-//        jobNameNotNull = true;
-//        uploadHasError(jobNameControlGroup, jobNameFeedback);
-//        jobNameWarnBlock.html(' ');
-//    }
-//};
-//
-//var jobNameValidation = function () {
-//    $('#jobName').bind("change keyup" ,jobNameInputKeyUp);
-//};
+var jobNameInputKeyUp = function () {
+    var jobName = $(this).val();
+    var jobNameControlGroup = $('#jobname-control-group');
+    var jobNameWarnBlock = $('#jobname-warn-block');
+    var jobNameFeedback = $('#jobname-feedback');
+
+    if(jobName.length == 0) {
+        jobNameNotNull = false;
+        jobSubmitHasError(jobNameControlGroup, jobNameFeedback);
+        jobNameWarnBlock.html('Job name cannot be empty!');
+    }else{
+        jobNameNotNull = true;
+        jobSubmitHasSuccess(jobNameControlGroup, jobNameFeedback);
+        jobNameWarnBlock.html(' ');
+    }
+};
+
+var jobNameValidation = function () {
+    var jobName = $('#jobName');
+    if(jobName.val().length > 0){
+        $('#job-submit').prop("disabled",false);
+    }
+    jobName.bind("change keyup" ,jobNameInputKeyUp);
+
+};
 
 $(document).ready(function () {
-    selectTypeOfWorksets();
     jobSubmitButtonVisibility();
-    //jobNameValidation();
+    jobNameValidation();
 });
 
