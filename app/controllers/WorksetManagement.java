@@ -336,7 +336,7 @@ public class WorksetManagement extends JavaController {
             httpClient.executeMethod(method);
             volDetails.setVolumeId(volid);
 
-            if (method.getStatusCode() == 200) {
+            if (method.getStatusCode() == 200 && !method.getResponseBodyAsString().contains("<warn>RESPONSE CODE: 400</warn>")) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
                 DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
@@ -422,12 +422,12 @@ public class WorksetManagement extends JavaController {
                 }
 
             } else {
-                volDetails.setTitle("Error while querying solr.");
-                volDetails.setMaleAuthor("Error while querying solr.");
-                volDetails.setFemaleAuthor("Error while querying solr.");
-                volDetails.setGenderUnkownAuthor("Error while querying solr.");
-                volDetails.setWordCount("Error while querying solr.");
-                volDetails.setPageCount("Error while querying solr.");
+                volDetails.setTitle(null);
+                volDetails.setMaleAuthor(null);
+                volDetails.setFemaleAuthor(null);
+                volDetails.setGenderUnkownAuthor(null);
+                volDetails.setWordCount(null);
+                volDetails.setPageCount(null);
             }
 
             return volDetails;
