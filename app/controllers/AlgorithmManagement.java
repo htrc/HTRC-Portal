@@ -39,10 +39,6 @@ public class AlgorithmManagement extends JavaController {
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         CommonProfile userProfile = getUserProfile();
         User loggedInUser = User.findByUserID(userProfile.getId());
-//        WorksetManagement.updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-//        updateAlgorithms(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-//        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
-//        List<Algorithm> algorithms = algorithmsPL.getPage(page - 1).getList();
 
         return ok(views.html.algorithms.render(loggedInUser, getAlgorithms()));
     }

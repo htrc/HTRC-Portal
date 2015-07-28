@@ -191,40 +191,4 @@ public class JobManagement extends JavaController {
 
         return ok(jobdetails.render(loggedInUser, jobsDetails.get(jobId), outputs));
     }
-
-
-//    public static void updateJobList(User loggedInUser) {
-//        HTRCAgentClient agentClient = new HTRCAgentClient(session());
-//        Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
-//        Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
-//        if (completedJobs == null) {
-//            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-//                    + loggedInUser.userId);
-//        } else {
-//            List<JobDetailsBean> completedJobsList = new ArrayList<>(completedJobs.values());
-//            for (JobDetailsBean job : completedJobsList) {
-//                if (ActiveJob.findByJobID(job.getJobId()) != null) {
-//                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
-//                } else if (CompletedJob.findByJobID(job.getJobId()) == null) {
-//                    CompletedJob completedJob = new CompletedJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus(), job.getJobSavedStr());
-//                    completedJob.save();
-//                }
-//            }
-//        }
-//        if (activeJobs == null) {
-//            log.error(PortalConstants.CANNOT_GETDATA_FROM_AGENT + " for user "
-//                    + loggedInUser.userId);
-//        } else {
-//            List<JobDetailsBean> activeJobsList = new ArrayList<>(activeJobs.values());
-//            for (JobDetailsBean job : activeJobsList) {
-//                if (ActiveJob.findByJobID(job.getJobId()) != null) {
-//                    ActiveJob.delete(ActiveJob.findByJobID(job.getJobId()));
-//                }
-//                ActiveJob activeJob = new ActiveJob(job.getJobId(), job.getJobTitle(), job.getLastUpdatedDate(), job.getJobStatus());
-//                activeJob.save();
-//            }
-//        }
-//
-//    }
-
 }

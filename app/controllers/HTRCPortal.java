@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.codehaus.jettison.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.play.CallbackController;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
 import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
@@ -46,13 +47,14 @@ public class HTRCPortal extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result login() throws IOException, JAXBException {
-        CommonProfile userProfile = getUserProfile();
-        String accessToken = (String) userProfile.getAttribute("access_token");
-        String refreshToken = (String) userProfile.getAttribute("refresh_token");
-        session().put(PortalConstants.SESSION_TOKEN,accessToken);
-        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
-        log.debug("User's roles:" + userProfile.toString());
-        String userId = userProfile.getId();
+//        CommonProfile userProfile = getUserProfile();
+//        String accessToken = (String) userProfile.getAttribute("access_token");
+//        String refreshToken = (String) userProfile.getAttribute("refresh_token");
+//        session().put(PortalConstants.SESSION_TOKEN,accessToken);
+//        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
+//        log.debug(userProfile.toString());
+
+        String userId = session(PortalConstants.SESSION_USERNAME);
         log.info("User "+ userId + " is successfully logged in.");
         log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){

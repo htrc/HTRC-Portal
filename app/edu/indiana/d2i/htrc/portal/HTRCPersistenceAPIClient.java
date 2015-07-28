@@ -69,7 +69,7 @@ public class HTRCPersistenceAPIClient {
     private final int MAX_RENEW = 1;
 
     public HTRCPersistenceAPIClient(Http.Session session) {
-        this.session = session;
+        HTRCPersistenceAPIClient.session = session;
         accessToken = session.get(PortalConstants.SESSION_TOKEN);
         refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
 
@@ -353,7 +353,6 @@ public class HTRCPersistenceAPIClient {
             play.Logger.info("getFilesAsString got access token expired error.");
             try {
                 accessToken = renewToken(refreshToken);
-//                session.put(PortalConstants.SESSION_TOKEN, accessToken);
                 renew++;
                 return getFilesAsString(repoPath, nameReg, typeReg, shared);
             } catch (Exception e) {

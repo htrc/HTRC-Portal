@@ -23,6 +23,7 @@ import edu.indiana.d2i.htrc.portal.PortalConstants;
 import filters.LoggingFilter;
 import models.User;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.Config;
 import org.pac4j.saml.client.Saml2Client;
 import play.Application;
@@ -60,10 +61,10 @@ public class Global extends GlobalSettings {
 
         if(loggedInUser != null) {
             log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable);
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.toString());
         } else {
             log.error("Internal server error.", throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable);
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.toString());
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
