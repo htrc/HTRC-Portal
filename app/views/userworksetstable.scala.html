@@ -40,7 +40,7 @@
                             <td style="max-width : 250 px ; word-wrap : break-word">@w.getMetadata.getDescription</td>
                             <td>@w.getMetadata.getVolumeCount</td>
                             <td>@if(w.getMetadata.isPublic) {Public} else {Private}</td>
-                            <td>@w.getMetadata.getLastModified.toString.substring(0, 19)</td>
+                            <td>@WorksetManagement.convertTimeToGMT(w.getMetadata.getLastModified.toString.substring(0, 19).replace("T"," "))</td>
                             <td style="min-width : 132 px ;">
                                 @if(w.getMetadata.getAuthor == user.userId) {
                                     <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.url") ')" target="_blank">

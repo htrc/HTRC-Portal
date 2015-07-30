@@ -22,6 +22,7 @@ import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.illinois.i3.htrc.registry.entities.workset.WorksetContent;
 import edu.illinois.i3.htrc.registry.entities.workset.Worksets;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
+import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import org.apache.amber.oauth2.client.OAuthClient;
 import org.apache.amber.oauth2.client.URLConnectionClient;
 import org.apache.amber.oauth2.client.request.OAuthClientRequest;
@@ -29,14 +30,19 @@ import org.apache.amber.oauth2.client.response.OAuthClientResponse;
 import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.w3c.dom.*;
 import play.Logger;
 import play.mvc.Http;
 
 
 import javax.xml.bind.*;
+import javax.xml.bind.Element;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -44,6 +50,9 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class HTRCPersistenceAPIClient {
@@ -230,7 +239,7 @@ public class HTRCPersistenceAPIClient {
             try {
                 accessToken = renewToken(refreshToken);
                 renew++;
-                return getWorkset(worksetId,worksetAuthor);
+                return getWorkset(worksetId, worksetAuthor);
             } catch (Exception e) {
                 throw new IOException(e);
             }
@@ -271,7 +280,7 @@ public class HTRCPersistenceAPIClient {
             try {
                 accessToken = renewToken(refreshToken);
                 renew++;
-                return getWorksetVolumes(worksetName,worksetAuthor);
+                return getWorksetVolumes(worksetName, worksetAuthor);
             } catch (Exception e) {
                 throw new IOException(e);
             }
@@ -451,6 +460,132 @@ public class HTRCPersistenceAPIClient {
         } else {
             this.responseCode = response;
             throw new IOException("Response code " + response + " for " + url + " message: \n " + post.getResponseBodyAsString());
+        }
+    }
+
+    /**
+     * Get Volum details from solr meta data instance. Here it adds '\' character before the ':'.
+     * @param volid
+     * @return VolumeDetailsBean
+     * @throws IOException
+     */
+    public VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
+        String volumeId;
+        if(volid.contains(":")){
+            volumeId = volid.substring(0,volid.indexOf(":")) + "\\" + volid.substring(volid.indexOf(":"));
+        }else{
+            volumeId = volid;
+        }
+        String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + URLEncoder.encode(volumeId, "UTF-8") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
+        VolumeDetailsBean volDetails = new VolumeDetailsBean();
+        log.debug(volumeDetailsQueryUrl);
+
+        HttpClient httpClient = new HttpClient();
+        HttpMethod method = new GetMethod(volumeDetailsQueryUrl);
+        method.setFollowRedirects(true);
+
+        try {
+            httpClient.executeMethod(method);
+            volDetails.setVolumeId(volid);
+
+            if (method.getStatusCode() == 200 && !method.getResponseBodyAsString().contains("<warn>RESPONSE CODE: 400</warn>")) {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+                DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+
+                Document dom = documentBuilder.parse(method.getResponseBodyAsStream());
+
+                NodeList result = dom.getElementsByTagName("result");
+                NodeList arrays = ((org.w3c.dom.Element) result.item(0)).getElementsByTagName("arr");
+                NodeList integers = ((org.w3c.dom.Element) result.item(0)).getElementsByTagName("int");
+                NodeList longIntegers = ((org.w3c.dom.Element) result.item(0)).getElementsByTagName("long");
+
+
+                for (int i = 0; i < arrays.getLength(); i++) {
+                    org.w3c.dom.Element arr = (org.w3c.dom.Element) arrays.item(i);
+
+                    if (arr.hasAttribute("name") && arr.getAttribute("name").equals("title")) {
+                        NodeList strElements = arr.getElementsByTagName("str");
+                        volDetails.setTitle((strElements.item(0)).getTextContent());
+                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderMale")) {
+                        NodeList strElements = arr.getElementsByTagName("str");
+                        String maleAuthor = "";
+
+                        for (int j = 0; j < strElements.getLength(); j++) {
+                            org.w3c.dom.Element str = (org.w3c.dom.Element) strElements.item(j);
+                            if (j != strElements.getLength() - 1) {
+                                maleAuthor += str.getTextContent();
+                            } else {
+                                maleAuthor += str.getTextContent();
+                            }
+                        }
+
+                        volDetails.setMaleAuthor(maleAuthor);
+
+
+                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderFemale")) {
+                        NodeList strElements = arr.getElementsByTagName("str");
+                        String femaleAuthor = "";
+
+                        for (int j = 0; j < strElements.getLength(); j++) {
+                            org.w3c.dom.Element str = (org.w3c.dom.Element) strElements.item(j);
+                            if (j != strElements.getLength() - 1) {
+                                femaleAuthor += str.getTextContent();
+                            } else {
+                                femaleAuthor += str.getTextContent();
+                            }
+                        }
+
+                        volDetails.setFemaleAuthor(femaleAuthor);
+
+
+                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderUnknown")) {
+                        NodeList strElements = arr.getElementsByTagName("str");
+                        String genderUnkownAuthor = "";
+
+                        for (int j = 0; j < strElements.getLength(); j++) {
+                            org.w3c.dom.Element str = (org.w3c.dom.Element) strElements.item(j);
+                            if (j != strElements.getLength() - 1) {
+                                genderUnkownAuthor += str.getTextContent();
+                            } else {
+                                genderUnkownAuthor += str.getTextContent();
+                            }
+                        }
+
+                        volDetails.setGenderUnkownAuthor(genderUnkownAuthor);
+
+
+                    }
+                }
+
+                for (int i = 0; i < integers.getLength(); i++) {
+                    org.w3c.dom.Element integer = (org.w3c.dom.Element) integers.item(i);
+                    if (integer.hasAttribute("name") && integer.getAttribute("name").equals("htrc_pageCount")) {
+                        String pageCount = integer.getTextContent();
+                        volDetails.setPageCount(pageCount);
+                    }
+                }
+                for (int i = 0; i < longIntegers.getLength(); i++) {
+                    org.w3c.dom.Element longInteger = (org.w3c.dom.Element) longIntegers.item(0);
+                    if (longInteger.hasAttribute("name") && longInteger.getAttribute("name").equals("htrc_wordCount")) {
+                        String wordCount = longInteger.getTextContent();
+                        volDetails.setWordCount(wordCount);
+                    }
+                }
+
+            } else {
+                volDetails.setTitle(null);
+                volDetails.setMaleAuthor(null);
+                volDetails.setFemaleAuthor(null);
+                volDetails.setGenderUnkownAuthor(null);
+                volDetails.setWordCount(null);
+                volDetails.setPageCount(null);
+            }
+
+            return volDetails;
+        } catch (Exception e) {
+            log.error("Error while getting volume details for volume: " + volid + " query url: " + volumeDetailsQueryUrl, e);
+            throw new RuntimeException("Error while getting volume details for volume: " + volid + " response: \n" + method.getResponseBodyAsString(), e);
         }
     }
 
