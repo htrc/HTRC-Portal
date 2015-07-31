@@ -61,6 +61,7 @@
                         return function(){
                             document.getElementById("myWorksetsMenu" + n).style.display="block";
                             document.getElementById("allWorksetsMenu" + n).style.display="none";
+                            setJobName(n);
                         }
                     }
 
@@ -68,6 +69,7 @@
                         return function(){
                             document.getElementById("allWorksetsMenu" + n).style.display="block";
                             document.getElementById("myWorksetsMenu" + n).style.display="none";
+                            setJobName(n);
                         }
                     }
                 </script>
@@ -98,14 +100,14 @@
                                     <input type="radio" name="worksetsCollection@parameters.indexOf(pm)" id="allWorksetsCollection@parameters.indexOf(pm)" value="allworksets"> Select a workset from all worksets
                                 </div>
                             </div>
-                            <select name="myWorksetsMenu@parameters.indexOf(pm)" id="myWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:block;'>
+                            <select name="myWorksetsMenu@parameters.indexOf(pm)" id="myWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:block;' onchange="setJobName(@parameters.indexOf(pm))">
                                 @*<option selected>Select a workset from my worksets</option>*@
                                 @for(ws <- userWorksetlist){
                                     <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
                                 }
 
                             </select>
-                            <select name="allWorksetsMenu@parameters.indexOf(pm)" id="allWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:none;'>
+                            <select name="allWorksetsMenu@parameters.indexOf(pm)" id="allWorksetsMenu@parameters.indexOf(pm)" class="form-control"  style='display:none;' onchange="setJobName(@parameters.indexOf(pm))">
                                 @*<option selected>Select a workset from all worksets</option>*@
                                 @for(ws <- allWorksetlist){
                                     <option>@WorksetManagement.getWorksetWithAuthor(ws.getMetadata.getName,ws.getMetadata.getAuthor)</option>
@@ -154,19 +156,39 @@
         </div>
     </div>
    <script type="text/javascript">
-                         var currentTime = new Date();
-                                    var d = new Date(currentTime),
-                                        month = '' + (d.getMonth() + 1),
-                                        day = '' + d.getDate(),
-                                        year = d.getFullYear(),
-                                        time = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+       function setJobName(index){
+                var typeOfWorksets = $("input[type=radio]:checked").val();
+                var currentTime = new Date();
+                var d = new Date(currentTime),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear(),
+                time = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
 
-                                    if (month.length < 2) month = '0' + month;
-                                    if (day.length < 2) day = '0' + day;
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
 
+                if(index == null){
+                    if(typeOfWorksets == "myworksets"){
+                        document.getElementById("jobName").value = document.getElementsByTagName("select")[0].value.substring(0,20) + "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                        jobNameInputKeyUp();
+                    }
+                    if(typeOfWorksets == "allworksets"){
+                        document.getElementById("jobName").value = document.getElementsByTagName("select")[1].value.substring(0,20) + "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                        jobNameInputKeyUp();
+                    }
+                }
 
-                               document.getElementById("jobName").value = "@algorithmdetails.getName-" + year + "-" + month + "-" + day + "-" + time;
+                if (document.getElementById("myWorksetsCollection" + index).checked){
+                    document.getElementById("jobName").value = document.getElementById("myWorksetsMenu" + index).value.substring(0,20)+ "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                    jobNameInputKeyUp();
+                }
+                if (document.getElementById("allWorksetsCollection" + index).checked){
+                    document.getElementById("jobName").value = document.getElementById("allWorksetsMenu" + index).value.substring(0,20)+ "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                    jobNameInputKeyUp();
+                }
 
+       }
 
 
 

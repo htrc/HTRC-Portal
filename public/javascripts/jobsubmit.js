@@ -32,7 +32,7 @@ var jobSubmitButtonVisibility = function () {
 };
 
 var jobNameInputKeyUp = function () {
-    var jobName = $(this).val();
+    var jobName = $('#jobName').val();
     var jobNameControlGroup = $('#jobname-control-group');
     var jobNameWarnBlock = $('#jobname-warn-block');
     var jobNameFeedback = $('#jobname-feedback');
@@ -53,12 +53,14 @@ var jobNameValidation = function () {
     if(jobName.val().length > 0){
         $('#job-submit').prop("disabled",false);
     }
-    jobName.bind("change keyup" ,jobNameInputKeyUp);
+    jobName.bind("change keyup input" ,jobNameInputKeyUp);
 
 };
 
 $(document).ready(function () {
     jobSubmitButtonVisibility();
     jobNameValidation();
+    jobNameInputKeyUp();
+    setJobName(null);
 });
 
