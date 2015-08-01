@@ -51,7 +51,7 @@
 <p>Even with the limitations described above, we believe that this dataset can help distant readers provide a fuller picture of literary culture than currently available. But we don't necessarily mean that all scholars will want to use this entire dataset. We anticipate that most scholars who use this resource will want to construct a corpus by sampling or selecting some subset of these volumes, rebalanced to reflect the particular cross-section of literary culture they are attempting to understand. For some questions, for instance, it will be appropriate to include reprints, or literature in translation, or books for a juvenile audience; for other purposes, those volumes should be excluded. We haven't made those decisions; the construction of an appropriate sample is ultimately up to individual researchers, and claims about historical representativeness can only be made relative to their particular research goals.</p>
 
 <h3>Data format; other technical details</h3>
-<p>To make download easier, volumes have been grouped in tar.gz files characterized by genre and publication date. Each of these files will unzip into a folder containing separate files for each volume. Each filename (minus the .tsv extension) is a HathiTrust volume ID; these IDs can be paired to the summary metadata table we provide in order to identify author, title, date, and so on. (More importantly, they can be used to retrieve full metadata from the HathiTrust Digital Library, and to view the original text online.) Each volume-level file contains two tab-separated columns: the first column contains words (or other tokens) and the second column indicates how often that token appears in the volume. We count only occurrences in pages that were identified as belonging to the relevant genre; running headers and footers are also excluded from the count, because a book that has "Three Musketeers" on the top of every page would otherwise end up with an implausible number of musketeers.</p>
+<p>To make download easier, volumes have been grouped in tar.gz files characterized by genre and publication date. Each of these files will unzip into a folder containing separate files for each volume. Each filename (minus the .tsv extension) is a HathiTrust volume ID; these IDs can be paired to the summary metadata table we provide in order to identify author, title, date, and so on. (More importantly, they can be used to retrieve full metadata from the HathiTrust, and to view the original text online.) Each volume-level file contains two tab-separated columns: the first column contains words (or other tokens) and the second column indicates how often that token appears in the volume. We count only occurrences in pages that were identified as belonging to the relevant genre; running headers and footers are also excluded from the count, because a book that has "Three Musketeers" on the top of every page would otherwise end up with an implausible number of musketeers.</p>
 
 <p>To normalize frequencies, researchers will also need a count of all words or all tokens counted. This can be created simply by summing the counts for the volume. For some purposes, you may want to limit this total to alphabetic tokens, or to words recognized by an English dictionary. (The latter option can be a simple way to compensate for the reduction in counts created by imperfect OCR.)</p>
 
@@ -60,7 +60,7 @@
 <h3>Resources for normalization and OCR correction</h3>
 <p>Optical character recognition makes errors. A constant level of randomly-distributed error is not a significant obstacle to research, but in practice OCR errors are not distributed randomly; they tend to cluster in cheaply-printed books, and especially in books printed before 1820. Scholars pursuing research across that temporal boundary may want to make an effort to minimize error. Resources to facilitate that process are provided in <a href="#resources">Resources</a> above; for instance, CorrectionRules.txt is a translation table that can be used to correct common OCR errors.<p>
 
-<p>In most cases, correction is straightforward at the token level; it's easy to see, for instance, that "whieh" is an error for "which." However, there are a special group of cases for which correction and normalization become difficult after context has been discarded. It's difficult to know whether "fame" is an error for long-s "same" unless you can see context like "that fame day." We wanted to support corrections of this kind without imposing our corrections on all users. So we have provided correction files for each genre that indicate recommended additions and subtractions for these special ambiguous words. These recommendations are based on Ted Underwood's process of contextual OCR correction (which used the original texts). Corrected results will still be imperfect; the goal is only to mitigate and reduce error. In correction files, the first column contains a volume ID, the second column contains a word, the third column contains a positive or negative integer that should be added to the count for that word to reflect contextual correction. These files also propose recommended corrections for certain word-division inconsistencies that would be hard to detect without context (e.g., "any where" becomes "anywhere" around the middle of the nineteenth century). Here, technically, we are overstepping the line of mere "correction" and proposing "normalization" of the dataset, since "any where" is the dominant/correct spelling before 1840.</p>
+<p>In most cases, correction is straightforward at the token level; it's easy to see, for instance, that "whieh" is an error for "which." However, there are a special group of cases for which correction and normalization become difficult after context has been discarded. It's difficult to know whether "fame" is an error for long-s "same" unless you can see context like "that fame day." We wanted to support corrections of this kind without imposing our corrections on all users. So we have provided correction files for each genre that indicate recommended additions and subtractions for these special ambiguous words. These recommendations <a href="https://github.com/tedunderwood/DataMunging/tree/master/OCRnormalizer">are based on Ted Underwood's process of contextual OCR correction</a> (which used the original texts). Corrected results will still be imperfect; the goal is only to mitigate and reduce error. In correction files, the first column contains a volume ID, the second column contains a word, the third column contains a positive or negative integer that should be added to the count for that word to reflect contextual correction. These files also propose recommended corrections for certain word-division inconsistencies that would be hard to detect without context (e.g., "any where" becomes "anywhere" around the middle of the nineteenth century). Here, technically, we are overstepping the line of mere "correction" and proposing "normalization" of the dataset, since "any where" is the dominant/correct spelling before 1840.</p>
 
 <p>The correction files we provide only include changes that require context to discern; we are providing this information because it would otherwise be impossible for researchers to infer it. But there is also a much larger set of corrections that could be made to individual tokens. Decisions about normalization can be just as important, if you want to compare works from different periods or different sides of the Atlantic. For instance, "honour" and "honor," "today" and "to-day," are still distinct in this dataset. If you want to treat them as equivalent, see <a href="#resources">Resources</a> for lists of variant spellings and unevenly-hyphenated forms, as well as a list of OCR correction rules.</p>
 
@@ -70,7 +70,7 @@
 <p>Because we only include the 10,000 most common words in the yearly summary file, scholars can't necessarily reconstruct a total wordcount for each year by summing up all the words. Instead, we have provided three special tokens for each year: <code>#ALLTOKENS</code> counts all the tokens in each year, including numbers and punctuation; <code>#ALPHABETIC</code> only counts alphabetic tokens; and <code>#DICTIONARYWORD</code> counts all the tokens that were found in an English dictionary.</p>
 
 <h3>Metadata</h3>
-<p>The metadata of record for this collection is stored in the HathiTrust Digital Library; see <a href="https://www.hathitrust.org/bib_api">their bibliographic API.</a> To make access easier, we have provided summary metadata tables for each genre. This information has been extracted from MARC records using <a href="https://github.com/tedunderwood/DataMunging/tree/master/HathiMetadata">a custom script, xmlparser.py.</a> Most of the columns will be self-explanatory; some that aren't are explained on p. 40 of <a href="http://figshare.com/articles/Understanding_Genre_in_a_Collection_of_a_Million_Volumes_Interim_Report/1281251">"Understanding Genre."</a> It's particularly important to know that "publication date" is recorded in a complicated way in controlfield 008 of MARC (because, for instance, books may list a range of years rather than a single one). We have provided the original MARC information (in four columns), but have also provided a single column called "date" that records our inference about the earliest likely date. This is the column we have used to organize volumes in tar files. The "subjects" column contains information extracted from multiple parts of the MARC record -- including genre as well as subject information, and some information from controlfield 008 -- but, frankly, you may want to take all of it with a grain of salt. Cataloging for books from this period is often incomplete or unreliable.</p>
+<p>The metadata of record for this collection is stored in the HathiTrust Digital Library; see <a href="https://www.hathitrust.org/bib_api">their bibliographic API.</a> To make access easier, we have provided summary metadata tables for each genre. This information has been extracted from MARC records using <a href="https://github.com/tedunderwood/DataMunging/tree/master/HathiMetadata">a custom script, xmlparser.py.</a> Most of the columns will be self-explanatory; some that aren't are explained on p. 40 of <a href="http://figshare.com/articles/Understanding_Genre_in_a_Collection_of_a_Million_Volumes_Interim_Report/1281251">"Understanding Genre."</a> It's particularly important to know that "publication date" is recorded in a complicated way in controlfield 008 of MARC (because, for instance, books may list a range of years rather than a single one). We have provided the original MARC information (in four columns), but have also provided a single column called "date" that records our inference about the earliest likely date. This is the column we have used to organize volumes in tar files. The "subjects" column contains information extracted from multiple parts of the MARC record -- including genre as well as subject information, and some information from <a href="http://www.loc.gov/marc/archive/2000/concise/ecbd008s.html">controlfield 008 of MARC</a> -- but, frankly, you may want to take all of it with a grain of salt. Cataloging for books from this period is often incomplete or unreliable.</p>
 
       </div>
       <!-- END intro col -->
@@ -115,59 +115,59 @@
     <div class="row" style="padding-right: 20px;">
       <div class="col-md-4">
         <h2 id="links to fiction">Fiction</h2>
-        	<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_metadata.csv">fiction_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_yearly_summary.csv">fiction_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_contextual_corrections.csv">fiction_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1700-1799.tar.gz">fiction_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1800-1834.tar.gz">fiction_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1835-1869.tar.gz">fiction_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1870-1879.tar.gz">fiction_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1880-1889.tar.gz">fiction_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1890-1899.tar.gz">fiction_1890-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1900-1904.tar.gz">fiction_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1905-1909.tar.gz">fiction_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1910-1914.tar.gz">fiction_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1915-1919.tar.gz">fiction_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/fiction_1920-1922.tar.gz">fiction_1920-1922.tar.gz</a><p>
+        	<p><a href="http://data.sharc.hathitrust.org/genre/fiction_metadata.csv">fiction_metadata.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_yearly_summary.csv">fiction_yearly_summary.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_contextual_corrections.csv">fiction_contextual_corrections.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1700-1799.tar.gz">fiction_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1800-1834.tar.gz">fiction_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1835-1869.tar.gz">fiction_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1870-1879.tar.gz">fiction_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1880-1889.tar.gz">fiction_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1890-1899.tar.gz">fiction_1890-1899.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1900-1904.tar.gz">fiction_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1905-1909.tar.gz">fiction_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1910-1914.tar.gz">fiction_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1915-1919.tar.gz">fiction_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1920-1922.tar.gz">fiction_1920-1922.tar.gz</a><p>
       </div>
       <!--End Fiction-->
 
       <div class="col-md-4">
         <h2 id="links to poetry">Poetry</h2>
-        	<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_metadata.csv">poetry_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_yearly_summary.csv">poetry_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_contextual_corrections.csv">poetry_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1700-1799.tar.gz">poetry_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1800-1834.tar.gz">poetry_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1835-1869.tar.gz">poetry_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1870-1879.tar.gz">poetry_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1880-1889.tar.gz">poetry_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1890-1899.tar.gz">poetry_1890-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1900-1904.tar.gz">poetry_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1905-1909.tar.gz">poetry_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1910-1914.tar.gz">poetry_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1915-1919.tar.gz">poetry_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/poetry_1920-1922.tar.gz">poetry_1920-1922.tar.gz</a><p>
+    <p><a href="http://data.sharc.hathitrust.org/genre/poetry_metadata.csv">poetry_metadata.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_yearly_summary.csv">poetry_yearly_summary.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_contextual_corrections.csv">poetry_contextual_corrections.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1700-1799.tar.gz">poetry_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1800-1834.tar.gz">poetry_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1835-1869.tar.gz">poetry_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1870-1879.tar.gz">poetry_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1880-1889.tar.gz">poetry_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1890-1899.tar.gz">poetry_1890-1899.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1900-1904.tar.gz">poetry_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1905-1909.tar.gz">poetry_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1910-1914.tar.gz">poetry_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1915-1919.tar.gz">poetry_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1920-1922.tar.gz">poetry_1920-1922.tar.gz</a><p>
       </div>
       <!-- End poetry -->
 
 
       <div class="col-md-4" >
         <h2 id="links to drama">Drama</h2>
-        	<p><a href="http://data.sharc.hathitrust.org/fiction/drama_metadata.csv">drama_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_yearly_summary.csv">drama_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_contextual_corrections.csv">drama_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1700-1799.tar.gz">drama_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1800-1834.tar.gz">drama_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1835-1869.tar.gz">drama_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1870-1879.tar.gz">drama_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1880-1889.tar.gz">drama_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1890-1899.tar.gz">drama_1890-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1900-1904.tar.gz">drama_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1905-1909.tar.gz">drama_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1910-1914.tar.gz">drama_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1915-1919.tar.gz">drama_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/fiction/drama_1920-1922.tar.gz">drama_1920-1922.tar.gz</a><p>
+        	<p><a href="http://data.sharc.hathitrust.org/genre/drama_metadata.csv">drama_metadata.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_yearly_summary.csv">drama_yearly_summary.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_contextual_corrections.csv">drama_contextual_corrections.csv</a></p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1700-1799.tar.gz">drama_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1800-1834.tar.gz">drama_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1835-1869.tar.gz">drama_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1870-1879.tar.gz">drama_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1880-1889.tar.gz">drama_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1890-1899.tar.gz">drama_1890-1899.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1900-1904.tar.gz">drama_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1905-1909.tar.gz">drama_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1910-1914.tar.gz">drama_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1915-1919.tar.gz">drama_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1920-1922.tar.gz">drama_1920-1922.tar.gz</a><p>
 	 </div>
       <!--End drama -->
     </div>

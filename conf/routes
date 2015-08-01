@@ -129,7 +129,7 @@ GET         /theme                                            controllers.HTRCPo
 
 GET         /features                                         controllers.HTRCPortal.features()
 
-GET         /fiction                                          controllers.HTRCPortal.fiction()
+GET         /genre                                          controllers.HTRCPortal.fiction()
 
 #GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()
