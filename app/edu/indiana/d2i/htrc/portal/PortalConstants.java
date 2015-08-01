@@ -161,4 +161,7 @@ public class  PortalConstants {
     // Features page
     public static String FEATURES_PAGE = "features.page";
 
+    // Fiction dataset page
+    public static String FICTION_PAGE = "fiction.page";
+
 }

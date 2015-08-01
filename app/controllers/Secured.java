@@ -63,6 +63,9 @@ public class Secured extends Security.Authenticator {
         if(ctx.request().path().equals("/features")){
             return ok(about.render(null));
         }
+        if(ctx.request().path().equals("/fiction")){
+            return ok(about.render(null));
+        }
         if(ctx.request().path().equals("/robort.txt")){
             return ok("User-agent: *\nDisallow: /blacklight/");
         }
