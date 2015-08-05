@@ -75,7 +75,7 @@ GET         /iswsnamevalid                                    controllers.Workse
 GET         /listalgorithms                                   controllers.AlgorithmManagement.listAlgorithms(page:Int ?= 1)
 
 # View Algorithm
-GET         /viewalgorithm                                    controllers.AlgorithmManagement.viewAlgorithm(algorithmName:String ?="")
+GET         /viewalgorithm                                    controllers.AlgorithmManagement.viewAlgorithm(algorithmName:String ?="", message: String ?="")
 
 # Submit Job
 POST        /submitjob                                        controllers.AlgorithmManagement.submitAlgorithm()

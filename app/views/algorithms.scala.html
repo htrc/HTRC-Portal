@@ -23,7 +23,7 @@
                     @for((w, id) <- algorithms.zipWithIndex){
                         <tr>
                             <td>@(id + 1)</td>
-                            <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)">@w.getName</a></td>
+                            <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName," ")">@w.getName</a></td>
                             <td><div class=" text-content short-text" style="max-width: 400px; word-wrap: break-word">@w.getDescription</div>
                                 <div class="show-more"><a href="#">Show more</a></div></td>
                             <td>
@@ -37,7 +37,7 @@
                             </td>
 
                             <td>@w.getVersion</td>
-                            <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName)" class="btn btn-xs btn-primary" title="Execute the algorithm: @w.getName">Execute</a> </td>
+                            <td><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName," ")" class="btn btn-xs btn-primary" title="Execute the algorithm: @w.getName">Execute</a> </td>
                         </tr>
                     }
                     </tbody>

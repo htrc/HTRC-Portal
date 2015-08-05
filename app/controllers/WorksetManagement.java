@@ -44,6 +44,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -106,7 +107,7 @@ public class WorksetManagement extends JavaController {
                             log.info("Volume Id: "+ volumeId + " is already exists in Volume object in portal.");
                         }else{
                             VolumeDetailsBean volumeDetailsBean = new VolumeDetailsBean();
-                            volumeDetailsBean = getVolumeDetails(volumeList.get(i).getId());
+                            volumeDetailsBean = persistenceAPIClient.getVolumeDetails(volumeList.get(i).getId());
                             first200VolumeDetailsList.add(volumeDetailsBean);
                             models.Volume nVolume = new models.Volume();
                             nVolume.volumeId = volumeDetailsBean.getVolumeId();
@@ -133,7 +134,7 @@ public class WorksetManagement extends JavaController {
                     if(volumeId.isEmpty()){
                         log.error("Volume Id is null.");
                     }else{
-                        volumeDetailsList.add(getVolumeDetails(volumeId));
+                        volumeDetailsList.add(persistenceAPIClient.getVolumeDetails(volumeId));
                     }
 
                 }
@@ -324,153 +325,6 @@ public class WorksetManagement extends JavaController {
         return ok(result);
     }
 
-    public static VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
-        String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + URLEncoder.encode(volid.replace(":", "%20"), "UTF-8") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
-        VolumeDetailsBean volDetails = new VolumeDetailsBean();
-
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = new GetMethod(volumeDetailsQueryUrl);
-        method.setFollowRedirects(true);
-
-        try {
-            httpClient.executeMethod(method);
-            volDetails.setVolumeId(volid);
-
-            if (method.getStatusCode() == 200) {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-                DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-
-                Document dom = documentBuilder.parse(method.getResponseBodyAsStream());
-
-                NodeList result = dom.getElementsByTagName("result");
-                NodeList arrays = ((Element) result.item(0)).getElementsByTagName("arr");
-                NodeList integers = ((Element) result.item(0)).getElementsByTagName("int");
-                NodeList longIntegers = ((Element) result.item(0)).getElementsByTagName("long");
-
-
-                for (int i = 0; i < arrays.getLength(); i++) {
-                    Element arr = (Element) arrays.item(i);
-
-                    if (arr.hasAttribute("name") && arr.getAttribute("name").equals("title")) {
-                        NodeList strElements = arr.getElementsByTagName("str");
-                        volDetails.setTitle((strElements.item(0)).getTextContent());
-                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderMale")) {
-                        NodeList strElements = arr.getElementsByTagName("str");
-                        String maleAuthor = "";
-
-                        for (int j = 0; j < strElements.getLength(); j++) {
-                            Element str = (Element) strElements.item(j);
-                            if (j != strElements.getLength() - 1) {
-                                maleAuthor += str.getTextContent();
-                            } else {
-                                maleAuthor += str.getTextContent();
-                            }
-                        }
-
-                        volDetails.setMaleAuthor(maleAuthor);
-
-
-                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderFemale")) {
-                        NodeList strElements = arr.getElementsByTagName("str");
-                        String femaleAuthor = "";
-
-                        for (int j = 0; j < strElements.getLength(); j++) {
-                            Element str = (Element) strElements.item(j);
-                            if (j != strElements.getLength() - 1) {
-                                femaleAuthor += str.getTextContent();
-                            } else {
-                                femaleAuthor += str.getTextContent();
-                            }
-                        }
-
-                        volDetails.setFemaleAuthor(femaleAuthor);
-
-
-                    } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderUnknown")) {
-                        NodeList strElements = arr.getElementsByTagName("str");
-                        String genderUnkownAuthor = "";
-
-                        for (int j = 0; j < strElements.getLength(); j++) {
-                            Element str = (Element) strElements.item(j);
-                            if (j != strElements.getLength() - 1) {
-                                genderUnkownAuthor += str.getTextContent();
-                            } else {
-                                genderUnkownAuthor += str.getTextContent();
-                            }
-                        }
-
-                        volDetails.setGenderUnkownAuthor(genderUnkownAuthor);
-
-
-                    }
-                }
-
-                for (int i = 0; i < integers.getLength(); i++) {
-                    Element integer = (Element) integers.item(i);
-                    if (integer.hasAttribute("name") && integer.getAttribute("name").equals("htrc_pageCount")) {
-                        String pageCount = integer.getTextContent();
-                        volDetails.setPageCount(pageCount);
-                    }
-                }
-                for (int i = 0; i < longIntegers.getLength(); i++) {
-                    Element longInteger = (Element) longIntegers.item(0);
-                    if (longInteger.hasAttribute("name") && longInteger.getAttribute("name").equals("htrc_wordCount")) {
-                        String wordCount = longInteger.getTextContent();
-                        volDetails.setWordCount(wordCount);
-                    }
-                }
-
-            } else {
-                volDetails.setTitle("Error while querying solr.");
-                volDetails.setMaleAuthor("Error while querying solr.");
-                volDetails.setFemaleAuthor("Error while querying solr.");
-                volDetails.setGenderUnkownAuthor("Error while querying solr.");
-                volDetails.setWordCount("Error while querying solr.");
-                volDetails.setPageCount("Error while querying solr.");
-            }
-
-            return volDetails;
-        } catch (Exception e) {
-            log.error("Error while getting volume details for volume: " + volid + " query url: " + volumeDetailsQueryUrl, e);
-            throw new RuntimeException("Error while getting volume details for volume: " + volid + " response: \n" + method.getResponseBodyAsString(), e);
-        }
-    }
-
-
-
-//    public static List<Workset> getWorksets() throws IOException, JAXBException {
-//        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-//        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
-//
-//        List<Workset> allWorksets = new ArrayList<Workset>();
-//
-//        for(edu.illinois.i3.htrc.registry.entities.workset.Workset w : worksetList){
-//            WorksetMeta metadata = w.getMetadata();
-//
-//            Calendar calendar = metadata.getLastModified().toGregorianCalendar();
-//            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
-//            formatter.setTimeZone(calendar.getTimeZone());
-//            String dateString = formatter.format(calendar.getTime());
-//
-//            List<Volume> volumeList = new ArrayList<>();
-//            if (!metadata.getName().contains(" ")) {
-//                volumeList = persistenceAPIClient.getWorksetVolumes(metadata.getName(), metadata.getAuthor());
-//            }
-//
-//            if(volumeList != null) {
-//                allWorksets.add(new Workset(metadata.getName(),
-//                        metadata.getDescription(),
-//                        metadata.getAuthor(),
-//                        metadata.getLastModifiedBy(),
-//                        dateString,
-//                        volumeList.size(),
-//                        metadata.isPublic()));
-//            }
-//        }
-//
-//        return allWorksets;
-//    }
 
     private static String domToString(Document doc) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -489,14 +343,18 @@ public class WorksetManagement extends JavaController {
         return sb.toString();
     }
 
-    public static void setSession(Map<String, String> session){
-        for(Map.Entry<String,String> entry : session.entrySet()){
-            session(entry.getKey(),entry.getValue());
-        }
-    }
 
     public static String getWorksetWithAuthor(String workset, String author){
         return workset + '@' + author;
+    }
+
+    public static String convertTimeToGMT(String timeString) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = formatter.parse(timeString);
+        SimpleDateFormat gmtFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT");
+        gmtFormatter.setTimeZone(gmtTimeZone);
+        return gmtFormatter.format(date) + " " + gmtTimeZone.getID();
     }
 
 }
