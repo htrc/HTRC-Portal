@@ -18,3 +18,7 @@ public/javascripts/algorithm/wordcloud/d3.layout.cloud.js
 public/stylesheets/fonts-googleapis.css
 
 conf/saml.xml
+
+conf/idp.xml
+
+conf/logger.xml
