@@ -163,28 +163,28 @@
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
                 year = d.getFullYear(),
-                time = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+                time = d.getHours()+":"+('0' + d.getMinutes()).slice(-2)+":"+('0' + d.getSeconds()).slice(-2);
 
                 if (month.length < 2) month = '0' + month;
                 if (day.length < 2) day = '0' + day;
 
                 if(index == null){
                     if(typeOfWorksets == "myworksets"){
-                        document.getElementById("jobName").value = document.getElementsByTagName("select")[0].value.substring(0,20) + "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                        document.getElementById("jobName").value = document.getElementsByTagName("select")[0].value.substring(0,20) + "::" + "@algorithmdetails.getName".substring(0,12) + "::" + time;
                         jobNameInputKeyUp();
                     }
                     if(typeOfWorksets == "allworksets"){
-                        document.getElementById("jobName").value = document.getElementsByTagName("select")[1].value.substring(0,20) + "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                        document.getElementById("jobName").value = document.getElementsByTagName("select")[1].value.substring(0,20) + "::" + "@algorithmdetails.getName".substring(0,12) + "::" + time;
                         jobNameInputKeyUp();
                     }
                 }
 
                 if (document.getElementById("myWorksetsCollection" + index).checked){
-                    document.getElementById("jobName").value = document.getElementById("myWorksetsMenu" + index).value.substring(0,20)+ "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                    document.getElementById("jobName").value = document.getElementById("myWorksetsMenu" + index).value.substring(0,20)+ "::" + "@algorithmdetails.getName".substring(0,12) + "::" + time;
                     jobNameInputKeyUp();
                 }
                 if (document.getElementById("allWorksetsCollection" + index).checked){
-                    document.getElementById("jobName").value = document.getElementById("allWorksetsMenu" + index).value.substring(0,20)+ "-" + "@algorithmdetails.getName".substring(0,12) + "-" + time;
+                    document.getElementById("jobName").value = document.getElementById("allWorksetsMenu" + index).value.substring(0,20)+ "::" + "@algorithmdetails.getName".substring(0,12) + "::" + time;
                     jobNameInputKeyUp();
                 }
 
