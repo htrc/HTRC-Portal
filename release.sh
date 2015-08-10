@@ -14,6 +14,7 @@ play dist
 # Copy Dockerfile to target/docker
 mkdir -p ./target/docker
 cp Dockerfile ./target/docker
+cp portal.sh ./target/docker
 
 # Copy Portal distribution to target/docker
 cp ./target/universal/htrc-portal-3.2-SNAPSHOT.zip ./target/docker
