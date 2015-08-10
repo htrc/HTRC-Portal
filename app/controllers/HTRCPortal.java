@@ -22,6 +22,7 @@ import play.Play;
 import play.mvc.Result;
 import views.html.about;
 import views.html.features;
+import views.html.fiction;
 import views.html.gotopage;
 import views.html.index;
 
@@ -142,6 +143,11 @@ public class HTRCPortal extends JavaController {
     public static Result features() throws IOException {
         String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
         return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)),featurePage));
+    }
+
+    public static Result fiction() throws IOException {
+        String fictionPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.fictionPage())));
+        return ok(fiction.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)),fictionPage));
     }
 
 //    public static class Login {
