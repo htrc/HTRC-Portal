@@ -62,7 +62,7 @@ public class UserManagement extends JavaController {
             }
             return ok(gotopage.render("Your account is activated successfully. Click on the login link to begin:", "login", "Login", null));
         }
-        return ok(gotopage.render("Error on your activation link.", null, null, null));
+        return ok(gotopage.render("It looks like you have already activated your account or some error on your activation link. Please try to login with your user credentials. If you can't login or activate your account, please contact us by email.", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
     }
 
     public static Result createAccountRequestForm() {
