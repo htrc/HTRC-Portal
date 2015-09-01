@@ -24,11 +24,11 @@
                         <tbody>
                         @for(job <- activeJobs){
                             <tr>
-                                <td>@job.getJobTitle()</td>
+                                <td>@job.getJobTitle</td>
                                 <td>@job.getAlgorithmName</td>
-                                <td>@job.getLastUpdatedDate()</td>
-                                <td>@job.getJobStatus()</td>
-                                <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
+                                <td>@WorksetManagement.convertTimeToGMT(job.getLastUpdatedDate)</td>
+                                <td>@job.getJobStatus</td>
+                                <td><input name="activeJobs[@{activeJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId"></td>
                             </tr>
                         }
                             @if(activeJobs.isEmpty){
@@ -65,9 +65,9 @@
                         <tbody>
                         @for(job <- completedJobs){
                             <tr>
-                                <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId())">@job.getJobTitle()</a></td>
+                                <td><a href="@routes.JobManagement.viewJobDetails(job.getJobId)">@job.getJobTitle</a></td>
                                 <td>@job.getAlgorithmName</td>
-                                <td>@job.getLastUpdatedDate()</td>
+                                <td>@WorksetManagement.convertTimeToGMT(job.getLastUpdatedDate)</td>
                                 <td>@job.getJobStatus()</td>
                                 <td><input name="completedJob[@{completedJobs.indexOf(job)}]" type="checkbox" value="@job.getJobId()"></td>
                                 @*<td>@job.getJobSavedStr()</td>*@

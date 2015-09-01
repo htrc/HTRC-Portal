@@ -67,11 +67,15 @@ GET         /downloadworkset                                  controllers.Workse
 # View Workset
 POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()
 
+# Validate workset name
+GET         /iswsnamevalid                                    controllers.WorksetManagement.validateWSName(wsName:String ?="")
+
+
 # Algorithm List Form
 GET         /listalgorithms                                   controllers.AlgorithmManagement.listAlgorithms(page:Int ?= 1)
 
 # View Algorithm
-GET         /viewalgorithm                                    controllers.AlgorithmManagement.viewAlgorithm(algorithmName:String ?="")
+GET         /viewalgorithm                                    controllers.AlgorithmManagement.viewAlgorithm(algorithmName:String ?="", message: String ?="")
 
 # Submit Job
 POST        /submitjob                                        controllers.AlgorithmManagement.submitAlgorithm()
@@ -122,6 +126,10 @@ GET         /callback                                         org.pac4j.play.Cal
 POST        /callback                                         org.pac4j.play.CallbackController.callback()
 
 GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
+
+GET         /features                                         controllers.HTRCPortal.features()
+
+GET         /genre                                            controllers.HTRCPortal.fiction()
 
 GET        /features                                          controllers.HTRCPortal.features()
 

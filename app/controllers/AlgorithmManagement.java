@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static play.data.Form.form;
@@ -38,33 +39,37 @@ public class AlgorithmManagement extends JavaController {
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         CommonProfile userProfile = getUserProfile();
         User loggedInUser = User.findByUserID(userProfile.getId());
-//        WorksetManagement.updateWorksets(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-//        updateAlgorithms(session().get(PortalConstants.SESSION_TOKEN), PlayConfWrapper.registryEPR());
-//        PagingList<Algorithm> algorithmsPL = Algorithm.algorithmPagingList();
-//        List<Algorithm> algorithms = algorithmsPL.getPage(page - 1).getList();
 
         return ok(views.html.algorithms.render(loggedInUser, getAlgorithms()));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
-    public static Result viewAlgorithm(String algorithmName) throws JAXBException, IOException, XMLStreamException {
+    public static Result viewAlgorithm(String algorithmName, String message) throws JAXBException, IOException, XMLStreamException {
         User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> userWorksetList = persistenceAPIClient.getUserWorksets();
+        List<edu.illinois.i3.htrc.registry.entities.workset.Workset> allWorksetList = persistenceAPIClient.getAllWorksets();
 
-        return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, worksetList, Form.form(SubmitJob.class)));
+        return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, userWorksetList, allWorksetList, Form.form(SubmitJob.class),message));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result submitAlgorithm() throws Exception {
-        AtomicReference<User> loggedInUser = new AtomicReference<User>(User.findByUserID(session(PortalConstants.SESSION_USERNAME)));
+        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        Form<SubmitJob> jobSubmitForm = form(SubmitJob.class).bindFromRequest();
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
-        jobSubmitBean.setJobName(requestData.get("jobName"));
-        jobSubmitBean.setUserName(loggedInUser.get().userId);
-        jobSubmitBean.setAlgorithmName(requestData.get("algorithmName"));
+        String jobName = requestData.get("jobName");
+        String algorithmName = requestData.get("algorithmName");
+        if(jobName.length() > 0){
+            jobSubmitBean.setJobName(jobName);
+        }else{
+            return redirect(routes.AlgorithmManagement.viewAlgorithm(algorithmName,"Job name cannot be null."));
+        }
+        jobSubmitBean.setUserName(loggedInUser.userId);
+        jobSubmitBean.setAlgorithmName(algorithmName);
         AlgorithmDetailsBean algorithmDetails;
         try {
             algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), requestData.get("algorithmName"));
@@ -84,7 +89,32 @@ public class AlgorithmManagement extends JavaController {
                 JobSubmitBean.Parameter parameter = new JobSubmitBean.Parameter();
                 parameter.setParamName(requestData.field("parameters[" + index + "].paramName").value());
                 parameter.setParamType(requestData.field("parameters[" + index + "].paramType").value());
-                parameter.setParamValue(requestData.field("parameters[" + index + "].paramValue").value());
+                if(Objects.equals(parameter.getParamType(), "collection")){
+                    String collectionType = requestData.field("worksetsCollection" + (index - 1)).value();
+                    String myWSValue = requestData.field("myWorksetsMenu" + (index - 1)).value();
+                    String allWSValue = requestData.field("allWorksetsMenu" + (index - 1)).value();
+                    switch (collectionType) {
+                        case "myworksets":
+                            parameter.setParamValue(myWSValue);
+                            log.info("Workset has selected from my worksets:" + myWSValue);
+                            break;
+                        case "allworksets":
+                            parameter.setParamValue(allWSValue);
+                            log.info("Workset has selected from all worksets:" + allWSValue);
+                            break;
+                        default:
+                            log.error("Error on workset selection. My workset value: " + myWSValue + ". All workset value: " + allWSValue);
+                            break;
+                    }
+                }else{
+                    parameter.setParamValue(requestData.field("parameters[" + index + "].paramValue").value());
+                }
+                boolean isRequired = Boolean.parseBoolean(requestData.field("parameters[" + index + "].paramRequired").value());
+                if(isRequired){
+                    if(parameter.getParamValue().length() == 0){
+                        return redirect(routes.AlgorithmManagement.viewAlgorithm(algorithmName, "Please fill all the required parameters."));
+                    }
+                }
                 parameterList.add(parameter);
             }
             jobSubmitBean.setParameters(parameterList);

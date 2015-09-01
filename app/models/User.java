@@ -47,8 +47,6 @@ import java.util.Map;
 public class User extends Model {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
     public String userId;
     public String email;
     public String userFirstName;

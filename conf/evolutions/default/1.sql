@@ -41,8 +41,7 @@ create table token (
 ;
 
 create table user (
-  id                        bigint auto_increment not null,
-  user_id                   varchar(255),
+  user_id                   varchar(255) not null,
   email                     varchar(255),
   user_first_name           varchar(255),
   user_last_name            varchar(255),
@@ -50,7 +49,7 @@ create table user (
   no_of_all_worksets        integer,
   no_of_active_jobs         integer,
   no_of_completed_jobs      integer,
-  constraint pk_user primary key (id))
+  constraint pk_user primary key (user_id))
 ;
 
 create table virtual_machine (
@@ -72,6 +71,8 @@ create table volume (
   word_count                varchar(255),
   constraint pk_volume primary key (id))
 ;
+
+create sequence user_seq;
 
 
 
@@ -95,4 +96,6 @@ drop table if exists virtual_machine;
 drop table if exists volume;
 
 SET REFERENTIAL_INTEGRITY TRUE;
+
+drop sequence if exists user_seq;
 

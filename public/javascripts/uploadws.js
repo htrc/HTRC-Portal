@@ -31,13 +31,27 @@ var wsSubmitButtonVisibility = function () {
     }
 };
 
+var checkWsNameValidity = function (wsname, onInvalidWSName, onValidWSName) {
+    var request = $.ajax({
+        url: "/iswsnamevalid?wsName=" + wsname,
+        type: "GET",
+        success: function (result) {
+            if (!result.valid) {
+                onInvalidWSName();
+            } else {
+                onValidWSName();
+            }
+        }
+    });
+};
+
 var wsNameInputKeyUp = function () {
     var wsName = $(this).val();
     var wsNameControlGroup = $('#wsname-control-group');
     var wsNameWarnBlock = $('#wsname-warn-block');
     var wsNameFeedback = $('#wsname-feedback');
 
-    if (wsName.indexOf(' ') >= 0 || wsName.match('[!,@@,#,$,%,\\,\/,^,&,*,?,~,(,),-]')) {
+    if (wsName.indexOf(' ') >= 0 || wsName.match('[^a-zA-Z0-9_]')) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name contains a space or a special character!');
@@ -46,9 +60,14 @@ var wsNameInputKeyUp = function () {
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name cannot be empty!');
     }else{
+        checkWsNameValidity(wsName,function () {
+            wsNameCorrect = false;
+            uploadHasError(wsNameControlGroup, wsNameFeedback);
+            wsNameWarnBlock.html('You already have a workset with this name. Please choose another name.');
+        },function(){
         wsNameCorrect = true;
         uploadHasSuccess(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('');
+        wsNameWarnBlock.html('');});
     }
 };
 

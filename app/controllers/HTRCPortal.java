@@ -13,15 +13,14 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.codehaus.jettison.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.play.CallbackController;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
+import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import play.Logger;
 import play.Play;
 import play.mvc.Result;
-import views.html.about;
-import views.html.features;
-import views.html.gotopage;
-import views.html.index;
+import views.html.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -45,21 +44,28 @@ public class HTRCPortal extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result login() throws IOException, JAXBException {
-        CommonProfile userProfile = getUserProfile();
-        String accessToken = (String) userProfile.getAttribute("access_token");
-        String refreshToken = (String) userProfile.getAttribute("refresh_token");
-        session().put(PortalConstants.SESSION_TOKEN,accessToken);
-        session().put(PortalConstants.SESSION_REFRESH_TOKEN,refreshToken);
-        String userId = userProfile.getId();
-        log.info("User "+ userId + " is successfully logged in.");
+//        CommonProfile userProfile = getUserProfile();
+//        String accessToken = (String) userProfile.getAttribute("access_token");
+//        String refreshToken = (String) userProfile.getAttribute("refresh_token");
+//        session().put(PortalConstants.SESSION_TOKEN,accessToken);
+//        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
+//        log.debug(userProfile.toString());
+
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        log.info("User " + userId + " is successfully logged in.");
         log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));
         }
-        session().put(PortalConstants.SESSION_USERNAME, userId);
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-
+        if(!userManager.roleNameExists(userId)){
+            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userManager.getEmail(userId) + ". Please check your email and activate account. " +
+                    "If you have not received your activation link, please contact us by email " +
+                    " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
+        }
+        log.debug("Role name exists: " + userManager.roleNameExists(userId));
+        session().put(PortalConstants.SESSION_USERNAME, userId);
         if(User.findByUserID(userId) == null){
             String userEmail = userManager.getEmail(userId);
             User nu = new User(userId, userEmail);
@@ -130,8 +136,13 @@ public class HTRCPortal extends JavaController {
         return ok(about.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
     }
 
-    public static Result features() {
-        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
+    public static Result features() throws IOException {
+        String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
+        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)), featurePage));
+    }
+    public static Result fiction() throws IOException {
+        String fictionPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.fictionPage())));
+        return ok(fiction.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)), fictionPage));
     }
 
 //    public static class Login {

@@ -115,6 +115,15 @@ public class PlayConfWrapper {
     // Released Version
     private static String releasedVersion = null;
 
+    // Google Analytics Code
+    private static String googleAnalyticsCode = null;
+
+    // Features page
+    private static String featurespage = null;
+
+    // Fiction dataset page
+    private static String fictionpage = null;
+
 
     public static String agentEndpoint() {
         if(agentEndpoint == null){
@@ -517,6 +526,27 @@ public class PlayConfWrapper {
             releasedVersion= Play.application().configuration().getString(PortalConstants.RELESED_VERSION);
         }
         return releasedVersion;
+    }
+
+    public static String googleAnalyticsCode(){
+        if(googleAnalyticsCode == null){
+            googleAnalyticsCode= Play.application().configuration().getString(PortalConstants.GA_CODE);
+        }
+        return googleAnalyticsCode;
+    }
+
+    public static String featuresPage(){
+        if(featurespage == null){
+            featurespage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
+        }
+        return featurespage;
+    }
+
+    public static String fictionPage(){
+        if(fictionpage == null){
+            fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
+        }
+        return fictionpage;
     }
 }
 

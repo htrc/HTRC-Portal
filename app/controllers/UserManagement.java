@@ -2,10 +2,7 @@ package controllers;
 
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import edu.indiana.d2i.htrc.portal.CSVReader;
-import edu.indiana.d2i.htrc.portal.HTRCUserManagerUtility;
-import edu.indiana.d2i.htrc.portal.PasswordChecker;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
+import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Token;
@@ -39,7 +36,8 @@ public class UserManagement extends JavaController {
 
         if (signUpForm.hasErrors()) {
             if (!SignUp.isValidEmail(signUpForm.data().get("email"))) {
-                return badRequest(accountrequest.render(Form.form(AccountRequest.class), null, signUpForm.data().get("firstName"), signUpForm.data().get("lastName"), signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
+                return badRequest(accountrequest.render(Form.form(AccountRequest.class), null, signUpForm.data().get("firstName"), signUpForm.data().get("lastName"),
+                        signUpForm.data().get("email"), "Your email is not recognized as an institutional email by our system. Please fill this form and request an account for your existing email."));
             }
             return badRequest(signup.render(signUpForm, null));
         }
@@ -64,7 +62,7 @@ public class UserManagement extends JavaController {
             }
             return ok(gotopage.render("Your account is activated successfully. Click on the login link to begin:", "login", "Login", null));
         }
-        return ok(gotopage.render("Error on your activation link.", null, null, null));
+        return ok(gotopage.render("It looks like you have already activated your account or some error on your activation link. Please try to login with your user credentials. If you can't login or activate your account, please contact us by email.", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
     }
 
     public static Result createAccountRequestForm() {
@@ -111,13 +109,15 @@ public class UserManagement extends JavaController {
     }
 
     public static Result createPasswordResetForm(String token) {
-        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token));
+        Token token1 = Token.findByToken(token);
+        String userId = token1.userId;
+        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
     }
 
     public static Result passwordReset() {
         Form<PasswordReset> passwordResetForm = form(PasswordReset.class).bindFromRequest();
         if (passwordResetForm.hasErrors()) {
-            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token")));
+            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
         String userId = token1.userId;
@@ -218,8 +218,8 @@ public class UserManagement extends JavaController {
                 return "There's a role name already exists with this name. Please use another username.";
             }
 
-            if (passwordValidate(password, confirmPassword) != null) {
-                return passwordValidate(password, confirmPassword);
+            if (passwordValidate(password, confirmPassword,userId) != null) {
+                return passwordValidate(password, confirmPassword,userId);
             }
 
             if (!email.equals(confirmEmail)) {
@@ -242,7 +242,7 @@ public class UserManagement extends JavaController {
                         "http://wso2.org/claims/emailaddress", email));
                 try {
                     userManager.createUser(userId, password, claims);
-                    sendUserRegistrationEmail(email, userId);
+                    sendUserRegistrationEmail(email, userId, firstName);
                     log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
                             + " User ID: " + userId);
                     setStatus("Success");
@@ -258,10 +258,14 @@ public class UserManagement extends JavaController {
             return null;
         }
 
-        public void sendUserRegistrationEmail(String userEmail, String userId) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Welcome to HTRC. Please click on following url to activate your account. \n" + url);
+            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
+                    "\n \n Please click on the following url to activate your account. \n" + url + "\n" +
+                    " \n \n" +
+                    " Cheers, \n" +
+                    " HTRC Team.");
 
         }
 
@@ -297,15 +301,6 @@ public class UserManagement extends JavaController {
                             email + " is not an approved email.");
                     return false;
                 }
-//                if (!instDomains.containsKey(domainName)) {
-//                    log.info(domainName + " is not an institutional email domain. ");
-//                    if(!approvedEmails.containsKey(email)){
-//                        log.info(email + " is not an approved email.");
-//                        return false;
-//                    }
-//
-//                }
-//                return true;
             }
         }
     }
@@ -350,17 +345,19 @@ public class UserManagement extends JavaController {
     }
 
     public static class PasswordReset {
+        public String userId;
         public String token;
         public String password;
-        public String retypePassword;
+        public String confirmPassword;
 
         PasswordChecker passwordChecker = new PasswordChecker();
 
 
         public String validate() {
             log.debug("Token in the form: " + token);
-            if (passwordValidate(password, retypePassword) != null) {
-                return passwordValidate(password, retypePassword);
+
+            if (passwordValidate(password, confirmPassword,userId) != null) {
+                return passwordValidate(password, confirmPassword,userId);
             }
             return null;
         }
@@ -421,23 +418,30 @@ public class UserManagement extends JavaController {
 
     }
 
-    public static String passwordValidate(String password, String retypePassword) {
+    public static String passwordValidate(String password, String retypePassword, String userId) {
         PasswordChecker passwordChecker = new PasswordChecker();
+
 
         if (password.isEmpty()) {
             return "Password is empty, Please enter password.";
         }
         if (password.length() < 15) {
-            return "Password should be more than 15 characters long.";
+            return "Password must be more than 15 characters long.";
         }
         if (password.contains(" ")) {
-            return "Password should not contain any white spaces.";
+            return "Password must not contain any white spaces.";
+        }
+        if (password.length() > 30) {
+            return "Password must not be more than 30 characters long.";
         }
         if (!passwordChecker.isValidPassword(password)) {
             return "Please use a strong password.";
         }
         if (!password.equals(retypePassword)) {
-            return "The Passwords do not match.";
+            return "Passwords do not match.";
+        }
+        if (password.equals(userId)){
+            return "Password includes your user ID.";
         }
         return null;
     }

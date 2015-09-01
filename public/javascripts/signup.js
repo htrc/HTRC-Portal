@@ -1,47 +1,8 @@
 var userIdCorrect = false;
-var passwordCorrect = false;
+
 var validEmailDomain = false;
-var confirmPasswordMatch = false;
+
 var confirmEmailMatch = false;
-
-
-var isPasswordSimilarToUserName = function (password, userId) {
-    return userId && password.toLowerCase().match(userId.toLowerCase());
-};
-
-var checkPasswordStrength = function (password, userId, minPasswordLength) {
-    var matchedRules = 0;
-
-    if (password.match(/[a-z]/)) {
-        matchedRules++;
-    }
-
-    if (password.match(/[A-Z]/)) {
-        matchedRules++;
-    }
-
-    if (password.match(/\d+/)) {
-        matchedRules++;
-    }
-
-    if (password.match(/.[!,@,#,$,%,\^,&,*,?,_,~]/)) {
-        matchedRules++;
-    }
-
-    if (isPasswordSimilarToUserName(password, userId)) {
-        return "SIMILAR_TO_UID";
-    }
-
-    if (password.indexOf(' ') >= 0) {
-        return "SPACE_IN_PASSWORD";
-    }
-
-    if (matchedRules >= 2 && password.length >= minPasswordLength) {
-        return "STRONG_PASSWORD";
-    }
-
-    return "WEAK_PASSWORD";
-};
 
 var hasError = function (element, iconElement) {
     acknowledgeButtonVisibility();
@@ -60,53 +21,6 @@ var hasSuccess = function (element, iconElement) {
     iconElement.addClass('glyphicon-ok');
     iconElement.removeClass('glyphicon-remove');
 };
-
-var registerPasswordStrengthChecker = function () {
-    var passwd = $('#password');
-    var passwdControlGroup = $('#password-control-group');
-    var userId = $('#userId');
-    var warnBlock = $('#password-warn-block');
-    var passwordFeedback = $('#password-feedback');
-
-    passwd.keyup(function () {
-        var passwordStrength = checkPasswordStrength(passwd.val(), userId.val(), 15);
-        if (passwordStrength == "WEAK_PASSWORD") {
-            passwordCorrect = false;
-            hasError(passwdControlGroup, passwordFeedback);
-            warnBlock.html('Weak password!<br/>');
-        } else if (passwordStrength == "SPACE_IN_PASSWORD") {
-            passwordCorrect = false;
-            hasError(passwdControlGroup, passwordFeedback);
-            warnBlock.html('Spaces are not allowed in the password!<br/>');
-        } else if (passwordStrength == "SIMILAR_TO_UID") {
-            passwordCorrect = false;
-            hasError(passwdControlGroup, passwordFeedback);
-            warnBlock.html('User name is not allowed in the password!<br/>');
-        } else {
-            passwordCorrect = true;
-            hasSuccess(passwdControlGroup, passwordFeedback);
-            warnBlock.html('');
-        }
-    });
-};
-
-var registerPasswordMatcher = function () {
-    var passwd = $('#password');
-    var confirmPasswd = $('#confirmPassword');
-    var confirmPasswdControlGroup = $('#confirm-password-control-group');
-    var confirmPasswdFeedback = $('#confirm-password-feedback');
-
-    confirmPasswd.keyup(function () {
-        if (passwd.val() !== confirmPasswd.val()) {
-            confirmPasswordMatch = false;
-            hasError(confirmPasswdControlGroup, confirmPasswdFeedback);
-        } else {
-            confirmPasswordMatch = true;
-            hasSuccess(confirmPasswdControlGroup, confirmPasswdFeedback);
-        }
-    });
-};
-
 var checkEmailDomainValidity = function (email, onInvalidDomain, onValidDomain) {
    var request = $.ajax({
         url: "/isvalidemaildomain?email=" + email,
@@ -126,13 +40,14 @@ var validEmail = function (email) {
     return re.test(email);
 };
 
+
 var registerEmailValidityChecker = function () {
     var emailControlGroup = $('#email-control-group');
     var emailFeedback = $('#email-feedback');
     var email = $('#email');
     var unrecognizedDomainWarning = $('#unrecognized-domain-warn');
 
-    email.bind("change keyup" , function () {
+    email.bind("change keyup paste" , function () {
         if (validEmail(email.val())) {
             checkEmailDomainValidity(email.val(),
                 function () {
@@ -161,7 +76,7 @@ var registerEmailMatcher = function () {
     var confirmEmail = $('#confirmEmail');
     var email = $('#email');
 
-    email.bind("change keyup" ,function (){
+    email.bind("change keyup paste" ,function (){
         if(confirmEmail.val() == email.val()){
             confirmEmailMatch = true;
             hasSuccess(emailControlGroup, emailFeedback);
@@ -170,7 +85,7 @@ var registerEmailMatcher = function () {
             hasError(emailControlGroup, emailFeedback);
         }
     });
-    confirmEmail.bind("change keyup" ,function (){
+    confirmEmail.bind("change keyup paste" ,function (){
         if(confirmEmail.val() == email.val()){
             confirmEmailMatch = true;
             hasSuccess(emailControlGroup, emailFeedback);
@@ -199,7 +114,7 @@ var userIdInputKeyUp = function () {
     var userIdWarnBlock = $('#userid-warn-block');
     var userIdFeedback = $('#user-id-feedback');
 
-    if (userId.indexOf(' ') >= 0 || userId.match('[!,@@,#,$,%,\\,\/,^,&,*,?,~,(,),-]')) {
+    if (userId.indexOf(' ') >= 0 || userId.match('[^a-zA-Z0-9]')) {
         userIdCorrect = false;
         hasError(userIdControlGroup, userIdFeedback);
         userIdWarnBlock.html('User ID contains a space or a special character!');
@@ -215,6 +130,10 @@ var userIdInputKeyUp = function () {
         userIdCorrect = false;
         hasError(userIdControlGroup, userIdFeedback);
         userIdWarnBlock.html('User ID contains a uppercase character.');
+    }else if(userId.length > 30){
+        userIdCorrect = false;
+        hasError(userIdControlGroup, userIdFeedback);
+        userIdWarnBlock.html('User ID must not be more than 30 characters long!');
     }else{
         userIdCorrect = true;
         hasSuccess(userIdControlGroup, userIdFeedback);
@@ -223,7 +142,9 @@ var userIdInputKeyUp = function () {
 };
 
 var registerUserIDValidation = function () {
-    $('#userId').bind("change keyup" ,userIdInputKeyUp);
+    var userId = $("#userId");
+    var value = "";
+    userId.bind("change keyup paste" ,userIdInputKeyUp);
 };
 
 var acknowledgeButtonVisibility = function() {
@@ -235,6 +156,13 @@ var acknowledgeButtonVisibility = function() {
     }
 };
 
+var triggerAlreadyFilledFields = setTimeout(function() {
+    $('input').each(function() {
+        var elem = $(this);
+        if (elem.val()) elem.change();
+    })
+}, 250);
+
 
 $(document).ready(function () {
     registerUserIDValidation();
@@ -244,4 +172,5 @@ $(document).ready(function () {
     acknowledgeButtonVisibility();
     registerPasswordMatcher();
     registerPasswordStrengthChecker();
+    triggerAlreadyFilledFields();
 });

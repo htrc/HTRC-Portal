@@ -5,14 +5,14 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName = "htrc-portal"
-  val appVersion = "3.1"
+  val appVersion = "3.2-SNAPSHOT"
 
   val appDependencies = Seq(
     javaCore,
     javaJdbc,
     javaEbean,
     cache,
-    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv3"
+    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv5"
       exclude("com.typesafe.play", "play-jdbc")
       exclude("com.typesafe.play", "play-cache"),
     "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv2",
@@ -61,7 +61,7 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += ("WSO2 Maven Repository" at "http://maven.wso2.org/nexus/content/groups/wso2-public/"),
     resolvers += ("Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"),
-    resolvers += ("HTRC Nexus Repository" at "http://nexus/htrc.illinois.edu/content/groups/public/"),
+    resolvers += ("HTRC Nexus Repository" at "http://nexus.htrc.illinois.edu/content/groups/public/"),
     resolvers += ("typesafe" at "http://repo.typesafe.com/typesafe/releases/"),
     resolvers += Resolver.mavenLocal
   )

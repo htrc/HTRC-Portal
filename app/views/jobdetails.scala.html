@@ -56,7 +56,7 @@
                                 @if(result.getKey.contains(".csv") || result.getKey.contains(".zip")){
                                     <a href="@result.getValue" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Click here to download @result.getKey</a>
                                 } else {
-                                    <iframe style="width : 100%; height : 500px;" src="@result.getValue">
+                                    <iframe class="job-details-iframe" src="@result.getValue">
                                         <p>Your browser does not support iframes.</p>
                                     </iframe>
                                 }

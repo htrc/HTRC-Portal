@@ -38,7 +38,6 @@ import java.util.*;
 public class HTRCAgentClient {
     private String accessToken;
     private String refreshToken;
-    private Http.Session session;
     private static Logger.ALogger log = play.Logger.of("application");
     private HttpClient client = new HttpClient();
     private XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -51,7 +50,6 @@ public class HTRCAgentClient {
     public int responseCode;
 
     public HTRCAgentClient(Http.Session session){
-        this.session = session;
         accessToken = session.get(PortalConstants.SESSION_TOKEN);
         refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
     }
@@ -211,7 +209,6 @@ public class HTRCAgentClient {
             }else if (responsecode == 401 && (renew < MAX_RENEW)) {
                 try {
                     accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
-//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
                     renew++;
                     return submitJob(jobSubmitBean);
                 } catch (Exception e) {
@@ -257,7 +254,6 @@ public class HTRCAgentClient {
                 } else if (response == 401 && (renew < MAX_RENEW)) {
                     try {
                         accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
-//                        session.put(PortalConstants.SESSION_TOKEN, accessToken);
                         renew++;
                         return deleteJobs(jobIds); // bugs here!
                     } catch (Exception e) {
@@ -301,7 +297,6 @@ public class HTRCAgentClient {
                 } else if (response == 401 && (renew < MAX_RENEW)) {
                     try {
                         accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
-//                        session.put(PortalConstants.SESSION_TOKEN, accessToken);
                         renew++;
                         return saveJobs(jobIds); // bugs here
                     } catch (Exception e) {
@@ -347,7 +342,6 @@ public class HTRCAgentClient {
             }else if (response == 401 && (renew < MAX_RENEW)) {
                 try {
                     accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
-//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
                     renew++;
                     return getAllJobsDetails();
                 } catch (Exception e) {
@@ -397,7 +391,6 @@ public class HTRCAgentClient {
             }else if (response == 401 && (renew < MAX_RENEW)) {
                 try {
                     accessToken = HTRCPersistenceAPIClient.renewToken(refreshToken);
-//                    session.put(PortalConstants.SESSION_TOKEN, accessToken);
                     renew++;
                     return getActiveJobsDetails();
                 } catch (Exception e) {
