@@ -2,6 +2,8 @@ package edu.indiana.d2i.htrc.portal;
 
 import play.Play;
 
+import javax.xml.bind.annotation.XmlElementDecl;
+
 /**
  * Copyright 2013 The Trustees of Indiana University
  *
@@ -104,6 +106,11 @@ public class PlayConfWrapper {
     private static String saml2KeyStorePassword = null;
     private static String saml2PrivateKeyPassword = null;
     private static String idpMetadataPath = null;
+    private static String samlSSOCallbackURL = null;
+
+    // Service Provider
+    private static String serviceProviderName = null;
+    private static String serviceProviderDescription = null;
 
     //Documentations
     private static String releaseDocument = null;
@@ -195,17 +202,19 @@ public class PlayConfWrapper {
         return userinfoEndpoint;
     }
 
-    public static String oauthClientID() {
-        if(clientID == null){
-            clientID = Play.application().configuration().getString(PortalConstants.OAUTH2_CLIENT_ID);
-        }
+    public static void setOauthClientID(String clientId) {
+        PlayConfWrapper.clientID = clientId;
+    }
+
+    public static String getOauthClientID() {
         return clientID;
     }
 
-    public static String oauthClientSecrete() {
-        if(clientSecrete == null){
-            clientSecrete = Play.application().configuration().getString(PortalConstants.OAUTH2_CLIENT_SECRETE);
-        }
+    public static void setOauthClientSecrete(String clientSecret) {
+        PlayConfWrapper.clientSecrete = clientSecret;
+    }
+
+    public static String getOauthClientSecrete() {
         return clientSecrete;
     }
 
@@ -494,6 +503,27 @@ public class PlayConfWrapper {
             idpMetadataPath = Play.application().configuration().getString(PortalConstants.IDP_METADATA_PATH);
         }
         return idpMetadataPath;
+    }
+
+    public static String samlSSOCallbackURL(){
+        if(samlSSOCallbackURL == null){
+            samlSSOCallbackURL = Play.application().configuration().getString(PortalConstants.SAML_SSO_CALLBACK_URL);
+        }
+        return samlSSOCallbackURL;
+    }
+
+    public static String serviceProviderName(){
+        if(serviceProviderName == null){
+            serviceProviderName = Play.application().configuration().getString(PortalConstants.SERVICE_PROVIDER_NAME);
+        }
+        return serviceProviderName;
+    }
+
+    public static String serviceProviderDescription(){
+        if(serviceProviderDescription == null){
+            serviceProviderDescription = Play.application().configuration().getString(PortalConstants.SERVICE_PROVIDER_DESCRIPTION);
+        }
+        return serviceProviderDescription;
     }
 
     public static String releaseDocument(){

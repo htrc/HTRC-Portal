@@ -81,7 +81,6 @@ public class HTRCPersistenceAPIClient {
         HTRCPersistenceAPIClient.session = session;
         accessToken = session.get(PortalConstants.SESSION_TOKEN);
         refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
-
     }
 
 
@@ -120,24 +119,33 @@ public class HTRCPersistenceAPIClient {
      * @throws org.apache.amber.oauth2.common.exception.OAuthProblemException
      * @throws Exception
      */
-    public static String renewToken(String refreshToken)
-            throws Exception {
-        OAuthClientRequest refreshTokenRequest = OAuthClientRequest
-                .tokenLocation(PlayConfWrapper.tokenEndpoint())
-                .setGrantType(GrantType.REFRESH_TOKEN)
-                .setRefreshToken(refreshToken)
-                .setClientId(PlayConfWrapper.oauthClientID())
-                .setClientSecret(PlayConfWrapper.oauthClientSecrete())
-                .buildBodyMessage();
-        OAuthClient refreshTokenClient = new OAuthClient(new URLConnectionClient());
-        OAuthClientResponse refreshTokenResponse = refreshTokenClient
-                .accessToken(refreshTokenRequest);
-        String refreshedAccessToken = refreshTokenResponse.getParam("access_token");
-        session.put(PortalConstants.SESSION_TOKEN, refreshedAccessToken);
-        session.put(PortalConstants.SESSION_REFRESH_TOKEN, refreshTokenResponse.getParam("refresh_token"));
-        log.info("Access token has been renewed to " + refreshedAccessToken);
+    public static String renewToken(String refreshToken)throws Exception {
+        String oauthClientId = PlayConfWrapper.getOauthClientID();
+        String oauthClientSecret = PlayConfWrapper.getOauthClientSecrete();
+        String tokenLocation = PlayConfWrapper.tokenEndpoint();
 
-        return refreshedAccessToken;
+        if(oauthClientId != null && oauthClientSecret != null && tokenLocation != null && refreshToken != null){
+            OAuthClientRequest refreshTokenRequest = OAuthClientRequest
+                    .tokenLocation(tokenLocation)
+                    .setGrantType(GrantType.REFRESH_TOKEN)
+                    .setRefreshToken(refreshToken)
+                    .setClientId(oauthClientId)
+                    .setClientSecret(oauthClientSecret)
+                    .buildBodyMessage();
+            OAuthClient refreshTokenClient = new OAuthClient(new URLConnectionClient());
+            OAuthClientResponse refreshTokenResponse = refreshTokenClient
+                    .accessToken(refreshTokenRequest);
+            String refreshedAccessToken = refreshTokenResponse.getParam("access_token");
+            session.put(PortalConstants.SESSION_TOKEN, refreshedAccessToken);
+            session.put(PortalConstants.SESSION_REFRESH_TOKEN, refreshTokenResponse.getParam("refresh_token"));
+            log.info("Access token has been renewed to " + refreshedAccessToken);
+
+            return refreshedAccessToken;
+        }else{
+            log.error("One or more variables are null.");
+            return null;
+        }
+
     }
 
 
