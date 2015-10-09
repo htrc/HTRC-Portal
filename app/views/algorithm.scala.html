@@ -116,6 +116,12 @@
                             </select>
 
                             <script type="text/javascript">
+                                if(@userWorksetlist.isEmpty){
+                                    document.getElementById("myWorksetsCollection@parameters.indexOf(pm)").checked = false;
+                                    document.getElementById("allWorksetsCollection@parameters.indexOf(pm)").checked = true;
+                                    document.getElementById("myWorksetsMenu@parameters.indexOf(pm)").style.display="none";
+                                    document.getElementById("allWorksetsMenu@parameters.indexOf(pm)").style.display="block";
+                                }
                                 document.getElementById("myWorksetsCollection@parameters.indexOf(pm)").onclick = selectMyWorksets(@parameters.indexOf(pm));
                                 document.getElementById("allWorksetsCollection@parameters.indexOf(pm)").onclick = selectAllWorksets(@parameters.indexOf(pm));
                             </script>
