@@ -89,7 +89,9 @@ public class Token extends Model {
 
     public static void deleteToken(String token){
        Token token1 = Token.findByToken(token);
-        token1.delete();
+        if(token1 != null){
+            token1.delete();
+        }
     }
 
     public static void replaceToken(Token token1){

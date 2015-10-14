@@ -115,15 +115,15 @@ public class UserManagement extends JavaController {
     }
 
     public static Result createPasswordResetForm(String token) {
-        if(!token.isEmpty() && token.length()==64){
+        if(!token.isEmpty()){
             log.debug(String.valueOf(token.length()));
             Token token1 = Token.findByToken(token);
-            String userId = token1.userId;
-            return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
-        }else{
-            return ok(gotopage.render("We are unable to reset your password. Please request a ", "passwordresetmail", "new password reset email.", null));
+            if(token1 != null){
+                String userId = token1.userId;
+                return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
+            }
         }
-
+        return ok(gotopage.render("We are unable to reset your password. Please request a ", "passwordresetmail", "new password reset email.", null));
     }
 
     public static Result passwordReset() {
@@ -132,23 +132,25 @@ public class UserManagement extends JavaController {
             return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
-        String userId = token1.userId;
-        log.info("Password reset token for user ID " + userId + " : " + token1.token);
-        log.info("Is token used: " + token1.isTokenUsed);
-        log.info("Token created at: " + token1.createdTime);
-        if (!Token.isTokenExpired(token1)) {
-            if (token1.isTokenUsed.equals("NO")) {
-                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-                try {
-                    userManager.changePassword(userId, passwordResetForm.get().password);
-                } catch (ChangePasswordUserAdminExceptionException e) {
-                    log.error("Cannot change user password due to error in User Admin");
-                    throw new RuntimeException(e); // TODO: Review this.
-                }
+        if(token1 != null){
+            String userId = token1.userId;
+            log.info("Password reset token for user ID " + userId + " : " + token1.token);
+            log.info("Is token used: " + token1.isTokenUsed);
+            log.info("Token created at: " + token1.createdTime);
+            if (!Token.isTokenExpired(token1)) {
+                if (token1.isTokenUsed.equals("NO")) {
+                    HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+                    try {
+                        userManager.changePassword(userId, passwordResetForm.get().password);
+                    } catch (ChangePasswordUserAdminExceptionException e) {
+                        log.error("Cannot change user password due to error in User Admin");
+                        throw new RuntimeException(e); // TODO: Review this.
+                    }
 
-                token1.isTokenUsed = "YES";
-                token1.update();
-                return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+                    token1.isTokenUsed = "YES";
+                    token1.update();
+                    return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+                }
             }
         }
         return ok(gotopage.render("We are unable to reset your password. Please check your email for a more recent password reset email, or request a ", "passwordresetmail", "new one.", null));
