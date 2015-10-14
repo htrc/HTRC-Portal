@@ -138,9 +138,9 @@ public class HTRCSSOServiceManagerUtility {
         serviceProviderDTO.setDoSignResponse(true);
         serviceProviderDTO.setDoSignAssertions(true);
         serviceProviderDTO.setDoValidateSignatureInRequests(true);
-        serviceProviderDTO.setCertAlias("portal.crt");
-        serviceProviderDTO.setRequestedAudiences(new String[]{"https://localhost:9443/oauth2/token"});
-        serviceProviderDTO.setRequestedRecipients(new String[]{"https://localhost:9443/oauth2/token"});
+        serviceProviderDTO.setCertAlias(PlayConfWrapper.certificateAlias());
+        serviceProviderDTO.setRequestedAudiences(new String[]{PlayConfWrapper.tokenEndpoint()});
+        serviceProviderDTO.setRequestedRecipients(new String[]{PlayConfWrapper.tokenEndpoint()});
 
         if(identitySAMLSSOConfigServiceStub != null){
             try {

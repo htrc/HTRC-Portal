@@ -144,6 +144,7 @@ public class  PortalConstants {
     public static String SAML2_PRIVATEKEY_PASSWORD = "saml2.privatekey.password";
     public static String IDP_METADATA_PATH = "idp.metadata.path";
     public static String SAML_SSO_CALLBACK_URL = "saml.sso.callback";
+    public static String CERTIFICATE_ALIAS = "certificate.alias";
 
     //Service provider
     public static String SERVICE_PROVIDER_NAME = "service.provider.name";

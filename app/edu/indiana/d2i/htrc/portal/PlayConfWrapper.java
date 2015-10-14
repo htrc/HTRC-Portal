@@ -107,6 +107,7 @@ public class PlayConfWrapper {
     private static String saml2PrivateKeyPassword = null;
     private static String idpMetadataPath = null;
     private static String samlSSOCallbackURL = null;
+    private static String certificateAlias = null;
 
     // Service Provider
     private static String serviceProviderName = null;
@@ -511,6 +512,14 @@ public class PlayConfWrapper {
         }
         return samlSSOCallbackURL;
     }
+
+    public static String certificateAlias(){
+        if(certificateAlias == null){
+            certificateAlias = Play.application().configuration().getString(PortalConstants.CERTIFICATE_ALIAS);
+        }
+        return certificateAlias;
+    }
+
 
     public static String serviceProviderName(){
         if(serviceProviderName == null){
