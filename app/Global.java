@@ -66,10 +66,10 @@ public class Global extends GlobalSettings {
 
         if(loggedInUser != null) {
             log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.toString());
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.getCause());
         } else {
             log.error("Internal server error.", throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.toString());
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.getCause());
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
