@@ -98,18 +98,21 @@ public class HTRCPortal extends JavaController {
         return redirect(routes.HTRCPortal.index());
     }
 
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result logout() {
-        session().clear();
-        org.pac4j.play.CallbackController.logoutAndRedirect();
-        CommonProfile userProfile = getUserProfile();
-        if(userProfile==null){
-            log.info("user profile is null");
-        }else{
-            log.info(userProfile.getId());
-        }
+        return org.pac4j.play.CallbackController.logoutAndRedirect();
+//        CommonProfile userProfile = getUserProfile();
+//        if(userProfile==null){
+//            log.info("user profile is null");
+//        }else{
+//            log.info(userProfile.getId());
+//        }
 
-        flash("success", "You've been logged out");
-        return redirect(routes.HTRCPortal.index());
+        // Clear the session
+//        session().clear();
+//
+//        flash("success", "You've been logged out");
+//        return redirect(routes.HTRCPortal.index());
     }
 
 //    public static Result authenticate() {

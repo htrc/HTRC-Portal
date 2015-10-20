@@ -14,7 +14,7 @@
     <artifactId>play-pac4j</artifactId>
     <packaging>pom</packaging>
     <name>Play pac4j</name>
-    <version>1.2.1.htrcv5</version>
+    <version>1.2.1.htrcv5-SNAPSHOT</version>
     <description>Java and Scala multi protocols (CAS, OAuth, OpenID, HTTP...) client for Play 2.2 framework</description>
     <url>https://github.com/leleuj/play-pac4j</url>
 
@@ -171,13 +171,13 @@
         <repository>
             <id>htrc.nexus.releases</id>
             <name>HTRC Release Repository</name>
-            <url>http://htrc.illinois.edu/nexus/content/repositories/releases/</url>
+            <url>https://nexus.htrc.illinois.edu/content/repositories/releases/</url>
         </repository>
 
         <snapshotRepository>
             <id>htrc.nexus.snapshots</id>
             <name>HTRC Snapshot Repository</name>
-            <url>http://htrc.illinois.edu/nexus/content/repositories/snapshots/</url>
+            <url>https://nexus.htrc.illinois.edu/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

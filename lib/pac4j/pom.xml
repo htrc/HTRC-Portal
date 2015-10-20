@@ -27,7 +27,7 @@
 	<artifactId>pac4j</artifactId>
 	<packaging>pom</packaging>
 	<name>pac4j</name>
-	<version>1.5.1.htrcv3</version>
+	<version>1.5.1.htrcv4-SNAPSHOT</version>
 	<description>Profile &amp; Authentication Client for Java</description>
 	<url>https://github.com/leleuj/pac4j</url>
 
@@ -342,16 +342,16 @@
     </pluginRepositories>
 
     <distributionManagement>
-        <repository>
-            <id>htrc.nexus.releases</id>
-            <name>HTRC Release Repository</name>
-            <url>http://nexus.htrc.illinois.edu/content/repositories/releases/</url>
-        </repository>
+		<repository>
+			<id>htrc.nexus.releases</id>
+			<name>HTRC Release Repository</name>
+			<url>https://nexus.htrc.illinois.edu/content/repositories/releases/</url>
+		</repository>
 
-        <snapshotRepository>
-            <id>htrc.nexus.snapshots</id>
-            <name>HTRC Snapshot Repository</name>
-            <url>http://nexus.htrc.illinois.edu/content/repositories/snapshots/</url>
-        </snapshotRepository>
+		<snapshotRepository>
+			<id>htrc.nexus.snapshots</id>
+			<name>HTRC Snapshot Repository</name>
+			<url>https://nexus.htrc.illinois.edu/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
     </distributionManagement>
 </project>

@@ -12,10 +12,10 @@ object ApplicationBuild extends Build {
     javaJdbc,
     javaEbean,
     cache,
-    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv5"
+    "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv5-SNAPSHOT"
       exclude("com.typesafe.play", "play-jdbc")
       exclude("com.typesafe.play", "play-cache"),
-    "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv2",
+    "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv4-SNAPSHOT",
     "edu.indiana.d2i.htrc" % "useradmin-ext-stub" % "1.0.0-SNAPSHOT",
     "org.apache.amber.wso2" % "amber" % "0.22.1358727.wso2v3",
     "edu.indiana.d2i.htrc.oauth2" % "client-api" % "1.0.1",
