@@ -5,6 +5,17 @@
 # This adds extra build time and increase the resource consumption (e.g. network resources). Running play dist
 # in build machine allows to re-use already downloaded dependencies.
 
+# Build pac4j
+cd lib/pac4j
+mvn clean install
+
+# Build play-pac4j
+cd ../play-pac4j
+mvn clean install
+
+# Go to portal root
+cd ../../
+
 # Run play clean first
 play clean-all
 
