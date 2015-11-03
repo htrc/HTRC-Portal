@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-
-usage() { echo "Usage: $0 [-P] [-b] [-p]" 1>&2; exit 1; }
 
 OPT_PRESENT=0
 

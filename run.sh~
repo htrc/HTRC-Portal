@@ -41,6 +41,6 @@ if [ "${OPT_PRESENT}" -ne "1" ]; then
 fi
 
 # Run Portal
-play
+play run -Dhttp.port=disabled -Dhttps.port=9000 -DapplyEvolutions.default=true -DapplyDownEvolutions.default=true -Dconfig.file=/Users/shliyana/Workspace/HTRC/HTRC-Portal/conf/application.conf -Dhttps.keyStore=/Users/shliyana/Workspace/HTRC/HTRC-Portal/conf/keystore.jks -Dhttps.keyStorePassword=portal
 
 
