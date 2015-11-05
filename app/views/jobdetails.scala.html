@@ -26,10 +26,10 @@
                         </tr>
                     </table>
                     <h3 style="padding-left: 8px;">Input Parameters</h3>
-                    <table class="table">
+                    <table class="table" id="jobparameters">
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
                                 <th>Value</th>
                             </tr>
                         </thead>
@@ -69,12 +69,24 @@
             </div>
         </div>
         <script type="text/javascript">
-        $(document).ready(function(){
-            $('#joboutput a:first').tab('show')
-            $("#resultlink").click(function(e) {
-                e.preventDefault();
-                $("#iframeresult").attr("src", $(this).attr("href"));
-             });
-        });
+            $(document).ready(function(){
+                $('#joboutput a:first').tab('show')
+                $("#resultlink").click(function(e) {
+                    e.preventDefault();
+                    $("#iframeresult").attr("src", $(this).attr("href"));
+                 });
+            });
+           /* job parameter sorting */ 
+           var table = $("#jobparameters").stupidtable(); 
+           table.bind('aftertablesort', function (event, data) {  
+           var th = $(this).find("th");              th.find(".arrow").remove(); 
+           var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>'; 
+           th.append('<i class="arrow fa fa-sort"></i>'); 
+           th.eq(data.column).find(".arrow").remove(); 
+           $("#description").find(".arrow").remove(); 
+           $("#actions").find(".arrow").remove(); 
+           th.eq(data.column).append(arrow);  
+           }); 
+
         </script>
     }
