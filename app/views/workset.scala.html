@@ -10,10 +10,10 @@
                      <span>
                          @if(workset.getMetadata.getAuthor == user.userId){
                              @if(workset.getMetadata.isPublic == true) {
-                                 (public)
+                                 (Availability: Public)
                              }
                              @if(workset.getMetadata.isPublic == false) {
-                                 (private)
+                                 (Availability: Private)
                              }
                          }
 

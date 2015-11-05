@@ -22,9 +22,9 @@
                     <thead>
                         <tr>
                             <th data-sort="int" style="min-width: 40px;">#<i class="fa fa-sort arrow"></i></th>
+                            <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="string" id="wsName">Name<i class="fa fa-sort arrow"></i></th>
                             <th id="description">Description</th>
-                            <th data-sort="string">Owner<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="int" style="min-width: 100px;">Volumes<i class="fa fa-sort arrow"></i></th>
                             @*<th data-sort="string-ins" style="min-width: 100px;">Visibility<i class="fa fa-sort arrow"></i></th>*@
                             <th data-sort="string" style="min-width: 150px;" id="lastUpdated">Last Updated<i class="fa fa-sort arrow"></i></th>
@@ -35,9 +35,9 @@
                     @for((w, id) <- worksets.zipWithIndex){
                         <tr class="@if(w.getMetadata.getAuthor == user.userId){owned} else {others}">
                             <td>@(id + 1)</td>
+                            <td>@w.getMetadata.getAuthor</td>
                             <td style="max-width: 150px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
                             <td style="max-width: 250px; word-wrap: break-word">@w.getMetadata.getDescription</td>
-                            <td>@w.getMetadata.getAuthor</td>
                             <td>@w.getMetadata.getVolumeCount</td>
                             @*<td>@if(w.getMetadata.isPublic){Public} else {Private}</td>*@
                             <td>@WorksetManagement.convertTimeToGMT(w.getMetadata.getLastModified.toString.substring(0,19).replace("T"," "))</td>
