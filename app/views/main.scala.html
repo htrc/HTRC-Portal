@@ -54,26 +54,26 @@
                                 Worksets <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >My Worksets</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal" >View my worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.userWorksets()">My Worksets</a></li>
+                                    <li><a href="@routes.WorksetManagement.userWorksets()">View my worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >All Worksets</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal" >View all worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.allWorksets()">All Worksets</a></li>
+                                    <li><a href="@routes.WorksetManagement.allWorksets()">View all worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal">Upload Workset</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal">Upload workset</a></li>
                                 } else {
-                                    <li><a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a></li>
+                                    <li><a href="#upload-csv-modal" data-toggle="modal">Upload workset</a></li>
                                 }
                                 <li class="divider"></li>
                                 <li>
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning ( '      @play.Play.application().configuration().getString("blacklight.url") ')">
-                                        Create Workset</a>
+                                        Create workset</a>
                                 </li>
                             </ul>
                         </li>
@@ -100,7 +100,7 @@
                                         <li><a href="#login-required-modal" data-toggle="modal" >
                                             Show Virtual Machines</a></li>
                                     } else {
-                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
+                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show virtual machines</a></li>
                                     }
                                     <li class="divider"></li>
                                     @if(user == null) {
@@ -108,7 +108,7 @@
                                             Create Virtual Machine</a></li>
                                     } else {
                                         <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
-                                            Create Virtual Machine</a></li>
+                                            Create virtual machine</a></li>
                                     }
                                 </ul>
                             </li>
