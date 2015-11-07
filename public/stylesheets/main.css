@@ -85,6 +85,10 @@ body {
     padding: 10px;
 }
 
+.panel-htrc .text-content {
+    min-height: 40px;
+}
+
 .margin-bt-0{
     margin-bottom: 0;
 }
