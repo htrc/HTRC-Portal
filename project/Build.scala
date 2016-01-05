@@ -30,6 +30,7 @@ object ApplicationBuild extends Build {
     "org.wso2.carbon" % "org.wso2.carbon.utils" % "4.2.0",
     "edu.vt.middleware" % "vt-password" % "3.1.2",
     "net.sourceforge.javacsv" % "javacsv" % "2.0",
+    "org.markdownj" % "markdownj-core" % "0.4",
     "org.wso2.carbon" % "org.wso2.carbon.registry.ws.client" % "4.2.0"
       exclude("org.eclipse.core", "org.eclipse.core.runtime")
       exclude("uddi", "uddi4j")

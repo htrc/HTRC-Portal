@@ -1,4 +1,5 @@
 @(user: User, algorithms: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean])
+@import edu.indiana.d2i.htrc.portal.Utils
 
 
 @main("Algorithms", user) {
@@ -24,7 +25,7 @@
                         <tr>
                             <td>@(id + 1)</td>
                             <td style="max-width: 400px; word-wrap: break-word"><a href="@routes.AlgorithmManagement.viewAlgorithm(w.getName," ")">@w.getName</a></td>
-                            <td><div class=" text-content short-text" style="max-width: 400px; word-wrap: break-word">@w.getDescription</div>
+                            <td><div class=" text-content short-text" style="max-width: 400px; word-wrap: break-word">@Html(Utils.markdownToHtml(w.getDescription))</div>
                                 <div class="show-more"><a href="#">Show more</a></div></td>
                             <td>
                                 @if(w.getAuthors.size() > 1){
