@@ -86,7 +86,11 @@ body {
 }
 
 .panel-htrc .text-content {
-    min-height: 2em;
+    min-height: 45px;
+}
+
+.panel-htrc .algo-text-content {
+    min-height: 3em;
 }
 
 .margin-bt-0{
