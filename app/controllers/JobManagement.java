@@ -153,7 +153,9 @@ public class JobManagement extends JavaController {
         Map<String, String> htmls = new TreeMap<String, String>();
         Map<String, String> csvs = new TreeMap<String, String>();
         Map<String, String> zips = new TreeMap<String, String>();
+        Map<String, String> xmls = new TreeMap<String, String>();
         Map<String, String> txts = new TreeMap<String, String>();
+        Map<String, String> scripts = new TreeMap<String, String>();
         Map<String, String> others = new TreeMap<String, String>();
         for(Map.Entry<String, String> result : jobResults.entrySet()){
             if(result.getKey().contains(".html")){
@@ -162,9 +164,13 @@ public class JobManagement extends JavaController {
                 csvs.put(result.getKey(),result.getValue());
             } else if(result.getKey().contains(".zip")){
                 zips.put(result.getKey(),result.getValue());
-            } else if(result.getKey().contains(".txt")){
+            } else if(result.getKey().contains(".xml")){
+                xmls.put(result.getKey(),result.getValue());
+            } else if(result.getKey().contains(".sh")){
+                scripts.put(result.getKey(),result.getValue());
+            }else if(result.getKey().contains(".txt")){
                 txts.put(result.getKey(),result.getValue());
-            } else {
+            }else {
                 others.put(result.getKey(),result.getValue());
             }
         }
@@ -178,6 +184,14 @@ public class JobManagement extends JavaController {
         }
 
         for(Map.Entry<String, String> e: zips.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: xmls.entrySet()){
+            outputs.add(e);
+        }
+
+        for(Map.Entry<String, String> e: scripts.entrySet()){
             outputs.add(e);
         }
 

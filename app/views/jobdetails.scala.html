@@ -26,11 +26,11 @@
                         </tr>
                     </table>
                     <h3 style="padding-left: 8px;">Input Parameters</h3>
-                    <table class="table">
+                    <table class="table" id="jobparameters">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Value</th>
+                                <th data-sort="string">Name<i class="fa fa-sort arrow"></i></th>
+                                <th id="paramvalue">Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,12 +53,89 @@
                         <ul class="tab-content" style="padding-left: 8px; padding-right: 8px; padding-top: 5px;">
                         @for((result, index) <- results.zipWithIndex) {
                             <div role="tabpanel" class="tab-pane" id="@index">
-                                @if(result.getKey.contains(".csv") || result.getKey.contains(".zip")){
-                                    <a href="@result.getValue" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Click here to download @result.getKey</a>
-                                } else {
-                                    <iframe class="job-details-iframe" src="@result.getValue">
-                                        <p>Your browser does not support iframes.</p>
-                                    </iframe>
+                                @if(result.getKey.contains(".xml") || result.getKey.contains(".csv") || result.getKey.contains(".sh")){
+                                    @if(result.getKey.contains(".xml") || result.getKey.contains(".csv.txt")) {
+                                        <a href="@result.getValue" class="btn btn-xs btn-primary job-details-buttons" target="_blank"><span class="glyphicon glyphicon-open job-details-glyphicon"></span> Click here to open @result.getKey in a new tab</a>
+                                    }else {
+                                        @if(result.getKey.contains(".csv") || result.getKey.contains(".sh")) {
+                                            <a href="@result.getValue" class="btn btn-xs btn-primary job-details-buttons"><span class="glyphicon glyphicon-download-alt job-details-glyphicon"></span> Click here to download @result.getKey</a>
+                                        }
+                                    }
+                                    <div id="content-@result.getKey.replace(".", "_")" class="job-details-frame" ></div>
+                                        <script>
+                                            $(document).ready(function() {
+                                            function xmlToString(xmlData) {
+
+                                            var xmlString;
+                                            //IE
+                                            if (window.ActiveXObject) {
+                                            xmlString = xmlData.xml;
+                                            }else {
+                                            xmlString = (new XMLSerializer()).serializeToString(xmlData);
+                                            }
+                                            return xmlString;
+                                            }
+
+                                            function csvToTable(csvData){
+                                                  var table = '';
+                                                  var rows = new Array();
+
+                                                  rows = csvData.split("\n");
+                                                  table += '<table>'
+                                                 for (var i = 0; i < rows.length - 1; i++){
+                                                  var columns = rows[i].split(',');
+                                                  table += '<tr>';
+
+                                                    for(var j = 0; j < columns.length; j++) {
+                                                        table += '<td class="job-details-table">' + columns[j] + '</td>';
+                                                    }
+
+                                                    table += '</tr>';
+                                                }
+                                                table += '</table>';
+                                                return table;
+                                            }
+
+                                            if(@result.getKey.contains(".xml")){
+                                                var xmlOutPut = $.get("@result.getValue", function(data) {
+                                                $("#content-@result.getKey.replace(".", "_")").html("<pre class='job-details-pre'><code class='xml'>"+xmlToString(data).replace(/&/g, '&amp;')
+                                                               .replace(/</g, '&lt;')
+                                                               .replace(/>/g, '&gt;')
+                                                               .replace(/"/g, '&quot;')
+                                                               .replace(/'/g, '&apos;') +"</code></pre>");
+                                                          $('pre code').each(function(i, block) {
+                                                    hljs.highlightBlock(block);
+                                                  });
+                                                })
+                                            }else if(@result.getKey.contains(".csv")){
+                                                var csvOutPut = $.get("@result.getValue", function(data) {
+                                                $("#content-@result.getKey.replace(".", "_")").html(csvToTable(data));
+                                                })
+                                            }else if(@result.getKey.contains(".sh")){
+                                                var shOutPut = $.get("@result.getValue", function(data) {
+                                                $("#content-@result.getKey.replace(".", "_")").html("<pre class='job-details-pre'><code class='bash'>"+ data.replace(/&/g, '&amp;')
+                                                               .replace(/</g, '&lt;')
+                                                               .replace(/>/g, '&gt;')
+                                                               .replace(/"/g, '&quot;')
+                                                               .replace(/'/g, '&apos;') +"</code></pre>");
+                                                               $('pre code').each(function(i, block) {
+                                                    hljs.highlightBlock(block);
+                                                  });
+                                                })
+                                            }
+
+
+                                            });
+                                        </script>
+
+                                }else{
+                                    @if(result.getKey.contains(".zip")){
+                                        <a href="@result.getValue" class="btn btn-xs btn-primary job-details-buttons"><span class="glyphicon glyphicon-download-alt job-details-glyphicon"></span> Click here to download @result.getKey</a>
+                                    } else {
+                                        <iframe class="job-details-frame" src="@result.getValue">
+                                            <p>Your browser does not support iframes.</p>
+                                        </iframe>
+                                    }
                                 }
                             </div>
                         }
@@ -69,12 +146,24 @@
             </div>
         </div>
         <script type="text/javascript">
-        $(document).ready(function(){
-            $('#joboutput a:first').tab('show')
-            $("#resultlink").click(function(e) {
-                e.preventDefault();
-                $("#iframeresult").attr("src", $(this).attr("href"));
-             });
-        });
+            $(document).ready(function(){
+                $('#joboutput a:first').tab('show')
+                $("#resultlink").click(function(e) {
+                    e.preventDefault();
+                    $("#iframeresult").attr("src", $(this).attr("href"));
+                 });
+            });
+           /* job parameter sorting */ 
+           var table = $("#jobparameters").stupidtable(); 
+           table.bind('aftertablesort', function (event, data) {  
+           var th = $(this).find("th");  
+           th.find(".arrow").remove(); 
+           var arrow = data.direction === "asc" ? '<i class="arrow fa fa-sort-asc"></i>' : '<i class="arrow fa fa-sort-desc"></i>'; 
+           th.append('<i class="arrow fa fa-sort"></i>'); 
+           th.eq(data.column).find(".arrow").remove(); 
+           $("#paramvalue").find(".arrow").remove(); 
+           th.eq(data.column).append(arrow);  
+           }); 
+
         </script>
     }

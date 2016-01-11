@@ -18,6 +18,7 @@
 import ch.ethz.ssh2.Session;
 import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
+import edu.indiana.d2i.htrc.portal.HTRCSSOServiceManagerUtility;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import filters.LoggingFilter;
@@ -26,6 +27,9 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.Config;
 import org.pac4j.saml.client.Saml2Client;
+import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
+import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
+import org.wso2.carbon.identity.application.common.model.xsd.ApplicationBasicInfo;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -35,6 +39,7 @@ import play.libs.F;
 import play.mvc.Http;
 import play.mvc.SimpleResult;
 
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,10 +66,10 @@ public class Global extends GlobalSettings {
 
         if(loggedInUser != null) {
             log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.toString());
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.getCause());
         } else {
             log.error("Internal server error.", throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.toString());
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.getCause());
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
@@ -86,6 +91,64 @@ public class Global extends GlobalSettings {
         play.Logger.info("Java Trust Store", System.getProperty("javax.net.ssl.trustStore"));
 
 
+         // Register portal as a service provider in Identity Server
+
+
+        String backEndUrl = PlayConfWrapper.oauthBackendUrl();
+        String appName = PlayConfWrapper.serviceProviderName();
+        String samlIssuer = PlayConfWrapper.samlSSOCallbackURL();
+        String samlAssertionUrl = PlayConfWrapper.samlSSOCallbackURL();
+        String userNameToRegisterOAUTHApp = PlayConfWrapper.userRegUser();
+        boolean isAppAlreadyRegistered = false;
+
+        HTRCSSOServiceManagerUtility ssoServiceManager = HTRCSSOServiceManagerUtility.getInstanceWithDefaultProperties();
+
+
+        try {
+            // Check whether service provider is already registered
+            ApplicationBasicInfo[] basicInfos = ssoServiceManager.listApplications();
+            for(ApplicationBasicInfo basicInfo : basicInfos){
+                if(basicInfo.getApplicationName().equals(appName)){
+                    isAppAlreadyRegistered = true;
+                    log.debug(appName + " is already registered as a service provider.");
+
+                    String[] oAuthCredentials = ssoServiceManager.getOAuthAppData(appName);              // Register OAUTH2 Client
+                    if(oAuthCredentials != null){
+                        PlayConfWrapper.setOauthClientID(oAuthCredentials[0]);
+                        PlayConfWrapper.setOauthClientSecrete(oAuthCredentials[1]);
+                    }else{
+                        log.error("OAUTH credentials are null.");
+                    }
+                }
+            }
+            if(!isAppAlreadyRegistered){
+                if(ssoServiceManager.registerSAMLClient(samlIssuer,samlAssertionUrl)){                                                                               // Register SAML client
+                    String[] oAuthCredentials = ssoServiceManager.registerOauthApp(PlayConfWrapper.portalUrl(), appName, userNameToRegisterOAUTHApp);              // Register OAUTH2 Client
+                    if(oAuthCredentials != null){
+                        PlayConfWrapper.setOauthClientID(oAuthCredentials[0]);
+                        PlayConfWrapper.setOauthClientSecrete(oAuthCredentials[1]);
+                        int serviceProviderId = ssoServiceManager.registerServiceProvider(appName);                                                                  //Register Service provider
+                        if(serviceProviderId != 0){
+                            ssoServiceManager.updateServiceProvider(backEndUrl, serviceProviderId, appName, samlIssuer, oAuthCredentials[0],oAuthCredentials[1]);   //Update service provider with SAML and OAUTH credentials
+                            log.info("Service provider " + appName + " is registered successfully!!");
+                        }else{
+                            log.error("Service provider ID = " + serviceProviderId);
+                        }
+                    }else{
+                        log.error("OAUTH credentials are null.");
+                    }
+                }else{
+                    log.error(samlIssuer + " is already registered as a SAML client. Please use different name as a SAML issuer.");
+                }
+            }
+        } catch (RemoteException e) {
+            log.error("Error when retrieving application information.", e);
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            log.error("Error when retrieving OAuth client information.", e);
+            throw new RuntimeException(e);
+        }
+
         final Saml2Client saml2Client = new Saml2Client();
         saml2Client.setKeystorePath(PlayConfWrapper.saml2KeyStorePath());
         saml2Client.setKeystorePassword(PlayConfWrapper.saml2KeyStorePassword());
@@ -93,15 +156,20 @@ public class Global extends GlobalSettings {
         saml2Client.setIdpMetadataPath(PlayConfWrapper.idpMetadataPath());
 
         // Enable SAML2 Assertion to OAuth2 access token exchange
-        saml2Client.setOauth2ExchangeEnabled(true);
-        saml2Client.setOauth2ClientID(PlayConfWrapper.oauthClientID());
-        saml2Client.setOauth2ClientSecret(PlayConfWrapper.oauthClientSecrete());
-        saml2Client.setOauth2TokenEndpoint(PlayConfWrapper.tokenEndpoint());
-        saml2Client.setDevMode(true);
 
-        final Clients clients = new Clients(PlayConfWrapper.portalUrl() + "/callback", saml2Client);
-        Config.setClients(clients);
+        if(PlayConfWrapper.getOauthClientID() != null && PlayConfWrapper.getOauthClientSecrete() != null){
+            saml2Client.setOauth2ExchangeEnabled(true);
+            saml2Client.setOauth2ClientID(PlayConfWrapper.getOauthClientID());
+            saml2Client.setOauth2ClientSecret(PlayConfWrapper.getOauthClientSecrete());
+            saml2Client.setOauth2TokenEndpoint(PlayConfWrapper.tokenEndpoint());
+            saml2Client.setDevMode(true);
 
+            final Clients clients = new Clients(PlayConfWrapper.portalUrl() + "/callback", saml2Client);
+            Config.setClients(clients);
+
+        }else{
+            log.error(String.format("OAuth Client ID and secret are null. OAuth Client ID: %s", PlayConfWrapper.getOauthClientID()));
+        }
         super.onStart(app);
     }
 }

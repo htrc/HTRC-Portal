@@ -62,7 +62,7 @@ public class UserManagement extends JavaController {
             }
             return ok(gotopage.render("Your account is activated successfully. Click on the login link to begin:", "login", "Login", null));
         }
-        return ok(gotopage.render("Error on your activation link.", null, null, null));
+        return ok(gotopage.render("It looks like you have already activated your account or some error on your activation link. Please try to login with your user credentials. If you can't login or activate your account, please contact us by email.", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
     }
 
     public static Result createAccountRequestForm() {
@@ -103,15 +103,27 @@ public class UserManagement extends JavaController {
         }
 
         String passwordResetToken = Token.generateToken(userId, userEmail);
-        String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
-        sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
-        return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
+        if (passwordResetToken != null){
+            String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
+            sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
+            return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
+        }else{
+            log.error("Cannot generate password reset tokens.");
+            return ok(gotopage.render("We are unable to reset your password right now. Please request a ", "passwordresetmail", "new password reset email.", null));
+        }
+
     }
 
     public static Result createPasswordResetForm(String token) {
-        Token token1 = Token.findByToken(token);
-        String userId = token1.userId;
-        return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
+        if(!token.isEmpty()){
+            log.debug(String.valueOf(token.length()));
+            Token token1 = Token.findByToken(token);
+            if(token1 != null){
+                String userId = token1.userId;
+                return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
+            }
+        }
+        return ok(gotopage.render("We are unable to reset your password. Please request a ", "passwordresetmail", "new password reset email.", null));
     }
 
     public static Result passwordReset() {
@@ -120,26 +132,28 @@ public class UserManagement extends JavaController {
             return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
-        String userId = token1.userId;
-        log.info("Password reset token for user ID " + userId + " : " + token1.token);
-        log.info("Is token used: " + token1.isTokenUsed);
-        log.info("Token created at: " + token1.createdTime);
-        if (!Token.isTokenExpired(token1)) {
-            if (token1.isTokenUsed.equals("NO")) {
-                HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-                try {
-                    userManager.changePassword(userId, passwordResetForm.get().password);
-                } catch (ChangePasswordUserAdminExceptionException e) {
-                    log.error("Cannot change user password due to error in User Admin");
-                    throw new RuntimeException(e); // TODO: Review this.
-                }
+        if(token1 != null){
+            String userId = token1.userId;
+            log.info("Password reset token for user ID " + userId + " : " + token1.token);
+            log.info("Is token used: " + token1.isTokenUsed);
+            log.info("Token created at: " + token1.createdTime);
+            if (!Token.isTokenExpired(token1)) {
+                if (token1.isTokenUsed.equals("NO")) {
+                    HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+                    try {
+                        userManager.changePassword(userId, passwordResetForm.get().password);
+                    } catch (ChangePasswordUserAdminExceptionException e) {
+                        log.error("Cannot change user password due to error in User Admin");
+                        throw new RuntimeException(e); // TODO: Review this.
+                    }
 
-                token1.isTokenUsed = "YES";
-                token1.update();
-                return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+                    token1.isTokenUsed = "YES";
+                    token1.update();
+                    return ok(gotopage.render("Password changed successfully. Click on the login link to begin:", "login", "Login", null));
+                }
             }
         }
-        return ok(gotopage.render("We were unable to reset your password. Please check your email for a more recent password reset email, or request a ", "passwordresetmail", "new one.", null));
+        return ok(gotopage.render("We are unable to reset your password. Please check your email for a more recent password reset email, or request a ", "passwordresetmail", "new one.", null));
 
 
     }

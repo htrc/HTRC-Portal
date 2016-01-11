@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public class HTRCPortal extends JavaController {
 //        log.debug(userProfile.toString());
 
         String userId = session(PortalConstants.SESSION_USERNAME);
-        log.info("User "+ userId + " is successfully logged in.");
+        log.info("Logged in user:"+ userId + ", Remote address:" + request().remoteAddress());
         log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));
@@ -99,7 +100,6 @@ public class HTRCPortal extends JavaController {
 
     public static Result logout() {
         session().clear();
-        log.info(session(PortalConstants.SESSION_USERNAME));
         org.pac4j.play.CallbackController.logoutAndRedirect();
         CommonProfile userProfile = getUserProfile();
         if(userProfile==null){

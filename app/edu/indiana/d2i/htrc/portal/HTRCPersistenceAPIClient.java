@@ -35,6 +35,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import play.Logger;
 import play.mvc.Http;
 
@@ -43,6 +45,7 @@ import javax.xml.bind.*;
 import javax.xml.bind.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -81,7 +84,6 @@ public class HTRCPersistenceAPIClient {
         HTRCPersistenceAPIClient.session = session;
         accessToken = session.get(PortalConstants.SESSION_TOKEN);
         refreshToken = session.get(PortalConstants.SESSION_REFRESH_TOKEN);
-
     }
 
 
@@ -120,24 +122,33 @@ public class HTRCPersistenceAPIClient {
      * @throws org.apache.amber.oauth2.common.exception.OAuthProblemException
      * @throws Exception
      */
-    public static String renewToken(String refreshToken)
-            throws Exception {
-        OAuthClientRequest refreshTokenRequest = OAuthClientRequest
-                .tokenLocation(PlayConfWrapper.tokenEndpoint())
-                .setGrantType(GrantType.REFRESH_TOKEN)
-                .setRefreshToken(refreshToken)
-                .setClientId(PlayConfWrapper.oauthClientID())
-                .setClientSecret(PlayConfWrapper.oauthClientSecrete())
-                .buildBodyMessage();
-        OAuthClient refreshTokenClient = new OAuthClient(new URLConnectionClient());
-        OAuthClientResponse refreshTokenResponse = refreshTokenClient
-                .accessToken(refreshTokenRequest);
-        String refreshedAccessToken = refreshTokenResponse.getParam("access_token");
-        session.put(PortalConstants.SESSION_TOKEN, refreshedAccessToken);
-        session.put(PortalConstants.SESSION_REFRESH_TOKEN, refreshTokenResponse.getParam("refresh_token"));
-        log.info("Access token has been renewed to " + refreshedAccessToken);
+    public static String renewToken(String refreshToken)throws Exception {
+        String oauthClientId = PlayConfWrapper.getOauthClientID();
+        String oauthClientSecret = PlayConfWrapper.getOauthClientSecrete();
+        String tokenLocation = PlayConfWrapper.tokenEndpoint();
 
-        return refreshedAccessToken;
+        if(oauthClientId != null && oauthClientSecret != null && tokenLocation != null && refreshToken != null){
+            OAuthClientRequest refreshTokenRequest = OAuthClientRequest
+                    .tokenLocation(tokenLocation)
+                    .setGrantType(GrantType.REFRESH_TOKEN)
+                    .setRefreshToken(refreshToken)
+                    .setClientId(oauthClientId)
+                    .setClientSecret(oauthClientSecret)
+                    .buildBodyMessage();
+            OAuthClient refreshTokenClient = new OAuthClient(new URLConnectionClient());
+            OAuthClientResponse refreshTokenResponse = refreshTokenClient
+                    .accessToken(refreshTokenRequest);
+            String refreshedAccessToken = refreshTokenResponse.getParam("access_token");
+            session.put(PortalConstants.SESSION_TOKEN, refreshedAccessToken);
+            session.put(PortalConstants.SESSION_REFRESH_TOKEN, refreshTokenResponse.getParam("refresh_token"));
+            log.info("Access token has been renewed to " + refreshedAccessToken);
+
+            return refreshedAccessToken;
+        }else{
+            log.error("One or more variables are null.");
+            return null;
+        }
+
     }
 
 
@@ -465,20 +476,23 @@ public class HTRCPersistenceAPIClient {
 
     /**
      * Get Volum details from solr meta data instance. Here it adds '\' character before the ':'.
-     * @param volid
+     * @param volId
      * @return VolumeDetailsBean
      * @throws IOException
      */
-    public VolumeDetailsBean getVolumeDetails(String volid) throws IOException {
+    public VolumeDetailsBean getVolumeDetails(String volId) throws IOException {
         String volumeId;
-        if(volid.contains(":")){
-            volumeId = volid.substring(0,volid.indexOf(":")) + "\\" + volid.substring(volid.indexOf(":"));
+        if(volId.contains(":")){
+            volumeId = volId.substring(0,volId.indexOf(":")) + "\\" + volId.substring(volId.indexOf(":"));
         }else{
-            volumeId = volid;
+            volumeId = volId;
         }
         String volumeDetailsQueryUrl = PlayConfWrapper.solrMetaQueryUrl() + "id:" + URLEncoder.encode(volumeId, "UTF-8") + "&fl=title,author,htrc_genderMale,htrc_genderFemale,htrc_genderUnknown,htrc_pageCount,htrc_wordCount";
         VolumeDetailsBean volDetails = new VolumeDetailsBean();
-        log.debug(volumeDetailsQueryUrl);
+
+        if(log.isDebugEnabled()) {
+            log.debug(volumeDetailsQueryUrl);
+        }
 
         HttpClient httpClient = new HttpClient();
         HttpMethod method = new GetMethod(volumeDetailsQueryUrl);
@@ -486,7 +500,7 @@ public class HTRCPersistenceAPIClient {
 
         try {
             httpClient.executeMethod(method);
-            volDetails.setVolumeId(volid);
+            volDetails.setVolumeId(volId);
 
             if (method.getStatusCode() == 200 && !method.getResponseBodyAsString().contains("<warn>RESPONSE CODE: 400</warn>")) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -541,18 +555,18 @@ public class HTRCPersistenceAPIClient {
 
                     } else if (arr.hasAttribute("name") && arr.getAttribute("name").equals("htrc_genderUnknown")) {
                         NodeList strElements = arr.getElementsByTagName("str");
-                        String genderUnkownAuthor = "";
+                        String genderUnknownAuthor = "";
 
                         for (int j = 0; j < strElements.getLength(); j++) {
                             org.w3c.dom.Element str = (org.w3c.dom.Element) strElements.item(j);
                             if (j != strElements.getLength() - 1) {
-                                genderUnkownAuthor += str.getTextContent();
+                                genderUnknownAuthor += str.getTextContent();
                             } else {
-                                genderUnkownAuthor += str.getTextContent();
+                                genderUnknownAuthor += str.getTextContent();
                             }
                         }
 
-                        volDetails.setGenderUnkownAuthor(genderUnkownAuthor);
+                        volDetails.setGenderUnkownAuthor(genderUnknownAuthor);
 
 
                     }
@@ -574,19 +588,23 @@ public class HTRCPersistenceAPIClient {
                 }
 
             } else {
-                volDetails.setTitle(null);
-                volDetails.setMaleAuthor(null);
-                volDetails.setFemaleAuthor(null);
-                volDetails.setGenderUnkownAuthor(null);
-                volDetails.setWordCount(null);
-                volDetails.setPageCount(null);
+                volDetails.setTitle("Cannot retrieve volume details.");
+                log.warn("Cannot retrieve details for volume id: " + volId + " Response body: \n" + method.getResponseBodyAsString());
             }
 
-            return volDetails;
-        } catch (Exception e) {
-            log.error("Error while getting volume details for volume: " + volid + " query url: " + volumeDetailsQueryUrl, e);
-            throw new RuntimeException("Error while getting volume details for volume: " + volid + " response: \n" + method.getResponseBodyAsString(), e);
+        } catch (SAXParseException e) {
+            log.error("Error while parsing volume details for volume: " + volId + " query url: " + volumeDetailsQueryUrl + " status code: " + method.getStatusCode(), e);
+            volDetails.setTitle("Cannot parse volume details.");
+        } catch (ParserConfigurationException e) {
+            log.error("Unrecoverable error while parsing volume details.", e);
+            log.error("Error while parsing volume details for volume: " + volId + " query url: " + volumeDetailsQueryUrl + " status code: " + method.getStatusCode(), e);
+            throw new RuntimeException("Unrecoverable error while parsing volume details.", e);
+        } catch (SAXException e) {
+            log.error("Error while parsing volume details for volume: " + volId + " query url: " + volumeDetailsQueryUrl + " status code: " + method.getStatusCode(), e);
+            volDetails.setTitle("Cannot parse volume details.");
         }
+
+        return volDetails;
     }
 
 }

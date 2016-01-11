@@ -2,7 +2,7 @@
         parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], userWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset],
         allWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob], message: String)
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
-
+@import edu.indiana.d2i.htrc.portal.Utils
 
 @main("Algorithm", user) {
     <div class="container">
@@ -30,7 +30,7 @@
                 <table>
                     <tr>
                         <td style="min-width: 100px;"><b>Description:  </b></td>
-                        <td>@algorithmdetails.getDescription</td>
+                        <td>@Html(Utils.markdownToHtml(algorithmdetails.getDescription))</td>
                     </tr>
                     <tr>
                         <td><b>Version:</b></td>
@@ -116,6 +116,12 @@
                             </select>
 
                             <script type="text/javascript">
+                                if(@userWorksetlist.isEmpty){
+                                    document.getElementById("myWorksetsCollection@parameters.indexOf(pm)").checked = false;
+                                    document.getElementById("allWorksetsCollection@parameters.indexOf(pm)").checked = true;
+                                    document.getElementById("myWorksetsMenu@parameters.indexOf(pm)").style.display="none";
+                                    document.getElementById("allWorksetsMenu@parameters.indexOf(pm)").style.display="block";
+                                }
                                 document.getElementById("myWorksetsCollection@parameters.indexOf(pm)").onclick = selectMyWorksets(@parameters.indexOf(pm));
                                 document.getElementById("allWorksetsCollection@parameters.indexOf(pm)").onclick = selectAllWorksets(@parameters.indexOf(pm));
                             </script>

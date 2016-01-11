@@ -35,18 +35,19 @@ import play.Logger;
 import play.Play;
 import play.db.ebean.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Entity
+@Table(uniqueConstraints=@UniqueConstraint(columnNames="user_id"))
 public class User extends Model {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public Long id;
+    @Column(unique=true, nullable=false)
     public String userId;
     public String email;
     public String userFirstName;

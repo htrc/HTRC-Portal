@@ -41,6 +41,7 @@ create table token (
 ;
 
 create table user (
+  id                        bigint auto_increment not null,
   user_id                   varchar(255) not null,
   email                     varchar(255),
   user_first_name           varchar(255),
@@ -49,7 +50,9 @@ create table user (
   no_of_all_worksets        integer,
   no_of_active_jobs         integer,
   no_of_completed_jobs      integer,
-  constraint pk_user primary key (user_id))
+  constraint uq_user_user_id unique (user_id),
+  constraint uq_user_1 unique (user_id),
+  constraint pk_user primary key (id))
 ;
 
 create table virtual_machine (

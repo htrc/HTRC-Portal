@@ -100,6 +100,8 @@ public class  PortalConstants {
     public static String SESSION_AGENT_INSTANCE = "session.agent.instance";
     public static String SESSION_LAST_ACTION = "session.lastaction";
     public static String SESSION_EXIST_BEFORE = "session.timeout";
+    public static String SESSION_OAUTH_CLIENT_ID = "session.oauth.client.id";
+    public static String SESSION_OAUTH_CLIENT_SECRET = "session.oauth.client.secret";
 
     // Sloan Web Service entries
     public static String SLOAN_WS_EPR = "sloanws.epr";
@@ -141,6 +143,12 @@ public class  PortalConstants {
     public static String SAML2_KEYSTORE_PASSWORD = "saml2.keystore.password";
     public static String SAML2_PRIVATEKEY_PASSWORD = "saml2.privatekey.password";
     public static String IDP_METADATA_PATH = "idp.metadata.path";
+    public static String SAML_SSO_CALLBACK_URL = "saml.sso.callback";
+    public static String CERTIFICATE_ALIAS = "certificate.alias";
+
+    //Service provider
+    public static String SERVICE_PROVIDER_NAME = "service.provider.name";
+    public static String SERVICE_PROVIDER_DESCRIPTION = "service.provider.description";
 
     //Documentations
     public static String RELEASE_DOCUMENT = "release.document";
