@@ -107,19 +107,25 @@ public class Global extends GlobalSettings {
         try {
             // Check whether service provider is already registered
             ApplicationBasicInfo[] basicInfos = ssoServiceManager.listApplications();
-            for(ApplicationBasicInfo basicInfo : basicInfos){
-                if(basicInfo.getApplicationName().equals(appName)){
-                    isAppAlreadyRegistered = true;
-                    log.debug(appName + " is already registered as a service provider.");
+            if(basicInfos != null){
+               for(ApplicationBasicInfo basicInfo : basicInfos){
+                   if(basicInfo.getApplicationName().equals(appName)){
+                       isAppAlreadyRegistered = true;
+                       log.debug(appName + " is already registered as a service provider.");
 
-                    String[] oAuthCredentials = ssoServiceManager.getOAuthAppData(appName);              // Register OAUTH2 Client
-                    if(oAuthCredentials != null){
-                        PlayConfWrapper.setOauthClientID(oAuthCredentials[0]);
-                        PlayConfWrapper.setOauthClientSecrete(oAuthCredentials[1]);
-                    }else{
-                        log.error("OAUTH credentials are null.");
-                    }
-                }
+                       String[] oAuthCredentials = ssoServiceManager.getOAuthAppData(appName);              // Register OAUTH2 Client
+                       if(oAuthCredentials != null){
+                           PlayConfWrapper.setOauthClientID(oAuthCredentials[0]);
+                           PlayConfWrapper.setOauthClientSecrete(oAuthCredentials[1]);
+                       }else{
+                           log.error("OAUTH credentials are null.");
+                       }
+                   } else{
+                       log.debug(appName + " is not registered as a service provider.");
+                   }
+               }
+            } else{
+                log.debug("There are no service providers.");
             }
             if(!isAppAlreadyRegistered){
                 if(ssoServiceManager.registerSAMLClient(samlIssuer,samlAssertionUrl)){                                                                               // Register SAML client
