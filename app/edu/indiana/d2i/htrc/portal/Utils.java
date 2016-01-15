@@ -17,6 +17,8 @@
 
 package edu.indiana.d2i.htrc.portal;
 
+import org.markdownj.MarkdownProcessor;
+
 public class Utils {
     public static String shortenTitle(String worksetName){
         if (worksetName.length() > 25){
@@ -24,5 +26,10 @@ public class Utils {
         }
 
         return worksetName;
+    }
+
+    public static String markdownToHtml(String markdown) {
+        MarkdownProcessor markdownProcessor = new MarkdownProcessor();
+        return markdownProcessor.markdown(markdown);
     }
 }

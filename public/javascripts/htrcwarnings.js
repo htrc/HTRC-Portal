@@ -5,6 +5,7 @@ function blacklightLoggingWarning(blacklightUrl) {
         return true;
     }
 
+    $('#modal-wb-url').attr("href", blacklightUrl);
     $('#create-collection-modal').modal('show');
 
     return false;

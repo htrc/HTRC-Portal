@@ -26,7 +26,7 @@
                             <th id="description">Description</th>
                             <th data-sort="int" style="min-width : 100 px ;">Volumes<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="string-ins" style="min-width : 100 px ;">
-                                Visibility<i class="fa fa-sort arrow"></i></th>
+                                Availability<i class="fa fa-sort arrow"></i></th>
                             <th data-sort="string" style="min-width : 150 px ;">
                                 Last Updated<i class="fa fa-sort arrow"></i></th>
                             <th id="actions">Actions</th>
@@ -43,8 +43,8 @@
                             <td>@WorksetManagement.convertTimeToGMT(w.getMetadata.getLastModified.toString.substring(0, 19).replace("T"," "))</td>
                             <td style="min-width : 132 px ;">
                                 @if(w.getMetadata.getAuthor == user.userId) {
-                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.url") ')" target="_blank">
-                                        <i class="icon-edit icon-white"></i> Edit</a>
+                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.manage.url") ')" target="_blank">
+                                        <i class="icon-edit icon-white"></i> Modify</a>
                                 }
                             <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i>
                                 Download</a>

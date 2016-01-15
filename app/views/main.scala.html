@@ -18,6 +18,8 @@
         <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/tomorrow.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
         <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
@@ -54,26 +56,26 @@
                                 Worksets <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >My Worksets</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal" >View my worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.userWorksets()">My Worksets</a></li>
+                                    <li><a href="@routes.WorksetManagement.userWorksets()">View my worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal" >All Worksets</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal" >View all worksets</a></li>
                                 } else {
-                                    <li><a href="@routes.WorksetManagement.allWorksets()">All Worksets</a></li>
+                                    <li><a href="@routes.WorksetManagement.allWorksets()">View all worksets</a></li>
                                 }
                                 <li class="divider"></li>
                                 @if(user == null) {
-                                    <li><a href="#login-required-modal" data-toggle="modal">Upload Workset</a></li>
+                                    <li><a href="#login-required-modal" data-toggle="modal">Upload workset</a></li>
                                 } else {
-                                    <li><a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a></li>
+                                    <li><a href="#upload-csv-modal" data-toggle="modal">Upload workset</a></li>
                                 }
                                 <li class="divider"></li>
                                 <li>
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="blacklightLoggingWarning ( '      @play.Play.application().configuration().getString("blacklight.url") ')">
-                                        Create Workset</a>
+                                        Create workset</a>
                                 </li>
                             </ul>
                         </li>
@@ -100,7 +102,7 @@
                                         <li><a href="#login-required-modal" data-toggle="modal" >
                                             Show Virtual Machines</a></li>
                                     } else {
-                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Virtual Machines</a></li>
+                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show virtual machines</a></li>
                                     }
                                     <li class="divider"></li>
                                     @if(user == null) {
@@ -108,7 +110,7 @@
                                             Create Virtual Machine</a></li>
                                     } else {
                                         <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
-                                            Create Virtual Machine</a></li>
+                                            Create virtual machine</a></li>
                                     }
                                 </ul>
                             </li>
@@ -204,7 +206,7 @@
                         <span class="pull-left" style="padding-top : 5 px ;"><input type="checkbox" id="dont-show" style="margin : - 3 px 0 0 ;">
                             Don't Show This Again.</span>
                         <a href="#" class="btn btn-link btn-sm" data-dismiss="modal" aria-hidden="true">Cancel</a>
-                        <a href="@play.Play.application().configuration().getString("blacklight.url")" class="btn btn-sm btn-primary" onclick="goToCreateCollection ( )">
+                        <a id="modal-wb-url" href="" class="btn btn-sm btn-primary" onclick="goToCreateCollection ( )">
                             Go</a>
                     </div>
                 </div>

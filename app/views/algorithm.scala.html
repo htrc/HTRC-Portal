@@ -2,7 +2,7 @@
         parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], userWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset],
         allWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob], message: String)
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
-
+@import edu.indiana.d2i.htrc.portal.Utils
 
 @main("Algorithm", user) {
     <div class="container">
@@ -30,7 +30,7 @@
                 <table>
                     <tr>
                         <td style="min-width: 100px;"><b>Description:  </b></td>
-                        <td>@algorithmdetails.getDescription</td>
+                        <td>@Html(Utils.markdownToHtml(algorithmdetails.getDescription))</td>
                     </tr>
                     <tr>
                         <td><b>Version:</b></td>
