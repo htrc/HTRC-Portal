@@ -1,7 +1,7 @@
-@(user: User, jobDetails: edu.indiana.d2i.htrc.portal.bean.JobDetailsBean, results: List[Map.Entry[String, String]])
+@(userId: String, jobDetails: edu.indiana.d2i.htrc.portal.bean.JobDetailsBean, results: List[Map.Entry[String, String]])
 
 
-@main("JobDetails", user) {
+@main("JobDetails", userId) {
         <div class="container">
             <div class="panel panel-default panel-htrc panel-with-table">
                 <div class="panel-heading">

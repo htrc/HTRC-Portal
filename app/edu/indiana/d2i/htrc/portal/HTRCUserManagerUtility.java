@@ -287,8 +287,6 @@ public class HTRCUserManagerUtility {
             resourceAdmin.addRolePermission(regUserWorksets, everyone, ResourceActionPermission.GET.toString(), PermissionType.ALLOW.toString());
 
 
-//            log.info(String.format("User %s created (permissions: %s)", userName,
-//                    Arrays.toString(permissions)));
         } catch (Exception e) {
             log.error("Error adding new user: " + userName, e);
             throw new RuntimeException("createUser", e);

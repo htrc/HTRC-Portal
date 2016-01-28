@@ -292,7 +292,7 @@ public class HTRCAgentClient {
                 int response = client.executeMethod(saveJobId);
                 this.responseCode = response;
                 if (response == 200) {
-                    log.info("Saved ActiveJob ID :  " + id);
+                    log.info("Saved Active Job ID :  " + id);
                     renew = 0;
                 } else if (response == 401 && (renew < MAX_RENEW)) {
                     try {

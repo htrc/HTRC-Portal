@@ -1,7 +1,7 @@
-@(form: Form[UserManagement.AccountRequest], user: User, firstName: String, lastName: String, email: String, message: String)
+@(form: Form[UserManagement.AccountRequest], userId: String, firstName: String, lastName: String, email: String, message: String)
 
 
-@main("AccountRequestMail", user) {
+@main("AccountRequestMail", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc">
             <div class="panel-heading">

@@ -3,8 +3,6 @@ package controllers;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import edu.indiana.d2i.htrc.portal.*;
-import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
-import models.User;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.utils.JSONUtils;
 import org.apache.commons.httpclient.HttpClient;
@@ -43,7 +41,7 @@ public class HTRCPortal extends JavaController {
 
     public static Result index() throws IOException {
         List<String> announcements = java.nio.file.Files.readAllLines(Paths.get(PlayConfWrapper.announcementDocument()), Charset.defaultCharset());
-        return ok(index.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)), announcements));
+        return ok(index.render(session(PortalConstants.SESSION_USERNAME), announcements));
     }
 
 
@@ -57,10 +55,8 @@ public class HTRCPortal extends JavaController {
 //        log.debug(userProfile.toString());
 
         String userId = session(PortalConstants.SESSION_USERNAME);
-        log.info("Logged in user:"+ userId + ", Remote address:" + request().remoteAddress());
-        log.info(session(PortalConstants.SESSION_TOKEN));
         if(userId == null){
-            return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please tryagain later.",null,null,null));
+            return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
         }
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
@@ -70,29 +66,10 @@ public class HTRCPortal extends JavaController {
                     " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
         }
         log.debug("Role name exists: " + userManager.roleNameExists(userId));
-        session().put(PortalConstants.SESSION_USERNAME, userId);
-        if(User.findByUserID(userId) == null){
-            String userEmail = userManager.getEmail(userId);
-            User nu = new User(userId, userEmail);
-
-            // Get the no of worksets
-            HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-            nu.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
-            nu.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
-
-            // Get the no of job results
-            HTRCAgentClient agentClient = new HTRCAgentClient(session());
-            Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
-            Map<String, JobDetailsBean> completedJobs = agentClient.getCompletedJobsDetails();
-            if(activeJobs != null){
-                nu.noOfActiveJobs = activeJobs.size();
-            }
-            if(completedJobs != null){
-                nu.noOfCompletedJobs = completedJobs.size();
-            }
-            nu.save();
-            log.info("New user " + nu.userId + " is added to User object.");
-        }
+        String userEmail = userManager.getEmail(userId);
+        session().put(PortalConstants.SESSION_EMAIL,userEmail);
+        log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
+        log.debug("User's access token:" + session(PortalConstants.SESSION_TOKEN));
 
 
         return redirect(routes.HTRCPortal.index());
@@ -112,95 +89,19 @@ public class HTRCPortal extends JavaController {
         return redirect(routes.HTRCPortal.index());
     }
 
-//    public static Result authenticate() {
-//        Form<Login> loginForm = form(Login.class).bindFromRequest();
-//        if (loginForm.hasErrors()) {
-//            return badRequest(login.render(loginForm, null));
-//        } else {
-//            if(User.findByUserID(loginForm.get().userId) == null){
-//                try {
-//                    String userEmail = getUserEmail(session().get(PortalConstants.SESSION_TOKEN));
-//                    User nu = new User(loginForm.get().userId, userEmail);
-//                    nu.save();
-//                    log.info("New user " + nu.userId + " is added to User object.");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            session().put("userId", loginForm.get().userId);
-//
-//
-//            return redirect(routes.HTRCPortal.index());
-//        }
-//    }
-
-//    @Security.Authenticated(Secured.class)
     public static Result about() {
-        return ok(about.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME))));
+        return ok(about.render(session(PortalConstants.SESSION_USERNAME)));
     }
 
     public static Result features() throws IOException {
         String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
-        return ok(features.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)),featurePage));
+        return ok(features.render(session(PortalConstants.SESSION_USERNAME),featurePage));
     }
 
     public static Result fiction() throws IOException {
         String fictionPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.fictionPage())));
-        return ok(fiction.render(User.findByUserID(session().get(PortalConstants.SESSION_USERNAME)),fictionPage));
+        return ok(fiction.render(session(PortalConstants.SESSION_USERNAME),fictionPage));
     }
-
-//    public static class Login {
-//        @Constraints.Required
-//        public String userId;
-//
-//        @Constraints.Required
-//        public String password;
-//
-//        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-//
-//        public String validate() throws Exception {
-//            if (userId.isEmpty() || password.isEmpty()) {
-//                return "Please fill username and password.";
-//            }
-//            if(authenticate(userId,password).isEmpty()){
-//                return "Invalid user name or password";
-//            }
-//            if(!userManager.roleNameExists(userId)){
-//                return String.format("Please activate your account. Activation link has been sent to %s",userManager.getEmail(userId));
-//            }
-//            return null;
-//        }
-//    }
-//
-//    public static Http.Session authenticate(String userId, String password){
-//        session().clear();
-//        try {
-//            OAuthClientRequest accessTokenRequest = OAuthClientRequest
-//                    .tokenLocation(PlayConfWrapper.tokenEndpoint())
-//                    .setGrantType(GrantType.PASSWORD)
-//                    .setClientId(PlayConfWrapper.oauthClientID())
-//                    .setClientSecret(PlayConfWrapper.oauthClientSecrete())
-//                    .setUsername(userId)
-//                    .setPassword(password)
-//                    .setScope("openid")
-//                    .buildBodyMessage();
-//
-//            OAuth2Client accessTokenClient = new OAuth2Client(new URLConnectionClient());
-//            OAuthClientResponse accessTokenResponse = accessTokenClient.accessToken(accessTokenRequest);
-//
-//
-//            session().put(PortalConstants.SESSION_USERNAME, userId);
-//            session().put(PortalConstants.SESSION_TOKEN,accessTokenResponse.getParam("access_token"));
-//            session().put(PortalConstants.SESSION_REFRESH_TOKEN,accessTokenResponse.getParam("refresh_token"));
-//            log.info(accessTokenResponse.getParam("access_token"));
-//            return session();
-//
-//        } catch (Exception e) {
-//            log.error("Invalid user ID or Password", e);
-//            return session();
-//        }
-//    }
 
     public static String getUserEmail(String accessToken) throws IOException {
         String userInfoEndpoint = Play.application().configuration().getString("oauth2.userinfo.endpoint");
@@ -239,11 +140,6 @@ public class HTRCPortal extends JavaController {
         return ok(cssContent).as("text/css");
     }
 
-//    public static Result getReleaseDocument() throws IOException {
-//        String releaseDocURL = Files.toString(new File(PlayConfWrapper.releaseDocument()), Charsets.UTF_8);
-//        System.out.println("Release Doc URL: " + releaseDocURL);
-//        return redirect(releaseDocURL) ;
-//    }
 
 
 

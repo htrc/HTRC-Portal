@@ -95,6 +95,7 @@ public class  PortalConstants {
     // session entry
     public static String SESSION_USERNAME = "session.username";              //This key is using in org.pac4j.play.CallbackController
     public static String SESSION_TOKEN = "session.token";                   //This key is using in org.pac4j.play.CallbackController
+    public static String SESSION_EMAIL = "session.email";
     public static String SESSION_TOKEN_EXPIRE_SEC = "session.token.expire";
     public static String SESSION_REFRESH_TOKEN = "session.refresh.token";    //This key is using in org.pac4j.play.CallbackController
     public static String SESSION_AGENT_INSTANCE = "session.agent.instance";

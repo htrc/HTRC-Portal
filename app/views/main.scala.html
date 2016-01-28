@@ -1,4 +1,4 @@
-@(title: String, user: User)(content: Html)
+@(title: String, userId: String)(content: Html)
 @import edu.indiana.d2i.htrc.portal.PlayConfWrapper
 @import play.api.Play
 
@@ -55,19 +55,19 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Worksets <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                @if(user == null) {
+                                @if(userId == null) {
                                     <li><a href="#login-required-modal" data-toggle="modal" >View my worksets</a></li>
                                 } else {
                                     <li><a href="@routes.WorksetManagement.userWorksets()">View my worksets</a></li>
                                 }
                                 <li class="divider"></li>
-                                @if(user == null) {
+                                @if(userId == null) {
                                     <li><a href="#login-required-modal" data-toggle="modal" >View all worksets</a></li>
                                 } else {
                                     <li><a href="@routes.WorksetManagement.allWorksets()">View all worksets</a></li>
                                 }
                                 <li class="divider"></li>
-                                @if(user == null) {
+                                @if(userId == null) {
                                     <li><a href="#login-required-modal" data-toggle="modal">Upload workset</a></li>
                                 } else {
                                     <li><a href="#upload-csv-modal" data-toggle="modal">Upload workset</a></li>
@@ -79,12 +79,12 @@
                                 </li>
                             </ul>
                         </li>
-                        @if(user == null) {
+                        @if(userId == null) {
                             <li><a href="#login-required-modal" data-toggle="modal" >Algorithms</a></li>
                         } else {
                             <li><a href="@routes.AlgorithmManagement.listAlgorithms()">Algorithms</a></li>
                         }
-                        @if(user == null) {
+                        @if(userId == null) {
                             <li><a href="#login-required-modal" data-toggle="modal" >Results</a></li>
                         } else {
                             <li ><a href="@routes.JobManagement.listJobs()">Results</a></li>
@@ -98,14 +98,14 @@
                                         Documentation</a>
                                     </li>
                                     <li class="divider"></li>
-                                    @if(user == null) {
+                                    @if(userId == null) {
                                         <li><a href="#login-required-modal" data-toggle="modal" >
                                             Show Virtual Machines</a></li>
                                     } else {
                                         <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show virtual machines</a></li>
                                     }
                                     <li class="divider"></li>
-                                    @if(user == null) {
+                                    @if(userId == null) {
                                         <li><a href="#login-required-modal" data-toggle="modal" >
                                             Create Virtual Machine</a></li>
                                     } else {
@@ -140,9 +140,8 @@
                                 </li>
                             </ul>
                         </li>
-                        @*<li><a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+User+Getting+Started+FAQ">Help</a></li>*@
                     </ul>
-                    @if(user == null) {
+                    @if(userId == null) {
                         <ul class="nav pull-right navbar-nav">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -161,7 +160,7 @@
                     } else {
                         <ul class="nav pull-right">
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle loggedin-user" data-toggle="dropdown" style="color : #FF9933 ;">@user.userId<b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle loggedin-user" data-toggle="dropdown" style="color : #FF9933 ;">@userId<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="@routes.HTRCPortal.logout()">Logout</a></li>
                                 </ul>

@@ -6,7 +6,6 @@ import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Token;
-import models.User;
 import org.pac4j.play.java.JavaController;
 import play.Logger;
 import play.data.Form;
@@ -92,15 +91,10 @@ public class UserManagement extends JavaController {
         String userId = passwordResetMailForm.get().userId;
         String userEmail;
         String userFirstName = userId; // User's name
-        if (User.findByUserID(userId) != null) {
-            User user = User.findByUserID(userId);
-            userEmail = user.email;
-//            userFirstName = user.userFirstName;
-        } else {
-            HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-            userEmail = userManager.getEmail(userId);
 
-        }
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+        userEmail = userManager.getEmail(userId);
+
 
         String passwordResetToken = Token.generateToken(userId, userEmail);
         if (passwordResetToken != null){
@@ -120,7 +114,7 @@ public class UserManagement extends JavaController {
             Token token1 = Token.findByToken(token);
             if(token1 != null){
                 String userId = token1.userId;
-                return ok(passwordreset.render(Form.form(PasswordReset.class), null, token, userId));
+                return ok(passwordreset.render(Form.form(PasswordReset.class),token, userId));
             }
         }
         return ok(gotopage.render("We are unable to reset your password. Please request a ", "passwordresetmail", "new password reset email.", null));
@@ -129,7 +123,7 @@ public class UserManagement extends JavaController {
     public static Result passwordReset() {
         Form<PasswordReset> passwordResetForm = form(PasswordReset.class).bindFromRequest();
         if (passwordResetForm.hasErrors()) {
-            return badRequest(passwordreset.render(passwordResetForm, null, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
+            return badRequest(passwordreset.render(passwordResetForm, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
         if(token1 != null){

@@ -22,7 +22,6 @@ import edu.indiana.d2i.htrc.portal.HTRCSSOServiceManagerUtility;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import filters.LoggingFilter;
-import models.User;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.Config;
@@ -59,21 +58,22 @@ public class Global extends GlobalSettings {
 
     @Override
     public F.Promise<SimpleResult> onError(Http.RequestHeader requestHeader, Throwable throwable) {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         dateFormat.setTimeZone(TimeZone.getTimeZone("US/Eastern"));
 
-        if(loggedInUser != null) {
-            log.error("Internal server error. Logged In UserId: " + loggedInUser.userId + " User Email: " + loggedInUser.email, throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + loggedInUser.userId + " \n User Email: " + loggedInUser.email + "\n Error: " + throwable.getCause());
+        if(userId != null) {
+            log.error("Internal server error. Logged In UserId: " + userId + " User Email: " + userEmail, throwable);
+            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + userId + " \n User Email: " + userEmail + "\n Error: " + throwable.getCause());
         } else {
             log.error("Internal server error.", throwable);
             UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.getCause());
         }
 
         return F.Promise.<SimpleResult>pure(internalServerError(
-                views.html.error500.render(throwable, loggedInUser)
+                views.html.error500.render(throwable, userId)
         ));
     }
 
@@ -120,14 +120,13 @@ public class Global extends GlobalSettings {
                        }else{
                            log.error("OAUTH credentials are null.");
                        }
-                   } else{
-                       log.debug(appName + " is not registered as a service provider.");
                    }
                }
             } else{
                 log.debug("There are no service providers.");
             }
             if(!isAppAlreadyRegistered){
+                log.debug(appName + " is not registered as a service provider.");
                 if(ssoServiceManager.registerSAMLClient(samlIssuer,samlAssertionUrl)){                                                                               // Register SAML client
                     String[] oAuthCredentials = ssoServiceManager.registerOauthApp(PlayConfWrapper.portalUrl(), appName, userNameToRegisterOAUTHApp);              // Register OAUTH2 Client
                     if(oAuthCredentials != null){

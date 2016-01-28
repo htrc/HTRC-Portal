@@ -8,13 +8,8 @@ import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
-import models.User;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.pac4j.play.java.JavaController;
@@ -55,29 +50,23 @@ public class WorksetManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result allWorksets() throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
-        loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
-        loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
-        loggedInUser.update();
-        return ok(allworksetstable.render(loggedInUser, worksetList));
+        return ok(allworksetstable.render(userId, worksetList));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result userWorksets() throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getUserWorksets();
-        loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
-        loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
-        loggedInUser.update();
-        return ok(userworksetstable.render(loggedInUser, worksetList));
+        return ok(userworksetstable.render(userId, worksetList));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException{
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName, worksetAuthor);
         List<Volume> volumeList = new ArrayList<>();
@@ -125,7 +114,7 @@ public class WorksetManagement extends JavaController {
                 log.debug("Workset: " + ws);
                 log.debug("Volumes: " + totalNoOfVolumes);
                 log.info("Workset" + worksetName + " has more than 200 volumes.");
-                 return ok(workset.render(loggedInUser, ws, first200VolumeDetailsList));
+                 return ok(workset.render(userId, ws, first200VolumeDetailsList));
             }else{
                 List<VolumeDetailsBean> volumeDetailsList = new ArrayList<>();
                 for (int i = 0; i <= volumeList.size() - 1; i++) {
@@ -142,18 +131,18 @@ public class WorksetManagement extends JavaController {
                 log.debug("Workset: " + ws);
                 log.debug("Volumes: " + totalNoOfVolumes);
                 log.info("Workset" + worksetName + " has lesser than 200 volumes.");
-                return ok(workset.render(loggedInUser, ws, volumeDetailsList));
+                return ok(workset.render(userId, ws, volumeDetailsList));
 
             }
         }
-        return ok(gotopage.render("Error occurred retrieving "+ worksetName +" workset. Please try again later.", "routes.WorksetManagement.allWorksets()","Go to Workset List page.", loggedInUser));
+        return ok(gotopage.render("Error occurred retrieving "+ worksetName +" workset. Please try again later.", "routes.WorksetManagement.allWorksets()","Go to Workset List page.", userId));
         
 
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result uploadWorkset() throws ParserConfigurationException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart csv = body.getFile("csv");
         String[] worksetName = body.asFormUrlEncoded().get("uploadWorksetName");
@@ -200,7 +189,7 @@ public class WorksetManagement extends JavaController {
                 metadataEle.appendChild(descriptionEle);
 
                 Element authorEle = worksetDoc.createElement("author");
-                authorEle.setTextContent(loggedInUser.userId);
+                authorEle.setTextContent(userId);
                 metadataEle.appendChild(authorEle);
 
                 Element ratingEle = worksetDoc.createElement("rating");
@@ -231,24 +220,21 @@ public class WorksetManagement extends JavaController {
             }
             try {
                 persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
-                loggedInUser.noOfAllWorksets = persistenceAPIClient.getAllWorksets().size();
-                loggedInUser.noOfMyWorksets = persistenceAPIClient.getUserWorksets().size();
-                loggedInUser.update();
             } catch (Exception e) {
                 log.error("Error when uploading workset in to registry");
                 throw new RuntimeException("Error when uploading workset in to registry");
             }
             log.info("Workset :" + wsName + " uploaded successfully. ");
-            return redirect(routes.WorksetManagement.viewWorkset(wsName,loggedInUser.userId));
+            return redirect(routes.WorksetManagement.viewWorkset(wsName,userId));
         } else {
             flash("error", "Missing file");
-            return ok(gotopage.render("Error occurred while uploading the file. Please try again.",null,null,loggedInUser));
+            return ok(gotopage.render("Error occurred while uploading the file. Please try again.",null,null,userId));
         }
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result downloadWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<Volume> volumes = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
 
@@ -316,9 +302,9 @@ public class WorksetManagement extends JavaController {
      */
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result validateWSName(String wsName) throws IOException, JAXBException {
-        User user = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        Workset ws = persistenceAPIClient.getWorkset(wsName, user.userId);
+        Workset ws = persistenceAPIClient.getWorkset(wsName, userId);
         // Validate the Workset Name and set isValid.
         ObjectNode result = Json.newObject();
         result.put("valid", ws == null);

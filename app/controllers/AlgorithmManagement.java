@@ -7,10 +7,6 @@ import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobDetailsBean;
 import edu.indiana.d2i.htrc.portal.bean.JobSubmitBean;
-import models.ActiveJob;
-import models.Algorithm;
-import models.User;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
 import org.springframework.util.StringUtils;
@@ -37,27 +33,26 @@ public class AlgorithmManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
-        CommonProfile userProfile = getUserProfile();
-        User loggedInUser = User.findByUserID(userProfile.getId());
+        String userId = session(PortalConstants.SESSION_USERNAME);
 
-        return ok(views.html.algorithms.render(loggedInUser, getAlgorithms()));
+        return ok(views.html.algorithms.render(userId, getAlgorithms()));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewAlgorithm(String algorithmName, String message) throws JAXBException, IOException, XMLStreamException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> userWorksetList = persistenceAPIClient.getUserWorksets();
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> allWorksetList = persistenceAPIClient.getAllWorksets();
 
-        return ok(algorithm.render(loggedInUser, algorithmDetails, parameters, userWorksetList, allWorksetList, Form.form(SubmitJob.class),message));
+        return ok(algorithm.render(userId, algorithmDetails, parameters, userWorksetList, allWorksetList, Form.form(SubmitJob.class),message));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result submitAlgorithm() throws Exception {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         Form<SubmitJob> jobSubmitForm = form(SubmitJob.class).bindFromRequest();
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();
@@ -68,7 +63,7 @@ public class AlgorithmManagement extends JavaController {
         }else{
             return redirect(routes.AlgorithmManagement.viewAlgorithm(algorithmName,"Job name cannot be null."));
         }
-        jobSubmitBean.setUserName(loggedInUser.userId);
+        jobSubmitBean.setUserName(userId);
         jobSubmitBean.setAlgorithmName(algorithmName);
         AlgorithmDetailsBean algorithmDetails;
         try {
@@ -126,11 +121,8 @@ public class AlgorithmManagement extends JavaController {
             log.error(String.format("Unable to submit job %s for user %s to agent",
                     jobSubmitBean.getJobName(), jobSubmitBean.getUserName()));
         } else {
-            log.info(String.format("ActiveJob (id: %s) is submitted, status is %s",
+            log.info(String.format("Active Job (id: %s) is submitted, status is %s",
                     jobDetailsBean.getJobId(), jobDetailsBean.getJobStatus()));
-            ActiveJob job = new ActiveJob(jobDetailsBean.getJobId(), jobDetailsBean.getJobTitle(),
-                    jobDetailsBean.getLastUpdatedDate(), jobDetailsBean.getJobStatus());
-            job.save();
         }
 
 
@@ -151,15 +143,6 @@ public class AlgorithmManagement extends JavaController {
             log.warn(PortalConstants.CANNOT_GETDATA_FROM_REGISTRY); //TODO: fix log message
         } else {
             List<AlgorithmDetailsBean> algorithmDetailsList = new ArrayList<>(allAlgorithms.values());
-
-            for (AlgorithmDetailsBean al : algorithmDetailsList) {
-                if (Algorithm.findAlgoritm(al.getName()) != null) {
-                    Algorithm.delete(Algorithm.findAlgoritm(al.getName()));
-                }
-                String authors = StringUtils.collectionToCommaDelimitedString(al.getAuthors());
-                Algorithm algorithm = new Algorithm(al.getName(), al.getDescription().substring(0, 50), authors, al.getVersion());
-                Algorithm.create(algorithm);
-            }
         }
 
     }
