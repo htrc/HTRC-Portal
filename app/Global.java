@@ -63,6 +63,7 @@ public class Global extends GlobalSettings {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         dateFormat.setTimeZone(TimeZone.getTimeZone("US/Eastern"));
+        log.debug("this is a test.");
 
         if(userId != null) {
             log.error("Internal server error. Logged In UserId: " + userId + " User Email: " + userEmail, throwable);
