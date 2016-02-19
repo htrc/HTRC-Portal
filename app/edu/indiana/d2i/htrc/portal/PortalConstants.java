@@ -161,9 +161,6 @@ public class  PortalConstants {
     // Feature Activations
     public static String IS_DATA_CAPSULE_ENABLE = "datacapsule.enable";
 
-    // Released Version
-    public static String RELESED_VERSION = "released.version";
-
     // Google Analytics code
     public static String GA_CODE = "google.analytics.code";
 

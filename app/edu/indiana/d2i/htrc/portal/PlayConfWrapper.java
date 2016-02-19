@@ -1,8 +1,7 @@
 package edu.indiana.d2i.htrc.portal;
 
 import play.Play;
-
-import javax.xml.bind.annotation.XmlElementDecl;
+import buildinfo.BuildInfo;
 
 /**
  * Copyright 2013 The Trustees of Indiana University
@@ -562,7 +561,10 @@ public class PlayConfWrapper {
 
     public static String releasedVersion(){
         if(releasedVersion == null){
-            releasedVersion= Play.application().configuration().getString(PortalConstants.RELESED_VERSION);
+            releasedVersion = "v" + BuildInfo.gitVersion();
+            if (BuildInfo.gitDirty())
+                releasedVersion += "*";
+            // releasedVersion += "::" + BuildInfo.gitBranch();
         }
         return releasedVersion;
     }
