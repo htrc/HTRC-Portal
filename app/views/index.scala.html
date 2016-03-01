@@ -1,7 +1,7 @@
-@(user: User, announcements: List[String])
+@(userId: String, announcements: List[String])
 @import java.util
 
-@main("Home", user) {
+@main("Home", userId) {
 
     <div class="container container-panel" style="padding-top: 15px; padding-bottom: 15px;">
         <div class="row" style="padding-left: 15px;">
@@ -58,7 +58,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        @if(user==null){
+                        @if(userId==null){
                             <a href="#login-required-modal" data-toggle="modal">Upload Workset</a>
                         }else{
                             <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
@@ -74,7 +74,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        @if(user==null){
+                        @if(userId==null){
                             <a href="#login-required-modal" data-toggle="modal">Browse Workset</a>
                         }else{
                             <a href="@routes.WorksetManagement.allWorksets()">Browse Workset</a>
@@ -88,7 +88,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
-                        @if(user==null){
+                        @if(userId==null){
                             <a href="#login-required-modal" data-toggle="modal">Execute Algorithms</a>
                         }else{
                             <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>

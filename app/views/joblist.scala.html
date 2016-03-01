@@ -1,8 +1,8 @@
-@(user: User, activeJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean] , completedJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
+@(userId: String, activeJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean] , completedJobs: List[edu.indiana.d2i.htrc.portal.bean.JobDetailsBean])
 
 
 
-@main("JobList", user) {
+@main("JobList", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc panel-with-activejobtable">
             <div class="panel-heading">

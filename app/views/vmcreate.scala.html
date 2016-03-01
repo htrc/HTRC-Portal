@@ -1,7 +1,7 @@
-@(user: User, form: Form[ExperimentalAnalysis.CreateVM], vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
+@(userId: String, form: Form[ExperimentalAnalysis.CreateVM], vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
 
 
-@main("VMCreate", user) {
+@main("VMCreate", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc">
             <div class="panel-heading">

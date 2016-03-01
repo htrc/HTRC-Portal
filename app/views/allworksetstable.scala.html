@@ -1,6 +1,6 @@
-@(user: User, worksets: List[edu.illinois.i3.htrc.registry.entities.workset.Workset])
+@(userId: String, worksets: List[edu.illinois.i3.htrc.registry.entities.workset.Workset])
 
-@main("Worksets", user) {
+@main("Worksets", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
@@ -33,7 +33,7 @@
                     </thead>
                     <tbody>
                     @for((w, id) <- worksets.zipWithIndex){
-                        <tr class="@if(w.getMetadata.getAuthor == user.userId){owned} else {others}">
+                        <tr class="@if(w.getMetadata.getAuthor == userId){owned} else {others}">
                             <td>@(id + 1)</td>
                             <td>@w.getMetadata.getAuthor</td>
                             <td style="max-width: 150px; word-wrap: break-word"><a href="@routes.WorksetManagement.viewWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)">@w.getMetadata.getName</a></td>
@@ -43,7 +43,7 @@
                             <td>@WorksetManagement.convertTimeToGMT(w.getMetadata.getLastModified.toString.substring(0,19).replace("T"," "))</td>
                             @*<td>@w.getMetadata.getLastModified.toString.substring(0,19)</td>*@
                             <td style="min-width: 132px;">
-                                @if(w.getMetadata.getAuthor == user.userId){
+                                @if(w.getMetadata.getAuthor == userId){
                                     <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.manage.url") ')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Modify</a>
                                 }

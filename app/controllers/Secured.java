@@ -18,7 +18,6 @@
 package controllers;
 
 import edu.indiana.d2i.htrc.portal.PortalConstants;
-import models.User;
 import play.Play;
 import play.mvc.Http;
 import play.mvc.Result;

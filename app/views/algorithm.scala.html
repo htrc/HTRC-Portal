@@ -1,10 +1,10 @@
-@(user: User, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean,
+@(userId: String, algorithmdetails: edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean,
         parameters: List[edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean.Parameter], userWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset],
         allWorksetlist: List[edu.illinois.i3.htrc.registry.entities.workset.Workset], form: Form[AlgorithmManagement.SubmitJob], message: String)
 @import edu.indiana.d2i.htrc.portal.bean.AlgorithmDetailsBean
 @import edu.indiana.d2i.htrc.portal.Utils
 
-@main("Algorithm", user) {
+@main("Algorithm", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc">
             <div class="panel-heading">
@@ -25,7 +25,7 @@
                     @flash.get("success")
                     </p>
                 }
-                <input type="hidden" name="userName" value="@user.userId">
+                <input type="hidden" name="userName" value="@userId">
                 <input type="hidden" name="algorithmName" value="@algorithmdetails.getName"/>
                 <table>
                     <tr>

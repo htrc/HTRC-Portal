@@ -22,8 +22,6 @@ import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.sloan.bean.VMImageDetails;
 import edu.indiana.d2i.htrc.sloan.bean.VMStatus;
-import models.User;
-import models.VirtualMachine;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
 import play.Logger;
@@ -52,41 +50,41 @@ public class ExperimentalAnalysis extends JavaController {
         if(!PlayConfWrapper.isDataCapsuleEnable()){
             return notFound();
         }
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        List<VMStatus> vmList = serviceClient.listVMs(loggedInUser, session());
+        List<VMStatus> vmList = serviceClient.listVMs(session());
         if(vmList != null){
-            return ok(vmlist.render(loggedInUser, vmList));
+            return ok(vmlist.render(userId, vmList));
         }else{
             log.error(PortalConstants.CANNOT_GETDATA_FROM_SERVER + " for user "
-                    + loggedInUser.userId);
-            return ok(gotopage.render("Sorry!! Cannot get Virtual Machines' details from server right now.", null, null, loggedInUser));
+                    + userId);
+            return ok(gotopage.render("Sorry!! Cannot get Virtual Machines' details from server right now.", null, null, userId));
         }
 
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result createVMForm() {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
         try {
-            vmImageDetailsList = serviceClient.listVMImages(loggedInUser, session());
+            vmImageDetailsList = serviceClient.listVMImages(session());
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return ok(vmcreate.render(loggedInUser, Form.form(CreateVM.class), vmImageDetailsList));
+        return ok(vmcreate.render(userId, Form.form(CreateVM.class), vmImageDetailsList));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result createVM() throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
         try {
-            vmImageDetailsList = serviceClient.listVMImages(loggedInUser, session());
+            vmImageDetailsList = serviceClient.listVMImages(session());
         } catch (GeneralSecurityException e) {
             log.error("Security exception while getting vm image details.", e);
             throw new RuntimeException(e);
@@ -99,68 +97,68 @@ public class ExperimentalAnalysis extends JavaController {
         Form<CreateVM> createVMForm = Form.form(CreateVM.class).bindFromRequest();
         if (createVMForm.hasErrors()) {
             log.debug("Create VM form has errors." + createVMForm.errorsAsJson());
-            return ok(vmcreate.render(loggedInUser, createVMForm, vmImageDetailsList));
+            return ok(vmcreate.render(userId, createVMForm, vmImageDetailsList));
         }
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result showVMStatus(String vmId) throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        VMStatus vmStatus = serviceClient.showVM(vmId, loggedInUser, session());
-        return ok(vmstatus.render(loggedInUser, vmStatus));
+        VMStatus vmStatus = serviceClient.showVM(vmId, session());
+        return ok(vmstatus.render(userId, vmStatus));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result deleteVM(String vmId) throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.deleteVM(vmId, loggedInUser, session());
+        serviceClient.deleteVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result startVM(String vmId) throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.startVM(vmId, loggedInUser, session());
+        serviceClient.startVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result stopVM(String vmId) throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.stopVM(vmId, loggedInUser, session());
+        serviceClient.stopVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result switchVMMode(String vmId, String mode) throws IOException {
-        User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
+        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        serviceClient.switchVMMode(vmId, mode, loggedInUser, session());
+        serviceClient.switchVMMode(vmId, mode, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
 
-    public static void updateVMList(User loggedInUser) {
-        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-        try {
-            List<VMStatus> vmList = serviceClient.listVMs(loggedInUser, session());
-            for (VMStatus v : vmList) {
-                VirtualMachine alreadyExist = VirtualMachine.findVM(v.getVmId());
-                if (alreadyExist != null) {
-                    VirtualMachine.deleteVM(alreadyExist);
-                }
-                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(), v.getState(), v.getMode());
-                VirtualMachine.createVM(virtualMachine);
-            }
-
-        } catch (Exception e) {
-            log.error("Update VM List Failed.", e);
-        }
-    }
+//    public static void updateVMList() {
+//        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+//        try {
+//            List<VMStatus> vmList = serviceClient.listVMs(session());
+//            for (VMStatus v : vmList) {
+//                VirtualMachine alreadyExist = VirtualMachine.findVM(v.getVmId());
+//                if (alreadyExist != null) {
+//                    VirtualMachine.deleteVM(alreadyExist);
+//                }
+//                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(), v.getState(), v.getMode());
+//                VirtualMachine.createVM(virtualMachine);
+//            }
+//
+//        } catch (Exception e) {
+//            log.error("Update VM List Failed.", e);
+//        }
+//    }
 
     public static class CreateVM {
         @Constraints.Required
@@ -200,10 +198,9 @@ public class ExperimentalAnalysis extends JavaController {
             if (mem < 1024 || mem > 4096) {
                 return "Memory should be between 1024MB - 4096MB";
             } else {
-                User loggedInUser = User.findByUserID(session(PortalConstants.SESSION_USERNAME));
                 HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
                 try {
-                    String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), loggedInUser, session());
+                    String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), session());
                 } catch (Exception e) {
                     log.error("Error calling createVM in data capsule API.", e);
                     return "VM Creation failed. Internal Error occurred!!";

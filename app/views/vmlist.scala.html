@@ -1,8 +1,8 @@
-@(user: User, vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMStatus])
+@(userId: String, vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMStatus])
     @import edu.indiana.d2i.htrc.sloan.bean.VMStatus
 
 
-    @main("VMList", user) {
+    @main("VMList", userId) {
 
         <div class="container">
             <div class="panel panel-default panel-htrc panel-with-table">

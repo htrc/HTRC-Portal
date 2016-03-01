@@ -1,14 +1,14 @@
-@(user: User, workset: edu.illinois.i3.htrc.registry.entities.workset.Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean])
+@(userId: String, workset: edu.illinois.i3.htrc.registry.entities.workset.Workset, volumeList:List[edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean])
 @import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean
 
-@main("Workset", user) {
+@main("Workset", userId) {
     <div class="container">
         <div class="panel panel-default panel-htrc panel-with-table">
             <div class="panel-heading">
                 <strong>@workset.getMetadata.getName</strong>
                  <span style="color: #777777;">
                      <span>
-                         @if(workset.getMetadata.getAuthor == user.userId){
+                         @if(workset.getMetadata.getAuthor == userId){
                              @if(workset.getMetadata.isPublic == true) {
                                  (Availability: Public)
                              }
