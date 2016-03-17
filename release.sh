@@ -8,13 +8,13 @@
 # Run play clean first
 play clean-all
 
-# Next run play dist 
+# Next run play dist
 play dist
 
 # Copy Dockerfile to target/docker
 mkdir -p ./target/docker
-cp Dockerfile ./target/docker
-cp portal.sh ./target/docker
+cp docker/Dockerfile ./target/docker
+cp docker/portal.sh ./target/docker
 
 # Copy Portal distribution to target/docker
 cp ./target/universal/htrc-portal-3.2-SNAPSHOT.zip ./target/docker
@@ -23,4 +23,4 @@ cp ./target/universal/htrc-portal-3.2-SNAPSHOT.zip ./target/docker
 cd target/docker
 
 # Then run docker build
-docker build -t htrc/portal .
+docker build -t htrc/portal:alpine .
