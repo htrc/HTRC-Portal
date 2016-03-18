@@ -21,4 +21,4 @@ RUN chmod +x /opt/portal.sh
 
 EXPOSE 9000
 
-CMD ["dockerize", "-timeout", "120", "-wait", "tcp://idp:9443", "-wait", "tcp://mysql:3306", "/opt/portal.sh"]
+CMD ["dockerize", "-timeout", "120s", "-wait", "tcp://idp:9443", "-wait", "tcp://mysql:3306", "/opt/portal.sh"]
