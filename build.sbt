@@ -21,7 +21,7 @@ lazy val commonSettings = Seq(
     "gitVersion" -> git.gitDescribedVersion.value.getOrElse("N/A"),
     "gitDirty" -> git.gitUncommittedChanges.value
   ),
-  packageOptions in (Compile, packageBin) += Package.ManifestAttributes(
+  packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
     ("Git-Sha", git.gitHeadCommit.value.getOrElse("N/A")),
     ("Git-Branch", git.gitCurrentBranch.value),
     ("Git-Version", git.gitDescribedVersion.value.getOrElse("N/A")),
@@ -90,5 +90,32 @@ lazy val `htrc-portal` = (project in file(".")).
       "org.wso2.carbon" % "org.wso2.carbon.identity.authenticator.token.stub" % "4.2.0",
       "org.apache.axis2.wso2" % "axis2-client" % "1.6.1.wso2v10",
       "org.apache.woden.wso2" % "woden" % "1.0.0.M8-wso2v1"
-    )
+    ),
+    playCopyAssets <<= playCopyAssetsTask,
+    resourceGenerators in Compile += Def.task {
+      val portalDistName = name.value + "-" + version.value + ".zip"
+      val portalDist = target(_ / "universal").value / portalDistName
+      val file = (resourceManaged in Compile).value / "docker" / "Dockerfile"
+      val contents = "FROM htrc/oracle-java7:alpine" + "\n\n" +
+        "RUN wget https://github.com/jwilder/dockerize/releases/download/v0.2.0/dockerize-linux-amd64-v0.2.0.tar.gz" + "\n" +
+        "RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.2.0.tar.gz" + "\n\n" +
+        "WORKDIR /opt" + "\n\n" +
+        "ADD %s /opt/".format(portalDist) + "\n" +
+        "RUN unzip %s-%s.zip".format(name.value, version.value) + "\n\n" +
+        "ADD portal.sh /opt/" + "\n" +
+        "RUN chmod +x /opt/portal.sh" + "\n\n" +
+        "EXPOSE 9000" + "\n\n" +
+        "CMD [\"dockerize\", \"-timeout\", \"120s\", \"-wait\", \"tcp://idp:9443\", \"-wait\", \"tcp://mysql:3306\", \"/opt/portal.sh\"]"
+      IO.write(file, contents)
+      Seq(file)
+    }.taskValue,
+    resourceGenerators in Compile += Def.task {
+      val file = (resourceManaged in Compile).value / "docker" / "portal.sh"
+      val contents = "#!/bin/sh" + "\n\n" +
+        "/opt/htrc-portal-3.2-SNAPSHOT/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf" + "\n"
+      IO.write(file, contents)
+      Seq(file)
+    }.taskValue
   )
+
+
