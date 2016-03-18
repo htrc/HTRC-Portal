@@ -1,0 +1,8 @@
+@(message: String, pageLink: String, pageName: String, userId: String)
+
+
+@main("-", userId) {
+    <div class="container container-panel" style="padding-top : 15 px ; padding-bottom : 15 px ;">
+        <div class="alert alert-warning" role="alert" style="margin-top: 20px;"><strong>@message <a href=@pageLink> @pageName </a></strong></div>
+    </div>
+}

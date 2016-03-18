@@ -64,6 +64,9 @@ GET         /viewworkset                                      controllers.Workse
 # Download Workset
 GET         /downloadworkset                                  controllers.WorksetManagement.downloadWorkset(worksetName:String ?="", worksetAuthor:String ?="")
 
+# Upload Workset
+GET        /uploadworkset                                      controllers.WorksetManagement.uploadWorksetForm()
+
 # View Workset
 POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()
 

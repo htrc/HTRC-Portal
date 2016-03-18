@@ -1,0 +1,55 @@
+@(userId: String)
+
+
+@main("WorksetUpload", userId) {
+    <div class="container">
+        <div class="panel panel-default panel-htrc">
+            <div class="panel-heading">
+                <strong>Upload Workset </strong>
+            </div>
+            <div class="panel-body">
+                @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
+                    <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
+                    <div class="form-group has-feedback" id="wsname-control-group">
+                        <label for="uploadWorksetName" class="control-label">Workset Name</label>
+                        <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="required" aria-describedby="wsname-feedback-status"/>
+                        <span id="wsname-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                        <span id="wsname-feedback-status" class="sr-only">(success)</span>
+                        @*<div id="workset_name_alert_placeholder">*@
+                        @*</div>*@
+                        <span class="help-block">
+                            Only characters A-Z, 0-9, or _ allowed.<br>
+                            <span id="wsname-warn-block" class="warn-block"></span>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="uploadWSdescription">Description</label>
+                        <input type="text" id="uploadWSdescription" class="form-control" name="uploadWSdescription" placeholder="Description" maxlength="100">
+                    </div>
+                    <div class="form-group has-feedback" id="inputfile-control-group">
+                        <label for="inputCSV">CSV File:</label>
+                        <input type="file" name="csv" accept="text/csv" id="inputCSV" required="required">
+                        <span id="inputfile-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                        <span id="inputfile-feedback-status" class="sr-only">(success)</span>
+                        <span class="help-block">
+                            You can only upload worksets as text files that are in CSV (comma-separated-values) format.<br>
+                            <span id="inputfile-warn-block" class="warn-block"></span>
+                        </span>
+                    </div>
+                    <div class="checkbox">
+                        <label >
+                            <input type="checkbox" name="privateWorkset" checked="checked"/> Private workset.
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-0 col-sm-10">
+                            <button type="submit" class="btn btn-primary btn-sm" id="ws-submit">Upload Workset</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+}

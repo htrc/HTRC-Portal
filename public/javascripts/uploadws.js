@@ -1,4 +1,5 @@
 var wsNameCorrect = false;
+var inputFileCorrect = false;
 
 var uploadHasError = function (element, iconElement) {
     wsSubmitButtonVisibility();
@@ -22,12 +23,12 @@ var wsSubmitButtonVisibility = function () {
     var wsSubmitButton = $('#ws-submit');
 
     // disable submit button at start
-    wsSubmitButton.prop("disabled",true);
-
-    if (wsNameCorrect) {
-        wsSubmitButton.prop("disabled",false);
-    }else{
-        wsSubmitButton.prop("disabled",true);
+    wsSubmitButton.prop("disabled", true);
+    var inputFileValue = $('#inputCSV').val();
+    if (wsNameCorrect && inputFileCorrect) {
+        wsSubmitButton.prop("disabled", false);
+    } else {
+        wsSubmitButton.prop("disabled", true);
     }
 };
 
@@ -55,28 +56,56 @@ var wsNameInputKeyUp = function () {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name contains a space or a special character!');
-    } else if(wsName.length == 0) {
+    } else if (wsName.length == 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
         wsNameWarnBlock.html('Workset name cannot be empty!');
-    }else{
-        checkWsNameValidity(wsName,function () {
+    } else {
+        checkWsNameValidity(wsName, function () {
             wsNameCorrect = false;
             uploadHasError(wsNameControlGroup, wsNameFeedback);
             wsNameWarnBlock.html('You already have a workset with this name. Please choose another name.');
-        },function(){
-        wsNameCorrect = true;
-        uploadHasSuccess(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('');});
+        }, function () {
+            wsNameCorrect = true;
+            uploadHasSuccess(wsNameControlGroup, wsNameFeedback);
+            wsNameWarnBlock.html('');
+        });
+    }
+};
+
+var inputFileChange = function () {
+    var fileName = $(this).val();
+    var validExtn = ".csv";
+    var inputFileControlGroup = $('#inputfile-control-group');
+    var inputFileWarnBlock = $('#inputfile-warn-block');
+    var inputFileFeedback = $('#inputfile-feedback');
+
+    if (fileName.length == 0) {
+        inputFileCorrect = false;
+        uploadHasError(inputFileControlGroup, inputFileFeedback);
+        inputFileWarnBlock.html('Please add a CSV file.');
+    } else if(fileName.substr((fileName.length - validExtn.length),fileName.length) != validExtn) {
+        inputFileCorrect = false;
+        uploadHasError(inputFileControlGroup, inputFileFeedback);
+        inputFileWarnBlock.html('Workset should be uploaded as a CSV file.');
+    }else {
+        inputFileCorrect = true;
+        uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
+        inputFileWarnBlock.html('');
     }
 };
 
 var worksetNameValidation = function () {
-   $('#uploadWorksetName').bind("change keyup" ,wsNameInputKeyUp);
+    $('#uploadWorksetName').bind("change keyup", wsNameInputKeyUp);
+};
+
+var inputFileValidation = function () {
+    $('#inputCSV').bind("change", inputFileChange);
 };
 
 $(document).ready(function () {
     worksetNameValidation();
+    inputFileValidation();
     wsSubmitButtonVisibility();
 });
 

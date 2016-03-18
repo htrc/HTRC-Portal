@@ -8,7 +8,7 @@
                 <strong>VM Creation (All fields are required) </strong>
             </div>
             <div class="panel-body">
-            @helper.form(routes.ExperimentalAnalysis.createVM(), 'class -> "form-horizontal") {
+            @helper.form(routes.ExperimentalAnalysis.createVM(), 'class -> "form-horizontal"){
                 @if(form.hasGlobalErrors) {
                     <p class="error">
                     @form.globalError.message

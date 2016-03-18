@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import play.Logger;
+import play.data.validation.Constraints;
 import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -141,6 +142,12 @@ public class WorksetManagement extends JavaController {
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
+    public static Result uploadWorksetForm() {
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        return ok(worksetupload.render(userId));
+    }
+
+    @RequiresAuthentication(clientName = "Saml2Client")
     public static Result uploadWorkset() throws ParserConfigurationException {
         String userId = session(PortalConstants.SESSION_USERNAME);
         Http.MultipartFormData body = request().body().asMultipartFormData();
@@ -228,7 +235,7 @@ public class WorksetManagement extends JavaController {
             return redirect(routes.WorksetManagement.viewWorkset(wsName,userId));
         } else {
             flash("error", "Missing file");
-            return ok(gotopage.render("Error occurred while uploading the file. Please try again.",null,null,userId));
+            return ok(warnings.render("Please upload a CSV file",null,null,userId));
         }
     }
 
