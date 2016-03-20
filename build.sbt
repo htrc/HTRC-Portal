@@ -139,6 +139,9 @@ def generateDockerImageBuilder(portalDistName: String, portalDistDirectory: File
     "docker build -t htrc/portal:alpine ."
 
   IO.write(buildSh, contents)
+
+  buildSh.setExecutable(true)
+  
   Seq(buildSh)
 }
 
