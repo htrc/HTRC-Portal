@@ -96,7 +96,7 @@ lazy val `htrc-portal` = (project in file(".")).
       val portalDistName = name.value + "-" + version.value + ".zip"
       val portalDist = target(_ / "universal").value / portalDistName
       val file = (resourceManaged in Compile).value / "docker" / "Dockerfile"
-      val contents = "FROM htrc/oracle-java7:alpine" + "\n\n" +
+      val contents = "FROM registry.docker.htrc.indiana.edu/htrc/oracle-java8:alpine" + "\n\n" +
         "RUN wget https://github.com/jwilder/dockerize/releases/download/v0.2.0/dockerize-linux-amd64-v0.2.0.tar.gz" + "\n" +
         "RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.2.0.tar.gz" + "\n\n" +
         "WORKDIR /opt" + "\n\n" +
