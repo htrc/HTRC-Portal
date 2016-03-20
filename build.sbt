@@ -112,7 +112,7 @@ lazy val `htrc-portal` = (project in file(".")).
     resourceGenerators in Compile += Def.task {
       val file = (resourceManaged in Compile).value / "docker" / "portal.sh"
       val contents = "#!/bin/sh" + "\n\n" +
-        "/opt/%s-%s/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf".format(name.value, version.value) + " -Dhttps.protocols=TLSv1.1" + "\n"
+        "/opt/%s-%s/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf".format(name.value, version.value) + "\n"
       IO.write(file, contents)
       Seq(file)
     }.taskValue
