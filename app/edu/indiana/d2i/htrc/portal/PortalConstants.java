@@ -81,6 +81,9 @@ public class  PortalConstants {
     public static String USER_REG_TRUSTSTORE_PWD = "user.reg.truststore.pwd";
     public static String USER_REG_TRUSTSTORE_TYPE = "user.reg.truststore.type";
 
+    // trust store
+    public static String CLIENT_TRUST_STORE = "client.truststore.path";
+    public static String CLIENT_TRUST_STORE_PASSWORD = "client.truststore.pwd";
 
 
     // error message

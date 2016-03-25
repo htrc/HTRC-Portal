@@ -1,23 +1,22 @@
 package edu.indiana.d2i.htrc.portal;
 
-import play.Play;
 import buildinfo.BuildInfo;
+import play.Play;
 
 /**
  * Copyright 2013 The Trustees of Indiana University
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express  or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 public class PlayConfWrapper {
@@ -56,10 +55,10 @@ public class PlayConfWrapper {
     private static String registryAlgFolder = null;
 
     // workset properties
-    private static  int worksetsPerPage = 0;
+    private static int worksetsPerPage = 0;
 
     // algorithm properties
-    private static  int algorithmsPerPage = 0;
+    private static int algorithmsPerPage = 0;
 
     // user register
     private static String userRegUrl = null;
@@ -131,72 +130,76 @@ public class PlayConfWrapper {
     // Fiction dataset page
     private static String fictionpage = null;
 
+    // Trust Store
+    private static String clientTrustStore = null;
+    private static String clientTustStorePassword = null;
+
 
     public static String agentEndpoint() {
-        if(agentEndpoint == null){
+        if (agentEndpoint == null) {
             agentEndpoint = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_EPR);
         }
         return agentEndpoint;
     }
 
     public static String jobdetailsURL() {
-        if(jobdetailsURL == null){
+        if (jobdetailsURL == null) {
             jobdetailsURL = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_JOBLIST_PART);
         }
         return jobdetailsURL;
     }
 
     public static String jobSubmitURL() {
-        if(submitURL == null){
+        if (submitURL == null) {
             submitURL = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_JOBSUBMIT_PART);
         }
         return submitURL;
     }
 
     public static String jobDeleteURLTemplate() {
-        if(jobdeleteURLTemplate == null){
+        if (jobdeleteURLTemplate == null) {
             jobdeleteURLTemplate = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_JOB_DELETE);
         }
         return jobdeleteURLTemplate;
     }
 
     public static String jobSaveURLTemplate() {
-        if(jobsaveURLTemplate == null){
+        if (jobsaveURLTemplate == null) {
             jobsaveURLTemplate = Play.application().configuration().getString(PortalConstants.PROPERTY_AGENT_JOB_SAVE);
         }
         return jobsaveURLTemplate;
     }
 
     public static int agentConnectTimeout() {
-        if(agentConnectTimeout == 0){
+        if (agentConnectTimeout == 0) {
             agentConnectTimeout = Play.application().configuration().getInt(PortalConstants.PROPERTY_AGENT_CONNECT_TIMEOUT);
         }
         return agentConnectTimeout;
     }
 
     public static int agentWaitTimeout() {
-        if(agentWaitTimeout == 0){
+        if (agentWaitTimeout == 0) {
             agentWaitTimeout = Play.application().configuration().getInt(PortalConstants.PROPERTY_AGENT_WAIT_TIMEOUT);
         }
         return agentWaitTimeout;
     }
 
     public static String oauthEndpoint() {
-        if(oauthEndpoint == null){
+        if (oauthEndpoint == null) {
             oauthEndpoint = Play.application().configuration().getString(PortalConstants.OAUTH2_AUTHZ_ENDPOINT);
         }
         return oauthEndpoint;
     }
 
     public static String tokenEndpoint() {
-        if(tokenEndpoint == null){
+        if (tokenEndpoint == null) {
             tokenEndpoint = Play.application().configuration().getString(PortalConstants.OAUTH2_TOKEN_ENDPOINT);
         }
         return tokenEndpoint;
     }
 
     public static String userInfoEndpoint() {
-        if(userinfoEndpoint == null){
+        if (userinfoEndpoint == null) {
             userinfoEndpoint = Play.application().configuration().getString(PortalConstants.OAUTH2_USERINFO_ENDPOINT);
         }
         return userinfoEndpoint;
@@ -219,348 +222,348 @@ public class PlayConfWrapper {
     }
 
     public static String oauthScope() {
-        if(oauthScope == null){
+        if (oauthScope == null) {
             oauthScope = Play.application().configuration().getString(PortalConstants.OAUTH2_SCOPE);
         }
         return oauthScope;
     }
 
     public static String oauthType() {
-        if(oauthType == null){
+        if (oauthType == null) {
             oauthType = Play.application().configuration().getString(PortalConstants.OAUTH2_GRANT_TYPE);
         }
         return oauthType;
     }
 
     public static String callBackUrl() {
-        if(callbackurl == null){
+        if (callbackurl == null) {
             callbackurl = Play.application().configuration().getString(PortalConstants.OAUTH2_CALLBACK_URL);
         }
         return callbackurl;
     }
 
     public static String adminServiceEndpoint() {
-        if(adminServiceEndpoint == null){
+        if (adminServiceEndpoint == null) {
             adminServiceEndpoint = Play.application().configuration().getString(PortalConstants.OAUTH2_ADMIN_SERVICE);
         }
         return adminServiceEndpoint;
     }
 
     public static String oauthBackendUrl() {
-        if(oauthBackendUrl == null){
+        if (oauthBackendUrl == null) {
             oauthBackendUrl = Play.application().configuration().getString(PortalConstants.OAUTH2_BACKEND_URL);
         }
         return oauthBackendUrl;
     }
 
     public static String solrMetaQueryUrl() {
-        if(solrMetaQueryUrl == null){
+        if (solrMetaQueryUrl == null) {
             solrMetaQueryUrl = Play.application().configuration().getString(PortalConstants.SOLR_META_QUERY_URL);
         }
         return solrMetaQueryUrl;
     }
 
     public static String solrOcrQueryUrl() {
-        if(solrOcrQueryUrl == null){
+        if (solrOcrQueryUrl == null) {
             solrOcrQueryUrl = Play.application().configuration().getString(PortalConstants.SOLR_OCR_QUERY_URL);
         }
         return solrOcrQueryUrl;
     }
 
     public static String blacklightUrl() {
-        if(blacklighturl == null){
+        if (blacklighturl == null) {
             blacklighturl = Play.application().configuration().getString(PortalConstants.BLACKLIGHT_URL);
         }
         return blacklighturl;
     }
 
     public static String registryEPR() {
-        if(registryEPR == null){
+        if (registryEPR == null) {
             registryEPR = Play.application().configuration().getString(PortalConstants.REGISTRY_ENDPOINT);
         }
         return registryEPR;
     }
 
     public static String registryAlgFolder() {
-        if(registryAlgFolder == null){
+        if (registryAlgFolder == null) {
             registryAlgFolder = Play.application().configuration().getString(PortalConstants.REGISTRY_ALGO_FOLDER);
         }
         return registryAlgFolder;
     }
 
     public static String userRegUrl() {
-        if(userRegUrl == null){
+        if (userRegUrl == null) {
             userRegUrl = Play.application().configuration().getString(PortalConstants.USER_REG_URL);
         }
         return userRegUrl;
     }
 
     public static String userRegUser() {
-        if(userRegUser == null){
+        if (userRegUser == null) {
             userRegUser = Play.application().configuration().getString(PortalConstants.USER_REG_USER);
         }
         return userRegUser;
     }
 
     public static String userRegPwd() {
-        if(userRegPwd == null){
+        if (userRegPwd == null) {
             userRegPwd = Play.application().configuration().getString(PortalConstants.USER_REG_PASSWORD);
         }
         return userRegPwd;
     }
 
     public static String userRegTruststore() {
-        if(userRegTruststore == null){
+        if (userRegTruststore == null) {
             userRegTruststore = Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE);
         }
         return userRegTruststore;
     }
 
     public static String userRegTruststorePwd() {
-        if(userRegTruststorePwd == null){
+        if (userRegTruststorePwd == null) {
             userRegTruststorePwd = Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE_PWD);
         }
         return userRegTruststorePwd;
     }
 
     public static String userRegTruststoreType() {
-        if(userRegTruststoreType == null){
+        if (userRegTruststoreType == null) {
             userRegTruststoreType = Play.application().configuration().getString(PortalConstants.USER_REG_TRUSTSTORE_TYPE);
         }
         return userRegTruststoreType;
     }
 
     public static String jobDetailsTimeOut() {
-        if(jobDetailsTimeOut == null){
+        if (jobDetailsTimeOut == null) {
             jobDetailsTimeOut = Play.application().configuration().getString(PortalConstants.PORTAL_JOB_DETAILS_TIMEOUT);
         }
         return jobDetailsTimeOut;
     }
 
-    public static int worksetsPerPage(){
-        if(worksetsPerPage == 0){
+    public static int worksetsPerPage() {
+        if (worksetsPerPage == 0) {
             worksetsPerPage = Play.application().configuration().getInt(PortalConstants.WORKSETS_PER_PAGE);
         }
         return worksetsPerPage;
     }
 
-    public static int algorithmsPerPage(){
-        if(algorithmsPerPage == 0){
+    public static int algorithmsPerPage() {
+        if (algorithmsPerPage == 0) {
             algorithmsPerPage = Play.application().configuration().getInt(PortalConstants.ALGORITHMS_PER_PAGE);
         }
         return algorithmsPerPage;
     }
 
     public static String sloanWsEndpoint() {
-        if(sloanWsEndpoint == null){
+        if (sloanWsEndpoint == null) {
             sloanWsEndpoint = Play.application().configuration().getString(PortalConstants.SLOAN_WS_EPR);
         }
         return sloanWsEndpoint;
     }
 
     public static String createVMUrl() {
-        if(createVMUrl == null){
+        if (createVMUrl == null) {
             createVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_CREATEVM);
         }
         return createVMUrl;
     }
 
     public static String showVMUrl() {
-        if(showVMUrl == null){
+        if (showVMUrl == null) {
             showVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_SHOWVM);
         }
         return showVMUrl;
     }
 
     public static String listVMImagesUrl() {
-        if(listVMImagesUrl == null){
+        if (listVMImagesUrl == null) {
             listVMImagesUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_LISTVMIMAGES);
         }
         return listVMImagesUrl;
     }
 
     public static String deleteVMUrl() {
-        if(deleteVMUrl == null){
+        if (deleteVMUrl == null) {
             deleteVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_DELETEVM);
         }
         return deleteVMUrl;
     }
 
     public static String startVMUrl() {
-        if(startVMUrl == null){
+        if (startVMUrl == null) {
             startVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_STARTVM);
         }
         return startVMUrl;
     }
 
     public static String stopVMUrl() {
-        if(stopVMUrl == null){
+        if (stopVMUrl == null) {
             stopVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_STOPVM);
         }
         return stopVMUrl;
     }
 
     public static String switchVMUrl() {
-        if(switchVMUrl == null){
+        if (switchVMUrl == null) {
             switchVMUrl = Play.application().configuration().getString(PortalConstants.SLOAN_WS_SWITCHVM);
         }
         return switchVMUrl;
     }
 
-    public static String portalUrl(){
-        if(portalUrl == null){
+    public static String portalUrl() {
+        if (portalUrl == null) {
             portalUrl = Play.application().configuration().getString(PortalConstants.PORTAL_URL);
         }
         return portalUrl;
     }
 
-    public static String errorHandlingEmail(){
-        if(errorHandlingEmail == null){
+    public static String errorHandlingEmail() {
+        if (errorHandlingEmail == null) {
             errorHandlingEmail = Play.application().configuration().getString(PortalConstants.ERROR_HANDLING_EMAIL);
         }
         return errorHandlingEmail;
     }
 
-    public static String supportEmail(){
-        if(supportEmail == null){
+    public static String supportEmail() {
+        if (supportEmail == null) {
             supportEmail = Play.application().configuration().getString(PortalConstants.SUPPORT_EMAIL);
         }
         return supportEmail;
     }
 
-    public static String htcEmailUserName(){
-        if(htrcEmailUserName == null){
-            htrcEmailUserName = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_USERNAME);
+    public static String getHTRCEmailUserName() {
+        if (htrcEmailUserName == null) {
+            htrcEmailUserName = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_USERNAME).trim();
         }
         return htrcEmailUserName;
     }
 
-    public static String htrcEmailPassword(){
-        if(htrcEmailPassword == null){
-            htrcEmailPassword = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_PASSWORD);
+    public static String getHTRCEmailPassword() {
+        if (htrcEmailPassword == null) {
+            htrcEmailPassword = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL_PASSWORD).trim();
         }
         return htrcEmailPassword;
     }
 
-    public static String htrcEmail(){
-        if(htrcEmail == null){
+    public static String htrcEmail() {
+        if (htrcEmail == null) {
             htrcEmail = Play.application().configuration().getString(PortalConstants.HTRC_EMAIL);
         }
         return htrcEmail;
     }
 
-    public static String validDomainsFirstCSV(){
-        if(validDomainsFirstCSV == null){
+    public static String validDomainsFirstCSV() {
+        if (validDomainsFirstCSV == null) {
             validDomainsFirstCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_FIRST_CSV);
         }
         return validDomainsFirstCSV;
     }
 
-    public static String validDomainsSecondCSV(){
-        if(validDomainsSecondCSV == null){
+    public static String validDomainsSecondCSV() {
+        if (validDomainsSecondCSV == null) {
             validDomainsSecondCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_SECOND_CSV);
         }
         return validDomainsSecondCSV;
     }
 
-    public static String validDomainsThirdCSV(){
-        if(validDomainsThirdCSV == null){
+    public static String validDomainsThirdCSV() {
+        if (validDomainsThirdCSV == null) {
             validDomainsThirdCSV = Play.application().configuration().getString(PortalConstants.HTRC_VALID_DOMAIN_THIRD_CSV);
         }
         return validDomainsThirdCSV;
     }
 
-    public static String approvedEmailsCSV(){
-        if(approvedEmailsCSV == null){
+    public static String approvedEmailsCSV() {
+        if (approvedEmailsCSV == null) {
             approvedEmailsCSV = Play.application().configuration().getString(PortalConstants.HTRC_APPROVED_EMAILS);
         }
         return approvedEmailsCSV;
     }
 
-    public static String saml2KeyStorePath(){
-        if(saml2KeyStorePath == null){
+    public static String saml2KeyStorePath() {
+        if (saml2KeyStorePath == null) {
             saml2KeyStorePath = Play.application().configuration().getString(PortalConstants.SAML2_KEYSTORE_PATH);
         }
         return saml2KeyStorePath;
     }
 
-    public static String saml2KeyStorePassword(){
-        if(saml2KeyStorePassword == null){
+    public static String saml2KeyStorePassword() {
+        if (saml2KeyStorePassword == null) {
             saml2KeyStorePassword = Play.application().configuration().getString(PortalConstants.SAML2_KEYSTORE_PASSWORD);
         }
         return saml2KeyStorePassword;
     }
 
-    public static String saml2PrivateKeyPassword(){
-        if(saml2PrivateKeyPassword == null){
+    public static String saml2PrivateKeyPassword() {
+        if (saml2PrivateKeyPassword == null) {
             saml2PrivateKeyPassword = Play.application().configuration().getString(PortalConstants.SAML2_PRIVATEKEY_PASSWORD);
         }
         return saml2PrivateKeyPassword;
     }
 
-    public static String idpMetadataPath(){
-        if(idpMetadataPath == null){
+    public static String idpMetadataPath() {
+        if (idpMetadataPath == null) {
             idpMetadataPath = Play.application().configuration().getString(PortalConstants.IDP_METADATA_PATH);
         }
         return idpMetadataPath;
     }
 
-    public static String samlSSOCallbackURL(){
-        if(samlSSOCallbackURL == null){
+    public static String samlSSOCallbackURL() {
+        if (samlSSOCallbackURL == null) {
             samlSSOCallbackURL = Play.application().configuration().getString(PortalConstants.SAML_SSO_CALLBACK_URL);
         }
         return samlSSOCallbackURL;
     }
 
-    public static String certificateAlias(){
-        if(certificateAlias == null){
+    public static String certificateAlias() {
+        if (certificateAlias == null) {
             certificateAlias = Play.application().configuration().getString(PortalConstants.CERTIFICATE_ALIAS);
         }
         return certificateAlias;
     }
 
 
-    public static String serviceProviderName(){
-        if(serviceProviderName == null){
+    public static String serviceProviderName() {
+        if (serviceProviderName == null) {
             serviceProviderName = Play.application().configuration().getString(PortalConstants.SERVICE_PROVIDER_NAME);
         }
         return serviceProviderName;
     }
 
-    public static String serviceProviderDescription(){
-        if(serviceProviderDescription == null){
+    public static String serviceProviderDescription() {
+        if (serviceProviderDescription == null) {
             serviceProviderDescription = Play.application().configuration().getString(PortalConstants.SERVICE_PROVIDER_DESCRIPTION);
         }
         return serviceProviderDescription;
     }
 
-    public static String releaseDocument(){
-        if(releaseDocument == null){
+    public static String releaseDocument() {
+        if (releaseDocument == null) {
             releaseDocument = Play.application().configuration().getString(PortalConstants.RELEASE_DOCUMENT);
         }
         return releaseDocument;
     }
 
-    public static String announcementDocument(){
-        if(announcementsDocument == null){
+    public static String announcementDocument() {
+        if (announcementsDocument == null) {
             announcementsDocument = Play.application().configuration().getString(PortalConstants.ANNOUNCEMENTS_DOCUMENT);
         }
         return announcementsDocument;
     }
 
-    public static String customCSSTheme(){
-        if(customCSSTheme == null){
+    public static String customCSSTheme() {
+        if (customCSSTheme == null) {
             customCSSTheme = Play.application().configuration().getString(PortalConstants.CUSTOM_CSS_THEME);
         }
         return customCSSTheme;
     }
 
-    public static boolean isDataCapsuleEnable(){
+    public static boolean isDataCapsuleEnable() {
         return Play.application().configuration().getBoolean(PortalConstants.IS_DATA_CAPSULE_ENABLE);
     }
 
-    public static String releasedVersion(){
-        if(releasedVersion == null){
+    public static String releasedVersion() {
+        if (releasedVersion == null) {
             releasedVersion = "v" + BuildInfo.gitVersion();
             if (BuildInfo.gitDirty())
                 releasedVersion += "*";
@@ -569,25 +572,41 @@ public class PlayConfWrapper {
         return releasedVersion;
     }
 
-    public static String googleAnalyticsCode(){
-        if(googleAnalyticsCode == null){
-            googleAnalyticsCode= Play.application().configuration().getString(PortalConstants.GA_CODE);
+    public static String googleAnalyticsCode() {
+        if (googleAnalyticsCode == null) {
+            googleAnalyticsCode = Play.application().configuration().getString(PortalConstants.GA_CODE);
         }
         return googleAnalyticsCode;
     }
 
-    public static String featuresPage(){
-        if(featurespage == null){
-            featurespage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
+    public static String featuresPage() {
+        if (featurespage == null) {
+            featurespage = Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
         }
         return featurespage;
     }
 
-    public static String fictionPage(){
-        if(fictionpage == null){
-            fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
+    public static String fictionPage() {
+        if (fictionpage == null) {
+            fictionpage = Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
         }
         return fictionpage;
+    }
+
+    public static String getClientTrustStorePath() {
+        if (clientTrustStore == null) {
+            clientTrustStore = Play.application().configuration().getString(PortalConstants.CLIENT_TRUST_STORE);
+        }
+
+        return clientTrustStore;
+    }
+
+    public static String getClientTrustStorePassword() {
+        if (clientTustStorePassword == null) {
+            clientTustStorePassword = Play.application().configuration().getString(PortalConstants.CLIENT_TRUST_STORE_PASSWORD);
+        }
+
+        return clientTustStorePassword;
     }
 }
 

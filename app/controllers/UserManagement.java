@@ -3,6 +3,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.indiana.d2i.htrc.portal.*;
+import edu.indiana.d2i.htrc.portal.config.PortalConfiguration;
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import models.Token;
@@ -13,9 +14,6 @@ import play.libs.Json;
 import play.mvc.Result;
 import views.html.*;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
@@ -99,7 +97,7 @@ public class UserManagement extends JavaController {
         String passwordResetToken = Token.generateToken(userId, userEmail);
         if (passwordResetToken != null){
             String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
-            sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
+            Utils.sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
             return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
         }else{
             log.error("Cannot generate password reset tokens.");
@@ -169,7 +167,7 @@ public class UserManagement extends JavaController {
             return ok(gotopage.render("Cannot find user with email " + userEmail + " !", "login", "Login", null));
         }
 
-        sendMail(userEmail, "Retrieve User ID.", "Your User ID: " + userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
+        Utils.sendMail(userEmail, "Retrieve User ID.", "Your User ID: " + userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
 //        userIds.clear();
 //        userIDRetrieveMailForm.get().userIDs.clear();
         log.info(userIDRetrieveMailForm.toString());
@@ -191,8 +189,7 @@ public class UserManagement extends JavaController {
 
 
     public static class SignUp {
-        public static Map<String, Integer> instDomains;
-        public static Map<String, Integer> approvedEmails;
+        public static PortalConfiguration.EmailValidationConfiguration emailValidationConfiguration;
         public String userId;
         public String password;
         public String confirmPassword;
@@ -269,7 +266,7 @@ public class UserManagement extends JavaController {
         public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
+            Utils.sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
                     "\n \n Please click on the following url to activate your account. \n" + url + "\n" +
                     " \n \n" +
                     " Cheers, \n" +
@@ -287,9 +284,6 @@ public class UserManagement extends JavaController {
 
 
         public static boolean isValidEmail(String email) {
-
-            instDomains.putAll(CSVReader.readAndSaveInstDomains(PlayConfWrapper.validDomainsThirdCSV()));
-            approvedEmails = CSVReader.readAndSaveApprovedEmails(PlayConfWrapper.approvedEmailsCSV());
             if (email.isEmpty()) {
                 log.info("Email is empty");
                 return false;
@@ -298,10 +292,10 @@ public class UserManagement extends JavaController {
                 if (domainName.indexOf(".") != domainName.lastIndexOf(".")) {
                     domainName = domainName.substring(domainName.indexOf(".") + 1);
                 }
-                if(instDomains.containsKey(domainName)){
+                if(emailValidationConfiguration.getValidDomainsList().contains(domainName)){
                     log.info(domainName + " is an institutional email domain.");
                     return true;
-                }else if(approvedEmails.containsKey(email)){
+                }else if(emailValidationConfiguration.getApprovedEmails().contains(email)){
                     log.info(email + " is an approved email.");
                     return true;
                 }else{
@@ -324,7 +318,7 @@ public class UserManagement extends JavaController {
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || institution.isEmpty()) {
                 return "Please fill all the required fields.";
             } else {
-                sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
+                Utils.sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
                         "User's name : " + firstName + " " + lastName + ";\n" +
                         "User's email : " + email + ";\n" +
                         "Institution/Employer : " + institution + ";\n" +
@@ -389,41 +383,6 @@ public class UserManagement extends JavaController {
                 return null;
             }
         }
-    }
-
-    public static void sendMail(String recipientEmail, String subject, String emailBody) {
-        Properties props = new Properties();
-
-        props.put("mail.smtp.host", "mail-relay.iu.edu");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-        //props.put("mail.smtp.port", "25");
-
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(PlayConfWrapper.htcEmailUserName().trim(), PlayConfWrapper.htrcEmailPassword().trim());
-                    }
-                }
-        );
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("sharc@indiana.edu"));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(recipientEmail));
-            message.setSubject(subject);
-            message.setText(emailBody);
-            Transport.send(message);
-            log.info("Message with subject : " + subject + " is sent successfully.");
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);  // TODO: Review exception handling logic.
-        }
-
     }
 
     public static String passwordValidate(String password, String retypePassword, String userId) {
