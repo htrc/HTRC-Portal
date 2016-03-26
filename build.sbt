@@ -21,7 +21,7 @@ lazy val commonSettings = Seq(
     "gitVersion" -> git.gitDescribedVersion.value.getOrElse("N/A"),
     "gitDirty" -> git.gitUncommittedChanges.value
   ),
-  packageOptions in (Compile, packageBin) += Package.ManifestAttributes(
+  packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
     ("Git-Sha", git.gitHeadCommit.value.getOrElse("N/A")),
     ("Git-Branch", git.gitCurrentBranch.value),
     ("Git-Version", git.gitDescribedVersion.value.getOrElse("N/A")),
@@ -90,5 +90,60 @@ lazy val `htrc-portal` = (project in file(".")).
       "org.wso2.carbon" % "org.wso2.carbon.identity.authenticator.token.stub" % "4.2.0",
       "org.apache.axis2.wso2" % "axis2-client" % "1.6.1.wso2v10",
       "org.apache.woden.wso2" % "woden" % "1.0.0.M8-wso2v1"
-    )
+    ),
+    resourceGenerators in Compile += Def.task {
+      generateDockerfile(name.value + "-" + version.value, (resourceManaged in Compile).value)
+    }.taskValue,
+    resourceGenerators in Compile += Def.task {
+      generatePortalRunner(name.value + "-" + version.value, (resourceManaged in Compile).value)
+    }.taskValue,
+    resourceGenerators in Compile += Def.task {
+      generateDockerImageBuilder(name.value + "-" + version.value, target(_ / "universal").value,
+        (resourceManaged in Compile).value, version.value)
+    }.taskValue
   )
+
+def generateDockerfile(portalDistName: String, managedResourcesDir: File): Seq[File] = {
+  val portalDist = portalDistName + ".zip"
+  val dockerFile = managedResourcesDir / "docker" / "Dockerfile"
+  val dockerfileContents = "FROM registry.docker.htrc.indiana.edu/htrc/oracle-java8:alpine" + "\n\n" +
+    "RUN wget https://github.com/jwilder/dockerize/releases/download/v0.2.0/dockerize-linux-amd64-v0.2.0.tar.gz" + "\n" +
+    "RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.2.0.tar.gz" + "\n\n" +
+    "WORKDIR /opt" + "\n\n" +
+    "ADD %s /opt/".format(portalDist) + "\n" +
+    "RUN unzip %s".format(portalDist) + "\n\n" +
+    "ADD portal.sh /opt/" + "\n" +
+    "RUN chmod +x /opt/portal.sh" + "\n\n" +
+    "EXPOSE 9000" + "\n\n" +
+    "CMD [\"dockerize\", \"-timeout\", \"120s\", \"-wait\", \"tcp://idp:9443\", \"-wait\", \"tcp://mysql:3306\", \"/opt/portal.sh\"]"
+
+  IO.write(dockerFile, dockerfileContents)
+  Seq(dockerFile)
+}
+
+def generatePortalRunner(portalDistName: String, managedResourcesDir: File): Seq[File] = {
+  val portalSh = managedResourcesDir / "docker" / "portal.sh"
+  val contents = "#!/bin/sh" + "\n\n" +
+    "/opt/%s/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf".format(portalDistName) + "\n"
+
+  IO.write(portalSh, contents)
+  Seq(portalSh)
+}
+
+def generateDockerImageBuilder(portalDistName: String, portalDistDirectory: File, managedResourcesDir: File, version: String): Seq[File] = {
+  val buildSh = managedResourcesDir / "docker" / "build.sh"
+  val portalDist = portalDistName + ".zip"
+  val portalDistPath = portalDistDirectory / portalDist
+  val contents = "#!/bin/sh" + "\n\n" +
+    "cp %s ./".format(portalDistPath) + "\n" +
+    "docker build -t htrc/portal:alpine-%s .".format(version) + "\n" +
+    "docker tag htrc/portal:alpine-%s registry.docker.htrc.indiana.edu/htrc/portal:alpine-%s".format(version, version) + "\n" +
+    "docker push registry.docker.htrc.indiana.edu/htrc/portal:alpine-%s".format(version)
+
+  IO.write(buildSh, contents)
+
+  buildSh.setExecutable(true)
+
+  Seq(buildSh)
+}
+
