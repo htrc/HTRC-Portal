@@ -2,6 +2,8 @@
 // logLevel := Level.Warn
 
 // Use the Play sbt plugin for Play projects
+resolvers += "Typesafe Releases" at "https://dl.bintray.com/typesafe/maven-releases/"
+
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.6")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.5")
