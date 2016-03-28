@@ -30,14 +30,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PortalConfiguration extends Configuration {
-    private static Logger.ALogger log = play.Logger.of("config");
+    private static Logger.ALogger log = play.Logger.of(PortalConfiguration.class);
 
     private static final String CONF_URL = "portal.url";
     private String version;
 
     public PortalConfiguration(Config conf) {
         super(conf);
-        log.info(conf.toString());
+
+        if(log.isDebugEnabled()) {
+            log.debug(conf.toString());
+        }
     }
 
     public Configuration getIDPConfig(String idpPrefix) {

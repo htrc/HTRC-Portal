@@ -78,6 +78,7 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
             setAuthenticationCookie(samlSSOConfigStub, authenticationCookie);
             setAuthenticationCookie(oauthAdminServiceStub, authenticationCookie);
         } catch (Exception e) {
+            log.error("Could not initialize WSO2ISSSOConfigurator.", e);
             throw new PortalException("Error occurred during configurator initialization.", e);
         }
     }
@@ -111,6 +112,8 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
                 }
             }
         } catch (Exception e) {
+            String errMessage = "Couldn't register Portal in WSO2 IS.";
+            log.error(errMessage, e);
             throw new PortalException("Couldn't register Portal in WSO2 IS.", e);
         }
 
@@ -284,6 +287,7 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
                 return (String) adminStub._getServiceClient().getServiceContext().getProperty
                         (HTTPConstants.COOKIE_STRING);
             } else {
+                log.error("Couldn't authenticate with WSO2 IS backend: " + configuration.getBackendURL());
                 throw new PortalException("Authentication failed against server " +
                         configuration.getBackendURL() + ". This can be due to invalid username and/or password.");
             }

@@ -44,7 +44,7 @@ import static play.mvc.Results.internalServerError;
 
 
 public class Global extends GlobalSettings {
-    private static Logger.ALogger log = play.Logger.of("global");
+    private static Logger.ALogger log = play.Logger.of(Global.class);
 
     @Override
     public <T extends EssentialFilter> Class<T>[] filters() {
