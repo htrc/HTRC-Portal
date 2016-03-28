@@ -21,6 +21,7 @@ import com.google.common.io.Files;
 import com.typesafe.config.Config;
 import play.Configuration;
 import buildinfo.BuildInfo;
+import play.Logger;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -29,11 +30,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PortalConfiguration extends Configuration {
+    private static Logger.ALogger log = play.Logger.of("config");
+
     private static final String CONF_URL = "portal.url";
     private String version;
 
     public PortalConfiguration(Config conf) {
         super(conf);
+        log.info(conf.toString());
     }
 
     public Configuration getIDPConfig(String idpPrefix) {

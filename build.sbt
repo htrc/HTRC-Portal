@@ -136,9 +136,9 @@ def generateDockerImageBuilder(portalDistName: String, portalDistDirectory: File
   val portalDistPath = portalDistDirectory / portalDist
   val contents = "#!/bin/sh" + "\n\n" +
     "cp %s ./".format(portalDistPath) + "\n" +
-    "docker build -t htrc/portal:alpine-%s .".format(version) + "\n" +
-    "docker tag htrc/portal:alpine-%s registry.docker.htrc.indiana.edu/htrc/portal:alpine-%s".format(version, version) + "\n" +
-    "docker push registry.docker.htrc.indiana.edu/htrc/portal:alpine-%s".format(version)
+    "docker build -t htrc/portal:%s .".format(version) + "\n" +
+    "docker tag htrc/portal:%s registry.docker.htrc.indiana.edu/htrc/portal:%s".format(version, version) + "\n" +
+    "docker push registry.docker.htrc.indiana.edu/htrc/portal:%s".format(version)
 
   IO.write(buildSh, contents)
 
