@@ -58,12 +58,15 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
 
     public WSO2ISSSOConfigurator(WSO2ISConfiguration configuration) {
         this.configuration = configuration;
-        String authenticationCookie = authenticate();
         try {
             URL baseURL = new URL(configuration.getBackendURL());
             if(log.isDebugEnabled()) {
                 log.debug("Initializing WSO2 IS configurator against WSO2 IS at " + baseURL);
             }
+
+            log.info("Authenticating to WSO2 IS at " + baseURL);
+            String authenticationCookie = authenticate();
+
             String appManagementSeriviceEPR =
                     new URL(baseURL, APPMANAGEMENT_SERVICE).toExternalForm();
             String samlSSOConfigServiceEPR =
