@@ -61,6 +61,9 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
         String authenticationCookie = authenticate();
         try {
             URL baseURL = new URL(configuration.getBackendURL());
+            if(log.isDebugEnabled()) {
+                log.debug("Initializing WSO2 IS configurator against WSO2 IS at " + baseURL);
+            }
             String appManagementSeriviceEPR =
                     new URL(baseURL, APPMANAGEMENT_SERVICE).toExternalForm();
             String samlSSOConfigServiceEPR =
@@ -276,6 +279,11 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
         try {
             String authenticationAdminEPR =
                     new URL(new URL(configuration.getBackendURL()), AUTHENTICATION_ADMIN_SERVICE).toExternalForm();
+
+            if(log.isDebugEnabled()) {
+                log.debug("Authenticating to WSO2 IS using authentication admin at " + authenticationAdminEPR);
+            }
+
             String remoteAddress = NetworkUtils.getLocalHostname();
 
             ConfigurationContext configContext = ConfigurationContextFactory
