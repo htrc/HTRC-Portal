@@ -124,7 +124,7 @@ def generateDockerfile(portalDistName: String, managedResourcesDir: File): Seq[F
 def generatePortalRunner(portalDistName: String, managedResourcesDir: File): Seq[File] = {
   val portalSh = managedResourcesDir / "docker" / "portal.sh"
   val contents = "#!/bin/sh" + "\n\n" +
-    "/opt/%s/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf".format(portalDistName) + "\n"
+    "/opt/%s/bin/htrc-portal -Dconfig.file=/htrc/conf/portal/application.conf -Dlogger.file=/htrc/conf/portal/logger.xml".format(portalDistName) + "\n"
 
   IO.write(portalSh, contents)
   Seq(portalSh)
@@ -137,8 +137,8 @@ def generateDockerImageBuilder(portalDistName: String, portalDistDirectory: File
   val contents = "#!/bin/sh" + "\n\n" +
     "cp %s ./".format(portalDistPath) + "\n" +
     "docker build -t htrc/portal:%s .".format(version) + "\n" +
-    "docker tag htrc/portal:%s registry.docker.htrc.indiana.edu/htrc/portal:%s".format(version, version) + "\n" +
-    "docker push registry.docker.htrc.indiana.edu/htrc/portal:%s".format(version)
+    "docker tag htrc/portal:%s registry.docker.htrc.indiana.edu/htrc/portal:%s \n".format(version, version) +
+    "docker push registry.docker.htrc.indiana.edu/htrc/portal:%s \n".format(version)
 
   IO.write(buildSh, contents)
 
