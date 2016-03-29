@@ -16,4 +16,4 @@ WORKDIR /opt/portal/
 
 EXPOSE 9000
 
-CMD ["dockerize", "-timeout", "120s", "-wait", "${IDP_EP:-tcp://idp:9443}", "-wait", "${MYSQL_EP:-tcp://mysql:3306}", "./bin/htrc-portal"]
+CMD dockerize -timeout 120s -wait ${IDP_EP:-tcp://idp:9443} -wait ${MYSQL_EP:-tcp://mysql:3306} ./bin/htrc-portal
