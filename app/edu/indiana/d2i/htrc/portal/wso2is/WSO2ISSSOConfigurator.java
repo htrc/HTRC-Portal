@@ -266,9 +266,11 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
     private ApplicationBasicInfo getExistingSP() {
         try {
             ApplicationBasicInfo[] apps = appManagementStub.getAllApplicationBasicInfo();
-            for (ApplicationBasicInfo appBasicInfo : apps) {
-                if (appBasicInfo.getApplicationName().equals(configuration.getSSOSPConfiguration().getSPIdentifier())) {
-                    return appBasicInfo;
+            if (apps != null && apps.length > 0) {
+                for (ApplicationBasicInfo appBasicInfo : apps) {
+                    if (appBasicInfo.getApplicationName().equals(configuration.getSSOSPConfiguration().getSPIdentifier())) {
+                        return appBasicInfo;
+                    }
                 }
             }
         } catch (Exception e) {
