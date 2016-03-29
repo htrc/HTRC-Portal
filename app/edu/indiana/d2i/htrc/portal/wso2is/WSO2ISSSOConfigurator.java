@@ -134,6 +134,11 @@ public class WSO2ISSSOConfigurator implements SSOConfigurator {
         SSOSPConfiguration spConfig = configuration.getSSOSPConfiguration();
         SAMLSSOServiceProviderDTO serviceProviderDTO = new SAMLSSOServiceProviderDTO();
 
+        if(log.isDebugEnabled()) {
+            log.debug(String.format("Registering service provider with Issuer: %s, Assertion Consumer: %s, Certificate Alias: %s, " +
+                    "OAuth2 Token Endpoint: %s ", spConfig.getSAMLIssuerURL(), spConfig.getSAMLAssertionConsumerURL(), spConfig.getSpCertificateAlias(), spConfig.getOAuth2TokenEndpoint()));
+        }
+
         serviceProviderDTO.setIssuer(spConfig.getSAMLIssuerURL());
         serviceProviderDTO.setAssertionConsumerUrl(spConfig.getSAMLAssertionConsumerURL());
         serviceProviderDTO.setDoSignResponse(false);
