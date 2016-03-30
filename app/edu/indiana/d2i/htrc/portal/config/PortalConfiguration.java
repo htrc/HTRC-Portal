@@ -86,7 +86,6 @@ public class PortalConfiguration extends Configuration {
 
             if (log.isDebugEnabled()) {
                 log.debug("Valid email domains count: " + validDomains.size());
-                log.debug("Is indiana.edu valid:" + validDomains.contains("indiana.edu"));
             }
 
             return validDomains;
