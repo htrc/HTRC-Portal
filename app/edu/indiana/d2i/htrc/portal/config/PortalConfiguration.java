@@ -85,7 +85,8 @@ public class PortalConfiguration extends Configuration {
             validDomains.addAll(readDomainsFromCSV(Paths.get(getString(CONF_APPROVED_EMAIL_DOMAINS))));
 
             if (log.isDebugEnabled()) {
-                log.debug("Valida email domains count: " + validDomains.size());
+                log.debug("Valid email domains count: " + validDomains.size());
+                log.debug("Is indiana.edu valid:" + validDomains.contains("indiana.edu"));
             }
 
             return validDomains;
@@ -110,10 +111,6 @@ public class PortalConfiguration extends Configuration {
                     }
 
                     validEmailDomains.add(institutionDomain);
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Number of valid email domains: " + validEmailDomains);
                 }
 
                 return validEmailDomains;
