@@ -38,7 +38,7 @@ public class PortalConfiguration extends Configuration {
     public PortalConfiguration(Config conf) {
         super(conf);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(conf.toString());
         }
     }
@@ -84,6 +84,10 @@ public class PortalConfiguration extends Configuration {
             // Read from recently approved email domains file.
             validDomains.addAll(readDomainsFromCSV(Paths.get(getString(CONF_APPROVED_EMAIL_DOMAINS))));
 
+            if (log.isDebugEnabled()) {
+                log.debug("Valida email domains count: " + validDomains.size());
+            }
+
             return validDomains;
         }
 
@@ -106,6 +110,10 @@ public class PortalConfiguration extends Configuration {
                     }
 
                     validEmailDomains.add(institutionDomain);
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Number of valid email domains: " + validEmailDomains);
                 }
 
                 return validEmailDomains;

@@ -95,11 +95,11 @@ public class UserManagement extends JavaController {
 
 
         String passwordResetToken = Token.generateToken(userId, userEmail);
-        if (passwordResetToken != null){
+        if (passwordResetToken != null) {
             String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
             Utils.sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
             return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
-        }else{
+        } else {
             log.error("Cannot generate password reset tokens.");
             return ok(gotopage.render("We are unable to reset your password right now. Please request a ", "passwordresetmail", "new password reset email.", null));
         }
@@ -107,12 +107,12 @@ public class UserManagement extends JavaController {
     }
 
     public static Result createPasswordResetForm(String token) {
-        if(!token.isEmpty()){
+        if (!token.isEmpty()) {
             log.debug(String.valueOf(token.length()));
             Token token1 = Token.findByToken(token);
-            if(token1 != null){
+            if (token1 != null) {
                 String userId = token1.userId;
-                return ok(passwordreset.render(Form.form(PasswordReset.class),token, userId));
+                return ok(passwordreset.render(Form.form(PasswordReset.class), token, userId));
             }
         }
         return ok(gotopage.render("We are unable to reset your password. Please request a ", "passwordresetmail", "new password reset email.", null));
@@ -121,10 +121,10 @@ public class UserManagement extends JavaController {
     public static Result passwordReset() {
         Form<PasswordReset> passwordResetForm = form(PasswordReset.class).bindFromRequest();
         if (passwordResetForm.hasErrors()) {
-            return badRequest(passwordreset.render(passwordResetForm, passwordResetForm.data().get("token"),passwordResetForm.data().get("userId")));
+            return badRequest(passwordreset.render(passwordResetForm, passwordResetForm.data().get("token"), passwordResetForm.data().get("userId")));
         }
         Token token1 = Token.findByToken(passwordResetForm.get().token);
-        if(token1 != null){
+        if (token1 != null) {
             String userId = token1.userId;
             log.info("Password reset token for user ID " + userId + " : " + token1.token);
             log.info("Is token used: " + token1.isTokenUsed);
@@ -176,11 +176,12 @@ public class UserManagement extends JavaController {
 
     public static Result validateEmail(String email) {
         // Validate the email and set isValid.
+        log.info("Validating email: " + email);
         boolean isValid = SignUp.isValidEmail(email);
         ObjectNode result = Json.newObject();
         if (isValid) {
             result.put("valid", true);
-        }else{
+        } else {
             result.put("valid", false);
         }
 
@@ -223,21 +224,21 @@ public class UserManagement extends JavaController {
                 return "There's a role name already exists with this name. Please use another username.";
             }
 
-            if (passwordValidate(password, confirmPassword,userId) != null) {
-                return passwordValidate(password, confirmPassword,userId);
+            if (passwordValidate(password, confirmPassword, userId) != null) {
+                return passwordValidate(password, confirmPassword, userId);
             }
 
             if (!email.equals(confirmEmail)) {
                 return "Emails are not matching.";
             }
             if (!isValidEmail(email)) {
-               return "Email is not an institutional email. Please enter your institutional email." +
-                            "If you don't have an institutional email or if your email is not recognized by our system, " +
-                            "please press 'Request Account' with your current email address ";
+                return "Email is not an institutional email. Please enter your institutional email." +
+                        "If you don't have an institutional email or if your email is not recognized by our system, " +
+                        "please press 'Request Account' with your current email address ";
             }
             if (acknowledgement == null) {
                 return "You have not acknowledge the user registration acknowledgement. Please acknowledge.";
-            }else {
+            } else {
                 List<Map.Entry<String, String>> claims = new ArrayList<>();
                 claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/givenname", firstName));
@@ -266,7 +267,7 @@ public class UserManagement extends JavaController {
         public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            Utils.sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
+            Utils.sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: " + userId +
                     "\n \n Please click on the following url to activate your account. \n" + url + "\n" +
                     " \n \n" +
                     " Cheers, \n" +
@@ -292,13 +293,13 @@ public class UserManagement extends JavaController {
                 if (domainName.indexOf(".") != domainName.lastIndexOf(".")) {
                     domainName = domainName.substring(domainName.indexOf(".") + 1);
                 }
-                if(emailValidationConfiguration.getValidDomainsList().contains(domainName)){
+                if (emailValidationConfiguration.getValidDomainsList().contains(domainName)) {
                     log.info(domainName + " is an institutional email domain.");
                     return true;
-                }else if(emailValidationConfiguration.getApprovedEmails().contains(email)){
+                } else if (emailValidationConfiguration.getApprovedEmails().contains(email)) {
                     log.info(email + " is an approved email.");
                     return true;
-                }else{
+                } else {
                     log.info(domainName + " is not an institutional email domain or " +
                             email + " is not an approved email.");
                     return false;
@@ -358,8 +359,8 @@ public class UserManagement extends JavaController {
         public String validate() {
             log.debug("Token in the form: " + token);
 
-            if (passwordValidate(password, confirmPassword,userId) != null) {
-                return passwordValidate(password, confirmPassword,userId);
+            if (passwordValidate(password, confirmPassword, userId) != null) {
+                return passwordValidate(password, confirmPassword, userId);
             }
             return null;
         }
@@ -407,7 +408,7 @@ public class UserManagement extends JavaController {
         if (!password.equals(retypePassword)) {
             return "Passwords do not match.";
         }
-        if (password.equals(userId)){
+        if (password.equals(userId)) {
             return "Password includes your user ID.";
         }
         return null;
