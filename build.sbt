@@ -40,8 +40,6 @@ lazy val `htrc-portal` = (project in file(".")).
     homepage := Some(url("https://sharc.hathitrust.org")),
     startYear := Some(2011),
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
-    scalacOptions += "-target:jvm-1.7",
-    scriptClasspath += "../conf/",
     libraryDependencies ++= Seq(
       javaCore,
       javaJdbc,
