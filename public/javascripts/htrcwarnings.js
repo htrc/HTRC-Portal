@@ -19,3 +19,10 @@ function goToCreateCollection() {
     return true;
 }
 
+function loggingRequiredWarning(targetUrl) {
+    $('#modal-target-url').attr("href", targetUrl);
+    $('#login-required-modal').modal('show');
+
+    return false;
+}
+

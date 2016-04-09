@@ -59,7 +59,7 @@
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
                         @if(userId==null){
-                            <a href="#login-required-modal" data-toggle="modal">Upload Workset</a>
+                            <a href="#" onclick="loggingRequiredWarning('#upload-csv-modal')">Upload Workset</a>
                         }else{
                             <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
                         }
@@ -75,7 +75,7 @@
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
                         @if(userId==null){
-                            <a href="#login-required-modal" data-toggle="modal">Browse Workset</a>
+                            <a href="#" onclick="loggingRequiredWarning('@routes.WorksetManagement.allWorksets()')">Browse Workset</a>
                         }else{
                             <a href="@routes.WorksetManagement.allWorksets()">Browse Workset</a>
                         }
@@ -89,7 +89,7 @@
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
                         @if(userId==null){
-                            <a href="#login-required-modal" data-toggle="modal">Execute Algorithms</a>
+                            <a href="#" onclick="loggingRequiredWarning('@routes.AlgorithmManagement.listAlgorithms()')">Execute Algorithms</a>
                         }else{
                             <a href="@routes.AlgorithmManagement.listAlgorithms()">Execute Algorithms</a>
                         }
