@@ -13,4 +13,4 @@ do
   sleep 5
 done
 
-./opt/portal/bin/htrc-portal -Dconfig.file=conf/application.conf -Dlogger.file=conf/logger.xml
+/opt/portal/bin/htrc-portal -Dconfig.file=conf/application.conf -Dlogger.file=conf/logger.xml
