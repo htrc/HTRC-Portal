@@ -59,9 +59,9 @@
                 <div class="panel panel-default panel-htrc margin-bt-0">
                     <div class="panel-heading">
                         @if(userId==null){
-                            <a href="#" onclick="loggingRequiredWarning('#upload-csv-modal')">Upload Workset</a>
+                            <a href="#" onclick="loggingRequiredWarning('@routes.WorksetManagement.uploadWorksetForm()')">Upload Workset</a>
                         }else{
-                            <a href="#upload-csv-modal" data-toggle="modal">Upload Workset</a>
+                            <a href="@routes.WorksetManagement.uploadWorksetForm()" data-toggle="modal">Upload Workset</a>
                         }
                     </div>
                     <div class="panel-body">
