@@ -1,5 +1,7 @@
 package edu.indiana.d2i.htrc.portal;
 
+import org.pac4j.play.Constants;
+
 /**
  * Copyright 2013 The Trustees of Indiana University
  *
@@ -93,11 +95,11 @@ public class  PortalConstants {
     public static final String PORTAL_JOB_DETAILS_TIMEOUT = "portal.job.details.timeout";
 
     // session entry
-    public static String SESSION_USERNAME = "session.username";              //This key is using in org.pac4j.play.CallbackController
-    public static String SESSION_TOKEN = "session.token";                   //This key is using in org.pac4j.play.CallbackController
-    public static String SESSION_EMAIL = "session.email";
+    public static String SESSION_USERNAME = Constants.SESSION_USERNAME;
+    public static String SESSION_TOKEN = Constants.SESSION_TOKEN;
+    public static String SESSION_EMAIL = Constants.SESSION_EMAIL;
     public static String SESSION_TOKEN_EXPIRE_SEC = "session.token.expire";
-    public static String SESSION_REFRESH_TOKEN = "session.refresh.token";    //This key is using in org.pac4j.play.CallbackController
+    public static String SESSION_REFRESH_TOKEN = Constants.SESSION_REFRESH_TOKEN;
     public static String SESSION_AGENT_INSTANCE = "session.agent.instance";
     public static String SESSION_LAST_ACTION = "session.lastaction";
     public static String SESSION_EXIST_BEFORE = "session.timeout";

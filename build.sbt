@@ -1,5 +1,8 @@
+import com.typesafe.sbt.{GitBranchPrompt, GitVersioning}
+import com.typesafe.sbt.SbtGit.git
 import play.Project._
 import com.typesafe.sbt.packager.Keys._
+import sbtbuildinfo.BuildInfoPlugin
 
 playJavaSettings
 
@@ -45,7 +48,7 @@ lazy val `htrc-portal` = (project in file(".")).
       javaJdbc,
       javaEbean,
       cache,
-      "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv5"
+      "org.pac4j" % "play-pac4j_java" % "1.2.1.htrcv6"
         exclude("com.typesafe.play", "play-jdbc")
         exclude("com.typesafe.play", "play-cache"),
       "org.pac4j" % "pac4j-saml" % "1.5.1.htrcv2",
@@ -55,6 +58,7 @@ lazy val `htrc-portal` = (project in file(".")).
       "org.apache.amber" % "oauth2-resourceserver" % "0.22.1358727-wso2v3",
       "com.googlecode.json-simple" % "json-simple" % "1.1",
       "mysql" % "mysql-connector-java" % "5.1.27",
+      "org.wso2.carbon" % "org.wso2.carbon.claim.mgt.stub" % "4.0.0",
       "org.wso2.carbon" % "org.wso2.carbon.identity.oauth.stub" % "4.2.2",
       "org.wso2.carbon" % "org.wso2.carbon.user.mgt.stub" % "4.2.0",
       "org.wso2.carbon" % "org.wso2.carbon.identity.application.mgt.stub" % "4.2.0",

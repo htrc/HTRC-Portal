@@ -55,23 +55,20 @@ public class HTRCPortal extends JavaController {
 //        log.debug(userProfile.toString());
 
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
         if(userId == null){
             return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
         }
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
         if(!userManager.roleNameExists(userId)){
-            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userManager.getEmail(userId) + ". Please check your email and activate account. " +
+            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
                     "If you have not received your activation link, please contact us by email " +
                     " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
         }
         log.debug("Role name exists: " + userManager.roleNameExists(userId));
-        String userEmail = userManager.getEmail(userId);
-        session().put(PortalConstants.SESSION_EMAIL,userEmail);
         log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
         log.debug("User's access token:" + session(PortalConstants.SESSION_TOKEN));
-
-
         return redirect(routes.HTRCPortal.index());
     }
 

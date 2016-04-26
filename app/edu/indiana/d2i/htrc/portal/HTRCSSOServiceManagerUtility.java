@@ -1,6 +1,7 @@
 package edu.indiana.d2i.htrc.portal;
 
 
+import com.typesafe.config.ConfigValue;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -8,6 +9,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
 import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
 import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
+import org.wso2.carbon.claim.mgt.stub.ClaimManagementServiceStub;
 import org.wso2.carbon.identity.application.common.model.xsd.*;
 import org.wso2.carbon.identity.application.mgt.stub.IdentityApplicationManagementServiceIdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.mgt.stub.IdentityApplicationManagementServiceStub;
@@ -18,9 +20,14 @@ import org.wso2.carbon.identity.sso.saml.stub.IdentitySAMLSSOConfigServiceIdenti
 import org.wso2.carbon.identity.sso.saml.stub.IdentitySAMLSSOConfigServiceStub;
 import org.wso2.carbon.identity.sso.saml.stub.types.SAMLSSOServiceProviderDTO;
 import org.wso2.carbon.utils.NetworkUtils;
+import play.Configuration;
 import play.Logger;
+import play.Play;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class HTRCSSOServiceManagerUtility {
     private static Logger.ALogger log = play.Logger.of("application");
@@ -302,9 +309,34 @@ public class HTRCSSOServiceManagerUtility {
         PermissionsAndRoleConfig permissionsAndRoleConfig = new PermissionsAndRoleConfig();
         permissionsAndRoleConfig.setIdpRoles(new String[]{appName});
 
+        List<ClaimMapping> claimMappings = new ArrayList<>();
+        Configuration claimsConfig = Play.application().configuration().getConfig("service.provider.claims");
+
+        int i = 1;
+        for(Map.Entry<String, ConfigValue> claim: claimsConfig.entrySet()) {
+            Claim localClaim = new Claim();
+            localClaim.setClaimId(i);
+            localClaim.setClaimUri(claim.getValue().render().replace("\"",""));
+
+            Claim remoteClaim = new Claim();
+            remoteClaim.setClaimId(i);
+            remoteClaim.setClaimUri(claim.getKey());
+
+            ClaimMapping spClaimMapping = new ClaimMapping();
+            spClaimMapping.setDefaultValue(claim.getKey());
+            spClaimMapping.setLocalClaim(localClaim);
+            spClaimMapping.setRemoteClaim(remoteClaim);
+            spClaimMapping.setRequested(true);
+
+            claimMappings.add(spClaimMapping);
+
+            i++;
+        }
+
 
         ClaimConfig claimConfig = new ClaimConfig();
         claimConfig.setAlwaysSendMappedLocalSubjectId(false);
+        claimConfig.setClaimMappings(claimMappings.toArray(new ClaimMapping[claimMappings.size()]));
 
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setApplicationID(appId);
