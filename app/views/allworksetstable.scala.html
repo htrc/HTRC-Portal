@@ -1,4 +1,5 @@
 @(userId: String, worksets: List[edu.illinois.i3.htrc.registry.entities.workset.Workset])
+    @import edu.indiana.d2i.htrc.portal.PlayConfWrapper
 
 @main("Worksets", userId) {
     <div class="container">
@@ -44,7 +45,7 @@
                             @*<td>@w.getMetadata.getLastModified.toString.substring(0,19)</td>*@
                             <td style="min-width: 132px;">
                                 @if(w.getMetadata.getAuthor == userId){
-                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @play.Play.application().configuration().getString("blacklight.manage.url") ')" target="_blank">
+                                    <a class="btn btn-xs btn-success" onclick="blacklightLoggingWarning ( ' @PlayConfWrapper.blacklightManageUrl()')" target="_blank">
                                         <i class="icon-edit icon-white"></i> Modify</a>
                                 }
                                 <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadWorkset(w.getMetadata.getName, w.getMetadata.getAuthor)" target="_blank"><i class="icon-download-alt icon-white"></i> Download</a>

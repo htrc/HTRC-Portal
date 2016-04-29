@@ -49,7 +49,8 @@ public class PlayConfWrapper {
 
 
     // blacklight url
-    private static String blacklighturl = null;
+    private static String blacklightUrl = null;
+    private static String blacklightManageUrl = null;
 
     // registry properties
     private static String registryEPR = null;
@@ -268,10 +269,17 @@ public class PlayConfWrapper {
     }
 
     public static String blacklightUrl() {
-        if(blacklighturl == null){
-            blacklighturl = Play.application().configuration().getString(PortalConstants.BLACKLIGHT_URL);
+        if(blacklightUrl == null){
+            blacklightUrl = Play.application().configuration().getString(PortalConstants.BLACKLIGHT_URL);
         }
-        return blacklighturl;
+        return blacklightUrl;
+    }
+
+    public static String blacklightManageUrl() {
+        if(blacklightManageUrl == null){
+            blacklightManageUrl = Play.application().configuration().getString(PortalConstants.BLACKLIGHT_MANAGE_URL);
+        }
+        return blacklightManageUrl;
     }
 
     public static String registryEPR() {

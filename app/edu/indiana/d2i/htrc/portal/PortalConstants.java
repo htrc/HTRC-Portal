@@ -32,6 +32,7 @@ public class  PortalConstants {
 
     // blacklight url
     public static String BLACKLIGHT_URL = "blacklight.url";
+    public static String BLACKLIGHT_MANAGE_URL = "blacklight.manage.url";
 
     // oauth2 entries
     public static String OAUTH2_AUTHZ_ENDPOINT = "oauth2.auth.endpoint";
