@@ -7,7 +7,6 @@
   hljs.initHighlightingOnLoad();
 </script>
 <div class="container container-panel">
-  <div class="container">
     <div class="row">
       <div class="col-md-12">
 
@@ -20,7 +19,7 @@
       </div>
     </div>
     <!-- End Header Row-->
-    <div class="row" style="padding-right: 20px;">
+    <div class="row" >
       <div class="col-md-9">
         <p class="text-info">Note that this is a
                   <strong>beta</strong> data release. Please send
@@ -119,7 +118,7 @@
       <!--End About the Data-->
 
     </div>
-    <div class="row" style="padding-right: 20px;">
+    <div class="row" >
       <div class="col-md-12" >
         <h1>Feature File Documentation</h1>
               <p>The HTRC Extracted Features provides two JSON files
@@ -130,7 +129,7 @@
       </div>
     </div>
 
-    <div class="row" style="padding-right: 20px;">
+    <div class="row" >
       <div class="col-md-3">
         <h2 id="documentation-for-metadata">Metadata</h2>
               <p>A small amount of bibliographic metadata for
@@ -326,7 +325,7 @@
     </div>
     <!-- End row-->
 
-    <div class="row" style="padding-right: 20px;">
+    <div class="row" >
       <hr />
       <div class="col-md-12" >
         <h2 id="downloads">Get the Data</h2>
@@ -350,93 +349,33 @@
                                     (505 volumes).</p>
                           <h3 id="rsync">Rsync</h3>
 
-                                <p>Rsync will download each feature
-                                file individually, following a
-                                  pairtree directory structure.</p>
-                                      <p>To sync all the basic feature
-                                        files:</p>
-                                              <div class="row"
-                                                   style="padding-left: 28px;">
-                                                            <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/basic/ .</pre>
-                                              </div>
+                                <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
+                                <p>To sync all the basic feature files:</p>
+				<p><pre>rsync -av data.sharc.hathitrust.org::pd-features/basic/ .</pre></p>
 
+				<p><b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you are doing.</b></p>
+				<p>To sync all the advanced feature files:</p>
+				<p><pre>rsync -av data.sharc.hathitrust.org::pd-features/advanced/ .</pre></p>
 
-        <p>
-                  <b><em>Note that this data is 1.19 Terabytes!</em>
-                  Only download all of it if you know what you are
-                    doing.</b></p>
-        <p>To sync all the advanced feature files:</p>
-        <div class="row" style="padding-left: 28px;">
-                      <pre class="col-xs-8">rsync -av data.sharc.hathitrust.org::pd-features/advanced/ .</pre>
-        </div>
+			      <p>A randomly sorted listing of all the basic files is available in the following location:</p>
+			      <p><pre>rsync -azv data.sharc.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre></p>
 
-              <p>A randomly sorted listing of all the basic files is
-                available in the following location:</p>
-              <div class="row" style="padding-left: 28px;">
-                            <pre class="col-xs-8">rsync -azv data.sharc.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre>
-              </div>
+              		      <p>There is also an advanced file listing at</p>
+			      <p><pre>pd-features/listing/pd-advanced-file-listing.txt</pre></p>
+                    
+			      <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
+				<p>To rsync only the files in a given text file:</p>
+				<p><pre>rsync -av --files-from FILE.TXT data.sharc.hathitrust.org::pd-features/ .</pre></p>
 
-              There is also an advanced file listing at
-              <div class="row" style="padding-left: 28px;">
-                <pre class="col-xs-8">pd-features/listing/pd-advanced-file-listing.txt</pre>
-              </div>
-                    <p>Users hoping for a more flexible file listings
-                      can use rsync's --list-only flag.</p>
-                          <p>To rsync only the files in a given text
-                            file:</p>
-                                  <div class="row"
-                                       style="padding-left: 28px;">
-                                                <pre class="col-xs-8">rsync -av --files-from FILE.TXT data.sharc.hathitrust.org::pd-features/ .</pre>
-                                  </div>
+			  <h4 id="file-names">File names</h4>
+			  <p>Volume feature files use the volume's ID, with the following characters substituted: <em>:</em> to <em>+</em>, and <em>/</em> to <em>=</em>. This means that any list of HathiTrust public domain files can be used to download the corresponding feature files.</p>
 
-                                        <h4 id="file-names">File
-                                          names</h4>
-                                              <p>Volume feature files
-                                              use the volume's ID,
-                                              with the following
-                                                characters substituted:
-                                                <em>:</em> to
-                                                        <em>+</em>,
-                                                        and
-                                                                <em>/</em>
-                                                                to
-                                                                        <em>=</em>. This
-                                                                        means
-                                                                        that
-                                                                        any
-                                                                        list
-                                                                        of
-                                                                        HathiTrust
-                                                                        public
-                                                                        domain
-                                                                        files
-                                                                        can
-                                                                        be
-                                                                        used
-                                                                        to
-                                                                        download
-                                                                        the
-                                                                        corresponding
-                                                                        feature
-                                                                        files.</p>
-
-                                              <h3 id="workset-download">Workset
-                                                Download</h3>
-                                              To download the
-                                                Extracted Features
-                                                data for a specific
-                                                workset in the HTRC
-                                                Portal, there is an
-                                                algorithm that
-                                                generates the Rsync
-                                                download
-                                                script: <a href="https://htrc2.pti.indiana.edu/viewalgorithm?algorithmName=EF_Rsync_Script_Generator">EF
-                                                Rsync Script
-                                                Generator</a>.
-      </div>
+                           <h3 id="workset-download">Workset Download</h3>
+			   <p>To download the Extracted Features data for a specific workset in the HTRC Portal, there is an algorithm that generates the Rsync download script: <a href="https://htrc2.pti.indiana.edu/viewalgorithm?algorithmName=EF_Rsync_Script_Generator">EF Rsync Script Generator</a>.</p>
+</div>
 
     </div>
-    <div class="row" style="padding-right: 20px;">
+    <div class="row" >
 
       <!-- START ACKNOWLEDGEMENTS-->
       <div class="col-md-12"><h2>Acknowledgements</h2>
@@ -565,7 +504,7 @@
     </div>
     <!-- End documentation row-->
 
-    <div class="row-fluid"  style="padding-right: 20px;">
+    <div class="row-fluid" >
       <hr />
       <div class="col-md-4">
         <h4>Contact Us</h4>
@@ -587,7 +526,6 @@
       </div>
     </div>
 
-  </div>
 </div>
 <!-- End body container-->
 <script>
