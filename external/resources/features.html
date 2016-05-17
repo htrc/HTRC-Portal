@@ -1,11 +1,3 @@
-<!-- Highlight.js -->
-<link rel="stylesheet" href="@routes.Assets.at("
-      stylesheets/highlight.default.css ")">
-<script src="@routes.Assets.at(" javascripts/highlight.pack.js
-        ")"></script>
-<script>
-  hljs.initHighlightingOnLoad();
-</script>
 <div class="container container-panel">
     <div class="row">
       <div class="col-md-12">
@@ -338,34 +330,34 @@
               <h3 id="sample-files">Sample Files</h3>
                     <p>A sample of 100 extracted feature files is
                     available for download through your
-                      browser: <a href="http://data.sharc.hathitrust.org/data/EF/sample.tar">sample.tar</a>.</p>
+                      browser: <a href="http://data.analytics.hathitrust.org/data/EF/sample.tar">sample.tar</a>.</p>
                           <p>Also, thematic collections are available
                           to
-                          download: <a href="http://data.sharc.hathitrust.org/data/EF/docsouth_samples.tar">DocSouth</a>
+                          download: <a href="http://data.analytics.hathitrust.org/data/EF/docsouth_samples.tar">DocSouth</a>
                           (87
-                          volumes), <a href="http://data.sharc.hathitrust.org/data/EF/EEBO_samples.tar">EEBO</a>
+                          volumes), <a href="http://data.analytics.hathitrust.org/data/EF/EEBO_samples.tar">EEBO</a>
                             (355 volumes),
-                                    <a href="http://data.sharc.hathitrust.org/data/EF/ECCO_samples.tar">ECCO</a>
+                                    <a href="http://data.analytics.hathitrust.org/data/EF/ECCO_samples.tar">ECCO</a>
                                     (505 volumes).</p>
                           <h3 id="rsync">Rsync</h3>
 
                                 <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
                                 <p>To sync all the basic feature files:</p>
-				<p><pre>rsync -av data.sharc.hathitrust.org::pd-features/basic/ .</pre></p>
+				<p><pre>rsync -av data.analytics.hathitrust.org::pd-features/basic/ .</pre></p>
 
 				<p><b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you are doing.</b></p>
 				<p>To sync all the advanced feature files:</p>
-				<p><pre>rsync -av data.sharc.hathitrust.org::pd-features/advanced/ .</pre></p>
+				<p><pre>rsync -av data.analytics.hathitrust.org::pd-features/advanced/ .</pre></p>
 
 			      <p>A randomly sorted listing of all the basic files is available in the following location:</p>
-			      <p><pre>rsync -azv data.sharc.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre></p>
+			      <p><pre>rsync -azv data.analytics.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre></p>
 
               		      <p>There is also an advanced file listing at</p>
 			      <p><pre>pd-features/listing/pd-advanced-file-listing.txt</pre></p>
                     
 			      <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
 				<p>To rsync only the files in a given text file:</p>
-				<p><pre>rsync -av --files-from FILE.TXT data.sharc.hathitrust.org::pd-features/ .</pre></p>
+				<p><pre>rsync -av --files-from FILE.TXT data.analytics.hathitrust.org::pd-features/ .</pre></p>
 
 			  <h4 id="file-names">File names</h4>
 			  <p>Volume feature files use the volume's ID, with the following characters substituted: <em>:</em> to <em>+</em>, and <em>/</em> to <em>=</em>. This means that any list of HathiTrust public domain files can be used to download the corresponding feature files.</p>
