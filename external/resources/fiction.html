@@ -20,7 +20,7 @@
 
 <p>Many of the questions scholars want to ask about large collections of text can be posed using simplified representations &ndash; for instance, a list of the words in each volume, together with their frequencies. This dataset represents a first attempt to provide that information for English-language fiction, drama, and poetry published between 1700 and 1922, and contained in the HathiTrust Digital Library.</p>
 
-<p>The project combines two sources of information. The word counts themselves come from the HathiTrust Research Center (HTRC), which has tabulated them at the page level in <a href = "https://sharc.hathitrust.org/features">4.8 million public-domain volumes.</a> Information about genre comes from <a href = "http://dx.doi.org/10.6084/m9.figshare.1279201">a parallel project led by Ted Underwood,</a> and supported by the National Endowment for the Humanities and the American Council of Learned Societies. This project applied machine learning to recognize genre at the page level in 854,476 English-language volumes. Mapping genre at the page level is important because genres are almost always mixed within volumes. Volumes of poetry can have long nonfiction introductions; volumes of fiction can be followed by many pages of publishers' advertisements. Fortunately, text categories of this broad kind (fiction/nonfiction/poetry/drama/paratext) can be identified fairly accurately by statistical models.</p>
+<p>The project combines two sources of information. The word counts themselves come from the HathiTrust Research Center (HTRC), which has tabulated them at the page level in <a href = "https://analytics.hathitrust.org/features">4.8 million public-domain volumes.</a> Information about genre comes from <a href = "http://dx.doi.org/10.6084/m9.figshare.1279201">a parallel project led by Ted Underwood,</a> and supported by the National Endowment for the Humanities and the American Council of Learned Societies. This project applied machine learning to recognize genre at the page level in 854,476 English-language volumes. Mapping genre at the page level is important because genres are almost always mixed within volumes. Volumes of poetry can have long nonfiction introductions; volumes of fiction can be followed by many pages of publishers' advertisements. Fortunately, text categories of this broad kind (fiction/nonfiction/poetry/drama/paratext) can be identified fairly accurately by statistical models.</p>
 
 <p>Because both of these projects mapped volumes at the page level, their results can be collated to produce genre-specific datasets. Researchers who want access to the richest level of detail can do this for themselves, pairing the data and metadata described above in order to extract individual pages that belong to a given genre. To provide an easier point of access, we have done that pairing for you here, and aggregated pages at the volume level. So the fiction dataset below, for instance, contains only volumes that were identified as containing fiction, and in each case aggregates the wordcounts for <em>only the pages that were identified as fiction</em>.</p>
 
@@ -55,7 +55,7 @@
 
 <p>To normalize frequencies, researchers will also need a count of all words or all tokens counted. This can be created simply by summing the counts for the volume. For some purposes, you may want to limit this total to alphabetic tokens, or to words recognized by an English dictionary. (The latter option can be a simple way to compensate for the reduction in counts created by imperfect OCR.)</p>
 
-<p>The data provided here is drawn directly from the HTRC's <a href="https://sharc.hathitrust.org/features">extracted features dataset</a>, and reflects decisions about word boundaries and tokenization made as part of that extraction process. In order to provide data of manageable size and complexity, we have simplified the original structure by collapsing different parts of speech. For instance, we add together occurrences of "rose" (noun) and "rose" (verb) to produce a single count for the grapheme. We have also normalized all tokens to lower-case, whereas the original dataset is case-sensitive. Scholars who need the distinctions we removed can, of course, retrieve the original data.</p>
+<p>The data provided here is drawn directly from the HTRC's <a href="https://analytics.hathitrust.org/features">extracted features dataset</a>, and reflects decisions about word boundaries and tokenization made as part of that extraction process. In order to provide data of manageable size and complexity, we have simplified the original structure by collapsing different parts of speech. For instance, we add together occurrences of "rose" (noun) and "rose" (verb) to produce a single count for the grapheme. We have also normalized all tokens to lower-case, whereas the original dataset is case-sensitive. Scholars who need the distinctions we removed can, of course, retrieve the original data.</p>
 
 <h3>Resources for normalization and OCR correction</h3>
 <p>Optical character recognition makes errors. A constant level of randomly-distributed error is not a significant obstacle to research, but in practice OCR errors are not distributed randomly; they tend to cluster in cheaply-printed books, and especially in books printed before 1820. Scholars pursuing research across that temporal boundary may want to make an effort to minimize error. Resources to facilitate that process are provided in <a href="#resources">Resources</a> above; for instance, CorrectionRules.txt is a translation table that can be used to correct common OCR errors.<p>
@@ -115,62 +115,62 @@
     <div class="row">
       <div class="col-md-4">
         <h2 id="links to fiction">Fiction</h2>
-        	<p><a href="http://data.sharc.hathitrust.org/genre/fiction_metadata.csv">fiction_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_yearly_summary.csv">fiction_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_contextual_corrections.csv">fiction_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1700-1799.tar.gz">fiction_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1800-1834.tar.gz">fiction_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1835-1869.tar.gz">fiction_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1870-1879.tar.gz">fiction_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1880-1889.tar.gz">fiction_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1890-1894.tar.gz">fiction_1890-1894.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1895-1899.tar.gz">fiction_1895-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1900-1904.tar.gz">fiction_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1905-1909.tar.gz">fiction_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1910-1914.tar.gz">fiction_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1915-1919.tar.gz">fiction_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/fiction_1920-1922.tar.gz">fiction_1920-1922.tar.gz</a><p>
+        	<p><a href="http://data.analytics.hathitrust.org/genre/fiction_metadata.csv">fiction_metadata.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_yearly_summary.csv">fiction_yearly_summary.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_contextual_corrections.csv">fiction_contextual_corrections.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1700-1799.tar.gz">fiction_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1800-1834.tar.gz">fiction_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1835-1869.tar.gz">fiction_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1870-1879.tar.gz">fiction_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1880-1889.tar.gz">fiction_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1890-1894.tar.gz">fiction_1890-1894.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1895-1899.tar.gz">fiction_1895-1899.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1900-1904.tar.gz">fiction_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1905-1909.tar.gz">fiction_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1910-1914.tar.gz">fiction_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1915-1919.tar.gz">fiction_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/fiction_1920-1922.tar.gz">fiction_1920-1922.tar.gz</a><p>
       </div>
       <!--End Fiction-->
 
       <div class="col-md-4">
         <h2 id="links to poetry">Poetry</h2>
-    <p><a href="http://data.sharc.hathitrust.org/genre/poetry_metadata.csv">poetry_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_yearly_summary.csv">poetry_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_contextual_corrections.csv">poetry_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1700-1799.tar.gz">poetry_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1800-1834.tar.gz">poetry_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1835-1869.tar.gz">poetry_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1870-1879.tar.gz">poetry_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1880-1889.tar.gz">poetry_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1890-1894.tar.gz">poetry_1890-1894.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1895-1899.tar.gz">poetry_1895-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1900-1904.tar.gz">poetry_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1905-1909.tar.gz">poetry_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1910-1914.tar.gz">poetry_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1915-1919.tar.gz">poetry_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/poetry_1920-1922.tar.gz">poetry_1920-1922.tar.gz</a><p>
+    <p><a href="http://data.analytics.hathitrust.org/genre/poetry_metadata.csv">poetry_metadata.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_yearly_summary.csv">poetry_yearly_summary.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_contextual_corrections.csv">poetry_contextual_corrections.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1700-1799.tar.gz">poetry_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1800-1834.tar.gz">poetry_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1835-1869.tar.gz">poetry_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1870-1879.tar.gz">poetry_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1880-1889.tar.gz">poetry_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1890-1894.tar.gz">poetry_1890-1894.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1895-1899.tar.gz">poetry_1895-1899.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1900-1904.tar.gz">poetry_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1905-1909.tar.gz">poetry_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1910-1914.tar.gz">poetry_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1915-1919.tar.gz">poetry_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/poetry_1920-1922.tar.gz">poetry_1920-1922.tar.gz</a><p>
       </div>
       <!-- End poetry -->
 
 
       <div class="col-md-4" >
         <h2 id="links to drama">Drama</h2>
-        	<p><a href="http://data.sharc.hathitrust.org/genre/drama_metadata.csv">drama_metadata.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_yearly_summary.csv">drama_yearly_summary.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_contextual_corrections.csv">drama_contextual_corrections.csv</a></p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1700-1799.tar.gz">drama_1700-1799.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1800-1834.tar.gz">drama_1800-1834.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1835-1869.tar.gz">drama_1835-1869.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1870-1879.tar.gz">drama_1870-1879.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1880-1889.tar.gz">drama_1880-1889.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1890-1894.tar.gz">drama_1890-1894.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1895-1899.tar.gz">drama_1895-1899.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1900-1904.tar.gz">drama_1900-1904.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1905-1909.tar.gz">drama_1905-1909.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1910-1914.tar.gz">drama_1910-1914.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1915-1919.tar.gz">drama_1915-1919.tar.gz</a><p>
-		<p><a href="http://data.sharc.hathitrust.org/genre/drama_1920-1922.tar.gz">drama_1920-1922.tar.gz</a><p>
+        	<p><a href="http://data.analytics.hathitrust.org/genre/drama_metadata.csv">drama_metadata.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_yearly_summary.csv">drama_yearly_summary.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_contextual_corrections.csv">drama_contextual_corrections.csv</a></p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1700-1799.tar.gz">drama_1700-1799.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1800-1834.tar.gz">drama_1800-1834.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1835-1869.tar.gz">drama_1835-1869.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1870-1879.tar.gz">drama_1870-1879.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1880-1889.tar.gz">drama_1880-1889.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1890-1894.tar.gz">drama_1890-1894.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1895-1899.tar.gz">drama_1895-1899.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1900-1904.tar.gz">drama_1900-1904.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1905-1909.tar.gz">drama_1905-1909.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1910-1914.tar.gz">drama_1910-1914.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1915-1919.tar.gz">drama_1915-1919.tar.gz</a><p>
+		<p><a href="http://data.analytics.hathitrust.org/genre/drama_1920-1922.tar.gz">drama_1920-1922.tar.gz</a><p>
 	 </div>
       <!--End drama -->
     </div>
