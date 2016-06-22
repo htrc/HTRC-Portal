@@ -76,6 +76,7 @@ var wsNameInputKeyUp = function () {
 var inputFileChange = function () {
     var fileName = $(this).val();
     var validExtn = ".csv";
+    var validExtn1=".txt"
     var inputFileControlGroup = $('#inputfile-control-group');
     var inputFileWarnBlock = $('#inputfile-warn-block');
     var inputFileFeedback = $('#inputfile-feedback');
@@ -84,14 +85,18 @@ var inputFileChange = function () {
         inputFileCorrect = false;
         uploadHasError(inputFileControlGroup, inputFileFeedback);
         inputFileWarnBlock.html('Please add a CSV file.');
-    } else if(fileName.substr((fileName.length - validExtn.length),fileName.length) != validExtn) {
-        inputFileCorrect = false;
-        uploadHasError(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('Workset should be uploaded as a CSV file.');
-    }else {
+    } else if(fileName.substr((fileName.length - validExtn.length),fileName.length) == validExtn) {
         inputFileCorrect = true;
         uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
         inputFileWarnBlock.html('');
+    } else if(fileName.substr((fileName.length - validExtn1.length),fileName.length) == validExtn1){
+        inputFileCorrect = true;
+         uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
+         inputFileWarnBlock.html('');
+    }else {
+        inputFileCorrect = false;
+         uploadHasError(inputFileControlGroup, inputFileFeedback);
+         inputFileWarnBlock.html('Workset should be uploaded as a CSV or text file.');
     }
 };
 

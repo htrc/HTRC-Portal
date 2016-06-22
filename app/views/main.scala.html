@@ -5,30 +5,51 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title> HTRC Portal - @title </title>
-        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">
-            <!-- Bootstrap -->
-        <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/flat.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/tomorrow.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
-        <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+<head>
+    <title> HTRC Portal - @title </title>
+    <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="600">
+    <!-- Bootstrap -->
+    <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/flat.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/tomorrow.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
+    <!--<script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>-->
         <script src="@routes.Assets.at("javascripts/bowser.min.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/uploadws.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-download-tracking.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-download-tracking.js")"></script>
 
     </head>
     <body>
+        <link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="assets/bower_components/chosen/chosen.css" />
+       <link rel="stylesheet" href="assets/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css" />
+       <link rel="stylesheet" href="assets/app/bookworm.gui.css"/>
+
+        <link rel="stylesheet" href="assets/bower_components/bootstrap/dist/css/bootstrap.css"/>
+
+       <!-- <script src="assets/bower_components/jquery/dist/jquery.min.js"></script>-->
+    <script src="bower_components/jquery-ui-multiselect-widget/src/jquery.multiselect.min.js" type="text/javascript"></script>
+    <script src="assets/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js" type="text/javascript"></script>
+    <script src="assets/bower_components/keymaster/keymaster.js" type="text/javascript"></script>
+    <script src="assets/bower_components/highcharts/highcharts.js" type="text/javascript"></script>
+    <script src="assets/bower_components/highcharts-export-csv/highcharts-export-csv.js"></script>
+    <script src="assets/bower_components/highcharts/modules/exporting.js"></script>
+    <script src="assets/bower_components/lodash/dist/lodash.min.js" type="text/javascript"></script>
+   <script src="assets/bower_components/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+   <script src="assets/bower_components/chosen/chosen.jquery.js" type="text/javascript"></script>
+    <script src="https://apis.google.com/js/client.js?onload=googleApiLoaded"></script>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+    <script type="text/javascript" src="assets/common/js/twitter_google_links.js"></script>
+    <script type="text/javascript" src="assets/app/bookworm.gui.js"></script>
         <nav class="navbar navbar-default navbar-fixed-top navbar-htrc" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -40,7 +61,7 @@
                     </button>
                     <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
                     width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;" alt=" ">
-                        HTRC Portal
+
                     </a>
                 </div>
 
@@ -48,6 +69,7 @@
                     <ul class="nav navbar-nav">
                         <li><a href="@routes.HTRCPortal.index()">Home</a></li>
                         <li><a href="@routes.HTRCPortal.about()">About</a>
+                        <li><a href="@routes.HTRCPortal.bookWorm()">BookWorm</a>
                         </li>
 
                         <li class="dropdown">
@@ -239,7 +261,6 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
             ga('create', '@PlayConfWrapper.googleAnalyticsCode()', 'auto');
             ga('send', 'pageview');
         </script>
