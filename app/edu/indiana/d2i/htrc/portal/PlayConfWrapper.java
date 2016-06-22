@@ -132,6 +132,11 @@ public class PlayConfWrapper {
     // Fiction dataset page
     private static String fictionpage = null;
 
+    //BookWorm Page
+
+    private static String bookWormPage = null;
+
+
 
     public static String agentEndpoint() {
         if(agentEndpoint == null){
@@ -590,7 +595,12 @@ public class PlayConfWrapper {
         }
         return featurespage;
     }
-
+    public static String bookWormPage(){
+        if(bookWormPage == null){
+            bookWormPage= Play.application().configuration().getString(PortalConstants.BOOKWORM_PAGE);
+        }
+        return bookWormPage;
+    }
     public static String fictionPage(){
         if(fictionpage == null){
             fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
