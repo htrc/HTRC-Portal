@@ -7,17 +7,17 @@
 <title>Bookworm</title>
 <!--<link rel="stylesheet" href="assets/app/bookworm.gui.css"/>-->
 
-<div class="container">
+<div class="container container-panel">
 
     <div class="row">
 
-        <div id="header">
+        <div class="col-md-12" id="header">
 
             <div id="header_brand">
-                <h1><a href="http://bookworm.culturomics.org" target="_blank">bookworm:</a> <font id="sourceName1"></font></h1>
-                <p>
-                    <span class="subtitle">Search for trends in hundreds of thousands of <span class="bw-texttype">texts</span> at <span id="sourceURL"></span></span>
-                </p>
+                <h1><a href="http://bookworm.culturomics.org" target="_blank">Bookworm:</a> <a href="http://hathitrust.org/" target="_blank"><font id="sourceName1"></font></a>
+                <br><small>
+                    <span class="subtitle">Search for trends in hundreds of thousands of <span class="bw-texttype">texts</span> at <span id="sourceURL"></span></span></small>
+                </h1>
             </div>
 
         </div>
@@ -27,93 +27,109 @@
     <div class="row">
 
         <div class="col-xs-12">
+            <table class="table">
+                <tr>
+                    <td style="border-top: none;">
+                        <div id="search_queries">
+                        </div>
+                    </td>
+                    <td style="border-top: none;">
+                        <ul class="nav nav-pills navbar-right" role="tablist">
+                            <li role="presentation" class="dropdown">
+                                <a id="time-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-time"  aria-hidden="true"></span> <span class="hidden-xs">Dates </span><span class="caret"></span>
+                                </a>
+                                <ul id="time-drop-menu" class="dropdown-menu" aria-labelledby="time-drop">
+                                    <li class="dropdown-header">Date Limits</li>
+                                    <li><a href="#"><div id="year-slider"></div></a></li>
+                                    <li><a href="#"><p id="time-val" style="width: 210px"></p></a></li>
+                                    <li class="dropdown-header">Smoothing</li>
+                                    <li><a href="#"><div id="smoothing-slider" width="175px"></div></a></li>
+                                    <li><a href="#"><p id="smoothing-val">t</p></a></li>
+                                </ul>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a id="metric-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-stats"  aria-hidden="true"></span> <span class="hidden-xs">Metric </span><span class="caret"></span>
+                                </a>
+                                <ul id="metric-drop-menu" class="dropdown-menu counttype" aria-labelledby="metric-drop">
+                                    <li class="dropdown-header">Metric</li>
+                                    <li data-val="WordsPerMillion" data-label="Words per Million"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Words per Million</a></li>
+                                    <li data-val="TextPercent" data-label="% of Texts"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Percent of <span class="bw-texttype">Text</span></a></li>
+                                    <li data-val="WordCount" data-label="Number of Words"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Number of Words</a></li>
+                                    <li data-val="TextCount" data-label="Number of Texts"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Number of <span class="bw-texttype">Text</span></a></li>
+                                </ul>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a id="case-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span class="glyphicon glyphicon-sort"  aria-hidden="true"></span> <span class="hidden-xs">Case </span><span class="caret"></span>
+                                </a>
+                                <ul id="case-drop-menu" class="dropdown-menu collationtype" aria-labelledby="case-drop">
+                                    <li class="dropdown-header">Case</li>
+                                    <li data-val="Case_Sensitive"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Case-Sensitive</a></li>
+                                    <li data-val="Case_Insensitive"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Case-Insensitive</a></li>
+                                </ul>
+                            </li>
 
-            <ul class="nav nav-pills navbar-right" role="tablist">
-                <li role="presentation" class="dropdown">
-                    <a id="time-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-time"  aria-hidden="true"></span> <span class="hidden-xs">Dates </span><span class="caret"></span>
-                    </a>
-                    <ul id="time-drop-menu" class="dropdown-menu" aria-labelledby="time-drop">
-                        <li class="dropdown-header">Date Limits</li>
-                        <li><a href="#"><div id="year-slider"></div></a></li>
-                        <li><a href="#"><p id="time-val" style="width: 210px"></p></a></li>
-                        <li class="dropdown-header">Smoothing</li>
-                        <li><a href="#"><div id="smoothing-slider" width="175px"></div></a></li>
-                        <li><a href="#"><p id="smoothing-val">t</p></a></li>
-                    </ul>
-                </li>
-                <li role="presentation" class="dropdown">
-                    <a id="metric-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-stats"  aria-hidden="true"></span> <span class="hidden-xs">Metric </span><span class="caret"></span>
-                    </a>
-                    <ul id="metric-drop-menu" class="dropdown-menu counttype" aria-labelledby="metric-drop">
-                        <li class="dropdown-header">Metric</li>
-                        <li data-val="WordsPerMillion" data-label="Words per Million"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Words per Million</a></li>
-                        <li data-val="TextPercent" data-label="% of Texts"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Percent of <span class="bw-texttype">Text</span></a></li>
-                        <li data-val="WordCount" data-label="Number of Words"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Number of Words</a></li>
-                        <li data-val="TextCount" data-label="Number of Texts"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Number of <span class="bw-texttype">Text</span></a></li>
-                    </ul>
-                </li>
-                <li role="presentation" class="dropdown">
-                    <a id="case-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-sort"  aria-hidden="true"></span> <span class="hidden-xs">Case </span><span class="caret"></span>
-                    </a>
-                    <ul id="case-drop-menu" class="dropdown-menu collationtype" aria-labelledby="case-drop">
-                        <li class="dropdown-header">Case</li>
-                        <li data-val="Case_Sensitive"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Case-Sensitive</a></li>
-                        <li data-val="Case_Insensitive"><a href="#"><span class="glyphicon glyphicon-ok bw-checkmark" aria-hidden="true"></span> Case-Insensitive</a></li>
-                    </ul>
-                </li>
+                            <li><button class='btn btn-primary search-btn search-bw' rel='tooltip' title='Search the corpus!'>
+                                <span class="glyphicon glyphicon-search"  aria-hidden="true"></span> Search
+                            </button></li>
+                        </ul>
+                    </td>
 
-                <li><button class='btn btn-primary search-btn search-bw' rel='tooltip' title='Search the corpus!'>
-                    <span class="glyphicon glyphicon-search"  aria-hidden="true"></span> Search
-                </button></li>
-            </ul>
+                </tr>
+            </table>
+
+
 
 
         </div>
 
-        <div class="col-xs-12 col-sm-9 col-md-10" id="search_queries">
-        </div>
 
-        <div class="pull-right" class="minor-controls">
-            <ul class="nav nav-pills" role="tablist">
-                <li role="presentation" class="dropdown">
-                    <a id="link-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-label="Link" aria-haspopup="true" aria-expanded="false" title="Link">
-                        <span class="glyphicon glyphicon-link"  aria-hidden="true"></span>
-                    </a>
 
-                    <ul id="link-drop-menu" class="dropdown-menu permalink" aria-labelledby="link-drop">
-                        <li class="dropdown-header">Copy this link</li>
-                        <li class="dropdown-padding" id="permalink"><input type="text"></input></li>
-                    </ul>
-                </li>
+        <div class="col-xs-12" class="minor-controls">
+            <table class="table">
+                <tr>
+                    <td style="border-top: none;">
+                        <ul class="nav nav-pills navbar-right" role="tablist">
+                            <li role="presentation" class="dropdown">
+                                <a id="link-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-label="Link" aria-haspopup="true" aria-expanded="false" title="Link">
+                                    <span class="glyphicon glyphicon-link"  aria-hidden="true"></span>
+                                </a>
 
-                <li role="presentation" class="dropdown">
-                    <a id="info-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Info">
-                        <span class="glyphicon glyphicon-info-sign"  aria-hidden="true"></span>
-                    </a>
+                                <ul id="link-drop-menu" class="dropdown-menu permalink" aria-labelledby="link-drop">
+                                    <li class="dropdown-header">Copy this link</li>
+                                    <li class="dropdown-padding" id="permalink"><input type="text"></input></li>
+                                </ul>
+                            </li>
 
-                    <ul id="info-drop-menu" class="dropdown-menu" aria-labelledby="info-drop">
-                        <form class='dropdown-padding'>Bookworm was created by Benjamin Schmidt (Department of History, Northeastern), Matt Nicklay, Neva Cherniavsky Durand, Martin Camacho, and
-                            Erez Lieberman Aiden at the <a href="http://www.culturomics.org" target="_blank">Cultural Observatory</a>. It enables you to visually explore lexical trends.
-                            Bookworm is hosted through the&nbsp;generous support of the <a href="http://www.opensciencedatacloud.org/" target="_blank">Open Science Data Cloud</a>.
-                            If you use it in an academic publication, please include a link to <a href="http://bookworm.culturomics.org/" target="_blank">bookworm.culturomics.org</a>.
-                        </form>
-                    </ul>
-                </li>
+                            <li role="presentation" class="dropdown">
+                                <a id="info-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Info">
+                                    <span class="glyphicon glyphicon-info-sign"  aria-hidden="true"></span>
+                                </a>
 
-                <li role="presentation" class="dropdown">
-                    <a id="export-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Export">
-                        <span class="glyphicon glyphicon-cloud-download"  aria-hidden="true"></span>
-                    </a>
+                                <ul id="info-drop-menu" class="dropdown-menu" aria-labelledby="info-drop">
+                                    <form class='dropdown-padding'>Bookworm was created by Benjamin Schmidt (Department of History, Northeastern), Matt Nicklay, Neva Cherniavsky Durand, Martin Camacho, and
+                                        Erez Lieberman Aiden at the <a href="http://www.culturomics.org" target="_blank">Cultural Observatory</a>. It enables you to visually explore lexical trends.
+                                        Bookworm is hosted through the&nbsp;generous support of the <a href="http://www.opensciencedatacloud.org/" target="_blank">Open Science Data Cloud</a>.
+                                        If you use it in an academic publication, please include a link to <a href="http://bookworm.culturomics.org/" target="_blank">bookworm.culturomics.org</a>.
+                                    </form>
+                                </ul>
+                            </li>
 
-                    <ul id="export-drop-menu" class="dropdown-menu" aria-labelledby="info-drop">
-                        <li><a href="#" class="bw-export-png">Export PNG</a></li>
-                        <li><a href="#" class="bw-export-pdf">Export PDF</a></li>
-                    </ul>
-                </li>
-            </ul>
+                            <li role="presentation" class="dropdown">
+                                <a id="export-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Export">
+                                    <span class="glyphicon glyphicon-cloud-download"  aria-hidden="true"></span>
+                                </a>
+
+                                <ul id="export-drop-menu" class="dropdown-menu" aria-labelledby="info-drop">
+                                    <li><a href="#" class="bw-export-png">Export PNG</a></li>
+                                    <li><a href="#" class="bw-export-pdf">Export PDF</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </td>
+                </tr></table>
         </div>
     </div>
 
@@ -130,46 +146,46 @@
         </div>
 
         <div class="row">
-
-
-            <div id="social">
-                <table cellspacing="0">
+            <div class="social col-xs-12 right">
+                <table class="table">
                     <tr>
-                        <td style="text-align: right;">
+                        <td style="text-align: right; float:right; border-top: none;">
                             <div id="fb-root"></div>
                             <script>
-								window.fbAsyncInit = function() {FB.init({status: true, xfbml: true});};
-								(function(d, s, id){
-									var js, fjs = d.getElementsByTagName(s)[0];
-									if (d.getElementById(id)) {return;}
-									js = d.createElement(s); js.id = id;
-									js.src = "//connect.facebook.net/en_US/all.js";
-									fjs.parentNode.insertBefore(js, fjs);
-								}(document, 'script', 'facebook-jssdk'));
-							</script>
+                                window.fbAsyncInit = function() {FB.init({status: true, xfbml: true});};
+                                (function(d, s, id){
+                                    var js, fjs = d.getElementsByTagName(s)[0];
+                                    if (d.getElementById(id)) {return;}
+                                    js = d.createElement(s); js.id = id;
+                                    js.src = "//connect.facebook.net/en_US/all.js";
+                                    fjs.parentNode.insertBefore(js, fjs);
+                                }(document, 'script', 'facebook-jssdk'));
+                            </script>
                         </td>
 
-                        <td style="text-align: right;float:right;">
+                        <td style="text-align: right; float:right; border-top: none;">
                             <div id="tweet_container"></div>
                         </td>
 
-                        <td style="text-align: right;float:right;">
+                        <td style="text-align: right; float:right; border-top: none;">
                             <g:plusone size="small" width="10" annotation="none" href="http://bookworm.culturomics.org"></g:plusone>
                             <script type="text/javascript">
-								(function () {
-									var po = document.createElement('script');
-									po.type = 'text/javascript';
-									po.async = true;
-									po.src = 'https://apis.google.com/js/plusone.js';
-									var s = document.getElementsByTagName('script')[0];
-									s.parentNode.insertBefore(po, s);
-								})();
-							</script>
+                                (function () {
+                                    var po = document.createElement('script');
+                                    po.type = 'text/javascript';
+                                    po.async = true;
+                                    po.src = 'https://apis.google.com/js/plusone.js';
+                                    var s = document.getElementsByTagName('script')[0];
+                                    s.parentNode.insertBefore(po, s);
+                                })();
+                            </script>
                         </td>
-
                     </tr>
+
+
                 </table>
             </div>
+
         </div>
 
         <div style="display:none">
