@@ -75,28 +75,28 @@ var wsNameInputKeyUp = function () {
 
 var inputFileChange = function () {
     var fileName = $(this).val();
-    var validExtn = ".csv";
-    var validExtn1=".txt"
+    var validExtns = [".csv",".txt"];
+
     var inputFileControlGroup = $('#inputfile-control-group');
     var inputFileWarnBlock = $('#inputfile-warn-block');
     var inputFileFeedback = $('#inputfile-feedback');
 
-    if (fileName.length == 0) {
-        inputFileCorrect = false;
-        uploadHasError(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('Please add a CSV file.');
-    } else if(fileName.substr((fileName.length - validExtn.length),fileName.length) == validExtn) {
-        inputFileCorrect = true;
-        uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('');
-    } else if(fileName.substr((fileName.length - validExtn1.length),fileName.length) == validExtn1){
-        inputFileCorrect = true;
-         uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
-         inputFileWarnBlock.html('');
+    if (fileName.length != 0) {
+        for (var i = 0; i < validExtns.length; i++) {
+            if (fileName.substr((fileName.length - validExtns[i].length), fileName.length) == validExtns[i]) {
+                inputFileCorrect = true;
+                uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
+                inputFileWarnBlock.html('');
+            } else {
+                inputFileCorrect = false;
+                uploadHasError(inputFileControlGroup, inputFileFeedback);
+                inputFileWarnBlock.html('Workset should be uploaded as a CSV or TXT file.');
+            }
+        }
     }else {
         inputFileCorrect = false;
-         uploadHasError(inputFileControlGroup, inputFileFeedback);
-         inputFileWarnBlock.html('Workset should be uploaded as a CSV or text file.');
+        uploadHasError(inputFileControlGroup, inputFileFeedback);
+        inputFileWarnBlock.html('Please upload a file.');
     }
 };
 

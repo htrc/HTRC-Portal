@@ -9,7 +9,7 @@
             </div>
             <div class="panel-body">
                 @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
-                    <p>Workset must be in CSV(comma-separated-values), TSV(tab-seperated-values) or TXT format.</p>
+                    <p>Workset must be in CSV(comma-separated-values) or TXT format.</p>
                     <div class="form-group has-feedback" id="wsname-control-group">
                         <label for="uploadWorksetName" class="control-label">Workset Name</label>
                         <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="required" aria-describedby="wsname-feedback-status"/>
@@ -32,7 +32,7 @@
                         <span id="inputfile-feedback" class="form-control-feedback" aria-hidden="true"></span>
                         <span id="inputfile-feedback-status" class="sr-only">(success)</span>
                         <span class="help-block">
-                            You can only upload worksets as text files that are in CSV (comma-separated-values) format.<br>
+                            You can only upload worksets as CSV(comma-separated-values)or TXT format..<br>
                             <span id="inputfile-warn-block" class="warn-block"></span>
                         </span>
                     </div>
