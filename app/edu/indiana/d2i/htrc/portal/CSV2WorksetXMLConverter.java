@@ -7,7 +7,9 @@ import play.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.List;
 
@@ -28,8 +30,19 @@ public class CSV2WorksetXMLConverter {
             Element volumesEle = volumesDoc.createElement("volumes");
             volumesDoc.appendChild(volumesEle);
 
-            au.com.bytecode.opencsv.CSVReader csvReader = new au.com.bytecode.opencsv.CSVReader(new FileReader(csv));
-
+            FileInputStream fstream = new FileInputStream(csv);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(csv));
+            String readCSVData = bufferedReader.readLine();
+            String [] tabData = readCSVData.split("\t");
+            String[] commaData = readCSVData.split(",");
+            au.com.bytecode.opencsv.CSVReader csvReader = null;
+            if (tabData.length>=commaData.length) {
+                csvReader = new au.com.bytecode.opencsv.CSVReader(new FileReader(csv), '\t');
+            }
+            else {
+               csvReader = new au.com.bytecode.opencsv.CSVReader(new FileReader(csv));
+            }
+            //au.com.bytecode.opencsv.CSVReader csvReader= new au.com.bytecode.opencsv.CSVReader(new FileReader(csv));
             List<String[]> rows = csvReader.readAll();
             if (rows.size() <= 0) {
                 log.warn("Empty Workset CSV.");
