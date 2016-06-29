@@ -82,16 +82,14 @@ var inputFileChange = function () {
     var inputFileFeedback = $('#inputfile-feedback');
 
     if (fileName.length != 0) {
-        for (var i = 0; i < validExtns.length; i++) {
-            if (fileName.substr((fileName.length - validExtns[i].length), fileName.length) == validExtns[i]) {
-                inputFileCorrect = true;
-                uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
-                inputFileWarnBlock.html('');
-            } else {
-                inputFileCorrect = false;
-                uploadHasError(inputFileControlGroup, inputFileFeedback);
-                inputFileWarnBlock.html('Workset should be uploaded as a CSV or TXT file.');
-            }
+        if (validExtns.indexOf(fileName.substr(fileName.lastIndexOf('.'))) > -1){
+            inputFileCorrect = true;
+            uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
+            inputFileWarnBlock.html('');
+        } else {
+            inputFileCorrect = false;
+            uploadHasError(inputFileControlGroup, inputFileFeedback);
+            inputFileWarnBlock.html('Workset should be uploaded as a CSV or TXT file.');
         }
     }else {
         inputFileCorrect = false;
