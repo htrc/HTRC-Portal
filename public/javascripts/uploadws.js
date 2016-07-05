@@ -52,10 +52,10 @@ var wsNameInputKeyUp = function () {
     var wsNameWarnBlock = $('#wsname-warn-block');
     var wsNameFeedback = $('#wsname-feedback');
 
-    if (wsName.indexOf(' ') >= 0 || wsName.match('[^a-zA-Z0-9_]')) {
+    if (wsName.indexOf(' ') >= 0 || wsName.indexOf('\'') >= 0 || wsName.match('[&?~!@#;%^*+={}|<>,"]') || wsName.match(/\\$/) || wsName.indexOf('\[') >= 0 || wsName.indexOf('\]') >= 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('Workset name contains a space or a special character!');
+        wsNameWarnBlock.html('Workset name contains illegal characters(&?~!@#;%^*+={}|<>,\'"\\) or spaces.');
     } else if (wsName.length == 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);

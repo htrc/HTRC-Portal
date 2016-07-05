@@ -171,7 +171,7 @@ public class WorksetManagement extends JavaController {
 
             try {
                 Document volumesDoc = CSV2WorksetXMLConverter.convert(csvFile);
-                if(worksetName == null || worksetName[0].length() <= 0){
+                if(worksetName[0].length() <= 0){
                     wsName = FilenameUtils.removeExtension(csvFileName);
                 } else {
                     wsName = worksetName[0];
