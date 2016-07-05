@@ -71,37 +71,45 @@
                             <div class="volume-list">
                             @for(v <- volumeList){
                                 <div class="volume">
-                                    <h4><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp;
-                                        @if(v.getTitle != null){
-                                            <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a>
-                                        }else{
-                                            There is no title, just letting you know.
-                                        }
-                                        </h4>
+                                    <h4 ><span style="color: #444;">@{volumeList.indexOf(v) + 1}</span>&nbsp; </h4>
+                                    @if(v.getTitle != null){
+                                    <a href="http://babel.hathitrust.org/cgi/pt?id=@v.getVolumeId;view=1up;seq=1" target="_blank">@v.getTitle</a>
                                     <dl class="volume-details">
                                         <dt class="volume-id">Volume Id:</dt>
                                         <dd class="volume-id">@v.getVolumeId</dd>
                                         <dt class="volume-author">Author:</dt>
                                         @if(v.getFemaleAuthor != null){
-                                            <dd class="volume-author">@v.getFemaleAuthor
-                                                <i>(F)</i>
-                                            </dd>
+                                        <dd class="volume-author">@v.getFemaleAuthor
+                                            <i>(F)</i>
+                                        </dd>
                                         }
                                         @if(v.getMaleAuthor != null){
-                                            <dd class="volume-author">@v.getMaleAuthor
-                                                <i>(M)</i>
-                                            </dd>
+                                        <dd class="volume-author">@v.getMaleAuthor
+                                            <i>(M)</i>
+                                        </dd>
                                         }
                                         @if(v.getGenderUnkownAuthor != null){
-                                            <dd class="volume-author">@v.getGenderUnkownAuthor
-                                                <i>(U)</i>
-                                            </dd>
+                                        <dd class="volume-author">@v.getGenderUnkownAuthor
+                                            <i>(U)</i>
+                                        </dd>
                                         }
                                         <dt class="volume-pageCount">Page Count[HTRC]:</dt>
                                         <dd class="volume-pageCount">@v.getPageCount</dd>
                                         <dt class="volume-wordCount">Word Count[HTRC]:</dt>
                                         <dd class="volume-wordCount">@v.getWordCount</dd>
                                     </dl>
+                                    }else{
+                                    <div  class="alert alert-warning fade in" >
+                                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                                        <strong>Caution! </strong> Title not retrieved.</div>
+                                    <dl class="volume-details">
+                                        <dt class="volume-id">Volume Id:</dt>
+                                        <dd class="volume-id">@v.getVolumeId</dd>
+                                    </dl>
+
+                                    }
+
+
                                 </div>
                             }
                             </div>
