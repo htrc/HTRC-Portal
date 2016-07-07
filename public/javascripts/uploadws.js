@@ -55,7 +55,7 @@ var wsNameInputKeyUp = function () {
     if (wsName.indexOf(' ') >= 0 || wsName.indexOf('\'') >= 0 || wsName.match('[&?~!@#;%^*+={}|<>,"]') || wsName.match(/\\$/) || wsName.indexOf('\[') >= 0 || wsName.indexOf('\]') >= 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('Workset name contains illegal characters(&?~!@#;%^*+={}|<>,\'"\\) or spaces.');
+        wsNameWarnBlock.html('Workset name contains illegal characters &?~!@#;%^*+={}|<>,\'"\\ or spaces.');
     } else if (wsName.length == 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
