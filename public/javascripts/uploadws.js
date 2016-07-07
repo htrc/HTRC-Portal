@@ -52,10 +52,10 @@ var wsNameInputKeyUp = function () {
     var wsNameWarnBlock = $('#wsname-warn-block');
     var wsNameFeedback = $('#wsname-feedback');
 
-    if (wsName.indexOf(' ') >= 0 || wsName.match('[^a-zA-Z0-9_]')) {
+    if (wsName.indexOf(' ') >= 0 || wsName.indexOf('\'') >= 0 || wsName.match('[&?~!@#;%^*+={}|<>,"]') || wsName.match(/\\$/) || wsName.indexOf('\[') >= 0 || wsName.indexOf('\]') >= 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
-        wsNameWarnBlock.html('Workset name contains a space or a special character!');
+        wsNameWarnBlock.html('Workset name contains illegal characters &?~!@#;%^*+={}|<>,\'"\\ or spaces.');
     } else if (wsName.length == 0) {
         wsNameCorrect = false;
         uploadHasError(wsNameControlGroup, wsNameFeedback);
@@ -75,23 +75,26 @@ var wsNameInputKeyUp = function () {
 
 var inputFileChange = function () {
     var fileName = $(this).val();
-    var validExtn = ".csv";
+    var validExtns = [".csv",".txt"];
+
     var inputFileControlGroup = $('#inputfile-control-group');
     var inputFileWarnBlock = $('#inputfile-warn-block');
     var inputFileFeedback = $('#inputfile-feedback');
 
-    if (fileName.length == 0) {
-        inputFileCorrect = false;
-        uploadHasError(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('Please add a CSV file.');
-    } else if(fileName.substr((fileName.length - validExtn.length),fileName.length) != validExtn) {
-        inputFileCorrect = false;
-        uploadHasError(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('Workset should be uploaded as a CSV file.');
+    if (fileName.length != 0) {
+        if (validExtns.indexOf(fileName.substr(fileName.lastIndexOf('.'))) > -1){
+            inputFileCorrect = true;
+            uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
+            inputFileWarnBlock.html('');
+        } else {
+            inputFileCorrect = false;
+            uploadHasError(inputFileControlGroup, inputFileFeedback);
+            inputFileWarnBlock.html('Workset should be uploaded as a CSV or TXT file.');
+        }
     }else {
-        inputFileCorrect = true;
-        uploadHasSuccess(inputFileControlGroup, inputFileFeedback);
-        inputFileWarnBlock.html('');
+        inputFileCorrect = false;
+        uploadHasError(inputFileControlGroup, inputFileFeedback);
+        inputFileWarnBlock.html('Please upload a file.');
     }
 };
 

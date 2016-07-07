@@ -9,7 +9,7 @@
             </div>
             <div class="panel-body">
                 @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
-                    <p>You can only upload worksets as text files that are in CSV (comma-separated-values) format.</p>
+                    <p>Workset must be in CSV(comma-separated-values) or TXT format.</p>
                     <div class="form-group has-feedback" id="wsname-control-group">
                         <label for="uploadWorksetName" class="control-label">Workset Name</label>
                         <input type="text" id="uploadWorksetName" class="form-control" name="uploadWorksetName" placeholder="Workset Name" required="required" aria-describedby="wsname-feedback-status"/>
@@ -18,7 +18,7 @@
                         @*<div id="workset_name_alert_placeholder">*@
                         @*</div>*@
                         <span class="help-block">
-                            Only characters A-Z, 0-9, or _ allowed.<br>
+                            Only characters A-Z 0-9 ( )- or _ allowed.<br>
                             <span id="wsname-warn-block" class="warn-block"></span>
                         </span>
                     </div>
@@ -28,11 +28,11 @@
                     </div>
                     <div class="form-group has-feedback" id="inputfile-control-group">
                         <label for="inputCSV">CSV File:</label>
-                        <input type="file" name="csv" accept="text/csv" id="inputCSV" required="required">
+                        <input type="file" name="csv" accept="text/csv,text/plain" id="inputCSV" required="required">
                         <span id="inputfile-feedback" class="form-control-feedback" aria-hidden="true"></span>
                         <span id="inputfile-feedback-status" class="sr-only">(success)</span>
                         <span class="help-block">
-                            You can only upload worksets as text files that are in CSV (comma-separated-values) format.<br>
+                            You can only upload worksets as CSV(comma-separated-values)or TXT format..<br>
                             <span id="inputfile-warn-block" class="warn-block"></span>
                         </span>
                     </div>
