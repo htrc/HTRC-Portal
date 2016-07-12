@@ -1,5 +1,5 @@
 @(t: Throwable, userId: String)
-
+    @import edu.indiana.d2i.htrc.portal.PlayConfWrapper
 
 @main("Internal Server Error", userId) {
     <div class="container container-panel" style="padding-top : 15 px ; padding-bottom : 15 px ;">
@@ -8,6 +8,6 @@
             @*Oops, looks like something went wrong. It's not you. It's us.*@
         </h2>
         <p style="text-align: center;">If you would like to help, please report what you were doing just before
-            the problem to our support email <a href="mailto:htrc-tech-help-l@@list.indiana.edu">htrc-tech-help-l@@list.indiana.edu</a></p>
+            the problem to our support email <a href="mailto:@PlayConfWrapper.supportEmail()">@PlayConfWrapper.supportEmail()</a></p>
     </div>
 }

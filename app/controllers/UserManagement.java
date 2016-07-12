@@ -44,7 +44,7 @@ public class UserManagement extends JavaController {
         return ok(gotopage.render("Welcome to HTRC! You account activation link was sent to "
                 + signUpForm.get().email +
                 ". If you don't receive your activation link within 5 minutes, please contact us by email " +
-                " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
+                " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(), null));
     }
 
     public static Result activateAccount(String token) {
@@ -61,7 +61,7 @@ public class UserManagement extends JavaController {
             }
             return ok(gotopage.render("Your account is activated successfully. Click on the login link to begin:", "login", "Login", null));
         }
-        return ok(gotopage.render("It looks like you have already activated your account or some error on your activation link. Please try to login with your user credentials. If you can't login or activate your account, please contact us by email.", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).", null));
+        return ok(gotopage.render("It looks like you have already activated your account or some error on your activation link. Please try to login with your user credentials. If you can't login or activate your account, please contact us by email.", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(), null));
     }
 
     public static Result createAccountRequestForm() {

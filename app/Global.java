@@ -66,7 +66,7 @@ public class Global extends GlobalSettings {
 
         if(userId != null) {
             log.error("Internal server error. Logged In UserId: " + userId + " User Email: " + userEmail, throwable);
-            UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + userId + " \n User Email: " + userEmail + "\n Error: " + throwable.getCause());
+            UserManagement. sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() + "\n Date and time in US/ET: " + dateFormat.format(date) + " \n Logged In UserId: " + userId + " \n User Email: " + userEmail + "\n Error: " + throwable.getCause());
         } else {
             log.error("Internal server error.", throwable);
             UserManagement.sendMail(PlayConfWrapper.errorHandlingEmail(),"Exception in "+ PlayConfWrapper.portalUrl(),"Internal server error in "+ PlayConfWrapper.portalUrl() +"\n Date and time in US/ET: " + dateFormat.format(date) +" \n Error: "+ throwable.getCause());

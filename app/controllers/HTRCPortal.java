@@ -64,7 +64,7 @@ public class HTRCPortal extends JavaController {
         if(!userManager.roleNameExists(userId)){
             return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
                     "If you have not received your activation link, please contact us by email " +
-                    " ", "mailto:htrc-tech-help-l@list.indiana.edu?Subject=Issue_with_account_activation_link", "(htrc-tech-help-l@list.indiana.edu).",null));
+                    " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(),null));
         }
         log.debug("Role name exists: " + userManager.roleNameExists(userId));
         log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
