@@ -6,7 +6,7 @@
         <div class="container">
             <div class="panel panel-default panel-htrc panel-with-table">
                 <div class="panel-heading">
-                    <strong>Virtual Machine Status</strong>
+                    <strong>Data Capsule Status</strong>
                     <span>
                         <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">Back to List</a>
                     </span>
@@ -15,7 +15,7 @@
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td style="width: 200px;"><b>VM Id:</b></td>
+                                <td style="width: 200px;"><b>Data Capsule Id:</b></td>
                                 <td>@vmStatus.getVmId</td>
                             </tr>
                             <tr>
@@ -27,15 +27,15 @@
                                 <td>@vmStatus.getState</td>
                             </tr>
                             <tr>
-                                <td><b>VM Initial Logging User ID:</b></td>
+                                <td><b>Data Capsule Initial Logging User ID:</b></td>
                                 <td>@vmStatus.getVmIntialLogingId</td>
                             </tr>
                             <tr>
-                                <td><b>VM Initial Logging Password:</b></td>
+                                <td><b>Data Capsule Initial Logging Password:</b></td>
                                 <td>@vmStatus.getVmInitialLogingPassword</td>
                             </tr>
                             <tr>
-                                <td><b>VM Mode:</b></td>
+                                <td><b>Data Capsule Mode:</b></td>
                                 <td>@vmStatus.getMode</td>
                             </tr>
                             <tr>
