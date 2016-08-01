@@ -92,7 +92,7 @@
                         @if(PlayConfWrapper.isDataCapsuleEnable) {
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    Data Capsule<b class="caret"></b></a>
+                                    Capsule<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="https://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule">
                                         Documentation</a>
@@ -100,17 +100,17 @@
                                     <li class="divider"></li>
                                     @if(userId == null) {
                                         <li><a href="#" onclick="loggingRequiredWarning('@routes.ExperimentalAnalysis.listVMs()')" >
-                                            Show Data Capsules</a></li>
+                                            Show Capsules</a></li>
                                     } else {
-                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Data Capsules</a></li>
+                                        <li><a href="@routes.ExperimentalAnalysis.listVMs()">Show Capsules</a></li>
                                     }
                                     <li class="divider"></li>
                                     @if(userId == null) {
                                         <li><a href="#" onclick="loggingRequiredWarning('@routes.ExperimentalAnalysis.createVMForm()')" >
-                                            Create Data Capsule</a></li>
+                                            Create Capsule</a></li>
                                     } else {
                                         <li><a href="@routes.ExperimentalAnalysis.createVMForm()">
-                                            Create Data Capsule</a></li>
+                                            Create Capsule</a></li>
                                     }
                                 </ul>
                             </li>

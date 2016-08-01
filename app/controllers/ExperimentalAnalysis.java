@@ -203,7 +203,7 @@ public class ExperimentalAnalysis extends JavaController {
                     String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), session());
                 } catch (Exception e) {
                     log.error("Error calling createVM in data capsule API.", e);
-                    return "Data Capsule Creation failed. Internal Error occurred!!";
+                    return "Capsule Creation failed. Internal Error occurred!!";
                 }
             }
 
