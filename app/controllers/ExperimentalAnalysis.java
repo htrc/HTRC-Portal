@@ -58,7 +58,7 @@ public class ExperimentalAnalysis extends JavaController {
         }else{
             log.error(PortalConstants.CANNOT_GETDATA_FROM_SERVER + " for user "
                     + userId);
-            return ok(gotopage.render("Sorry!! Cannot get Virtual Machines' details from server right now.", null, null, userId));
+            return ok(gotopage.render("Sorry!! Cannot get Data Capsule' details from server right now.", null, null, userId));
         }
 
     }
@@ -203,7 +203,7 @@ public class ExperimentalAnalysis extends JavaController {
                     String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), session());
                 } catch (Exception e) {
                     log.error("Error calling createVM in data capsule API.", e);
-                    return "VM Creation failed. Internal Error occurred!!";
+                    return "Data Capsule Creation failed. Internal Error occurred!!";
                 }
             }
 
