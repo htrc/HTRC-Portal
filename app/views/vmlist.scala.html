@@ -7,7 +7,7 @@
         <div class="container">
             <div class="panel panel-default panel-htrc panel-with-table">
                 <div class="panel-heading">
-                    <strong>Virtual Machines</strong>
+                    <strong>Data Capsule</strong>
                     <a href="@routes.ExperimentalAnalysis.createVMForm()" class="btn btn-small pull-right" id="create-vm" style="padding-top : 5 px">
                         <i class="icon-plus"></i>
                     </a>
@@ -17,7 +17,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th><b>Vm Id</b></th>
+                                    <th><b>DataCapsule Id</b></th>
                                     <th><b>Status</b></th>
                                     <th><b>Actions</b></th>
                                 </tr>
@@ -44,11 +44,11 @@
                                         } else {
                                             @if(vm.getState == "SHUTDOWN") {
                                                 <a href="@routes.ExperimentalAnalysis.startVM(vm.getVmId)" class="btn btn-success btn-xs" id="startvm">
-                                                    Start VM
+                                                    Start Data Capsule
                                                 </a>
                                             } else {
                                                 <a href="@routes.ExperimentalAnalysis.stopVM(vm.getVmId)" class="btn btn-info btn-xs" id="stopvm">
-                                                    Stop VM
+                                                    Stop Data Capsule
                                                 </a>
                                                 @if(vm.getMode == "MAINTENANCE") {
                                                     <a href="#" class="btn btn-info btn-xs" id="switchmode-maintainance" onclick="modalMessage ( 'Switch to Secure Mode',
@@ -70,7 +70,7 @@
 
                                         }
                                         <a href="#" class="btn btn-danger btn-xs" id="deletevms" onclick="modalMessage('Delete VM', 'Do you want to delete VM ID:  @vm.getVmId ?', '@routes.ExperimentalAnalysis.deleteVM(vm.getVmId)')">
-                                            <i class="icon-trash icon-white"></i> Delete VM
+                                            <i class="icon-trash icon-white"></i> Delete Data Capsule
                                         </a>
 
 
@@ -78,13 +78,13 @@
 
                                     </td>
                                 </tr>
-                            }
+                            } 
                             </tbody>
                         </table>
                     } else {
                         <p style="padding: 8px;">There are no virtual machines.</p>
                     }
-                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">To log in to a virtual machine, you should use a VNC client. You can
+                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">To log in to a Data Capsule, you should use a VNC client. You can
                         input the host name and VNC port information shown by clicking the
                         vmid link. For more information, please refer the <a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule"><b>documentation</b></a>.</p>
                 </div>
