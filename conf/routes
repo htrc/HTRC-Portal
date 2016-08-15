@@ -71,7 +71,7 @@ GET         /downloadworkset                                  controllers.Workse
 GET        /uploadworkset                                      controllers.WorksetManagement.uploadWorksetForm()
 
 # validate Workset
-POST        /validateworkset                                   controllers.WorksetManagement.validateWorkset()
+POST        /validateworkset/                                   controllers.WorksetManagement.validateWorkset()
 
 
 # View Workset
