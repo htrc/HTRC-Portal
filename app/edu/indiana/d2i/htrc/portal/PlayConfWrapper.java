@@ -132,6 +132,9 @@ public class PlayConfWrapper {
     // Fiction dataset page
     private static String fictionpage = null;
 
+    //Data Files
+    private static String htrcvolumesdata =null;
+
 
     public static String agentEndpoint() {
         if(agentEndpoint == null){
@@ -596,6 +599,14 @@ public class PlayConfWrapper {
             fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
         }
         return fictionpage;
+    }
+
+    public static String htrcvolumesdata()
+    {
+        if(htrcvolumesdata == null){
+            htrcvolumesdata = Play.application().configuration().getString(PortalConstants.HTRC_VOLUMES_DATA);
+        }
+        return htrcvolumesdata;
     }
 }
 

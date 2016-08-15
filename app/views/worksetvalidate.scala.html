@@ -1,0 +1,111 @@
+@(userId: String,totalVolumesCount:Integer,copyRightVolumeCount:Integer,rows:java.util.List[Array[String]],headers:java.util.List[String],uploadWSForm:Form[WorksetManagement.UploadWorkset],wsName:String,wsDescription:String,isPrivate:Boolean,
+worksetFile:java.io.File,tempfile:java.io.File,rowsNotInRepository:java.util.List[Array[String]])
+@main("worksetvalidate", userId) {
+<div class="container">
+    <div class="panel panel-default panel-htrc">
+        <div class="panel-heading">
+            <strong>Validate Workset </strong>
+        </div>
+        <div class="panel-body">
+
+            @helper.form(routes.WorksetManagement.uploadWorkset(), 'class -> "form-horizontal",'id ->"upload_workset"){
+            @if(uploadWSForm.hasGlobalErrors){
+            <p class="error">@uploadWSForm.globalError().message()</p>
+            }
+            <div class="form-group">
+                <input type="hidden" name="rows" id="rows" value=@rows>
+
+                <input type="hidden" name="headers" id="wsHeaders" value=@headers>
+                <input type="hidden" name="wsFile" id="wsFile">
+                <input type="hidden" name="wsName" id="wsName" value="@wsName">
+                <input type="hidden" name="wsDescripton" id="wsContent" value=@wsDescription>
+                <input type="hidden" name="isPrivate" id="isPrivate" value=@isPrivate>
+
+                <div class="col-md-10 col-md-offset-1">
+
+                    <!-- row for the panels -->
+                    <div class="row" style="margin-left:-30px;">
+                        <div class="col-md-2 col-sm-4 col-xs-4">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><strong>Total Volumes Uploaded</strong></div>
+                                <div class="panel-body dc-stat-panel-body">
+                                    <span class="huge-text">@totalVolumesCount</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-4 col-xs-4">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><strong>Volumes In Public Domain</strong></div>
+                                <div class="panel-body dc-stat-panel-body">
+                                    <span class="huge-text">@copyRightVolumeCount</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <table class="table" id="view_deletedvolumes" style="margin-top:4px;">
+                        <Strong><caption>Volumes Not In Public Domains</caption></Strong>
+                        <tr class ="active">
+                            <th>Volume ID</th>
+                        </tr>
+                        @for(index <- 0 until rowsNotInRepository.size){
+                        <tr>
+                            <td>@rowsNotInRepository(index)(0)</td>
+                        </tr>
+                        }
+                    </table>
+
+                    <div class="col-sm-offset-0 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                                title="submits original workset">Original Workset</button>
+                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                                title="submits the volumes which are in public domain">Modified Workset</button>
+                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-view" data-toggle="tooltip" data-placement="right"
+                                title="View the volumes that are not in public domain" >View Volumes</button>
+                        <a class="btn btn-primary btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
+                           title="Back to Upload Workset Page">Cancel</a>
+
+
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"  >
+        $(document).ready(function () {
+
+            var volumeCount =@copyRightVolumeCount
+            $("#validatews-submit").click(function () {
+
+                $('#wsFile').val("@worksetFile");
+
+
+            });
+            $("#validatews-modify").click(function () {
+                //$('#wsFile').val("@tempfile");
+                if(volumeCount == 0)
+                {
+                    alert(' Modifed Workset is empty. Please click on Original workset to submit your uploaded file or cancel to upload new workset')
+                    return false;
+                }
+                else
+                {
+                    $('#wsFile').val("@tempfile");
+                    return true;
+                }
+
+            });
+
+            $("#view_deletedvolumes").hide();
+
+            $("#validatews-view").click(function(){
+                $("#view_deletedvolumes").show();
+                return false;
+            });
+        });
+  </script>
+}

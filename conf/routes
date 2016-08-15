@@ -48,6 +48,9 @@ GET         /isvalidemaildomain                               controllers.UserMa
 
 GET         /about                                            controllers.HTRCPortal.about()
 
+# About BookWorm
+
+#GET         /bookWorm                                         controllers.HTRCPortal.bookWorm()
 
 # All Worksets List Form
 GET         /listallworksets                                  controllers.WorksetManagement.allWorksets()
@@ -66,6 +69,10 @@ GET         /downloadworkset                                  controllers.Workse
 
 # Upload Workset
 GET        /uploadworkset                                      controllers.WorksetManagement.uploadWorksetForm()
+
+# validate Workset
+POST        /validateworkset                                   controllers.WorksetManagement.validateWorkset()
+
 
 # View Workset
 POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()

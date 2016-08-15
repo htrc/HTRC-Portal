@@ -8,6 +8,7 @@ import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.Workset;
 import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
 import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
+import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import org.apache.commons.io.FilenameUtils;
@@ -19,6 +20,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import play.Logger;
+import play.data.Form;
 import play.data.validation.Constraints;
 import play.libs.Json;
 import play.mvc.Http;
@@ -35,11 +37,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -148,7 +149,7 @@ public class WorksetManagement extends JavaController {
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
-    public static Result uploadWorkset() throws ParserConfigurationException {
+    public static Result validateWorkset() throws ParserConfigurationException,FileNotFoundException,IOException,Exception {
         String userId = session(PortalConstants.SESSION_USERNAME);
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart csv = body.getFile("csv");
@@ -156,25 +157,122 @@ public class WorksetManagement extends JavaController {
         String[] description = body.asFormUrlEncoded().get("uploadWSdescription");
         boolean isPrivateWorkset = body.asFormUrlEncoded().containsKey("privateWorkset");
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-
         if (csv != null) {
+            int totalVolumes=0;
+            int copyRightVolumeCount =0;
+            int rightIndex = -1;
+            List<String[]> rows;
+            List<String[]> rowsNotInRepository=new ArrayList<String[]>();
+            List<String[]> rowsInRepository=new ArrayList<String[]>();
+            String[] headers;
             String wsName;
             String wsDescription;
             String csvFileName = csv.getFilename();
             String contentType = csv.getContentType();
             File csvFile = csv.getFile();
+            File modifiedFile;
+            String volumeFilePath = PlayConfWrapper.htrcvolumesdata();
             log.info("CSV file name: " + csvFileName + " content type: " + contentType +
                     " is private: " + isPrivateWorkset + " workset name: " + worksetName[0]);
+            try {
+                if(worksetName == null || worksetName[0].length() <= 0){
+                    wsName = FilenameUtils.removeExtension(csvFileName);
+                } else {
+                    wsName = worksetName[0];
+                }
+                if(description == null || description[0].length() <= 0){
+                    wsDescription = null;
+                } else {
+                    wsDescription = description[0];
+                }
+
+
+                File volumeFile = new File(volumeFilePath);
+                List<String> volumesList = Files.readAllLines(volumeFile.toPath(), StandardCharsets.UTF_8);
+
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(csvFile));
+                String readCSVData = bufferedReader.readLine();
+                String[] tabData = readCSVData.split("\t");
+                String[] commaData = readCSVData.split(",");
+                au.com.bytecode.opencsv.CSVReader csvReader = null;
+                if (tabData.length >= commaData.length) {
+                    csvReader = new au.com.bytecode.opencsv.CSVReader(new FileReader(csvFile), '\t');
+                } else {
+                    csvReader = new au.com.bytecode.opencsv.CSVReader(new FileReader(csvFile));
+                }
+                //au.com.bytecode.opencsv.CSVReader csvReader= new au.com.bytecode.opencsv.CSVReader(new FileReader(csv));
+                rows = csvReader.readAll();
+                if (rows.size() <= 0) {
+                    log.warn("Empty Workset CSV.");
+                    throw new Exception("Empty Workset CSV.");
+                }
+                headers = rows.get(0);
+                if (headers[0].startsWith("volume") || headers[0].contains("volume") || headers[0].contains("id")) {
+                    rows.remove(0);
+                }  else {
+                    headers = new String[headers.length];
+                    for (int i = 0; i < headers.length; i++) {
+                        headers[i] = "header-" + i;
+                    }
+                    log.warn("No headers for the workset");
+                }
+                totalVolumes =rows.size();
+                for(String[]row : rows)
+                {
+                    if(volumesList.contains(row[0]))
+                    {
+                        copyRightVolumeCount +=1;
+                        rowsInRepository.add(row);
+                    }
+                    else
+                    {
+                        rowsNotInRepository.add(row);
+                    }
+                }
+                modifiedFile=File.createTempFile(wsName + "-" +wsDescription, ".csv");
+                CSVWriter csvmodified = new CSVWriter(new FileWriter(modifiedFile));
+                for(String[] str:rowsInRepository)
+                {
+                    csvmodified.writeNext(str);
+                }
+                csvmodified.close();
+            }catch (Exception e) {
+                log.error("Error while uploading CSV file.");
+                throw new RuntimeException("Error while uploading CSV file.",e);
+            }
+
+            return ok(worksetvalidate.render(userId,totalVolumes,copyRightVolumeCount,rows,Arrays.asList(headers), Form.form(UploadWorkset.class),wsName,wsDescription,isPrivateWorkset,csvFile,
+                    modifiedFile,rowsNotInRepository));
+        }else {
+            flash("error", "Missing file");
+            return ok(warnings.render("Please upload a CSV file", null, null, userId));
+        }
+    }
+
+
+    @RequiresAuthentication(clientName = "Saml2Client")
+    public static Result uploadWorkset() throws ParserConfigurationException {
+        Form<UploadWorkset> uploadWorksetForm = Form.form(UploadWorkset.class).bindFromRequest();
+        HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        String userId = session(PortalConstants.SESSION_USERNAME);
+
+        if(uploadWorksetForm.hasErrors()){
+            return badRequest(gotopage.render("Some error has happened.",null,null,userId));
+        }
+        File worsetFile = uploadWorksetForm.get().wsFile;
+        if (worsetFile != null) {
+            String worksetName = uploadWorksetForm.get().wsName;
+            String worksetDescription = uploadWorksetForm.get().wsDescription;
+            Boolean isPrivateWorkset = uploadWorksetForm.get().isPrivate;
+            log.debug("Workset Name: " + worksetName + " is private: " + isPrivateWorkset);
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
             Document worksetDoc = domBuilder.newDocument();
 
             try {
-                Document volumesDoc = CSV2WorksetXMLConverter.convert(csvFile);
-                if(worksetName[0].length() <= 0){
-                    wsName = FilenameUtils.removeExtension(csvFileName);
-                } else {
-                    wsName = worksetName[0];
+                Document volumesDoc = CSV2WorksetXMLConverter.convert(worsetFile);
+                if (worksetName == null) {
+                    worksetName = FilenameUtils.removeExtension(worsetFile.getName());
                 }
                 Element worksetEle = worksetDoc.createElement("workset");
                 worksetEle.setAttribute("xmlns", "http://registry.htrc.i3.illinois.edu/entities/workset");
@@ -183,16 +281,11 @@ public class WorksetManagement extends JavaController {
                 Element metadataEle = worksetDoc.createElement("metadata");
 
                 Element name = worksetDoc.createElement("name");
-                name.setTextContent(wsName);
+                name.setTextContent(worksetName);
                 metadataEle.appendChild(name);
-                if(description == null || description[0].length() <= 0){
-                    wsDescription = null;
-                } else {
-                    wsDescription = description[0];
-                }
 
                 Element descriptionEle = worksetDoc.createElement("description");
-                descriptionEle.setTextContent(wsDescription);
+                descriptionEle.setTextContent(worksetDescription);
                 metadataEle.appendChild(descriptionEle);
 
                 Element authorEle = worksetDoc.createElement("author");
@@ -219,25 +312,26 @@ public class WorksetManagement extends JavaController {
                 worksetEle.appendChild(content);
 
 
-
-
             } catch (Exception e) {
                 log.error("Error on converting to xml file.");
-                throw new RuntimeException("Error on converting to xml file.",e);
+                throw new RuntimeException("Error on converting to xml file.", e);
             }
             try {
-                persistenceAPIClient.createWorkset(domToString(worksetDoc),!isPrivateWorkset);
+                log.debug("Workset content: " + domToString(worksetDoc));
+                persistenceAPIClient.createWorkset(domToString(worksetDoc), !isPrivateWorkset);
             } catch (Exception e) {
                 log.error("Error when uploading workset in to registry");
                 throw new RuntimeException("Error when uploading workset in to registry");
             }
-            log.info("Workset :" + wsName + " uploaded successfully. ");
-            return redirect(routes.WorksetManagement.viewWorkset(wsName,userId));
-        } else {
+            log.info("Workset :" + worksetName + " uploaded successfully. ");
+            return redirect(routes.WorksetManagement.viewWorkset(worksetName, userId));
+        }
+        else {
             flash("error", "Missing file");
-            return ok(warnings.render("Please upload a CSV file",null,null,userId));
+            return ok(warnings.render("Please upload a CSV file", null, null, userId));
         }
     }
+
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result downloadWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
@@ -348,6 +442,17 @@ public class WorksetManagement extends JavaController {
         TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT");
         gmtFormatter.setTimeZone(gmtTimeZone);
         return gmtFormatter.format(date) + " " + gmtTimeZone.getID();
+    }
+
+    public static class UploadWorkset
+    {
+        public List<String[]> rows;
+        public List headers;
+        public String wsName;
+        public String wsDescription;
+        public boolean isPrivate;
+        public File wsFile;
+
     }
 
 }

@@ -173,4 +173,7 @@ public class  PortalConstants {
     // Fiction dataset page
     public static String FICTION_PAGE = "fiction.page";
 
+    // Data Folder
+    public static String HTRC_VOLUMES_DATA ="htrc.volumes.data";
+
 }

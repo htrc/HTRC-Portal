@@ -8,7 +8,7 @@
                 <strong>Upload Workset </strong>
             </div>
             <div class="panel-body">
-                @helper.form(action = routes.WorksetManagement.uploadWorkset, 'enctype -> "multipart/form-data") {
+                @helper.form(action = routes.WorksetManagement.validateWorkset, 'enctype -> "multipart/form-data") {
                     <p>Workset must be in CSV(comma-separated-values) or TXT format.</p>
                     <div class="form-group has-feedback" id="wsname-control-group">
                         <label for="uploadWorksetName" class="control-label">Workset Name</label>
