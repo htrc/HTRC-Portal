@@ -22,3 +22,9 @@ conf/saml.xml
 conf/idp.xml
 
 conf/logger.xml
+
+conf/backup/*
+
+conf/new-keystore/*
+
+conf/wso2carbon.cert

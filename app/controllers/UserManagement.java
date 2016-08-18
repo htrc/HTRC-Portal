@@ -99,7 +99,7 @@ public class UserManagement extends JavaController {
         String passwordResetToken = Token.generateToken(userId, userEmail);
         if (passwordResetToken != null){
             String url = PlayConfWrapper.portalUrl() + "/passwordreset" + "?" + "token=" + passwordResetToken;
-            sendMail(userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
+            sendMail(PlayConfWrapper.htrcEmail(), userEmail, "Password Reset for HTRC Portal", "Hi " + userFirstName + ",\n" + "Looks like you'd like to change your HTRC Portal password.Please click the following link to do so: \n" + url + "\n Please disregard this e-mail if you did not request a password reset.\n \n Cheers, \n HTRC Team.");
             return ok(gotopage.render("Password reset link sent to " + userEmail.substring(0, 4) + "......" + userEmail.substring(userEmail.indexOf("@")), null, null, null));
         }else{
             log.error("Cannot generate password reset tokens.");
@@ -169,7 +169,7 @@ public class UserManagement extends JavaController {
             return ok(gotopage.render("Cannot find user with email " + userEmail + " !", "login", "Login", null));
         }
 
-        sendMail(userEmail, "Retrieve User ID.", "Your User ID: " + userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
+        sendMail(PlayConfWrapper.htrcEmail(), userEmail, "Retrieve User ID.", "Your User ID: " + userIds + ". To login please go to " + PlayConfWrapper.portalUrl() + "/login");
 //        userIds.clear();
 //        userIDRetrieveMailForm.get().userIDs.clear();
         log.info(userIDRetrieveMailForm.toString());
@@ -269,7 +269,7 @@ public class UserManagement extends JavaController {
         public void sendUserRegistrationEmail(String userEmail, String userId, String firstName) throws UnsupportedEncodingException, NoSuchAlgorithmException {
             String userRegistrationToken = Token.generateToken(userId, userEmail);
             String url = PlayConfWrapper.portalUrl() + "/activateaccount" + "?" + "token=" + userRegistrationToken;
-            sendMail(userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
+            sendMail(PlayConfWrapper.htrcEmail(), userEmail, "User Registration for HTRC Portal", "Hi " + firstName + ",\n \n" + "Welcome to the HathiTrust Research Center. You have created an account in HTRC with following user name. \n \nUser Name: "+ userId+
                     "\n \n Please click on the following url to activate your account. \n" + url + "\n" +
                     " \n \n" +
                     " Cheers, \n" +
@@ -324,7 +324,7 @@ public class UserManagement extends JavaController {
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || institution.isEmpty()) {
                 return "Please fill all the required fields.";
             } else {
-                sendMail(PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
+                sendMail(email, PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
                         "User's name : " + firstName + " " + lastName + ";\n" +
                         "User's email : " + email + ";\n" +
                         "Institution/Employer : " + institution + ";\n" +
@@ -391,7 +391,7 @@ public class UserManagement extends JavaController {
         }
     }
 
-    public static void sendMail(String recipientEmail, String subject, String emailBody) {
+    public static void sendMail(String senderEmail, String recipientEmail, String subject, String emailBody) {
         Properties props = new Properties();
 
         props.put("mail.smtp.host", "mail-relay.iu.edu");
@@ -413,7 +413,7 @@ public class UserManagement extends JavaController {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("sharc@indiana.edu"));
+            message.setFrom(new InternetAddress(senderEmail));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(recipientEmail));
             message.setSubject(subject);
