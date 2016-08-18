@@ -4,7 +4,7 @@ worksetFile:java.io.File,tempfile:java.io.File,rowsNotInRepository:java.util.Lis
 <div class="container">
     <div class="panel panel-default panel-htrc">
         <div class="panel-heading">
-            <strong>Validate Workset </strong>
+            <strong>Workset Summary</strong>
         </div>
         <div class="panel-body">
 
@@ -81,15 +81,25 @@ worksetFile:java.io.File,tempfile:java.io.File,rowsNotInRepository:java.util.Lis
             var volumeCount =@copyRightVolumeCount
             $("#validatews-submit").click(function () {
 
-                $('#wsFile').val("@worksetFile");
+                if(@totalVolumesCount == 0)
+                {
+                    alert(' Original Workset is empty. Please click on Cancel and upload a new Workset')
+                    return false;
+                }
+                else
+                {
+                    $('#wsFile').val("@worksetFile");
+                    return true;
+                }
+
 
 
             });
             $("#validatews-modify").click(function () {
-                //$('#wsFile').val("@tempfile");
+
                 if(volumeCount == 0)
                 {
-                    alert(' Modifed Workset is empty. Please click on Original workset to submit your uploaded file or cancel to upload new workset')
+                    alert(' Modifed Workset is empty. Please click on Upload Original Workset to submit your original Workset or Cancel to upload a new Workset')
                     return false;
                 }
                 else
