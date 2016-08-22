@@ -113,7 +113,11 @@
     <div class="row" >
       <div class="col-md-12" >
         <h1>Feature File Documentation</h1>
-	<p>The HTRC Extracted Features provides a small amount of metadata in addition to the quantitative features.</p>
+              <p>The HTRC Extracted Features provides two JSON files
+              for each volume: a basic features files and an advanced
+              features file. For most users, the basic features should
+                suffice. Both files include the volume metadata.</p>
+
       </div>
     </div>
 
@@ -169,9 +173,10 @@
       </div>
       <!--End Metadata-->
 
-      <div class="col-md-9">
-        <!-- START DOCUMENTATION -->
-              <h2 id="documentation-for-features">Features</h2>
+      <div class="col-md-6">
+        <!-- START BASIC DOCUMENTATION -->
+              <h2 id="documentation-for-basic-extracted-features">Basic
+                Features</h2>
               <h3 id="features">Volume-Level Features</h3>
         <p>
                   <strong>schemaVersion</strong>: A version identifier
@@ -196,7 +201,7 @@
         <p>
                   <strong>seq</strong>: The sequence
                   number. <a href="#page-id">More details on this
-                    value</a>.</p>
+                    value.</a>.</p>
         <p>
                   <strong>tokenCount</strong>: The total number of
                   tokens on the page.</p>
@@ -255,12 +260,60 @@
                   rejoined. No other data cleaning or OCR correction
                   was performed. <a href="#token-parse">Details on POS
                     parsing and types of tags used</a>.
-
-	<p><strong>beginLineChars</strong>: Aggregated frequency counts of the first non-whitespace character on each line.</p>
-	<p><strong>endLineChars</strong>: Count of the last character on each line in this page section (ignoring whitespace).</p>
-	<p><strong>capAlphaSeq</strong>: The longest length of the alphabetical sequence of capital characters starting a line. (Body only).</p>
       </div>
-      <!-- End feature documentation -->
+      <!-- End basic documentation -->
+
+
+      <div id="advanced-documentation" class="col-md-3" >
+        <h2>Advanced Features</h2>
+              <p>The advanced features data provides additional
+              page-level features, while including the same
+              volume-level that is included with the basic features
+                set.</p>
+              <h3 id="features-1">Volume-Level Features</h3>
+                    <p>The features extracted from the content of the
+                      volume.</p>
+        <p>
+                  <strong>schemaVersion</strong>: A version identifier
+                  for the format and structure of the feature data
+                  (HTRC generated).</p>
+        <p>
+                  <strong>dateCreated</strong>: The time the batch of
+                  metadata was processed and recorded (HTRC
+                  generated).</p>
+        <p>
+                  <strong>pageCount</strong>: The number of pages in
+                  the volume.</p>
+        <p>
+                  <strong>pages</strong>: An array of JSON objects,
+                  each representing a page of the volume.</p>
+        <h3 id="page-1">Page-Level Features</h3>
+              <p>Pages are contained within volumes, they have a
+              sequence number, and information about their header,
+                body, and footer.</p>
+                    <h4 id="page-level-information-1">Page-level
+                      information</h4>
+        <p>
+          <strong>seq</strong>: The sequence number.</p>
+        <p>
+                <strong>beginLineChars</strong>: Aggregated frequency
+                counts of the first non-whitespace character on each
+                line.</p>
+        <p>
+                  <strong>endLineChars</strong>: Count of the last
+                  character on each line in this page section
+                  (ignoring whitespace).</p>
+        <p>
+                  <strong>capAlphaSeq</strong>: (body only) The
+                  longest length of the alphabetical sequence of
+                  capital characters starting a line.</p>
+
+
+
+
+
+      </div>
+      <!--End advanced documentation -->
     </div>
     <!-- End row-->
 
@@ -289,14 +342,19 @@
                           <h3 id="rsync">Rsync</h3>
 
                                 <p>Rsync will download each feature file individually, following a pairtree directory structure.</p>
-                                <p>To sync *all* the feature files:</p>
-				<p><pre>rsync -av data.analytics.hathitrust.org::pd-features/ .</pre></p>
+                                <p>To sync all the basic feature files:</p>
+				<p><pre>rsync -av data.analytics.hathitrust.org::pd-features/basic/ .</pre></p>
 
-				<p><b><em>Note that this data is 1.2 Terabytes!</em> Only download all of it if you know what you are doing.</b></p>
+				<p><b><em>Note that this data is 1.19 Terabytes!</em> Only download all of it if you know what you are doing.</b></p>
+				<p>To sync all the advanced feature files:</p>
+				<p><pre>rsync -av data.analytics.hathitrust.org::pd-features/advanced/ .</pre></p>
 
-			      <p>A randomly sorted listing of all the files is available in the following location:</p>
-			      <p><pre>rsync -azv data.analytics.hathitrust.org::pd-features/listing/pd-file-listing.txt .</pre></p>
+			      <p>A randomly sorted listing of all the basic files is available in the following location:</p>
+			      <p><pre>rsync -azv data.analytics.hathitrust.org::pd-features/listing/pd-basic-file-listing.txt .</pre></p>
 
+              		      <p>There is also an advanced file listing at</p>
+			      <p><pre>pd-features/listing/pd-advanced-file-listing.txt</pre></p>
+                    
 			      <p>Users hoping for a more flexible file listings can use rsync's --list-only flag.</p>
 				<p>To rsync only the files in a given text file:</p>
 				<p><pre>rsync -av --files-from FILE.TXT data.analytics.hathitrust.org::pd-features/ .</pre></p>
@@ -465,6 +523,6 @@
 <script>
   $(document).ready(function() {
   var a = "@";
-  $(".contact").text("htrc-support-l" + a + "list.indiana.edu");
+  $(".contact").text("htrc-help" + a + "hathitrust.org");
   });
   </script>
