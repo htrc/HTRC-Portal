@@ -241,8 +241,9 @@ public class WorksetManagement extends JavaController {
                 throw new RuntimeException("Error while uploading CSV file.",e);
             }
 
-            return ok(worksetvalidate.render(userId,totalVolumes,copyRightVolumeCount,rows,Arrays.asList(headers), Form.form(UploadWorkset.class),wsName,wsDescription,isPrivateWorkset,csvFile,
-                    modifiedFile,rowsNotInRepository));
+            log.debug("CSV File: " + csvFile.getPath() + " , Modified File: " + modifiedFile.getPath());
+            return ok(worksetvalidate.render(userId,totalVolumes,copyRightVolumeCount,rows,Arrays.asList(headers), Form.form(UploadWorkset.class),wsName,wsDescription,isPrivateWorkset,csvFile.getPath(),
+                    modifiedFile.getPath(),rowsNotInRepository));
         }else {
             flash("error", "Missing file");
             return ok(warnings.render("Please upload a CSV file", null, null, userId));
@@ -259,8 +260,11 @@ public class WorksetManagement extends JavaController {
         if(uploadWorksetForm.hasErrors()){
             return badRequest(gotopage.render("Some error has happened.",null,null,userId));
         }
-        File worsetFile = uploadWorksetForm.get().wsFile;
-        if (worsetFile != null) {
+        String filePath = uploadWorksetForm.get().wsFilePath;
+
+        if (filePath != null) {
+            File worksetFile = new File(filePath);
+            log.debug("File : " + worksetFile);
             String worksetName = uploadWorksetForm.get().wsName;
             String worksetDescription = uploadWorksetForm.get().wsDescription;
             Boolean isPrivateWorkset = uploadWorksetForm.get().isPrivate;
@@ -270,9 +274,9 @@ public class WorksetManagement extends JavaController {
             Document worksetDoc = domBuilder.newDocument();
 
             try {
-                Document volumesDoc = CSV2WorksetXMLConverter.convert(worsetFile);
+                Document volumesDoc = CSV2WorksetXMLConverter.convert(worksetFile);
                 if (worksetName == null) {
-                    worksetName = FilenameUtils.removeExtension(worsetFile.getName());
+                    worksetName = FilenameUtils.removeExtension(worksetFile.getName());
                 }
                 Element worksetEle = worksetDoc.createElement("workset");
                 worksetEle.setAttribute("xmlns", "http://registry.htrc.i3.illinois.edu/entities/workset");
@@ -451,7 +455,8 @@ public class WorksetManagement extends JavaController {
         public String wsName;
         public String wsDescription;
         public boolean isPrivate;
-        public File wsFile;
+        public String wsFilePath;
+        //public File wsFile;
 
     }
 
