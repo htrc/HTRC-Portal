@@ -11,6 +11,7 @@ import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
 import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
+import models.Validation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.pac4j.play.java.JavaController;
@@ -160,8 +161,12 @@ public class WorksetManagement extends JavaController {
         if (csv != null) {
             int totalVolumes=0;
             int copyRightVolumeCount =0;
-            int rightIndex = -1;
+            int missingVolumeCount =0;
+            int titleIndex = -1;
             List<String[]> rows;
+            List<Validation> rowsList = new ArrayList<Validation>();
+            List<Validation> rowsNotInRepositoryList = new ArrayList<Validation>();
+            List<Validation> rowsInRepositoryList = new ArrayList<Validation>();
             List<String[]> rowsNotInRepository=new ArrayList<String[]>();
             List<String[]> rowsInRepository=new ArrayList<String[]>();
             String[] headers;
@@ -216,16 +221,61 @@ public class WorksetManagement extends JavaController {
                     }
                     log.warn("No headers for the workset");
                 }
+
+                for(int i =0; i<headers.length;i++)
+                {
+                    if(headers[i].contains("title") ||headers[i].startsWith("title"))
+                    {
+                        titleIndex = i;
+                    }
+                }
+
                 totalVolumes =rows.size();
                 for(String[]row : rows)
                 {
-                    if(volumesList.contains(row[0]))
+                    String title_row;
+                    String volume = row[0];
+                    if(titleIndex >0)
                     {
-                        copyRightVolumeCount +=1;
-                        rowsInRepository.add(row);
+
+                        title_row = row[titleIndex];
+
                     }
                     else
                     {
+                        title_row = null;
+                    }
+                    Validation totalRows = new Validation(volume,title_row);
+                    rowsList.add(totalRows);
+                    if(volumesList.contains(row[0]))
+                    {
+                        String title;
+                        copyRightVolumeCount +=1;
+                        String volumeID = row[0];
+                        if(titleIndex>0) {
+                           title  = row[titleIndex];
+                        }
+                        else
+                        {
+                            title = null;
+                        }
+                        Validation copyrightRows = new Validation(volumeID,title);
+                        rowsInRepositoryList.add(copyrightRows);
+                        rowsInRepository.add(row);
+                    }
+                    else
+                    {   String title;
+                        String volumeID =  row[0];
+                        if(titleIndex >0)
+                        {
+                            title = row[titleIndex];
+                        }
+                        else{
+                            title = null;
+                        }
+                        Validation missingRows = new Validation(volumeID,title);
+                        rowsNotInRepositoryList.add(missingRows);
+                        missingVolumeCount +=1;
                         rowsNotInRepository.add(row);
                     }
                 }
@@ -243,7 +293,7 @@ public class WorksetManagement extends JavaController {
 
             log.debug("CSV File: " + csvFile.getPath() + " , Modified File: " + modifiedFile.getPath());
             return ok(worksetvalidate.render(userId,totalVolumes,copyRightVolumeCount,rows,Arrays.asList(headers), Form.form(UploadWorkset.class),wsName,wsDescription,isPrivateWorkset,csvFile.getPath(),
-                    modifiedFile.getPath(),rowsNotInRepository));
+                    modifiedFile.getPath(),missingVolumeCount,rowsList,rowsInRepositoryList,rowsNotInRepositoryList));
         }else {
             flash("error", "Missing file");
             return ok(warnings.render("Please upload a CSV file", null, null, userId));
