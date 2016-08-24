@@ -2,11 +2,91 @@
 originalWSFilePath: String,modifiedWSFilePath:String,rowsNotInRepository:java.util.List[Array[String]])
 @main("worksetvalidate", userId) {
 <div class="container">
-    <div class="panel panel-default panel-htrc">
+    <div class="panel panel-default panel-htrc panel-with-table">
         <div class="panel-heading">
             <strong>Workset Summary</strong>
         </div>
-        <div class="panel-body">
+        <div>
+            <table class ="table table-hover" id ="workset_summary" style ="margin-top:4px;">
+                <tr>
+                    <td colspan="3"><strong>workset name:</strong></td>
+                </tr>
+                <tr >
+                    <td><strong>Total Volumes Uploaded</strong></td>
+                    <td>@totalVolumesCount</td>
+                    <td><button type="submit" class="btn btn-info btn-xs" id="totalvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the volumes uploaded" >View</button></td>
+                </tr>
+                <tr >
+                    <td><strong>Volumes In Public Domain</strong></td>
+                    <td>@copyRightVolumeCount</td>
+                    <td><button type="submit" class="btn btn-info btn-xs" id="copyrightvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the copy right volumes" >View</button></td>
+
+                    <table class="table" id="view_copyrightvolume" style="margin-top:4px;">
+                        <thead>
+                        <tr>
+                            <th>Volume ID</th>
+                        </tr>
+                        </thead>
+                        @for(index <- 0 until rowsNotInRepository.size){
+                        <tr>
+                            <td>@rowsNotInRepository(index)(0)</td>
+                        </tr>
+                        }
+                    </table>
+
+                </tr>
+
+                <tr>
+                    <td><strong>Volumes Not In Public Domain</strong></td>
+                    <td>@totalVolumesCount</td>
+                    <td><button type="submit" class="btn btn-info btn-xs" id="missingvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the missing volumes" >View</button></td>
+
+                    <table class="table" id="view_deletedvolume" style="margin-top:4px;">
+                        <thead>
+                        <tr>
+                            <th>Volume ID</th>
+                        </tr>
+                        </thead>
+                        @for(index <- 0 until rowsNotInRepository.size){
+                        <tr>
+                            <td>@rowsNotInRepository(index)(0)</td>
+                        </tr>
+                        }
+                    </table>
+                </tr>
+            </table>
+
+
+            <table class="table" id="view_deletedvolumes" style="margin-top:4px;">
+                <Strong><caption>Volumes Not In Public Domains</caption></Strong>
+                <tr class ="active">
+                    <th>Volume ID</th>
+                </tr>
+                @for(index <- 0 until rowsNotInRepository.size){
+                <tr>
+                    <td>@rowsNotInRepository(index)(0)</td>
+                </tr>
+                }
+            </table>
+
+
+            <div class="col-sm-offset-0 col-sm-10">
+                <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                        title="submits original workset">Upload Original Workset</button>
+                <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                        title="submits the volumes which are in public domain">Upload Modified Workset</button>
+                <button type="submit" class="btn btn-primary btn-sm" id="validatews-view" data-toggle="tooltip" data-placement="right"
+                        title="View the volumes that are not in public domain" >View Missing Volumes</button>
+                <a class="btn btn-primary btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
+                   title="Back to Upload Workset Page">Cancel</a>
+
+
+            </div>
+
+
 
             @helper.form(routes.WorksetManagement.uploadWorkset(), 'class -> "form-horizontal",'id ->"upload_workset"){
             @if(uploadWSForm.hasGlobalErrors){
@@ -21,60 +101,15 @@ originalWSFilePath: String,modifiedWSFilePath:String,rowsNotInRepository:java.ut
                 <input type="hidden" name="wsDescripton" id="wsContent" value=@wsDescription>
                 <input type="hidden" name="isPrivate" id="isPrivate" value=@isPrivate>
 
-                <div class="col-md-10 col-md-offset-1">
-
-                    <!-- row for the panels -->
-                    <div class="row" style="margin-left:-30px;">
-                        <div class="col-md-2 col-sm-4 col-xs-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><strong>Total Volumes Uploaded</strong></div>
-                                <div class="panel-body dc-stat-panel-body">
-                                    <span class="huge-text">@totalVolumesCount</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-4 col-xs-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><strong>Volumes In Public Domain</strong></div>
-                                <div class="panel-body dc-stat-panel-body">
-                                    <span class="huge-text">@copyRightVolumeCount</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <table class="table" id="view_deletedvolumes" style="margin-top:4px;">
-                        <Strong><caption>Volumes Not In Public Domains</caption></Strong>
-                        <tr class ="active">
-                            <th>Volume ID</th>
-                        </tr>
-                        @for(index <- 0 until rowsNotInRepository.size){
-                        <tr>
-                            <td>@rowsNotInRepository(index)(0)</td>
-                        </tr>
-                        }
-                    </table>
-
-                    <div class="col-sm-offset-0 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
-                                title="submits original workset">Upload Original Workset</button>
-                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
-                                title="submits the volumes which are in public domain">Upload Modified Workset</button>
-                        <button type="submit" class="btn btn-primary btn-sm" id="validatews-view" data-toggle="tooltip" data-placement="right"
-                                title="View the volumes that are not in public domain" >View Missing Volumes</button>
-                        <a class="btn btn-primary btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
-                           title="Back to Upload Workset Page">Cancel</a>
 
 
-                    </div>
 
                 </div>
                 }
             </div>
         </div>
     </div>
-</div>
+
 <script type="text/javascript"  >
         $(document).ready(function () {
 
@@ -112,10 +147,41 @@ originalWSFilePath: String,modifiedWSFilePath:String,rowsNotInRepository:java.ut
 
             $("#view_deletedvolumes").hide();
 
+
             $("#validatews-view").click(function(){
                 $("#view_deletedvolumes").show();
                 return false;
             });
+
+           $('#view_deletedvolume').wrap('<div id="hide" style="display:none"/>');
+           $('#view_deletedvolume').dataTable({
+                "bInfo": false,
+                "bFilter":false,
+                "bLengthChange": false
+
+            });
+            $("#missingvolumes-view").click(function(){
+                $('#hide').css( 'display', 'block' );
+                return false;
+                });
+
+
+            $('#view_copyrightvolume').wrap('<div id="hide2" style="display:none"/>');
+            $('#view_copyrightvolume').dataTable({
+                "bInfo": false,
+                "bFilter":false,
+                "bLengthChange": false
+
+            });
+
+            $("#copyrightvolumes-view").click(function(){
+                $('#hide2').css( 'display', 'block' );
+                return false;
+                });
+
+
+
+
         });
   </script>
 }
