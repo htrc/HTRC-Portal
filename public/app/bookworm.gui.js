@@ -76,7 +76,7 @@
       document.getElementById("sourceName1").innerHTML = options["settings"]["sourceName"];
       document.title = "bookworm " + options["settings"]["sourceName"];
       $(".bw-texttype").text(options.settings.itemName + "s");
-      document.getElementById("sourceURL").innerHTML = "<a href=\"" + options["settings"]["sourceURL"] + "\">" + options["settings"]["sourceURL"] + "</a>";
+      document.getElementById("sourceURL").innerHTML = "<a href=\"" + options["settings"]["sourceURL"] + "\">" + options["settings"]["sourceName"] + "</a>";
       params = getHash();
       search_limits = params["search_limits"];
       _.each(search_limits, function(el) {
