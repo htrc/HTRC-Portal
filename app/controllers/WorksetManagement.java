@@ -324,7 +324,10 @@ public class WorksetManagement extends JavaController {
             Document worksetDoc = domBuilder.newDocument();
 
             try {
-                Document volumesDoc = CSV2WorksetXMLConverter.convert(worksetFile);
+               
+                    Document volumesDoc = CSV2WorksetXMLConverter.convert(worksetFile);
+
+
                 if (worksetName == null) {
                     worksetName = FilenameUtils.removeExtension(worksetFile.getName());
                 }

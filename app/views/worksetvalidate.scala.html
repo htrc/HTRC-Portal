@@ -15,10 +15,10 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                 <tr >
                     <td width ="50%"><strong>Total Volumes Uploaded</strong></td>
                     <td width ="20%">@totalVolumesCount</td>
-                    <td><button type="submit" class="btn btn-info btn-xs" id="totalvolumes-view" data-toggle="tooltip" data-placement="right"
-                                title="View the volumes uploaded" >View</button>
-                    <button type="submit" class="btn btn-info btn-xs" id="totalvolumes-hide" data-toggle="tooltip" data-placement="right"
-                                             title="Hide the volumes uploaded" >Hide</button></td>
+                    <td><a class="btn btn-info btn-xs" id="totalvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the volumes uploaded" >View</a>
+                    <a class="btn btn-info btn-xs" id="totalvolumes-hide" data-toggle="tooltip" data-placement="right"
+                                             title="Hide the volumes uploaded" >Hide</a></td>
                     <table class="table" id="view_originalvolume" style="margin-top:4px;">
                         <thead>
                         <tr>
@@ -39,10 +39,10 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                 <tr >
                     <td width ="50%"><strong>Volumes In Public Domain</strong></td>
                     <td width ="20%">@copyRightVolumeCount</td>
-                    <td><button type="submit" class="btn btn-info btn-xs" id="copyrightvolumes-view" data-toggle="tooltip" data-placement="right"
-                                title="View the copy right volumes" >View</button>
-                    <button type="submit" class="btn btn-info btn-xs" id="copyrightvolumes-hide" data-toggle="tooltip" data-placement="right"
-                                             title="Hide the copy right volumes" >Hide</button></td>
+                    <td><a class="btn btn-info btn-xs" id="copyrightvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the copy right volumes" >View</a>
+                    <a class="btn btn-info btn-xs" id="copyrightvolumes-hide" data-toggle="tooltip" data-placement="right"
+                                             title="Hide the copy right volumes" >Hide</a></td>
 
                     <table class="table" id="view_copyrightvolume" style="margin-top:4px;">
                         <thead>
@@ -66,10 +66,10 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                     <tr>
                     <td width ="50%"><strong>Volumes Not In Public Domain</strong></td>
                     <td width ="20%">@missingVolumeCount</td>
-                    <td><button type="submit" class="btn btn-info btn-xs" id="missingvolumes-view" data-toggle="tooltip" data-placement="right"
-                                title="View the missing volumes" >View</button>
-                       <button type="submit" class="btn btn-info btn-xs" id="missingvolumes-hide" data-toggle="tooltip" data-placement="right"
-                                                 title="Hide the missing volumes" >Hide</button></td>
+                    <td><a class="btn btn-info btn-xs" id="missingvolumes-view" data-toggle="tooltip" data-placement="right"
+                                title="View the missing volumes" >View</a>
+                       <a  class="btn btn-info btn-xs" id="missingvolumes-hide" data-toggle="tooltip" data-placement="right"
+                                                 title="Hide the missing volumes" >Hide</a></td>
 
                     <table class="table" id="view_deletedvolume" style="margin-top:4px;">
                         <thead>
@@ -89,17 +89,6 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
             </table>
 
 
-            <div class="col-sm-offset-0 col-sm-10">
-                <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
-                        title="submits original workset">Upload Original Workset</button>
-                <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
-                        title="submits the volumes which are in public domain">Upload Modified Workset</button>
-
-                <a class="btn btn-inverse btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
-                   title="Back to Upload Workset Page"><i class="icon-remove icon-white"></i>Cancel</a>
-
-
-            </div>
 
 
 
@@ -117,9 +106,20 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                 <input type="hidden" name="isPrivate" id="isPrivate" value=@isPrivate>
 
 
+                <div class="col-sm-offset-0 col-sm-10">
+                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                            title="submits original workset">Upload Original Workset</button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                            title="submits the volumes which are in public domain">Upload Modified Workset</button>
+
+                    <a class="btn btn-inverse btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
+                       title="Back to Upload Workset Page"><i class="icon-remove icon-white"></i>Cancel</a>
 
 
                 </div>
+
+
+            </div>
                 }
             </div>
         </div>
