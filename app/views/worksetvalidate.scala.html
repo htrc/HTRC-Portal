@@ -1,5 +1,5 @@
 @(userId: String,totalVolumesCount:Integer,copyRightVolumeCount:Integer,rows:java.util.List[Array[String]],headers:java.util.List[String],uploadWSForm:Form[WorksetManagement.UploadWorkset],wsName:String,wsDescription:String,isPrivate:Boolean,
-originalWSFilePath: String,modifiedWSFilePath:String,
+originalWSFilePath:String,modifiedWSFilePath:String,
 missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[Validation],rowsNotInRepositoryList:List[Validation])
 @main("worksetvalidate", userId) {
 <div class="container">
@@ -127,7 +127,12 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
 
 <script type="text/javascript"  >
         $(document).ready(function () {
-
+            $("#upload_workset").submit(function(){
+                $(this).submit(function(){
+                    return false;
+                    });
+                    return true;
+                    });
             var volumeCount =@copyRightVolumeCount
             $("#validatews-submit").click(function () {
 
