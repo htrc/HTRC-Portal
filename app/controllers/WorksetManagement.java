@@ -307,13 +307,14 @@ public class WorksetManagement extends JavaController {
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         String userId = session(PortalConstants.SESSION_USERNAME);
 
-        if(uploadWorksetForm.hasErrors()){
-            return badRequest(gotopage.render("Some error has happened.",null,null,userId));
+        if (uploadWorksetForm.hasErrors()) {
+            return badRequest(gotopage.render("Some error has happened.", null, null, userId));
         }
         String filePath = uploadWorksetForm.get().wsFilePath;
 
         if (filePath != null) {
             File worksetFile = new File(filePath);
+            //File worksetFile = uploadWorksetForm.get().wsFile;
             log.debug("File : " + worksetFile);
             String worksetName = uploadWorksetForm.get().wsName;
             String worksetDescription = uploadWorksetForm.get().wsDescription;
@@ -324,7 +325,10 @@ public class WorksetManagement extends JavaController {
             Document worksetDoc = domBuilder.newDocument();
 
             try {
+
                 Document volumesDoc = CSV2WorksetXMLConverter.convert(worksetFile);
+
+
                 if (worksetName == null) {
                     worksetName = FilenameUtils.removeExtension(worksetFile.getName());
                 }
@@ -379,8 +383,7 @@ public class WorksetManagement extends JavaController {
             }
             log.info("Workset :" + worksetName + " uploaded successfully. ");
             return redirect(routes.WorksetManagement.viewWorkset(worksetName, userId));
-        }
-        else {
+        } else {
             flash("error", "Missing file");
             return ok(warnings.render("Please upload a CSV file", null, null, userId));
         }
