@@ -82,8 +82,20 @@ public class HTRCExperimentalAnalysisServiceClient {
             }
         } else {
             this.responseCode = response;
+            String jsonStr = post.getResponseBodyAsString();
+            JSONParser parser = new JSONParser();
             log.error(post.getResponseBodyAsString());
-            throw new IOException("Response code " + response + " for " + createVMUrl + " message: \n " + post.getResponseBodyAsString());
+            try {
+                Object obj = parser.parse(jsonStr);
+                JSONObject jsonObject = (JSONObject) obj;
+                String description = ((String) jsonObject.get("description"));
+                throw new IOException("Staus code is  " + response + "\n  Error message: " + description);
+
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+
         }
         return null;
 
