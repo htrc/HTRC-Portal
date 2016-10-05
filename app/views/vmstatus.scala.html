@@ -6,7 +6,7 @@
         <div class="container">
             <div class="panel panel-default panel-htrc panel-with-table">
                 <div class="panel-heading">
-                    <strong>Data Capsule Status</strong>
+                    <strong>Capsule Status</strong>
                     <span>
                         <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">Back to List</a>
                     </span>
@@ -23,29 +23,42 @@
                                 <td>@vmStatus.getImageName</td>
                             </tr>
                             <tr>
+                                <td><b>Memory:</b></td>
+                                <td>@vmStatus.getMemory</td>
+                            </tr>
+                            <tr>
+                                <td><b>VCPU:</b></td>
+                                <td>@vmStatus.getVcpu</td>
+                            </tr>
+                            <tr>
+                                <td><b>Secure Volume Size:</b></td>
+                                <td>@vmStatus.getVolumeSize</td>
+                            </tr>
+                            <tr>
                                 <td><b>State:</b></td>
                                 <td>@vmStatus.getState</td>
                             </tr>
                             <tr>
-                                <td><b>Data Capsule Initial Logging User ID:</b></td>
+                                <td><b>Capsule Initial Logging User ID:</b></td>
                                 <td>@vmStatus.getVmIntialLogingId</td>
                             </tr>
                             <tr>
-                                <td><b>Data Capsule Initial Logging Password:</b></td>
+                                <td><b>Capsule Initial Logging Password:</b></td>
                                 <td>@vmStatus.getVmInitialLogingPassword</td>
                             </tr>
                             <tr>
-                                <td><b>Data Capsule Mode:</b></td>
+                                <td><b>Capsule Mode:</b></td>
                                 <td>@vmStatus.getMode</td>
-                            </tr>
-                            <tr>
-                                <td><b>VNC Port:</b></td>
-                                <td>@vmStatus.getVncPort</td>
                             </tr>
                             <tr>
                                 <td><b>Host Name:</b></td>
                                 <td>@vmStatus.getPublicIp</td>
                             </tr>
+                            <tr>
+                                <td><b>VNC Port:</b></td>
+                                <td>@vmStatus.getVncPort</td>
+                            </tr>
+
                             <tr>
                                 <td><strong>VNC URL:</strong></td>
                                 <td id="vnc-url">@vmStatus.getPublicIp:@vmStatus.getVncPort</td>
@@ -60,19 +73,17 @@
                                 </script>
                             </tr>
                             <tr>
-                                <td><b>Memory:</b></td>
-                                <td>@vmStatus.getMemory</td>
+                                <td><b>SSH Port:</b></td>
+                                <td>@vmStatus.getSshPort</td>
                             </tr>
-                            <tr>
-                                <td><b>VCPU:</b></td>
-                                <td>@vmStatus.getVcpu</td>
-                            </tr>
-                            <tr>
-                                <td><b>Volume Size:</b></td>
-                                <td>@vmStatus.getVolumeSize</td>
-                            </tr>
+
+
                         </tbody>
                     </table>
+                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">
+                        Use SSH login in the Maintenance mode. SSH login is not allowed in the Secure mode.
+                        To SSH into the Data Capsule, use following command in your Linux terminal: <br> ssh -p @vmStatus.getSshPort @vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp
+                        <br>@vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp's password: @vmStatus.getVmInitialLogingPassword</p>
                 </div>
             </div>
         </div>

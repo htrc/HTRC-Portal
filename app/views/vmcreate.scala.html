@@ -5,7 +5,7 @@
     <div class="container">
         <div class="panel panel-default panel-htrc">
             <div class="panel-heading">
-                <strong>Data Capsule Creation (All fields are required) </strong>
+                <strong>Capsule Creation (All fields are required) </strong>
             </div>
             <div class="panel-body">
             @helper.form(routes.ExperimentalAnalysis.createVM(), 'class -> "form-horizontal"){
@@ -23,11 +23,10 @@
                     <label for="vmImageName" class="col-sm-2 control-label">Data Capsule Image</label>
                     <div class="col-sm-10">
                         <select id="vmImageName" name="vmImageName" class="form-control">
-                            <option selected="selected">
-                                @form.data().get("vmImageName")
-                            </option>
                         @for(vm <- vmDetailsList) {
-                            <option>@vm.getVmImageName</option>
+                            @if(vm.getVmImageName != "uncamp2015-image"){
+                                <option>@vm.getVmImageName</option>
+                            }
                         }
                         </select>
                     </div>
@@ -36,14 +35,14 @@
                     <label for="userName" class="col-sm-2 control-label">VNC Login User Name</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="userName" name="userName" placeholder="User Name" required="true" value="@form.data().get("userName")">
-                        Note: This is different from the login user name of Data Capsule.
+                        Note: This is different from the login user name of Capsule.
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password" class="col-sm-2 control-label">VNC Login Password </label>
                     <div class="col-sm-10">
                         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required="true">
-                        Note: This is different from the login password of Data Capsule. Password must be less than 8 characters. This is due to a VNC limitation.
+                        Note: This is different from the login password of Capsule. Password must be less than 8 characters. This is due to a VNC limitation.
                     </div>
                 </div>
                 <div class="form-group">
@@ -108,7 +107,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-sm">Create Data Capsule</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Create Capsule</button>
                     </div>
                 </div>
             }
