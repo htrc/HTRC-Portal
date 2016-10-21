@@ -42,7 +42,6 @@ import play.mvc.Http;
 
 
 import javax.xml.bind.*;
-import javax.xml.bind.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,8 +53,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class HTRCPersistenceAPIClient {

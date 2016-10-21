@@ -173,4 +173,9 @@ public class  PortalConstants {
     // Fiction dataset page
     public static String FICTION_PAGE = "fiction.page";
 
+    // bookWorm Page
+    public static String BOOKWORM_PAGE = "bookWorm.page";
+
 }
+
+
