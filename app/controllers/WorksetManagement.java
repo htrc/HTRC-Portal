@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.illinois.i3.htrc.registry.entities.workset.Property;
 import edu.illinois.i3.htrc.registry.entities.workset.Volume;
 import edu.illinois.i3.htrc.registry.entities.workset.Workset;
-import edu.indiana.d2i.htrc.portal.CSV2WorksetXMLConverter;
-import edu.indiana.d2i.htrc.portal.HTRCPersistenceAPIClient;
-import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
-import edu.indiana.d2i.htrc.portal.PortalConstants;
+import edu.indiana.d2i.htrc.portal.*;
 import edu.indiana.d2i.htrc.portal.bean.VolumeDetailsBean;
 import models.Validation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.json.simple.JSONObject;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
 import org.w3c.dom.Document;
@@ -158,6 +156,7 @@ public class WorksetManagement extends JavaController {
         String[] description = body.asFormUrlEncoded().get("uploadWSdescription");
         boolean isPrivateWorkset = body.asFormUrlEncoded().containsKey("privateWorkset");
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
+        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         if (csv != null) {
             int totalVolumes=0;
             int copyRightVolumeCount =0;
@@ -229,6 +228,14 @@ public class WorksetManagement extends JavaController {
                         titleIndex = i;
                     }
                 }
+                List<String> volumeList = new ArrayList<String>();
+                for (String[]data :rows)
+                {
+                    volumeList.add(data[0]);
+                }
+                JSONObject jsonVolumeList =new JSONObject();
+                jsonVolumeList.put("volumeIdsList",volumeList);
+                List<String> volumesInHtrc = serviceClient.getVolumesInHtrc(jsonVolumeList);
 
                 totalVolumes =rows.size();
                 for(String[]row : rows)
@@ -236,44 +243,40 @@ public class WorksetManagement extends JavaController {
                     String title_row;
                     String volume = row[0];
                     if(titleIndex >0)
-                    {
-
-                        title_row = row[titleIndex];
-
-                    }
+                    { title_row = row[titleIndex];}
                     else
                     {
                         title_row = null;
                     }
                     Validation totalRows = new Validation(volume,title_row);
                     rowsList.add(totalRows);
-                    if(volumesList.contains(row[0]))
+                    if(volumesInHtrc.contains(row[0]))
                     {
                         String title;
                         copyRightVolumeCount +=1;
                         String volumeID = row[0];
-                        if(titleIndex>0) {
+                        /*if(titleIndex>0) {
                            title  = row[titleIndex];
                         }
                         else
                         {
                             title = null;
-                        }
-                        Validation copyrightRows = new Validation(volumeID,title);
+                        }*/
+                        Validation copyrightRows = new Validation(volumeID,title_row);
                         rowsInRepositoryList.add(copyrightRows);
                         rowsInRepository.add(row);
                     }
                     else
                     {   String title;
                         String volumeID =  row[0];
-                        if(titleIndex >0)
+                        /*if(titleIndex >0)
                         {
                             title = row[titleIndex];
                         }
                         else{
                             title = null;
-                        }
-                        Validation missingRows = new Validation(volumeID,title);
+                        }*/
+                        Validation missingRows = new Validation(volumeID,title_row);
                         rowsNotInRepositoryList.add(missingRows);
                         missingVolumeCount +=1;
                         rowsNotInRepository.add(row);
