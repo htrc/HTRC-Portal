@@ -175,6 +175,7 @@ public class WorksetManagement extends JavaController {
             String contentType = csv.getContentType();
             File csvFile = csv.getFile();
             File modifiedFile;
+            File missingVolumesmodifiedFile;
             String volumeFilePath = PlayConfWrapper.htrcvolumesdata();
             log.info("CSV file name: " + csvFileName + " content type: " + contentType +
                     " is private: " + isPrivateWorkset + " workset name: " + worksetName[0]);
@@ -236,7 +237,6 @@ public class WorksetManagement extends JavaController {
                 JSONObject jsonVolumeList =new JSONObject();
                 jsonVolumeList.put("volumeIdsList",volumeList);
                 List<String> volumesInHtrc = serviceClient.getVolumesInHtrc(jsonVolumeList);
-
                 totalVolumes =rows.size();
                 for(String[]row : rows)
                 {
@@ -245,38 +245,19 @@ public class WorksetManagement extends JavaController {
                     if(titleIndex >0)
                     { title_row = row[titleIndex];}
                     else
-                    {
-                        title_row = null;
-                    }
+                    {title_row = null;}
                     Validation totalRows = new Validation(volume,title_row);
                     rowsList.add(totalRows);
-                    if(volumesInHtrc.contains(row[0]))
+                    if(volumesInHtrc.contains(volume))
                     {
-                        String title;
                         copyRightVolumeCount +=1;
-                        String volumeID = row[0];
-                        /*if(titleIndex>0) {
-                           title  = row[titleIndex];
-                        }
-                        else
-                        {
-                            title = null;
-                        }*/
-                        Validation copyrightRows = new Validation(volumeID,title_row);
+                        Validation copyrightRows = new Validation(volume,title_row);
                         rowsInRepositoryList.add(copyrightRows);
                         rowsInRepository.add(row);
                     }
                     else
-                    {   String title;
-                        String volumeID =  row[0];
-                        /*if(titleIndex >0)
-                        {
-                            title = row[titleIndex];
-                        }
-                        else{
-                            title = null;
-                        }*/
-                        Validation missingRows = new Validation(volumeID,title_row);
+                    {
+                        Validation missingRows = new Validation(volume,title_row);
                         rowsNotInRepositoryList.add(missingRows);
                         missingVolumeCount +=1;
                         rowsNotInRepository.add(row);
@@ -289,14 +270,30 @@ public class WorksetManagement extends JavaController {
                     csvmodified.writeNext(str);
                 }
                 csvmodified.close();
+
+                missingVolumesmodifiedFile = File.createTempFile(wsName +"-"+wsDescription+"-missing",".csv");
+                CSVWriter csvMissingVolumes = new CSVWriter(new FileWriter(missingVolumesmodifiedFile));
+                for(String [] str:rowsNotInRepository)
+                {
+                    csvMissingVolumes.writeNext(str);
+                }
+                csvMissingVolumes.close();
             }catch (Exception e) {
                 log.error("Error while uploading CSV file.");
                 throw new RuntimeException("Error while uploading CSV file.",e);
             }
 
-            log.debug("CSV File: " + csvFile.getPath() + " , Modified File: " + modifiedFile.getPath());
-            return ok(worksetvalidate.render(userId,totalVolumes,copyRightVolumeCount,rows,Arrays.asList(headers), Form.form(UploadWorkset.class),wsName,wsDescription,isPrivateWorkset,csvFile.getPath(),
-                    modifiedFile.getPath(),missingVolumeCount,rowsList,rowsInRepositoryList,rowsNotInRepositoryList));
+            if(totalVolumes <5000) {
+                log.debug("CSV File: " + csvFile.getPath() + " , Modified File: " + modifiedFile.getPath());
+                return ok(worksetvalidate.render(userId, totalVolumes, copyRightVolumeCount, rows, Arrays.asList(headers), Form.form(UploadWorkset.class), wsName, wsDescription, isPrivateWorkset, csvFile.getPath(),
+                        modifiedFile.getPath(), missingVolumeCount, rowsList, rowsInRepositoryList, rowsNotInRepositoryList));
+            }
+            else
+            {
+                return ok(worksetValidateLarge.render(userId, totalVolumes, copyRightVolumeCount, rows, Arrays.asList(headers), Form.form(UploadWorkset.class), wsName, wsDescription, isPrivateWorkset, csvFile.getPath(),
+                        modifiedFile.getPath(), missingVolumeCount, rowsList, rowsInRepositoryList, rowsNotInRepositoryList,
+                        missingVolumesmodifiedFile.getPath()));
+            }
         }else {
             flash("error", "Missing file");
             return ok(warnings.render("Please upload a CSV file", null, null, userId));
@@ -456,6 +453,16 @@ public class WorksetManagement extends JavaController {
         return ok(csv);
     }
 
+    @RequiresAuthentication(clientName = "Saml2Client")
+    public static Result downloadValidateWorkset(String filePath,String worksetName) throws IOException, JAXBException {
+
+        File file = new File(filePath);
+        response().setContentType("text/csv");
+        response().setHeader("Content-Disposition", "attachment;filename=" + worksetName+".csv");
+        response().setHeader("Cache-control", "private");
+
+        return ok(file);
+    }
     /**
      * This is to check whether user already has a workset in with the given name
      * @param wsName Workset's name

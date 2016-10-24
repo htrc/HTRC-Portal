@@ -178,6 +178,6 @@ public class  PortalConstants {
 
     //HTRC VOLUMES URL
 
-    public static String HTRC_VOLUMES_URL ="https://htrc4.pti.indiana.edu:10443/rights-api";
+    public static String HTRC_VOLUMES_URL ="https://htrc4.pti.indiana.edu:10443/rights-api/";
 
 }

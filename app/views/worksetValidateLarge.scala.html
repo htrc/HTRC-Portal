@@ -1,0 +1,118 @@
+@(userId: String,totalVolumesCount:Integer,copyRightVolumeCount:Integer,rows:java.util.List[Array[String]],headers:java.util.List[String],uploadWSForm:Form[WorksetManagement.UploadWorkset],wsName:String,wsDescription:String,isPrivate:Boolean,
+originalWSFilePath:String,modifiedWSFilePath:String,
+missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[Validation],rowsNotInRepositoryList:List[Validation],
+missingWSFilePath:String)
+@main("worksetvalidate", userId) {
+
+<div class="container">
+    <div class="panel panel-default panel-htrc panel-with-table">
+        <div class="panel-heading">
+            <strong>Workset Summary</strong>
+        </div>
+        <div>
+            <table class ="table table-hover" id ="workset_summary" style ="margin-top:4px;">
+                <tr>
+                    <td colspan="3"><strong>Workset Name: @wsName</strong></td>
+                </tr>
+                <tr >
+                    <td width ="50%"><strong>Total Volumes Uploaded</strong></td>
+                    <td width ="20%">@totalVolumesCount</td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(originalWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                            Download</a>
+                    </td>
+                </tr>
+                <tr >
+                    <td width ="50%"><strong>Volumes In Public Domain</strong></td>
+                    <td width ="20%">@copyRightVolumeCount</td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(modifiedWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                            Download</a>
+                       </td>
+
+                </tr>
+
+                <tr>
+                    <td width ="50%"><strong>Volumes Not In Public Domain</strong></td>
+                    <td width ="20%">@missingVolumeCount</td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(missingWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                            Download</a>
+                    </td>
+                </tr>
+            </table>
+            @helper.form(routes.WorksetManagement.uploadWorkset(), 'class -> "form-horizontal",'id ->"upload_workset"){
+            @if(uploadWSForm.hasGlobalErrors){
+            <p class="error">@uploadWSForm.globalError().message()</p>
+            }
+            <div class="form-group">
+                <input type="hidden" name="rows" id="rows" value=@rows>
+
+                <input type="hidden" name="headers" id="wsHeaders" value=@headers>
+                <input type="hidden" name="wsFilePath" id="wsFilePath">
+                <input type="hidden" name="wsName" id="wsName" value="@wsName">
+                <input type="hidden" name="wsDescripton" id="wsContent" value=@wsDescription>
+                <input type="hidden" name="isPrivate" id="isPrivate" value=@isPrivate>
+
+
+                <div class="col-sm-offset-0 col-sm-10">
+                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                            title="submits original workset">Upload Original Workset</button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                            title="submits the volumes which are in public domain">Upload Modified Workset</button>
+
+                    <a class="btn btn-inverse btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
+                       title="Back to Upload Workset Page"><i class="icon-remove icon-white"></i>Cancel</a>
+
+
+                </div>
+
+
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"  >
+        $(document).ready(function () {
+            $("#upload_workset").submit(function(){
+                $(this).submit(function(){
+                    return false;
+                    });
+                    return true;
+                    });
+            var volumeCount =@copyRightVolumeCount
+            $("#validatews-submit").click(function () {
+
+                if(@totalVolumesCount == 0)
+                {
+                    alert(' Original Workset is empty. Please click on Cancel and upload a new Workset')
+                    return false;
+                }
+                else
+                {
+                    $('#wsFilePath').val("@originalWSFilePath");
+                    return true;
+                }
+
+            });
+            $("#validatews-modify").click(function () {
+
+                if(volumeCount == 0)
+                {
+                    alert(' Modifed Workset is empty. Please click on Upload Original Workset to submit your original Workset or Cancel to upload a new Workset')
+                    return false;
+                }
+                else
+                {
+                    $('#wsFilePath').val("@modifiedWSFilePath");
+                    return true;
+                }
+
+            });
+
+
+        });
+  </script>
+}
