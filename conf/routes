@@ -50,7 +50,7 @@ GET         /about                                            controllers.HTRCPo
 
 # About BookWorm
 
-GET         /bookWorm                                         controllers.HTRCPortal.bookWorm()
+GET         /bookworm                                         controllers.HTRCPortal.bookWorm()
 
 # All Worksets List Form
 GET         /listallworksets                                  controllers.WorksetManagement.allWorksets()
