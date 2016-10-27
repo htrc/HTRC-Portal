@@ -5,6 +5,11 @@
 <meta charset="UTF-8">
 <meta name="description" content="bookworm: Search for trends in hundreds of thousands of texts">
 <title>Bookworm</title>
+<style>
+    body{
+        background:  rgba(0, 0, 0, 0);
+    }
+</style>
 <!--<link rel="stylesheet" href="assets/app/bookworm.gui.css"/>-->
 
 <div class="container container-panel">
@@ -22,10 +27,8 @@
         </div>
 
         <div class="col-xs-4" class="minor-controls" style="float:right">
-            <table class="table">
-                <tr>
-                    <td style="border-top: none;">
-                        <ul class="nav nav-pills navbar-right" role="tablist">
+
+                        <ul class="nav nav-pills pull-right" role="tablist">
                             <li role="presentation" class="dropdown">
                                 <a id="link-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-label="Link" aria-haspopup="true" aria-expanded="false" title="Link">
                                     <span class="glyphicon glyphicon-link"  aria-hidden="true"></span>
@@ -62,23 +65,19 @@
                                 </ul>
                             </li>
                         </ul>
-                    </td>
-                </tr></table>
+
         </div>
     </div>
 
 
     <div class="row">
 
-        <div class="col-xs-12">
-            <table class="table" style = "padding:0px; margin:0px">
-                <tr>
-                    <td style="border-top: none;">
+        <div class="col-xs-6">
+
                         <div id="search_queries">
                         </div>
-                    </td>
-                    <td style="border-top: none;">
-                        <ul class="nav nav-pills navbar-right" role="tablist">
+                    </div><div class="col-xs-6">
+                        <ul class="nav nav-pills pull-right" role="tablist">
                             <li role="presentation" class="dropdown">
                                 <a id="time-drop" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                     <span class="glyphicon glyphicon-time"  aria-hidden="true"></span> <span class="hidden-xs">Dates </span><span class="caret"></span>
@@ -119,9 +118,7 @@
                                 <span class="glyphicon glyphicon-search"  aria-hidden="true"></span> Search
                             </button></li>
                         </ul>
-                    </td>
-                </tr>
-            </table>
+
         </div>
 
     </div>
@@ -139,10 +136,22 @@
         </div>
 
         <div class="row">
-            <div class="social col-xs-12 right">
-                <table class="table">
-                    <tr>
-                        <td style="text-align: right; float:right; border-top: none;">
+            <div class="col-xs-10"></div>
+            <div class="col-xs-1 pull-right">
+                <g:plusone size="standard" annotation="none" href="http://bookworm.culturomics.org"></g:plusone>
+                <script type="text/javascript">
+                    (function () {
+                        var po = document.createElement('script');
+                        po.type = 'text/javascript';
+                        po.async = true;
+                        po.src = 'https://apis.google.com/js/plusone.js';
+                        var s = document.getElementsByTagName('script')[0];
+                        s.parentNode.insertBefore(po, s);
+                    })();
+                </script>
+            </div>
+            <div class="social col-xs-1 pull-right">
+
                             <div id="fb-root"></div>
                             <script>
                                 window.fbAsyncInit = function() {FB.init({status: true, xfbml: true});};
@@ -154,30 +163,10 @@
                                     fjs.parentNode.insertBefore(js, fjs);
                                 }(document, 'script', 'facebook-jssdk'));
                             </script>
-                        </td>
 
-                        <td style="text-align: right; float:right; border-top: none;">
                             <div id="tweet_container"></div>
-                        </td>
-
-                        <td style="text-align: right; float:right; border-top: none;">
-                            <g:plusone size="small" width="10" annotation="none" href="http://bookworm.culturomics.org"></g:plusone>
-                            <script type="text/javascript">
-                                (function () {
-                                    var po = document.createElement('script');
-                                    po.type = 'text/javascript';
-                                    po.async = true;
-                                    po.src = 'https://apis.google.com/js/plusone.js';
-                                    var s = document.getElementsByTagName('script')[0];
-                                    s.parentNode.insertBefore(po, s);
-                                })();
-                            </script>
-                        </td>
-                    </tr>
-
-
-                </table>
             </div>
+
 
         </div>
 
