@@ -583,7 +583,7 @@ public class PlayConfWrapper {
 
     public static String datasetsPage(){
         if(datasetspage == null){
-            datasetspage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
+            datasetspage= Play.application().configuration().getString(PortalConstants.DATASETS_PAGE);
         }
         return datasetspage;
     }

@@ -27,12 +27,12 @@ body {
 }
 
 .title-slide.bg1 {
-    background: url('assets/images/image-bg-2.jpg') no-repeat center center fixed;
+    background: url('../images/image-bg-2.jpg') no-repeat center center fixed;
     
 }
 
 .title-slide.bg2 {
-    background: url('assets/images/image-bg-3.jpg') no-repeat center center fixed;
+    background: url('../images/image-bg-3.jpg') no-repeat center center fixed;
     
 }
 
