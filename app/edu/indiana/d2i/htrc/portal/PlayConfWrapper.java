@@ -126,11 +126,8 @@ public class PlayConfWrapper {
     // Google Analytics Code
     private static String googleAnalyticsCode = null;
 
-    // Features page
-    private static String featurespage = null;
-
-    // Fiction dataset page
-    private static String fictionpage = null;
+    // Datasets page
+    private static String datasetspage = null;
 
 
     public static String agentEndpoint() {
@@ -584,18 +581,12 @@ public class PlayConfWrapper {
         return googleAnalyticsCode;
     }
 
-    public static String featuresPage(){
-        if(featurespage == null){
-            featurespage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
+    public static String datasetsPage(){
+        if(datasetspage == null){
+            datasetspage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
         }
-        return featurespage;
+        return datasetspage;
     }
 
-    public static String fictionPage(){
-        if(fictionpage == null){
-            fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
-        }
-        return fictionpage;
-    }
 }
 

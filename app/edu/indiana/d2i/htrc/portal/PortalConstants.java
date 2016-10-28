@@ -168,9 +168,6 @@ public class  PortalConstants {
     public static String GA_CODE = "google.analytics.code";
 
     // Features page
-    public static String FEATURES_PAGE = "features.page";
-
-    // Fiction dataset page
-    public static String FICTION_PAGE = "fiction.page";
+    public static String DATASETS_PAGE = "datasets.page";
 
 }

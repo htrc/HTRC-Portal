@@ -19,8 +19,7 @@ import play.Logger;
 import play.Play;
 import play.mvc.Result;
 import views.html.about;
-import views.html.features;
-import views.html.fiction;
+import views.html.datasets;
 import views.html.gotopage;
 import views.html.index;
 
@@ -90,14 +89,9 @@ public class HTRCPortal extends JavaController {
         return ok(about.render(session(PortalConstants.SESSION_USERNAME)));
     }
 
-    public static Result features() throws IOException {
-        String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
-        return ok(features.render(session(PortalConstants.SESSION_USERNAME),featurePage));
-    }
-
-    public static Result fiction() throws IOException {
-        String fictionPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.fictionPage())));
-        return ok(fiction.render(session(PortalConstants.SESSION_USERNAME),fictionPage));
+    public static Result datasets() throws IOException {
+        String datasetsPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.datasetsPage())));
+        return ok(datasets.render(session(PortalConstants.SESSION_USERNAME),datasetsPage));
     }
 
     public static String getUserEmail(String accessToken) throws IOException {
