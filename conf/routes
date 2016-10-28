@@ -133,9 +133,7 @@ POST        /callback                                         org.pac4j.play.Cal
 
 GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
 
-GET         /features                                         controllers.HTRCPortal.features()
-
-GET         /genre                                            controllers.HTRCPortal.fiction()
+GET         /datasets                                         controllers.HTRCPortal.datasets()
 
 #GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()

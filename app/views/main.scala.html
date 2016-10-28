@@ -28,7 +28,6 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-download-tracking.js")"></script>
     </head>
     <body>
-
         <nav class="navbar navbar-default navbar-fixed-top navbar-htrc" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -115,12 +114,10 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Data<b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="@routes.HTRCPortal.features()">
-                                    Extracted Features Dataset</a>
-                                </li>
-                                <li><a href="@routes.HTRCPortal.fiction()">
-                                    Word Frequencies in English-Language Literature, 1700-1922</a>
-                                </li>
+
+				<li><a href="@routes.HTRCPortal.datasets()">
+					Datasets
+				</a></li>
                                 <li><a href="@routes.HTRCPortal.bookWorm()">Explore trends with Bookworm</a>
                                 </li>
                             </ul>
@@ -239,6 +236,7 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
             ga('create', '@PlayConfWrapper.googleAnalyticsCode()', 'auto');
             ga('send', 'pageview');
         </script>
