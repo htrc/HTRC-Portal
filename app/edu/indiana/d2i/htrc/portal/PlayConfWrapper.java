@@ -126,11 +126,13 @@ public class PlayConfWrapper {
     // Google Analytics Code
     private static String googleAnalyticsCode = null;
 
-    // Features page
-    private static String featurespage = null;
+    // Datasets page
+    private static String datasetspage = null;
 
-    // Fiction dataset page
-    private static String fictionpage = null;
+    //BookWorm Page
+
+    private static String bookWormPage = null;
+
 
     //Data Files
     private static String htrcvolumesdata =null;
@@ -590,18 +592,17 @@ public class PlayConfWrapper {
         return googleAnalyticsCode;
     }
 
-    public static String featuresPage(){
-        if(featurespage == null){
-            featurespage= Play.application().configuration().getString(PortalConstants.FEATURES_PAGE);
+    public static String datasetsPage(){
+        if(datasetspage == null){
+            datasetspage= Play.application().configuration().getString(PortalConstants.DATASETS_PAGE);
         }
-        return featurespage;
+        return datasetspage;
     }
-
-    public static String fictionPage(){
-        if(fictionpage == null){
-            fictionpage= Play.application().configuration().getString(PortalConstants.FICTION_PAGE);
+    public static String bookWormPage(){
+        if(bookWormPage == null){
+            bookWormPage= Play.application().configuration().getString(PortalConstants.BOOKWORM_PAGE);
         }
-        return fictionpage;
+        return bookWormPage;
     }
 
     public static String htrcvolumesdata()
@@ -620,5 +621,6 @@ public class PlayConfWrapper {
         }
         return volumesUrl;
     }
+
 }
 

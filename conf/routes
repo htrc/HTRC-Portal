@@ -50,7 +50,7 @@ GET         /about                                            controllers.HTRCPo
 
 # About BookWorm
 
-#GET         /bookWorm                                         controllers.HTRCPortal.bookWorm()
+GET         /bookworm                                         controllers.HTRCPortal.bookWorm()
 
 # All Worksets List Form
 GET         /listallworksets                                  controllers.WorksetManagement.allWorksets()
@@ -141,9 +141,7 @@ POST        /callback                                         org.pac4j.play.Cal
 
 GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
 
-GET         /features                                         controllers.HTRCPortal.features()
-
-GET         /genre                                            controllers.HTRCPortal.fiction()
+GET         /datasets                                         controllers.HTRCPortal.datasets()
 
 #GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()

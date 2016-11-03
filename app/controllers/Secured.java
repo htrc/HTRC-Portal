@@ -59,10 +59,7 @@ public class Secured extends Security.Authenticator {
         if(ctx.request().path().equals("/about")){
             return ok(about.render(null));
         }
-        if(ctx.request().path().equals("/features")){
-            return ok(about.render(null));
-        }
-        if(ctx.request().path().equals("/genre")){
+        if(ctx.request().path().equals("/datasets")){
             return ok(about.render(null));
         }
 

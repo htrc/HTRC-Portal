@@ -5,31 +5,27 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title> HTRC Portal - @title </title>
-        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <!-- Bootstrap -->
-        <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/flat.css")" rel="stylesheet" media="screen">
-        <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
-        <link href="@routes.Assets.at("stylesheets/tomorrow.min.css")" rel="stylesheet">
-        @*<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">*@
-        <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
-        @*<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/tomorrow.min.css">*@
-        @*<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>*@
-        <script src="@routes.Assets.at("javascripts/highlight.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/bowser.min.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/uploadws.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-download-tracking.js")"></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-
+<head>
+    <title> HTRC Portal - @title </title>
+    <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="600">
+    <!-- Bootstrap -->
+    <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/flat.css")" rel="stylesheet" media="screen">
+    <link href="@routes.Assets.at("stylesheets/font-awesome.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("stylesheets/tomorrow.min.css")" rel="stylesheet">
+    <link rel="stylesheet" href="@routes.HTRCPortal.getCustomTheme()">
+    <script src="@routes.Assets.at("javascripts/highlight.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/stupidtable.min.js")"></script>
+    <script src="assets/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js" type="text/javascript"></script>
+    <script src="assets/bower_components/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bowser.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/htrcwarnings.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/uploadws.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-download-tracking.js")"></script>
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top navbar-htrc" role="navigation">
@@ -43,15 +39,13 @@
                     </button>
                     <a class="navbar-brand" href="@routes.HTRCPortal.index()"><img src="@routes.Assets.at("images/hathi.jpg")"
                     width="36" height="32" style="padding-right : 5 px ; margin-top : - 1 px ;" alt=" ">
-                        HTRC Portal
+
                     </a>
                 </div>
 
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="@routes.HTRCPortal.index()">Home</a></li>
-                        </li>
-
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Worksets <b class="caret"></b></a>
@@ -120,11 +114,11 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Data<b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="@routes.HTRCPortal.features()">
-                                    Extracted Features Dataset</a>
-                                </li>
-                                <li><a href="@routes.HTRCPortal.fiction()">
-                                    Word Frequencies in English-Language Literature, 1700-1922</a>
+
+				<li><a href="@routes.HTRCPortal.datasets()">
+					Datasets
+				</a></li>
+                                <li><a href="@routes.HTRCPortal.bookWorm()">Explore trends with Bookworm</a>
                                 </li>
                             </ul>
                         </li>

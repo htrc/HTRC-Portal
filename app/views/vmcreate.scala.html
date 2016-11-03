@@ -23,11 +23,10 @@
                     <label for="vmImageName" class="col-sm-2 control-label">Data Capsule Image</label>
                     <div class="col-sm-10">
                         <select id="vmImageName" name="vmImageName" class="form-control">
-                            <option selected="selected">
-                                @form.data().get("vmImageName")
-                            </option>
                         @for(vm <- vmDetailsList) {
-                            <option>@vm.getVmImageName</option>
+                            @if(vm.getVmImageName != "uncamp2015-image"){
+                                <option>@vm.getVmImageName</option>
+                            }
                         }
                         </select>
                     </div>

@@ -15,7 +15,6 @@
  *
  */
 
-import ch.ethz.ssh2.Session;
 import controllers.UserManagement;
 import edu.indiana.d2i.htrc.portal.CSVReader;
 import edu.indiana.d2i.htrc.portal.HTRCSSOServiceManagerUtility;
@@ -23,11 +22,8 @@ import edu.indiana.d2i.htrc.portal.PlayConfWrapper;
 import edu.indiana.d2i.htrc.portal.PortalConstants;
 import filters.LoggingFilter;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.play.Config;
 import org.pac4j.saml.client.Saml2Client;
-import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
-import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
 import org.wso2.carbon.identity.application.common.model.xsd.ApplicationBasicInfo;
 import play.Application;
 import play.GlobalSettings;

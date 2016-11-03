@@ -168,10 +168,10 @@ public class  PortalConstants {
     public static String GA_CODE = "google.analytics.code";
 
     // Features page
-    public static String FEATURES_PAGE = "features.page";
+    public static String DATASETS_PAGE = "datasets.page";
 
-    // Fiction dataset page
-    public static String FICTION_PAGE = "fiction.page";
+    // bookWorm Page
+    public static String BOOKWORM_PAGE = "bookWorm.page";
 
     // Data Folder
     public static String HTRC_VOLUMES_DATA ="htrc.volumes.data";
@@ -181,3 +181,5 @@ public class  PortalConstants {
     public static String HTRC_VOLUMES_URL ="https://htrc4.pti.indiana.edu:10443/rights-api/";
 
 }
+
+

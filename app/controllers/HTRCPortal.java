@@ -11,25 +11,18 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.codehaus.jettison.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.play.CallbackController;
 import org.pac4j.play.java.JavaController;
 import org.pac4j.play.java.RequiresAuthentication;
-import org.wso2.carbon.user.mgt.stub.UserAdminUserAdminException;
 import play.Logger;
 import play.Play;
 import play.mvc.Result;
-import views.html.about;
-import views.html.features;
-import views.html.fiction;
-import views.html.gotopage;
-import views.html.index;
+import views.html.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -83,21 +76,22 @@ public class HTRCPortal extends JavaController {
         }
 
         flash("success", "You've been logged out");
-        return redirect(routes.HTRCPortal.index());
+        return redirect(controllers.routes.HTRCPortal.index());
     }
 
     public static Result about() {
         return ok(about.render(session(PortalConstants.SESSION_USERNAME)));
     }
 
-    public static Result features() throws IOException {
-        String featurePage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.featuresPage())));
-        return ok(features.render(session(PortalConstants.SESSION_USERNAME),featurePage));
+    public static Result bookWorm() throws IOException {
+        String bookWormPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.bookWormPage())));
+        //return ok(features.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
+        return ok(bookworm.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
     }
 
-    public static Result fiction() throws IOException {
-        String fictionPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.fictionPage())));
-        return ok(fiction.render(session(PortalConstants.SESSION_USERNAME),fictionPage));
+    public static Result datasets() throws IOException {
+        String datasetsPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.datasetsPage())));
+        return ok(datasets.render(session(PortalConstants.SESSION_USERNAME),datasetsPage));
     }
 
     public static String getUserEmail(String accessToken) throws IOException {

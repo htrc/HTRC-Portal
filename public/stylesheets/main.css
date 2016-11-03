@@ -13,6 +13,53 @@ body {
     min-height: 43px;
 }
 
+
+.container.nopad {
+    padding: 0;
+}
+
+.bg-full {
+    background-color: #c77134;
+}
+
+.container {
+    background: rgba(255,255,255,0.4);
+}
+
+.title-slide.bg1 {
+    background: url('../images/image-bg-2.jpg') no-repeat center center fixed;
+    
+}
+
+.title-slide.bg2 {
+    background: url('../images/image-bg-3.jpg') no-repeat center center fixed;
+    
+}
+
+.title-slide h2 small {
+    color: #e9e9e9;
+    font-style: italic;
+}
+
+.title-slide h2 {
+    color: white;
+}
+
+.bg-full .title-slide {
+    padding-top: 30px;
+    padding-bottom: 30px;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    height:100%;
+}
+
+body {
+    background: whitesmoke;
+}
+
 .navbar-htrc {
     border-bottom: 1px solid #c0cdd1;
     border-bottom-width: 2px;
