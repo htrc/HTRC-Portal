@@ -138,7 +138,7 @@ public class PlayConfWrapper {
     private static String htrcvolumesdata =null;
 
     //Volume api
-    private static String volumesUrl = null;
+    private static String htrcRightsApi = null;
 
 
     public static String agentEndpoint() {
@@ -613,13 +613,13 @@ public class PlayConfWrapper {
         return htrcvolumesdata;
     }
 
-    public static String getVolumesUrl()
+    public static String htrcRightsAPI()
     {
-        if(volumesUrl == null)
+        if(htrcRightsApi == null)
         {
-            volumesUrl = Play.application().configuration().getString(PortalConstants.HTRC_VOLUMES_URL);
+            htrcRightsApi = Play.application().configuration().getString(PortalConstants.HTRC_RIGHTS_API);
         }
-        return volumesUrl;
+        return htrcRightsApi;
     }
 
 }

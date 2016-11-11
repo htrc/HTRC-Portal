@@ -176,9 +176,9 @@ public class  PortalConstants {
     // Data Folder
     public static String HTRC_VOLUMES_DATA ="htrc.volumes.data";
 
-    //HTRC VOLUMES URL
+    //HTRC RIGHTS API
 
-    public static String HTRC_VOLUMES_URL ="https://htrc4.pti.indiana.edu:10443/rights-api/";
+    public static String HTRC_RIGHTS_API ="rights.api";
 
 }
 
