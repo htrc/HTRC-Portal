@@ -31,9 +31,14 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.util.URIUtil;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -602,6 +607,39 @@ public class HTRCPersistenceAPIClient {
         }
 
         return volDetails;
+    }
+
+    public List<String>  getVolumesInHtrc(JSONObject volumes) throws IOException
+    {
+        //String volumesUrl = "http://localhost:8087/SGA_REST_DataIngestor/sga/dataingestor"  ;
+        String volumesUrl = PlayConfWrapper.htrcRightsAPI()+"/filter";
+        StringRequestEntity entity = new StringRequestEntity(volumes.toJSONString(),"application/json","UTF-8");
+        PostMethod post = new PostMethod(volumesUrl);
+        post.setRequestEntity(entity);
+        post.addRequestHeader("Content-Type", "application/json");
+
+        NameValuePair levelparam = new NameValuePair("level", URIUtil.encodeQuery("3"));
+        NameValuePair[] params = new NameValuePair[] {levelparam};
+        post.setQueryString(params);
+        int response = client.executeMethod(post);
+        if(response ==200)
+        {
+            String jsonStr = post.getResponseBodyAsString();
+            log.info(Arrays.toString(post.getRequestHeaders()));
+            JSONParser parser = new JSONParser();
+            try {
+                Object obj = parser.parse(jsonStr);
+                JSONObject jsonObject = (JSONObject) obj;
+                return (List<String>)jsonObject.get("volumeIdsList");
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        } else {
+            this.responseCode = response;
+            log.error(post.getResponseBodyAsString());
+            throw new IOException("Response code " + response + " for " + volumesUrl + " message: \n " + post.getResponseBodyAsString());
+        }
+        return null;
     }
 
 }

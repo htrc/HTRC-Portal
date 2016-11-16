@@ -156,7 +156,7 @@ public class WorksetManagement extends JavaController {
         String[] description = body.asFormUrlEncoded().get("uploadWSdescription");
         boolean isPrivateWorkset = body.asFormUrlEncoded().containsKey("privateWorkset");
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
-        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+
         if (csv != null) {
             int totalVolumes=0;
             int copyRightVolumeCount =0;
@@ -236,7 +236,7 @@ public class WorksetManagement extends JavaController {
                 }
                 JSONObject jsonVolumeList =new JSONObject();
                 jsonVolumeList.put("volumeIdsList",volumeList);
-                List<String> volumesInHtrc = serviceClient.getVolumesInHtrc(jsonVolumeList);
+                List<String> volumesInHtrc = persistenceAPIClient.getVolumesInHtrc(jsonVolumeList);
                 totalVolumes =rows.size();
                 for(String[]row : rows)
                 {
