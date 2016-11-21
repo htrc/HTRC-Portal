@@ -611,7 +611,7 @@ public class HTRCPersistenceAPIClient {
 
     public List<String>  getVolumesInHtrc(JSONObject volumes) throws IOException
     {
-        //String volumesUrl = "http://localhost:8087/SGA_REST_DataIngestor/sga/dataingestor"  ;
+        //String volumesUrl = "http://localhost:8087/SGA_REST_DataIngestor/sga/dataingestor";
         String volumesUrl = PlayConfWrapper.htrcRightsAPI()+"/filter";
         StringRequestEntity entity = new StringRequestEntity(volumes.toJSONString(),"application/json","UTF-8");
         PostMethod post = new PostMethod(volumesUrl);

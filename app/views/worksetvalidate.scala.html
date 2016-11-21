@@ -89,10 +89,6 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                 </tr>
             </table>
 
-
-
-
-
             @helper.form(routes.WorksetManagement.uploadWorkset(), 'class -> "form-horizontal",'id ->"upload_workset"){
             @if(uploadWSForm.hasGlobalErrors){
             <p class="error">@uploadWSForm.globalError().message()</p>
@@ -108,10 +104,10 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
 
 
                 <div class="col-sm-offset-0 col-sm-10">
-                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
-                            title="submits original workset">Upload Original Workset</button>
-                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
-                            title="submits the volumes which are in public domain">Upload Modified Workset</button>
+                    <button type="submit" class="btn btn-inverse btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                            title="submits original workset"><i class="icon-remove icon-white"></i>Upload Original Workset</button>
+                    <button type="submit" class="btn btn-inverse btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                            title="submits the volumes which are in public domain"><i class="icon-remove icon-white"></i>Upload Modified Workset</button>
 
                     <a class="btn btn-inverse btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
                        title="Back to Upload Workset Page"><i class="icon-remove icon-white"></i>Cancel</a>
@@ -136,7 +132,6 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                     });
             var volumeCount =@copyRightVolumeCount
             $("#validatews-submit").click(function () {
-
                 if(@totalVolumesCount == 0)
                 {
                     alert(' Original Workset is empty. Please click on Cancel and upload a new Workset')
@@ -147,12 +142,8 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                     $('#wsFilePath').val("@originalWSFilePath");
                     return true;
                 }
-
-
-
             });
             $("#validatews-modify").click(function () {
-
                 if(volumeCount == 0)
                 {
                     alert(' Modifed Workset is empty. Please click on Upload Original Workset to submit your original Workset or Cancel to upload a new Workset')
@@ -163,33 +154,19 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
                     $('#wsFilePath').val("@modifiedWSFilePath");
                     return true;
                 }
-
             });
-
-            $("#view_deletedvolumes").hide();
-
-
-            $("#validatews-view").click(function(){
-                $("#view_deletedvolumes").show();
-                return false;
-            });
-
            $('#view_deletedvolume').wrap('<div id="hide" style="display:none"/>');
            $('#view_deletedvolume').dataTable({
                 "bFilter":false,
                 "bLengthChange": false
-
             });
             $("#missingvolumes-view").click(function(){
-
                 $('#hide').css( 'display', 'block' );
                 $('#hide_copyright').css('display','none');
                 $('#hide_original').css('display','none');
                 return false;
 
                 });
-
-
             $('#view_copyrightvolume').wrap('<div id="hide_copyright" style="display:none"/>');
             $('#view_copyrightvolume').dataTable({
                 "bFilter":false,
@@ -198,14 +175,10 @@ missingVolumeCount:Integer,rowsList :List[Validation],rowsInRepositoryList:List[
             });
 
             $("#copyrightvolumes-view").click(function(){
-
-
                 $('#hide_copyright').css( 'display', 'block' );
                 $('#hide').css('display','none');
                 $('#hide_original').css('display','none');
                 return false;
-
-
                 });
 
             $('#view_originalvolume').wrap('<div id="hide_original" style="display:none"/>');
