@@ -113,13 +113,18 @@
         </div>
 
             <script type="text/javascript">
-            function modalMessage(modalHeader, modalBody, locationHref){
-                $('#modal-header').text(modalHeader);
-                $('#modal-body').text(modalBody);
-                $('#modal-href').attr("href", locationHref);
-                $('#popup-modal').modal('show');
-                return true ;
-            }
+                function modalMessage(modalHeader, modalBody, locationHref){
+                    $('#modal-header').text(modalHeader);
+                    $('#modal-body').text(modalBody);
+                    $('#modal-href').attr("href", locationHref);
+                    $('#popup-modal').modal('show');
+                    return true ;
+                }
+
+                setInterval(function(){
+                    window.location.reload(1);
+                }, 10000);
+
             </script>
 
 
