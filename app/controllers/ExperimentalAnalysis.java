@@ -190,21 +190,14 @@ public class ExperimentalAnalysis extends JavaController {
                 mem = Integer.parseInt(memory);
             } catch (Exception e) {
                 log.error("Error parsing memory value.", e);
-                return "Memory should be an integer between 1024 and 10240.";
             }
-
-            if (mem < 1024 || mem > 4096) {
-                return "Memory should be between 1024MB - 4096MB";
-            } else {
-                HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-                try {
-                    String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), session());
-                } catch (Exception e) {
-                    log.error("Error calling createVM in data capsule API.", e);
-                    return "Capsule Creation failed. Internal Error occurred!!";
-                }
+            HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
+            try {
+                String vmId = serviceClient.createVM(vmImageName, userName, password, String.valueOf(memory), String.valueOf(numberOfVCPUs), session());
+            } catch (Exception e) {
+                log.error("Error calling createVM in data capsule API.", e);
+                return "Capsule Creation failed. Internal Error occurred!!";
             }
-
             return null;
         }
     }

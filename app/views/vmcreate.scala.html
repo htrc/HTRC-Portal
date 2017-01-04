@@ -1,4 +1,4 @@
-@(userId: String, form: Form[ExperimentalAnalysis.CreateVM], vmDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
+@(userId: String, form: Form[ExperimentalAnalysis.CreateVM], vmImageDetailsList: List[edu.indiana.d2i.htrc.sloan.bean.VMImageDetails])
 
 
 @main("VMCreate", userId) {
@@ -23,8 +23,8 @@
                     <label for="vmImageName" class="col-sm-2 control-label">Data Capsule Image</label>
                     <div class="col-sm-10">
                         <select id="vmImageName" name="vmImageName" class="form-control">
-                        @for(vm <- vmDetailsList) {
-                            @if(vm.getVmImageName != "uncamp2015-image"){
+                        @for(vm <- vmImageDetailsList) {
+                            @if(vm.getVmImageStatus() == "ACTIVE"){
                                 <option>@vm.getVmImageName</option>
                             }
                         }
