@@ -149,20 +149,22 @@ var registerUserIDValidation = function () {
 
 var acknowledgeButtonVisibility = function() {
     var acknowledgementCheckBox = $('#acknowledgement');
+    var submitButton = $('#submit');
     if (userIdCorrect && passwordCorrect && validEmailDomain && confirmPasswordMatch && confirmEmailMatch) {
         acknowledgementCheckBox.prop("disabled",false);
+        submitButton.prop("disabled", !acknowledgementCheckBox.prop('checked'));
     }else{
         acknowledgementCheckBox.prop("disabled",true);
+        submitButton.prop("disabled",true);
     }
 };
 
-var triggerAlreadyFilledFields = setTimeout(function() {
+var triggerAlreadyFilledFields = function() {
     $('input').each(function() {
         var elem = $(this);
         if (elem.val()) elem.change();
     })
-}, 250);
-
+};
 
 $(document).ready(function () {
     registerUserIDValidation();
@@ -172,5 +174,5 @@ $(document).ready(function () {
     acknowledgeButtonVisibility();
     registerPasswordMatcher();
     registerPasswordStrengthChecker();
-    triggerAlreadyFilledFields();
+    setTimeout(triggerAlreadyFilledFields, 250);
 });
