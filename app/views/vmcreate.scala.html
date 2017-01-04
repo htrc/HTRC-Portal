@@ -31,34 +31,40 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group has-feedback" id="username-control-group">
                     <label for="userName" class="col-sm-2 control-label">VNC Login User Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="userName" name="userName" placeholder="User Name" required="true" value="@form.data().get("userName")">
-                        Note: This is different from the login user name of Capsule.
+                        <input type="text" class="form-control" id="userName" name="userName" placeholder="VNC User Name" aria-describedby="user-id-feedback-status" required value="@form.data.get("userName")">
+                        <span id="user-id-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                        <span id="user-id-feedback-status" class="sr-only">(success)</span>
+                        <div id="user_id_alert_placeholder">
+                        </div>
+                        <span class="help-block">
+                            <span id="userid-warn-block" class="warn-block"></span>
+                            Note: This is different from the login user name of Capsule. User Name must be at least 3 characters long and less than 8 characters long. This is due to a VNC limitation.
+                        </span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group has-feedback" id="password-control-group">
                     <label for="password" class="col-sm-2 control-label">VNC Login Password </label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required="true">
-                        Note: This is different from the login password of Capsule. Password must be less than 8 characters. This is due to a VNC limitation.
+                        <input type="password" class="form-control" id="password" name="password" placeholder="VNC Password" aria-describedby="password-feedback-status" required>
+                        <span id="password-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                        <span id="password-feedback-status" class="sr-only">(success)</span>
+                        <div id="alert_placeholder">
+                        </div>
+                        <span class="help-block">
+                            <span id="password-warn-block" class="warn-block"></span>
+                            Note: This is different from the login password of Capsule. Password must be at least 3 characters long and less than 8 characters long. This is due to a VNC limitation.
+                        </span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group has-feedback" id="confirm-password-control-group">
                     <label for="confirmPassword" class="col-sm-2 control-label">Confirm Password [VNC] </label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Password" required="true" oninput="check(this)">
-                        <script language='javascript' type='text/javascript'>
-                        function check (input){
-                            if (input.value != document.getElementById('password').value){
-                                input.setCustomValidity('Password Must be Matching.');
-                            } else {
-                                // input is valid -- reset the error message
-                                input.setCustomValidity('') ;
-                            }
-                        }
-                        </script>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="VNC Password" aria-describedby="confirm-password-feedback-status" required>
+                        <span id="confirm-password-feedback" class="form-control-feedback" aria-hidden="true"></span>
+                        <span id="confirm-password-feedback-status" class="sr-only">(success)</span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -66,14 +72,7 @@
                     <div class="col-sm-10">
 
                                 <select id="numberOfVCPUs" name="numberOfVCPUs" class="form-control">
-                                    @if(form.data().get("numberOfVCPUs")!= null){
-                                        <option selected="selected">
-                                        @form.data().get("numberOfVCPUs")
-                                        </option>
-                                        <option>1</option>
-                                    } else{
-                                        <option selected="selected">1</option>
-                                    }
+                                    <option selected="selected">1</option>
                                     <option>2</option>
                                     <option>3</option>
                                     <option>4</option>
@@ -88,30 +87,21 @@
                     <label for="memory" class="col-sm-2 control-label">Memory (MB)</label>
                     <div class="col-sm-10">
                         <select id="memory" name="memory" class="form-control">
-                            @if(form.data().get("memory")!= null){
-                                <option selected="selected">
-                                    @form.data().get("memory")
-                                </option>
-                                <option>1024</option>
-                                <option>2048</option>
-                            }else{
-                                <option>1024</option>
-                                <option selected="selected">
-                                    2048
-                                </option>
-                            }
+                            <option selected="selected">2048</option>
                             <option>4096</option>
-                            <option>8196</option>
+                            <option>8192</option>
+                            <option>16384</option>
                         </select>
                       </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary btn-sm">Create Capsule</button>
+                        <button type="submit" class="btn btn-primary btn-sm" name="createCapsule" id="createCapsule">Create Capsule</button>
                     </div>
                 </div>
             }
             </div>
         </div>
     </div>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vmcreate.js")"></script>
 }
