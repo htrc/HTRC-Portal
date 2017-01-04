@@ -61,6 +61,21 @@ var checkPasswordStrength = function (password, userId, minPasswordLength, maxPa
     return "WEAK_PASSWORD";
 };
 
+var matchPasswords = function () {
+    var passwd = $('#password');
+    var confirmPasswd = $('#confirmPassword');
+    var confirmPasswdControlGroup = $('#confirm-password-control-group');
+    var confirmPasswdFeedback = $('#confirm-password-feedback');
+    if (passwd.val() !== confirmPasswd.val()) {
+        confirmPasswordMatch = false;
+        hasError(confirmPasswdControlGroup, confirmPasswdFeedback);
+    } else {
+        confirmPasswordMatch = true;
+        hasSuccess(confirmPasswdControlGroup, confirmPasswdFeedback);
+    }
+
+};
+
 var registerPasswordStrengthChecker = function () {
     var passwd = $('#password');
     var passwdControlGroup = $('#password-control-group');
@@ -91,22 +106,12 @@ var registerPasswordStrengthChecker = function () {
             hasSuccess(passwdControlGroup, passwordFeedback);
             warnBlock.html('');
         }
+        matchPasswords();
     });
 };
 
 var registerPasswordMatcher = function () {
-    var passwd = $('#password');
     var confirmPasswd = $('#confirmPassword');
-    var confirmPasswdControlGroup = $('#confirm-password-control-group');
-    var confirmPasswdFeedback = $('#confirm-password-feedback');
 
-    confirmPasswd.keyup(function () {
-        if (passwd.val() !== confirmPasswd.val()) {
-            confirmPasswordMatch = false;
-            hasError(confirmPasswdControlGroup, confirmPasswdFeedback);
-        } else {
-            confirmPasswordMatch = true;
-            hasSuccess(confirmPasswdControlGroup, confirmPasswdFeedback);
-        }
-    });
+    confirmPasswd.keyup(matchPasswords);
 };
