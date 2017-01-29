@@ -18,16 +18,16 @@ missingWSFilePath:String)
                     <td width ="50%"><strong>Total Volumes Uploaded</strong></td>
                     <td width ="20%">@totalVolumesCount</td>
                     <td>
-                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(originalWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
-                            Download</a>
+                        <a id ="btn_allvolumes" style="width:200px" class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(originalWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                            Download All Volumes </a>
                     </td>
                 </tr>
                 <tr >
                     <td width ="50%"><strong>Volumes In Public Domain</strong></td>
                     <td width ="20%">@copyRightVolumeCount</td>
                     <td>
-                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(modifiedWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
-                            Download</a>
+                        <a class="btn btn-xs btn-primary" style="width:200px"href="@routes.WorksetManagement.downloadValidateWorkset(modifiedWSFilePath,wsName)" target="_blank" ><i class="icon-download-alt icon-white"></i>
+                            Download Copyright Volumes</a>
                        </td>
 
                 </tr>
@@ -36,8 +36,8 @@ missingWSFilePath:String)
                     <td width ="50%"><strong>Volumes Not In Public Domain</strong></td>
                     <td width ="20%">@missingVolumeCount</td>
                     <td>
-                        <a class="btn btn-xs btn-primary" href="@routes.WorksetManagement.downloadValidateWorkset(missingWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
-                            Download</a>
+                        <a class="btn btn-xs btn-primary" style="width:200px" href="@routes.WorksetManagement.downloadValidateWorkset(missingWSFilePath,wsName)" target="_blank"><i class="icon-download-alt icon-white"></i>
+                            Download Non Copyrighted Volumes</a>
                     </td>
                 </tr>
             </table>
@@ -56,20 +56,23 @@ missingWSFilePath:String)
 
 
                 <div class="col-sm-offset-0 col-sm-10">
-                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
-                            title="submits original workset">Upload Original Workset</button>
-                    <button type="submit" class="btn btn-primary btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
-                            title="submits the volumes which are in public domain">Upload Modified Workset</button>
+                    <button type="submit" class="btn btn-inverse btn-sm" id="validatews-submit" data-toggle="tooltip" data-placement="right"
+                            title="submits original workset"><i class="icon-remove icon-white"></i>Use @totalVolumesCount Volume Workset</button>
+                    @if(totalVolumesCount != copyRightVolumeCount){
+                    <button type="submit" class="btn btn-inverse btn-sm" id="validatews-modify" data-toggle="tooltip" data-placement="right"
+                            title="submits the volumes which are in public domain"><i class="icon-remove icon-white"></i>Use @copyRightVolumeCount Volume Workset</button>
+                    }
 
                     <a class="btn btn-inverse btn-sm" id="validatews-back" href="@routes.WorksetManagement.uploadWorksetForm()" target="_self" data-toggle="tooltip" data-placement="right"
                        title="Back to Upload Workset Page"><i class="icon-remove icon-white"></i>Cancel</a>
-
-
                 </div>
 
 
             </div>
             }
+
+            <p class="alert alert-info" style="margin: 10px; padding: 5px;"><b>Note:</b> Algorithms in HTRC Portal will work only on volumes in Public Domain.</p>
+
         </div>
     </div>
 </div>

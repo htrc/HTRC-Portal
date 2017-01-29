@@ -44,6 +44,10 @@ POST        /passwordresetmail                                controllers.UserMa
 # Validate email domain
 GET         /isvalidemaildomain                               controllers.UserManagement.validateEmail(email:String ?="")
 
+#About datasets
+
+GET         /datasets                                       controllers.HTRCPortal.datasets()
+
 # About Form
 
 GET         /about                                            controllers.HTRCPortal.about()
@@ -67,19 +71,18 @@ GET         /viewworkset                                      controllers.Workse
 # Download Workset
 GET         /downloadworkset                                  controllers.WorksetManagement.downloadWorkset(worksetName:String ?="", worksetAuthor:String ?="")
 
-# Download Validate Workset
-GET         /downloadvalidateworkset                           controllers.WorksetManagement.downloadValidateWorkset(filePath:String ?="", worksetName:String ?="")
-
-
 # Upload Workset
 GET        /uploadworkset                                      controllers.WorksetManagement.uploadWorksetForm()
+
+# View Workset
+POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()
+
 
 # validate Workset
 POST        /validateworkset/                                   controllers.WorksetManagement.validateWorkset()
 
-
-# View Workset
-POST        /uploadworkset                                    controllers.WorksetManagement.uploadWorkset()
+# download workset
+GET        /downloadValidateWorkset                                   controllers.WorksetManagement.downloadValidateWorkset(filepath:String ?="",wsName:String ?="")
 
 # Validate workset name
 GET         /iswsnamevalid                                    controllers.WorksetManagement.validateWSName(wsName:String ?="")
@@ -141,7 +144,9 @@ POST        /callback                                         org.pac4j.play.Cal
 
 GET         /theme                                            controllers.HTRCPortal.getCustomTheme()
 
-GET         /datasets                                         controllers.HTRCPortal.datasets()
+#GET         /features                                         controllers.HTRCPortal.features()
+
+#GET         /genre                                            controllers.HTRCPortal.fiction()
 
 #GET         /releasedoc                                        controllers.HTRCPortal.getReleaseDocument()
 #GET         /logout              org.pac4j.play.CallbackController.logoutAndOk()
