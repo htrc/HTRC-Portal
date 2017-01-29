@@ -131,7 +131,8 @@ public class HTRCExperimentalAnalysisServiceClient {
                     JSONObject infoObject = (JSONObject) aJsonArray;
                     String name = (String) infoObject.get("imageName");
                     String description = (String) infoObject.get("imageDescription");
-                    VMImageDetails vmDetails = new VMImageDetails(name, description);
+                    String status = (String) infoObject.get("imageStatus");
+                    VMImageDetails vmDetails = new VMImageDetails(name, description,status);
                     if (!vmDetailsList.contains(vmDetails)) {
                         vmDetailsList.add(vmDetails);
                     }

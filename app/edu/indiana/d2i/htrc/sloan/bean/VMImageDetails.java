@@ -20,10 +20,12 @@ package edu.indiana.d2i.htrc.sloan.bean;
 public class VMImageDetails {
     private String vmImageName;
     private String vmImageDescription;
+    private String vmImageStatus;
 
-    public VMImageDetails(String imageName, String imageDescription){
+    public VMImageDetails(String imageName, String imageDescription, String imageStatus){
         this.vmImageName = imageName;
         this.vmImageDescription = imageDescription;
+        this.vmImageStatus = imageStatus;
     }
 
     public String getVmImageName() {
@@ -40,5 +42,13 @@ public class VMImageDetails {
 
     public void setVmImageDescription(String vmImageDescription) {
         this.vmImageDescription = vmImageDescription;
+    }
+
+    public String getVmImageStatus() {
+        return vmImageStatus;
+    }
+
+    public void setVmImageStatus(String vmImageStatus) {
+        this.vmImageStatus = vmImageStatus;
     }
 }
