@@ -176,7 +176,6 @@ public class WorksetManagement extends JavaController {
             File csvFile = csv.getFile();
             File modifiedFile;
             File missingVolumesmodifiedFile;
-            String volumeFilePath = PlayConfWrapper.htrcvolumesdata();
             log.info("CSV file name: " + csvFileName + " content type: " + contentType +
                     " is private: " + isPrivateWorkset + " workset name: " + worksetName[0]);
             try {
@@ -190,10 +189,6 @@ public class WorksetManagement extends JavaController {
                 } else {
                     wsDescription = description[0];
                 }
-
-
-                File volumeFile = new File(volumeFilePath);
-                List<String> volumesList = Files.readAllLines(volumeFile.toPath(), StandardCharsets.UTF_8);
 
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(csvFile));
                 String readCSVData = bufferedReader.readLine();
