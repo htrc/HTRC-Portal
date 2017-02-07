@@ -1,96 +1,126 @@
 @(userId: String, vmStatus: edu.indiana.d2i.htrc.sloan.bean.VMStatus)
-    @import edu.indiana.d2i.htrc.sloan.bean.VMStatus
+@import edu.indiana.d2i.htrc.sloan.bean.VMStatus
 
 
-    @main("VMStatus", userId) {
-        <div class="container">
-            <div class="panel panel-default panel-htrc panel-with-table">
-                <div class="panel-heading">
-                    <strong>Capsule Status</strong>
-                    <span>
-                        <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">Back to List</a>
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td style="width: 200px;"><b>Data Capsule Id:</b></td>
-                                <td>@vmStatus.getVmId</td>
-                            </tr>
-                            <tr>
-                                <td><b>Image Name:</b></td>
-                                <td>@vmStatus.getImageName</td>
-                            </tr>
-                            <tr>
-                                <td><b>Memory:</b></td>
-                                <td>@vmStatus.getMemory</td>
-                            </tr>
-                            <tr>
-                                <td><b>VCPU:</b></td>
-                                <td>@vmStatus.getVcpu</td>
-                            </tr>
-                            <tr>
-                                <td><b>Secure Volume Size:</b></td>
-                                <td>@vmStatus.getVolumeSize</td>
-                            </tr>
-                            <tr>
-                                <td><b>State:</b></td>
-                                <td>@vmStatus.getState</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Initial Logging User ID:</b></td>
-                                <td>@vmStatus.getVmIntialLogingId</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Initial Logging Password:</b></td>
-                                <td>@vmStatus.getVmInitialLogingPassword</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Mode:</b></td>
-                                <td>@vmStatus.getMode</td>
-                            </tr>
-                            <tr>
-                                <td><b>Host Name:</b></td>
-                                <td>@vmStatus.getPublicIp</td>
-                            </tr>
-                            <tr>
-                                <td><b>VNC Port:</b></td>
-                                <td>@vmStatus.getVncPort</td>
-                            </tr>
+@main("VMStatus", userId) {
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Capsule Status</strong>
+                <span>
+                    <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">
+                        Back to List</a>
+                </span>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 200px;"><b>Data Capsule ID:</b></td>
+                            <td>@vmStatus.getVmId</td>
+                        </tr>
+                        <tr>
+                            <td><b>Image Name:</b></td>
+                            <td>@vmStatus.getImageName</td>
+                        </tr>
+                        <tr>
+                            <td><b>Memory:</b></td>
+                            <td>@vmStatus.getMemory</td>
+                        </tr>
+                        <tr>
+                            <td><b>VCPU:</b></td>
+                            <td>@vmStatus.getVcpu</td>
+                        </tr>
+                        <tr>
+                            <td><b>Secure Volume Size:</b></td>
+                            <td>@vmStatus.getVolumeSize</td>
+                        </tr>
+                        <tr>
+                            <td><b>State:</b></td>
+                            <td>@vmStatus.getState</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Operating System User ID:</b></td>
+                            <td>@vmStatus.getVmIntialLogingId</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Operating System Password:</b></td>
+                            <td>@vmStatus.getVmInitialLogingPassword</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Mode:</b></td>
+                            <td>@vmStatus.getMode</td>
+                        </tr>
+                        <tr>
+                            <td><b>Host Name:</b></td>
+                            <td>@vmStatus.getPublicIp</td>
+                        </tr>
+                        <tr>
+                            <td><b>VNC Port:</b></td>
+                            <td>@vmStatus.getVncPort</td>
+                        </tr>
 
-                            <tr>
-                                <td><strong>VNC URL:</strong></td>
-                                <td id="vnc-url">@vmStatus.getPublicIp:@vmStatus.getVncPort</td>
-                                <script type="text/javascript">
-                                    $(document).ready(function(){
-                                        if(bowser.safari){
+                        <tr>
+                            <td><strong>VNC URL:</strong></td>
+                            <td id="vnc-url">@vmStatus.getPublicIp:@vmStatus.getVncPort</td>
+                            <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        if (bowser.safari) {
                                             var td = $("#vnc-url");
                                             var url = $("#vnc-url").text();
-                                            td.html("<a href='vnc://" + url +"'>" + url + "</a>");
+                                            td.html("<a href='vnc://" + url + "'>" + url + "</a>");
                                         }
                                     });
-                                </script>
-                            </tr>
-                            <tr>
-                                <td><b>SSH Port:</b></td>
-                                <td>@vmStatus.getSshPort</td>
-                            </tr>
+                            </script>
+                        </tr>
+                        <tr>
+                            <td><b>SSH Port:</b></td>
+                            <td>@vmStatus.getSshPort</td>
+                        </tr>
 
 
-                        </tbody>
-                    </table>
-                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">
-                        Use SSH login in the Maintenance mode. SSH login is not allowed in the Secure mode.
-                        To SSH into the Data Capsule, use following command in your Linux terminal: <br> ssh -p @vmStatus.getSshPort @vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp
-                        <br>@vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp's password: @vmStatus.getVmInitialLogingPassword</p>
+                    </tbody>
+                </table>
+                <div class="alert alert-info" style="margin: 10px;
+                    padding: 5px;">
+                    <p>
+                        To log in to a Data Capsule,
+                        you can use a VNC client when the capsule is in either Secure or Maintenance mode.
+                        SSH login is also available, but only when in Maintenance mode and not when the capsule is in Secure mode.
+                    </p>
+                    <p>To SSH into your Capsule, use following command in your Linux terminal:
+                        <br/>ssh -p @vmStatus.getSshPort @vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp
+                        <br/>@vmStatus.getVmIntialLogingId@@@vmStatus.getPublicIp
+                        's password: @vmStatus.getVmInitialLogingPassword
+                    </p>
+                    <p>To log in to your capsule using VNC:</p>
+                    <ul>
+                        <li>If you are using the Safari browser in Mac OSX, click on the 'VNC URL' or
+                            navigate to 'vnc://@vmStatus.getPublicIp:@vmStatus.getVncPort' within Safari.</li>
+                        <li>If you already have a VNC client installed on your computer, open it and enter VNC URL.</li>
+                        <li>If you do not have a VNC client installed on your machine, you can download one from here:
+                            <br><a href="https://www.realvnc.com/download/viewer" target="_blank">
+                                https://www.realvnc.com/download/viewer</a></li>
+                    </ul>
+
+                    <p>After you enter the VNC URL in your VNC client window,
+                        you will be prompted for a password.
+                        Enter the VNC password you supplied when you created the Capsule.
+                        (Note: this is not the password displayed above to log in to the capsule's operating system.)
+                        If you can't remember the password you entered when you created your capsule,
+                        please contact <a href="mailto:htrc-help@@hathitrust.org?Subject=Recover VNC Password">
+                        HTRC Support staff</a> to recover your VNC password.</p>
+                    <p>For more information, please refer <a href="https://wiki.htrc.illinois.edu/x/TQFRAQ"><b>
+                        HTRC Data Capsule Tutorial.</b></a></p>
                 </div>
+
             </div>
         </div>
-        <script type="text/javascript">
-            setInterval(function(){
-            window.location.reload(1);
+    </div>
+    <script type="text/javascript">
+            setInterval(function () {
+                window.location.reload(1);
             }, 10000);
-        </script>
+    </script>
 
-    }
+}
