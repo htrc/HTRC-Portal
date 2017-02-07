@@ -17,7 +17,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th><b>Data Capsule Id</b></th>
+                                    <th><b>Data Capsule ID</b></th>
                                     <th><b>Status</b></th>
                                     <th><b>Actions</b></th>
                                 </tr>
@@ -52,7 +52,7 @@
                                                 </a>
                                                 @if(vm.getMode == "MAINTENANCE") {
                                                     <a href="#" class="btn btn-info btn-xs" id="switchmode-maintainance" onclick="modalMessage ( 'Switch to Secure Mode',
-                                                    'Network in secure mode is highly constrained. You can only access HTRC Data service. You should only write your data to secure volume. ' +
+                                                    'Network in Secure mode is highly constrained. You can only access HTRC Data service. You should only write your data to secure volume. ' +
                                                     'Data written to other places will not be persistent.', ' @routes.ExperimentalAnalysis.switchVMMode(vm.getVmId, "SECURE") ')">
                                                         Switch To Secure Mode
                                                     </a>
@@ -60,7 +60,7 @@
 
                                                     <a href="#" class="btn btn-info btn-xs" id="switchmode-security"
                                                     onclick="modalMessage ( 'Switch to Maintenance Mode',
-                                                    'Only data written in secure volume is preserved! Please make sure you save your data to secure volume! Please dismount secure volume in virtual machine before to maintenance mode! ' +
+                                                    'Only data written in secure volume is preserved! Please make sure you save your data to secure volume before switching to Maintenance mode! ' +
                                                     'Click OK to continue switching, click Cancel to discard switching operation.', ' @routes.ExperimentalAnalysis.switchVMMode(vm.getVmId, "MAINTENANCE") ')">
                                                         Switch To Maintenance Mode
                                                     </a>
@@ -84,11 +84,11 @@
                     } else {
                         <p style="padding: 8px;">There are no Data Capsules.</p>
                     }
-                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">To log in to a Data Capsule, you can use VNC client in both Secure and Maintenance modes.
-                        Or use SSH login in the Maintenance mode.
-                        SSH login is not allowed in the Secure mode.
-                        Get VNC and SSH login information by clicking the 'Data Capsule Id' link.
-                        For more information, please refer the <a href="http://wiki.htrc.illinois.edu/display/COM/HTRC+Data+Capsule"><b>documentation</b></a>.</p>
+                    <p class="alert alert-info" style="margin: 10px; padding: 5px;">To log in to a Data Capsule,
+                        you can use a VNC client when the capsule is in either Secure or Maintenance mode.
+                        SSH login is also available, but only when in Maintenance mode and not when the capsule is in Secure mode.
+                        Get VNC and SSH login information by clicking the 'Data Capsule ID' link above.
+                        For more information, please refer the <a href="https://wiki.htrc.illinois.edu/x/SAFRAQ"><b>documentation</b></a>.</p>
                 </div>
             </div>
         </div>

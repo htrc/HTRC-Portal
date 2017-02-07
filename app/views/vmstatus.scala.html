@@ -2,63 +2,63 @@
     @import edu.indiana.d2i.htrc.sloan.bean.VMStatus
 
 
-    @main("VMStatus", userId) {
-        <meta http-equiv="refresh" content="600">
-        <div class="container">
-            <div class="panel panel-default panel-htrc panel-with-table">
-                <div class="panel-heading">
-                    <strong>Capsule Status</strong>
-                    <span>
-                        <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">Back to List</a>
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td style="width: 200px;"><b>Data Capsule Id:</b></td>
-                                <td>@vmStatus.getVmId</td>
-                            </tr>
-                            <tr>
-                                <td><b>Image Name:</b></td>
-                                <td>@vmStatus.getImageName</td>
-                            </tr>
-                            <tr>
-                                <td><b>Memory:</b></td>
-                                <td>@vmStatus.getMemory</td>
-                            </tr>
-                            <tr>
-                                <td><b>VCPU:</b></td>
-                                <td>@vmStatus.getVcpu</td>
-                            </tr>
-                            <tr>
-                                <td><b>Secure Volume Size:</b></td>
-                                <td>@vmStatus.getVolumeSize</td>
-                            </tr>
-                            <tr>
-                                <td><b>State:</b></td>
-                                <td>@vmStatus.getState</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Initial Logging User ID:</b></td>
-                                <td>@vmStatus.getVmIntialLogingId</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Initial Logging Password:</b></td>
-                                <td>@vmStatus.getVmInitialLogingPassword</td>
-                            </tr>
-                            <tr>
-                                <td><b>Capsule Mode:</b></td>
-                                <td>@vmStatus.getMode</td>
-                            </tr>
-                            <tr>
-                                <td><b>Host Name:</b></td>
-                                <td>@vmStatus.getPublicIp</td>
-                            </tr>
-                            <tr>
-                                <td><b>VNC Port:</b></td>
-                                <td>@vmStatus.getVncPort</td>
-                            </tr>
+@main("VMStatus", userId) {
+    <div class="container">
+        <div class="panel panel-default panel-htrc panel-with-table">
+            <div class="panel-heading">
+                <strong>Capsule Status</strong>
+                <span>
+                    <a href="@routes.ExperimentalAnalysis.listVMs()" class="btn btn-info btn-xs pull-right">
+                        Back to List</a>
+                </span>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 200px;"><b>Data Capsule ID:</b></td>
+                            <td>@vmStatus.getVmId</td>
+                        </tr>
+                        <tr>
+                            <td><b>Image Name:</b></td>
+                            <td>@vmStatus.getImageName</td>
+                        </tr>
+                        <tr>
+                            <td><b>Memory:</b></td>
+                            <td>@vmStatus.getMemory</td>
+                        </tr>
+                        <tr>
+                            <td><b>VCPU:</b></td>
+                            <td>@vmStatus.getVcpu</td>
+                        </tr>
+                        <tr>
+                            <td><b>Secure Volume Size:</b></td>
+                            <td>@vmStatus.getVolumeSize</td>
+                        </tr>
+                        <tr>
+                            <td><b>State:</b></td>
+                            <td>@vmStatus.getState</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Operating System User ID:</b></td>
+                            <td>@vmStatus.getVmIntialLogingId</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Operating System Password:</b></td>
+                            <td>@vmStatus.getVmInitialLogingPassword</td>
+                        </tr>
+                        <tr>
+                            <td><b>Capsule Mode:</b></td>
+                            <td>@vmStatus.getMode</td>
+                        </tr>
+                        <tr>
+                            <td><b>Host Name:</b></td>
+                            <td>@vmStatus.getPublicIp</td>
+                        </tr>
+                        <tr>
+                            <td><b>VNC Port:</b></td>
+                            <td>@vmStatus.getVncPort</td>
+                        </tr>
 
                             <tr>
                                 <td><strong>VNC URL:</strong></td>
