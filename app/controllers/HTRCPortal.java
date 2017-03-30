@@ -50,19 +50,29 @@ public class HTRCPortal extends JavaController {
         String userId = session(PortalConstants.SESSION_USERNAME);
         String userEmail = session(PortalConstants.SESSION_EMAIL);
         if(userId == null){
-            return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
+            userIdNotFound();
+        } else if (!isAccountActivated(userId)){
+            accountNotActivated(userId, userEmail);
         }
-
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-        if(!userManager.roleNameExists(userId)){
-            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
-                    "If you have not received your activation link, please contact us by email " +
-                    " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(),null));
-        }
-        log.debug("Role name exists: " + userManager.roleNameExists(userId));
         log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
         log.debug("User's access token:" + session(PortalConstants.SESSION_TOKEN));
         return redirect(routes.HTRCPortal.index());
+    }
+
+    public static boolean isAccountActivated(String userId){
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+        log.debug("Role name exists: " + userManager.roleNameExists(userId));
+        return userManager.roleNameExists(userId);
+    }
+
+    public static Result accountNotActivated( String userId, String userEmail){
+        return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
+                "If you have not received your activation link, please contact us by email " +
+                " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(),null));
+    }
+
+    public static Result userIdNotFound(){
+        return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
     }
 
     public static Result logout() {

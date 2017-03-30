@@ -203,6 +203,7 @@ public class UserManagement extends JavaController {
         public String acknowledgement;
         //        private final String[] permissions = {"/permission/admin/login"};
         private String status = null;
+        List<String> usersWithEmail = null;
 
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
         PasswordChecker passwordChecker = new PasswordChecker();
@@ -224,6 +225,14 @@ public class UserManagement extends JavaController {
 
             if (userManager.roleNameExists(userId)) {
                 return "There's a role name already exists with this name. Please use another username.";
+            }
+            try {
+                usersWithEmail = userManager.getUserIdsFromEmail(email);
+                if (usersWithEmail != null && usersWithEmail.size() > 0){
+                    return email + " is already used for user accounts: " + usersWithEmail;
+                }
+            } catch (RemoteException e) {
+                log.error("Error when checking email availability.");
             }
 
             if (passwordValidate(password, confirmPassword,userId) != null) {
@@ -249,7 +258,7 @@ public class UserManagement extends JavaController {
                 claims.add(new AbstractMap.SimpleEntry<>(
                         "http://wso2.org/claims/emailaddress", email));
                 try {
-                    userManager.createUser(userId, password, claims);
+                    userManager.createUser(userId, password, email, claims);
                     sendUserRegistrationEmail(email, userId, firstName);
                     log.info("User " + firstName + " " + lastName + " has acknowledge the user registration acknowledgement."
                             + " User ID: " + userId);
