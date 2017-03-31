@@ -34,25 +34,22 @@ public class HTRCPortal extends JavaController {
 
     public static Result index() throws IOException {
         List<String> announcements = java.nio.file.Files.readAllLines(Paths.get(PlayConfWrapper.announcementDocument()), Charset.defaultCharset());
-        return ok(index.render(session(PortalConstants.SESSION_USERNAME), announcements));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)){
+            return ok(index.render(null, announcements));
+        }
+        return ok(index.render(userId, announcements));
     }
 
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result login() throws IOException, JAXBException {
-//        CommonProfile userProfile = getUserProfile();
-//        String accessToken = (String) userProfile.getAttribute("access_token");
-//        String refreshToken = (String) userProfile.getAttribute("refresh_token");
-//        session().put(PortalConstants.SESSION_TOKEN,accessToken);
-//        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
-//        log.debug(userProfile.toString());
-
         String userId = session(PortalConstants.SESSION_USERNAME);
         String userEmail = session(PortalConstants.SESSION_EMAIL);
         if(userId == null){
-            userIdNotFound();
+            return redirect(routes.HTRCPortal.userIdNotFound());
         } else if (!isAccountActivated(userId)){
-            accountNotActivated(userId, userEmail);
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
         }
         log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
         log.debug("User's access token:" + session(PortalConstants.SESSION_TOKEN));
@@ -61,8 +58,11 @@ public class HTRCPortal extends JavaController {
 
     public static boolean isAccountActivated(String userId){
         HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-        log.debug("Role name exists: " + userManager.roleNameExists(userId));
-        return userManager.roleNameExists(userId);
+        if(userId != null){
+            log.debug("Role name exists: " + userManager.roleNameExists(userId));
+            return userManager.roleNameExists(userId);
+        }
+        return false;
     }
 
     public static Result accountNotActivated( String userId, String userEmail){
@@ -90,18 +90,29 @@ public class HTRCPortal extends JavaController {
     }
 
     public static Result about() {
-        return ok(about.render(session(PortalConstants.SESSION_USERNAME)));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)){
+            return ok(about.render(null));
+        }
+        return ok(about.render(userId));
     }
 
     public static Result bookWorm() throws IOException {
         String bookWormPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.bookWormPage())));
-        //return ok(features.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
-        return ok(bookworm.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)) {
+            return ok(bookworm.render(null,bookWormPage));
+        }
+        return ok(bookworm.render(userId,bookWormPage));
     }
 
     public static Result datasets() throws IOException {
         String datasetsPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.datasetsPage())));
-        return ok(datasets.render(session(PortalConstants.SESSION_USERNAME),datasetsPage));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)) {
+            return ok(bookworm.render(null,datasetsPage));
+        }
+        return ok(datasets.render(userId,datasetsPage));
     }
 
     public static String getUserEmail(String accessToken) throws IOException {

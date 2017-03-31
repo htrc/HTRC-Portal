@@ -41,6 +41,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static controllers.HTRCPortal.isAccountActivated;
+
 public class WorksetManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -49,6 +51,12 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result allWorksets() throws IOException, JAXBException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getAllWorksets();
         return ok(allworksetstable.render(userId, worksetList));
@@ -57,6 +65,12 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result userWorksets() throws IOException, JAXBException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<edu.illinois.i3.htrc.registry.entities.workset.Workset> worksetList = persistenceAPIClient.getUserWorksets();
         return ok(userworksetstable.render(userId, worksetList));
@@ -65,6 +79,12 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException{
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         edu.illinois.i3.htrc.registry.entities.workset.Workset ws = persistenceAPIClient.getWorkset(worksetName, worksetAuthor);
         List<Volume> volumeList = new ArrayList<>();
@@ -141,12 +161,24 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result uploadWorksetForm() {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         return ok(worksetupload.render(userId));
     }
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result uploadWorkset() throws ParserConfigurationException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart csv = body.getFile("csv");
         String[] worksetName = body.asFormUrlEncoded().get("uploadWorksetName");
@@ -239,6 +271,12 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result downloadWorkset(String worksetName, String worksetAuthor) throws IOException, JAXBException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         List<Volume> volumes = persistenceAPIClient.getWorksetVolumes(worksetName, worksetAuthor);
 
@@ -307,6 +345,12 @@ public class WorksetManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result validateWSName(String wsName) throws IOException, JAXBException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
         Workset ws = persistenceAPIClient.getWorkset(wsName, userId);
         // Validate the Workset Name and set isValid.

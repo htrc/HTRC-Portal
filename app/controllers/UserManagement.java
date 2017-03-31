@@ -332,7 +332,13 @@ public class UserManagement extends JavaController {
         public String validate() throws Exception {
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || institution.isEmpty()) {
                 return "Please fill all the required fields.";
-            } else {
+            }
+            if(SignUp.isValidEmail(email)){
+                return "Your email domain or email is an approved one in HTRC. " +
+                        "Please try to signup using the email "
+                        +email+".  If you have trouble with signing up, please contact HTRC support staff htrc-help@hathitrust.org.";
+            }
+            else {
                 sendMail(email, PlayConfWrapper.supportEmail(), "Account request for HTRC Portal", "Following user has requested an account.\n" +
                         "User's name : " + firstName + " " + lastName + ";\n" +
                         "User's email : " + email + ";\n" +
