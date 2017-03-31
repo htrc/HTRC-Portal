@@ -19,6 +19,7 @@ package edu.indiana.d2i.htrc.portal;
 
 
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
+import edu.indiana.d2i.htrc.portal.exception.EmailAlreadyExistsException;
 import edu.indiana.d2i.htrc.portal.exception.RoleNameAlreadyExistsException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoRequest;
@@ -198,7 +199,7 @@ public class HTRCUserManagerUtility {
      * @see #getRequiredUserClaims()
      * @see #getAvailablePermissions()
      */
-    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims) throws Exception { // TODO: Review this
+    public void createUser(String userName, String password, String email, List<Map.Entry<String, String>> claims) throws Exception { // TODO: Review this
         if (userName == null) {
             throw new NullPointerException("User name null.");
         }
@@ -217,6 +218,15 @@ public class HTRCUserManagerUtility {
             String message = userName + " is a already exist role name.";
             log.warn(message);
             throw new RoleNameAlreadyExistsException(message);
+
+        }
+
+        List<String> usersWithEmail =getUserIdsFromEmail(email);
+
+        if (usersWithEmail != null && usersWithEmail.size() > 0){
+            String message = email + " is already used for user accounts: " + usersWithEmail;
+            log.warn(message);
+            throw new EmailAlreadyExistsException(message);
 
         }
 

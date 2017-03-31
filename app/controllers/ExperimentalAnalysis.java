@@ -39,6 +39,8 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static controllers.HTRCPortal.isAccountActivated;
+
 public class ExperimentalAnalysis extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
@@ -49,6 +51,12 @@ public class ExperimentalAnalysis extends JavaController {
             return notFound();
         }
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMStatus> vmList = serviceClient.listVMs(session());
         if(vmList != null){
@@ -64,6 +72,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result createVMForm() {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
         try {
@@ -79,6 +93,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result createVM() throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         List<VMImageDetails> vmImageDetailsList = new ArrayList<VMImageDetails>();
         try {
@@ -103,6 +123,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result showVMStatus(String vmId) throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         VMStatus vmStatus = serviceClient.showVM(vmId, session());
         return ok(vmstatus.render(userId, vmStatus));
@@ -111,6 +137,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result deleteVM(String vmId) throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.deleteVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
@@ -119,6 +151,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result startVM(String vmId) throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.startVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
@@ -127,6 +165,12 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result stopVM(String vmId) throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.stopVM(vmId, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
@@ -135,28 +179,16 @@ public class ExperimentalAnalysis extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result switchVMMode(String vmId, String mode) throws IOException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
         serviceClient.switchVMMode(vmId, mode, session());
         return Results.redirect(controllers.routes.ExperimentalAnalysis.listVMs());
     }
-
-//    public static void updateVMList() {
-//        HTRCExperimentalAnalysisServiceClient serviceClient = new HTRCExperimentalAnalysisServiceClient();
-//        try {
-//            List<VMStatus> vmList = serviceClient.listVMs(session());
-//            for (VMStatus v : vmList) {
-//                VirtualMachine alreadyExist = VirtualMachine.findVM(v.getVmId());
-//                if (alreadyExist != null) {
-//                    VirtualMachine.deleteVM(alreadyExist);
-//                }
-//                VirtualMachine virtualMachine = new VirtualMachine(v.getVmId(), v.getState(), v.getMode());
-//                VirtualMachine.createVM(virtualMachine);
-//            }
-//
-//        } catch (Exception e) {
-//            log.error("Update VM List Failed.", e);
-//        }
-//    }
 
     public static class CreateVM {
         @Constraints.Required
