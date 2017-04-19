@@ -67,6 +67,10 @@ public class HTRCUserManagerUtility {
     private Pattern userNameRegExp;
     private Pattern roleNameRegExp;
 
+    private static HTRCUserManagerUtility instance  = null;
+    private static Object mutex = new Object();
+
+
     private static final ResourceActionPermission[] ALL_PERMISSIONS = new ResourceActionPermission[]{
             ResourceActionPermission.GET, ResourceActionPermission.PUT,
             ResourceActionPermission.DELETE, ResourceActionPermission.AUTHORIZE
@@ -74,27 +78,33 @@ public class HTRCUserManagerUtility {
 
 
     public static HTRCUserManagerUtility getInstanceWithDefaultProperties() {
-        try {
-            Properties userMgtUtilityProps = new Properties();
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
-
-            return new HTRCUserManagerUtility(
-                    PlayConfWrapper.oauthBackendUrl() + "/services/",
-                    PlayConfWrapper.userRegUrl(),
-                    PlayConfWrapper.userRegUser(),
-                    PlayConfWrapper.userRegPwd(),
-                    userMgtUtilityProps);
-        } catch (Exception e) {
-            String errMessage = "Failed to create User Manager Utility instance.";
-            log.error(errMessage, e);
-            throw new RuntimeException(errMessage, e);
+        if (instance == null) {
+            try {
+                Properties userMgtUtilityProps = new Properties();
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
+                synchronized (mutex) {
+                    if (instance == null) {
+                        instance = new HTRCUserManagerUtility(
+                            PlayConfWrapper.oauthBackendUrl() + "/services/",
+                            PlayConfWrapper.userRegUrl(),
+                            PlayConfWrapper.userRegUser(),
+                            PlayConfWrapper.userRegPwd(),
+                            userMgtUtilityProps);
+                    }
+                }
+            } catch (Exception e) {
+                String errMessage = "Failed to create User Manager Utility instance.";
+                log.error(errMessage, e);
+                throw new RuntimeException(errMessage, e);
+            }
         }
+        return instance;
     }
 
-    public HTRCUserManagerUtility(String isURL, String gregURL, String userName, String password,
+    private HTRCUserManagerUtility(String isURL, String gregURL, String userName, String password,
                                   Properties configProperties) {
         if (!(configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_HOME)
                 && configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_FILES)
