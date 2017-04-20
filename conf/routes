@@ -7,7 +7,13 @@ GET         /                                                 controllers.HTRCPo
 
 # Login Form
 GET         /login                                            controllers.HTRCPortal.login()
-#
+
+# User Account Not Activated message
+GET       /accountnotactivated                                controllers.HTRCPortal.accountNotActivated(userId:String ?="", userEmail:String ?="" )
+
+#User ID not found
+GET      /useridnotfound                                     controllers.HTRCPortal.userIdNotFound()
+
 ## Authenticate
 #POST        /login                                            controllers.HTRCPortal.authenticate()
 #

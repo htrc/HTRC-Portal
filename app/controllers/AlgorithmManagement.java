@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static controllers.HTRCPortal.isAccountActivated;
 import static play.data.Form.form;
 
 public class AlgorithmManagement extends JavaController {
@@ -32,6 +33,12 @@ public class AlgorithmManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listAlgorithms(int page) throws JAXBException, IOException, XMLStreamException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
 
         return ok(views.html.algorithms.render(userId, getAlgorithms()));
     }
@@ -39,6 +46,12 @@ public class AlgorithmManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewAlgorithm(String algorithmName, String message) throws JAXBException, IOException, XMLStreamException {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         AlgorithmDetailsBean algorithmDetails = getAlgorithmDetails(session().get(PortalConstants.SESSION_TOKEN), algorithmName);
         List<AlgorithmDetailsBean.Parameter> parameters = algorithmDetails.getParameters();
         HTRCPersistenceAPIClient persistenceAPIClient = new HTRCPersistenceAPIClient(session());
@@ -51,6 +64,12 @@ public class AlgorithmManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result submitAlgorithm() throws Exception {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         Form<SubmitJob> jobSubmitForm = form(SubmitJob.class).bindFromRequest();
         JobSubmitBean jobSubmitBean = new JobSubmitBean();
         DynamicForm requestData = form().bindFromRequest();

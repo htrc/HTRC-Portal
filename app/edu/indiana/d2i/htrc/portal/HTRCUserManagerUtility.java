@@ -19,6 +19,7 @@ package edu.indiana.d2i.htrc.portal;
 
 
 import edu.indiana.d2i.htrc.portal.exception.ChangePasswordUserAdminExceptionException;
+import edu.indiana.d2i.htrc.portal.exception.EmailAlreadyExistsException;
 import edu.indiana.d2i.htrc.portal.exception.RoleNameAlreadyExistsException;
 import edu.indiana.d2i.htrc.portal.exception.UserAlreadyExistsException;
 import edu.indiana.d2i.htrc.wso2is.extensions.stub.types.UserInfoRequest;
@@ -66,6 +67,10 @@ public class HTRCUserManagerUtility {
     private Pattern userNameRegExp;
     private Pattern roleNameRegExp;
 
+    private static HTRCUserManagerUtility instance  = null;
+    private static Object mutex = new Object();
+
+
     private static final ResourceActionPermission[] ALL_PERMISSIONS = new ResourceActionPermission[]{
             ResourceActionPermission.GET, ResourceActionPermission.PUT,
             ResourceActionPermission.DELETE, ResourceActionPermission.AUTHORIZE
@@ -73,27 +78,33 @@ public class HTRCUserManagerUtility {
 
 
     public static HTRCUserManagerUtility getInstanceWithDefaultProperties() {
-        try {
-            Properties userMgtUtilityProps = new Properties();
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
-            userMgtUtilityProps.put(CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
-
-            return new HTRCUserManagerUtility(
-                    PlayConfWrapper.oauthBackendUrl() + "/services/",
-                    PlayConfWrapper.userRegUrl(),
-                    PlayConfWrapper.userRegUser(),
-                    PlayConfWrapper.userRegPwd(),
-                    userMgtUtilityProps);
-        } catch (Exception e) {
-            String errMessage = "Failed to create User Manager Utility instance.";
-            log.error(errMessage, e);
-            throw new RuntimeException(errMessage, e);
+        if (instance == null) {
+            try {
+                Properties userMgtUtilityProps = new Properties();
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_HOME, "/htrc/%s");                              // %s will be replaced by the appropriate user name
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_FILES, "/htrc/%s/files");                       // make sure the settings match the configuration used in the Registry Extension
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_WORKSETS, "/htrc/%s/worksets");
+                userMgtUtilityProps.put(CONFIG_HTRC_USER_JOBS, "/htrc/%s/files/jobs");
+                synchronized (mutex) {
+                    if (instance == null) {
+                        instance = new HTRCUserManagerUtility(
+                            PlayConfWrapper.oauthBackendUrl() + "/services/",
+                            PlayConfWrapper.userRegUrl(),
+                            PlayConfWrapper.userRegUser(),
+                            PlayConfWrapper.userRegPwd(),
+                            userMgtUtilityProps);
+                    }
+                }
+            } catch (Exception e) {
+                String errMessage = "Failed to create User Manager Utility instance.";
+                log.error(errMessage, e);
+                throw new RuntimeException(errMessage, e);
+            }
         }
+        return instance;
     }
 
-    public HTRCUserManagerUtility(String isURL, String gregURL, String userName, String password,
+    private HTRCUserManagerUtility(String isURL, String gregURL, String userName, String password,
                                   Properties configProperties) {
         if (!(configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_HOME)
                 && configProperties.containsKey(PortalConstants.UR_CONFIG_HTRC_USER_FILES)
@@ -198,7 +209,7 @@ public class HTRCUserManagerUtility {
      * @see #getRequiredUserClaims()
      * @see #getAvailablePermissions()
      */
-    public void createUser(String userName, String password, List<Map.Entry<String, String>> claims) throws Exception { // TODO: Review this
+    public void createUser(String userName, String password, String email, List<Map.Entry<String, String>> claims) throws Exception { // TODO: Review this
         if (userName == null) {
             throw new NullPointerException("User name null.");
         }
@@ -217,6 +228,15 @@ public class HTRCUserManagerUtility {
             String message = userName + " is a already exist role name.";
             log.warn(message);
             throw new RoleNameAlreadyExistsException(message);
+
+        }
+
+        List<String> usersWithEmail =getUserIdsFromEmail(email);
+
+        if (usersWithEmail != null && usersWithEmail.size() > 0){
+            String message = email + " is already used for user accounts: " + usersWithEmail;
+            log.warn(message);
+            throw new EmailAlreadyExistsException(message);
 
         }
 

@@ -34,35 +34,45 @@ public class HTRCPortal extends JavaController {
 
     public static Result index() throws IOException {
         List<String> announcements = java.nio.file.Files.readAllLines(Paths.get(PlayConfWrapper.announcementDocument()), Charset.defaultCharset());
-        return ok(index.render(session(PortalConstants.SESSION_USERNAME), announcements));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)){
+            return ok(index.render(null, announcements));
+        }
+        return ok(index.render(userId, announcements));
     }
 
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result login() throws IOException, JAXBException {
-//        CommonProfile userProfile = getUserProfile();
-//        String accessToken = (String) userProfile.getAttribute("access_token");
-//        String refreshToken = (String) userProfile.getAttribute("refresh_token");
-//        session().put(PortalConstants.SESSION_TOKEN,accessToken);
-//        session().put(PortalConstants.SESSION_REFRESH_TOKEN, refreshToken);
-//        log.debug(userProfile.toString());
-
         String userId = session(PortalConstants.SESSION_USERNAME);
         String userEmail = session(PortalConstants.SESSION_EMAIL);
         if(userId == null){
-            return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
         }
-
-        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
-        if(!userManager.roleNameExists(userId)){
-            return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
-                    "If you have not received your activation link, please contact us by email " +
-                    " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(),null));
-        }
-        log.debug("Role name exists: " + userManager.roleNameExists(userId));
         log.info("Logged in user:"+ userId + ", Email:" + userEmail + ", Remote address:" + request().remoteAddress());
         log.debug("User's access token:" + session(PortalConstants.SESSION_TOKEN));
         return redirect(routes.HTRCPortal.index());
+    }
+
+    public static boolean isAccountActivated(String userId){
+        HTRCUserManagerUtility userManager = HTRCUserManagerUtility.getInstanceWithDefaultProperties();
+        if(userId != null){
+            log.debug("Role name exists: " + userManager.roleNameExists(userId));
+            return userManager.roleNameExists(userId);
+        }
+        return false;
+    }
+
+    public static Result accountNotActivated( String userId, String userEmail){
+        return ok(gotopage.render("Looks like you have not activated your account. Your account activation link has sent to " + userEmail + ". Please check your email and activate account. " +
+                "If you have not received your activation link, please contact us by email " +
+                " ", "mailto:"+PlayConfWrapper.supportEmail()+"?Subject=Issue_with_account_activation_link", PlayConfWrapper.supportEmail(),null));
+    }
+
+    public static Result userIdNotFound(){
+        return ok(gotopage.render("Sorry. Looks like system can't retrieve your information. Please try again later.",null,null,null));
     }
 
     public static Result logout() {
@@ -80,18 +90,29 @@ public class HTRCPortal extends JavaController {
     }
 
     public static Result about() {
-        return ok(about.render(session(PortalConstants.SESSION_USERNAME)));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)){
+            return ok(about.render(null));
+        }
+        return ok(about.render(userId));
     }
 
     public static Result bookWorm() throws IOException {
         String bookWormPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.bookWormPage())));
-        //return ok(features.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
-        return ok(bookworm.render(session(PortalConstants.SESSION_USERNAME),bookWormPage));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)) {
+            return ok(bookworm.render(null,bookWormPage));
+        }
+        return ok(bookworm.render(userId,bookWormPage));
     }
 
     public static Result datasets() throws IOException {
         String datasetsPage = new String(java.nio.file.Files.readAllBytes(Paths.get(PlayConfWrapper.datasetsPage())));
-        return ok(datasets.render(session(PortalConstants.SESSION_USERNAME),datasetsPage));
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        if(!isAccountActivated(userId)) {
+            return ok(bookworm.render(null,datasetsPage));
+        }
+        return ok(datasets.render(userId,datasetsPage));
     }
 
     public static String getUserEmail(String accessToken) throws IOException {

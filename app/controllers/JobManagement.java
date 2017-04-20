@@ -15,12 +15,20 @@ import views.html.joblist;
 import java.io.IOException;
 import java.util.*;
 
+import static controllers.HTRCPortal.isAccountActivated;
+
 public class JobManagement extends JavaController {
     private static Logger.ALogger log = play.Logger.of("application");
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result listJobs() {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
 
         Map<String, JobDetailsBean> activeJobs = agentClient.getActiveJobsDetails();
@@ -53,6 +61,13 @@ public class JobManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result cancelJobs() {
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         List<String> activeJobIds = new ArrayList<String>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
@@ -62,7 +77,6 @@ public class JobManagement extends JavaController {
                 activeJobIds.add(form.get(key)[0]);
             }
         }
-        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.cancelJobs(activeJobIds);
         if (response) {
@@ -77,6 +91,13 @@ public class JobManagement extends JavaController {
 
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result updateJobs() throws IOException {
+        String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         List<String> completedJobIds = new ArrayList<String>();
         Map<String, String[]> form = request().body().asFormUrlEncoded();
         Set<String> keys = form.keySet();
@@ -86,7 +107,6 @@ public class JobManagement extends JavaController {
                 completedJobIds.add(form.get(key)[0]);
             }
         }
-        String userId = session(PortalConstants.SESSION_USERNAME);
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         boolean response = agentClient.deleteJobs(completedJobIds);
         if (response) {
@@ -101,6 +121,12 @@ public class JobManagement extends JavaController {
     @RequiresAuthentication(clientName = "Saml2Client")
     public static Result viewJobDetails(String jobId) {
         String userId = session(PortalConstants.SESSION_USERNAME);
+        String userEmail = session(PortalConstants.SESSION_EMAIL);
+        if(userId == null){
+            return redirect(routes.HTRCPortal.userIdNotFound());
+        } else if (!isAccountActivated(userId)){
+            return redirect(routes.HTRCPortal.accountNotActivated(userId, userEmail));
+        }
         HTRCAgentClient agentClient = new HTRCAgentClient(session());
         List<String> jobIds = new ArrayList<String>();
         jobIds.add(jobId);
